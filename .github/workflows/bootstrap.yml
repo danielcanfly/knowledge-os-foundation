@@ -1,0 +1,53 @@
+name: Bootstrap source
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.bootstrap/source.tar.gz'
+      - '.github/workflows/bootstrap.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  unpack-test-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify bootstrap archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'd41426897950f2fd063d475ec7032ac101e11a6fcfd416be8469239feded282d  .bootstrap/source.tar.gz' | sha256sum -c -
+      - name: Expand source
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar -xzf .bootstrap/source.tar.gz -C .
+          rm -rf .bootstrap
+          rm -f .github/workflows/bootstrap.yml
+      - name: Install and validate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python scripts/validate_contracts.py
+          python -m pytest -q
+          python -m compileall -q scripts reference tests
+      - name: Commit expanded source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'knowledge-os-bootstrap[bot]'
+          git config user.email 'knowledge-os-bootstrap[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'feat: bootstrap executable Knowledge OS foundation'
+          git push origin HEAD:main
