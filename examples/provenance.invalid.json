@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0",
+  "record_id": "prov_01JXYZ123456789ABCDEFGHJKN",
+  "subject": {
+    "kind": "concept",
+    "concept_id": "concepts/knowledge-compiler",
+    "x_kos_id": "ko_01JXYZ123456789ABCDEFGHJKM",
+    "content_sha256": "5bdd3f42d0d219ca5203d68b3aa879d7bcef5cca04deae93c684ac64e5736d05"
+  },
+  "created_at": "2026-07-02T12:00:00Z",
+  "sources": [
+    {
+      "source_id": "src_google_okf_451lines",
+      "uri": "https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md",
+      "kind": "web",
+      "content_sha256": "1065a892265e221e616bff58f1263191f08b5f6b1fcef477a0ba543add602fc2",
+      "retrieved_at": "2026-07-02T10:00:00Z",
+      "audience": "restricted",
+      "snapshot_key": "sources/src_google_okf_451lines/1065a892265e221e616bff58f1263191f08b5f6b1fcef477a0ba543add602fc2/raw.md",
+      "media_type": "text/markdown",
+      "license": "Apache-2.0",
+      "owner": "GoogleCloudPlatform"
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "claim_compiler_definition",
+      "selector": {
+        "heading": "Knowledge Compiler",
+        "line_start": 15,
+        "line_end": 15
+      },
+      "claim_sha256": "530ac7e0409e5f23fbdb4de7deae521f9083306ef88694ec3db511f8f274a602",
+      "derivation_type": "synthesized",
+      "confidence": 0.95,
+      "evidence": [
+        {
+          "source_ref": "src_missing_reference",
+          "support": "context",
+          "locator": {
+            "heading": "Open Knowledge Format (OKF)"
+          }
+        }
+      ],
+      "review_status": "human_approved",
+      "review": {
+        "reviewer": "daniel",
+        "reviewed_at": "2026-07-02T11:30:00Z",
+        "notes": "Approved as an architectural synthesis based on the OKF producer-consumer model."
+      }
+    }
+  ],
+  "access": {
+    "source_audiences": [
+      "restricted"
+    ],
+    "effective_audience": "public",
+    "policy_version": "1.0",
+    "declassified": false
+  },
+  "integrity": {
+    "record_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "generated_by": "knowledge-builder/0.1.0",
+    "run_id": "build_20260702T120000Z_01",
+    "prompt_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "model": "manual-contract-fixture"
+  }
+}
