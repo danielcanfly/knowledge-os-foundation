@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://knowledge-os.local/schemas/release-manifest.schema.json",
+  "title": "Knowledge OS Release Manifest",
+  "description": "Immutable manifest for one complete Knowledge OS runtime release.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "release_id",
+    "created_at",
+    "release_ready",
+    "builder",
+    "source",
+    "okf",
+    "artifacts",
+    "counts",
+    "security",
+    "quality",
+    "compatibility"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "release_id": {"type": "string", "pattern": "^[0-9]{8}T[0-9]{6}Z-[a-f0-9]{7,40}$"},
+    "created_at": {"$ref": "#/$defs/utcTimestamp"},
+    "release_ready": {"const": true},
+    "supersedes_release_id": {
+      "anyOf": [
+        {"type": "string", "pattern": "^[0-9]{8}T[0-9]{6}Z-[a-f0-9]{7,40}$"},
+        {"type": "null"}
+      ]
+    },
+    "builder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "git_sha", "config_sha256", "build_id", "mode"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"},
+        "git_sha": {"$ref": "#/$defs/gitSha"},
+        "config_sha256": {"$ref": "#/$defs/sha256"},
+        "build_id": {"type": "string", "pattern": "^build_[A-Za-z0-9_.:-]+$"},
+        "mode": {"enum": ["full", "incremental", "reproducibility", "repair"]},
+        "model_runs_frozen": {"type": "boolean"}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "commit_sha", "foundation_repository", "foundation_commit_sha", "dirty"],
+      "properties": {
+        "repository": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"},
+        "commit_sha": {"$ref": "#/$defs/gitSha"},
+        "foundation_repository": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"},
+        "foundation_commit_sha": {"$ref": "#/$defs/gitSha"},
+        "dirty": {"const": false}
+      }
+    },
+    "okf": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base_version", "profile", "bundle_id", "bundle_prefix", "root_index", "content_sha256"],
+      "properties": {
+        "base_version": {"const": "0.1"},
+        "profile": {"const": "daniel-knowledge-os/0.1"},
+        "bundle_id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]{2,63}$"},
+        "bundle_prefix": {"type": "string", "pattern": "^releases/[^/]+/bundle/$"},
+        "root_index": {"type": "string", "pattern": "^releases/[^/]+/bundle/index\\.md$"},
+        "content_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 4,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/artifact"}
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["concepts", "sections", "edges", "provenance_records", "source_snapshots"],
+      "properties": {
+        "concepts": {"type": "integer", "minimum": 1},
+        "sections": {"type": "integer", "minimum": 1},
+        "edges": {"type": "integer", "minimum": 0},
+        "provenance_records": {"type": "integer", "minimum": 1},
+        "source_snapshots": {"type": "integer", "minimum": 1},
+        "tombstones": {"type": "integer", "minimum": 0}
+      }
+    },
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["acl_model_version", "audiences", "contains_restricted_data", "secret_scan", "acl_propagation"],
+      "properties": {
+        "acl_model_version": {"const": "1.0"},
+        "audiences": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/audience"}},
+        "contains_restricted_data": {"type": "boolean"},
+        "secret_scan": {"$ref": "#/$defs/gatePassed"},
+        "acl_propagation": {"$ref": "#/$defs/gatePassed"}
+      }
+    },
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["overall", "gates"],
+      "properties": {
+        "overall": {"const": "passed"},
+        "gates": {"type": "array", "minItems": 6, "items": {"$ref": "#/$defs/qualityGate"}}
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runtime_min_version", "contract_versions"],
+      "properties": {
+        "runtime_min_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+        "runtime_max_version": {
+          "anyOf": [
+            {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+            {"type": "null"}
+          ]
+        },
+        "contract_versions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["layer_model", "okf_profile", "build_pipeline", "runtime_query", "provenance"],
+          "properties": {
+            "layer_model": {"const": "0.1.0"},
+            "okf_profile": {"const": "0.1.0"},
+            "build_pipeline": {"const": "0.1.0"},
+            "runtime_query": {"const": "0.1.0"},
+            "provenance": {"const": "1.0"}
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": {"type": ["string", "number", "boolean", "null"]}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "gitSha": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+    "utcTimestamp": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "audience": {"enum": ["public", "internal", "confidential", "restricted"]},
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "key", "sha256", "bytes", "media_type", "audiences", "required"],
+      "properties": {
+        "kind": {"enum": ["okf_bundle", "page", "graph", "lexical_index", "semantic_index", "source_map", "provenance", "build_report", "redirects", "tombstones"]},
+        "key": {
+          "type": "string",
+          "pattern": "^releases/[^/]+/.+",
+          "not": {"pattern": "(?:^|/)\\.\\.(?:/|$)"}
+        },
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 0},
+        "media_type": {"type": "string", "minLength": 3},
+        "encoding": {"enum": ["identity", "gzip", "zstd"]},
+        "audiences": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/audience"}},
+        "required": {"type": "boolean"},
+        "model": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["provider", "name", "revision", "dimensions"],
+          "properties": {
+            "provider": {"type": "string", "minLength": 1},
+            "name": {"type": "string", "minLength": 1},
+            "revision": {"type": "string", "minLength": 1},
+            "dimensions": {"type": "integer", "minimum": 1}
+          }
+        }
+      }
+    },
+    "gatePassed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "checked_at", "tool"],
+      "properties": {
+        "status": {"const": "passed"},
+        "checked_at": {"$ref": "#/$defs/utcTimestamp"},
+        "tool": {"type": "string", "minLength": 1},
+        "report_key": {"type": "string", "pattern": "^releases/[^/]+/.+"}
+      }
+    },
+    "qualityGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status", "required", "checked_at"],
+      "properties": {
+        "name": {"enum": ["okf_profile", "internal_links", "provenance", "acl_propagation", "secret_scan", "artifact_integrity", "golden_queries", "reproducibility"]},
+        "status": {"const": "passed"},
+        "required": {"type": "boolean"},
+        "checked_at": {"$ref": "#/$defs/utcTimestamp"},
+        "metric": {"type": "number"},
+        "threshold": {"type": "number"},
+        "details_key": {"type": "string", "pattern": "^releases/[^/]+/.+"}
+      }
+    }
+  }
+}
