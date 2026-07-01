@@ -1,0 +1,134 @@
+{
+  "schema_version": "1.0",
+  "release_id": "20260702T120000Z-a1b2c3d",
+  "created_at": "2026-07-02T12:00:00Z",
+  "release_ready": true,
+  "supersedes_release_id": null,
+  "builder": {
+    "name": "knowledge-builder",
+    "version": "0.1.0",
+    "git_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "config_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "build_id": "build_20260702T120000Z_01",
+    "mode": "full",
+    "model_runs_frozen": true
+  },
+  "source": {
+    "repository": "danielcanfly/knowledge-source",
+    "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "foundation_repository": "danielcanfly/knowledge-os-foundation",
+    "foundation_commit_sha": "dddddddddddddddddddddddddddddddddddddddd",
+    "dirty": false
+  },
+  "okf": {
+    "base_version": "0.1",
+    "profile": "daniel-knowledge-os/0.1",
+    "bundle_id": "kb_main",
+    "bundle_prefix": "releases/20260702T120000Z-a1b2c3d/bundle/",
+    "root_index": "releases/20260702T120000Z-a1b2c3d/bundle/index.md",
+    "content_sha256": "13cf428a9d4a103350e330e2b1bb8601857f33c27eb28d38a60bb73481a3b219"
+  },
+  "artifacts": [
+    {
+      "kind": "okf_bundle",
+      "key": "releases/20260702T120000Z-a1b2c3d/bundle.tar.gz",
+      "sha256": "45387217b63aa26b8b131a639713643f9fd982db3978769869f10dfb05113b0c",
+      "bytes": 1685,
+      "media_type": "application/gzip",
+      "encoding": "identity",
+      "audiences": ["public", "internal"],
+      "required": true
+    },
+    {
+      "kind": "graph",
+      "key": "releases/20260702T120000Z-a1b2c3d/artifacts/graph.json",
+      "sha256": "2b001da6a77e10cd0983bfc3931933636d8e0dae4d780e67388004e9af2b40e0",
+      "bytes": 287,
+      "media_type": "application/json",
+      "encoding": "identity",
+      "audiences": ["internal"],
+      "required": true
+    },
+    {
+      "kind": "lexical_index",
+      "key": "releases/20260702T120000Z-a1b2c3d/artifacts/lexical-index.json",
+      "sha256": "10931ebeafe4166791098a754f10320925b90fbbfa8d8c8f6399aab15c7ff2c9",
+      "bytes": 329,
+      "media_type": "application/json",
+      "encoding": "identity",
+      "audiences": ["internal"],
+      "required": true
+    },
+    {
+      "kind": "provenance",
+      "key": "releases/20260702T120000Z-a1b2c3d/artifacts/provenance.json",
+      "sha256": "a054b0a7b9eb2e5d627e3a6d34565a7a9b6b26eee23fa1d039b260544d35013f",
+      "bytes": 2616,
+      "media_type": "application/json",
+      "encoding": "identity",
+      "audiences": ["public", "internal"],
+      "required": true
+    },
+    {
+      "kind": "build_report",
+      "key": "releases/20260702T120000Z-a1b2c3d/artifacts/build-report.json",
+      "sha256": "1a41ccf73fabc4a184fc4494118ceb4dbeca8193241ea790b8ab3c05dfc9c5be",
+      "bytes": 346,
+      "media_type": "application/json",
+      "encoding": "identity",
+      "audiences": ["internal"],
+      "required": true
+    }
+  ],
+  "counts": {
+    "concepts": 1,
+    "sections": 3,
+    "edges": 0,
+    "provenance_records": 1,
+    "source_snapshots": 1,
+    "tombstones": 0
+  },
+  "security": {
+    "acl_model_version": "1.0",
+    "audiences": ["public", "internal"],
+    "contains_restricted_data": false,
+    "secret_scan": {
+      "status": "passed",
+      "checked_at": "2026-07-02T12:00:00Z",
+      "tool": "example-secret-scanner/1.0"
+    },
+    "acl_propagation": {
+      "status": "passed",
+      "checked_at": "2026-07-02T12:00:00Z",
+      "tool": "validate_contracts.py"
+    }
+  },
+  "quality": {
+    "overall": "passed",
+    "gates": [
+      {"name": "okf_profile", "status": "passed", "required": true, "checked_at": "2026-07-02T12:00:00Z"},
+      {"name": "internal_links", "status": "passed", "required": true, "checked_at": "2026-07-02T12:00:00Z"},
+      {"name": "provenance", "status": "passed", "required": true, "checked_at": "2026-07-02T12:00:00Z"},
+      {"name": "acl_propagation", "status": "passed", "required": true, "checked_at": "2026-07-02T12:00:00Z"},
+      {"name": "secret_scan", "status": "passed", "required": true, "checked_at": "2026-07-02T12:00:00Z"},
+      {"name": "artifact_integrity", "status": "passed", "required": true, "checked_at": "2026-07-02T12:00:00Z"},
+      {"name": "golden_queries", "status": "passed", "required": true, "checked_at": "2026-07-02T12:00:00Z"},
+      {"name": "reproducibility", "status": "passed", "required": true, "checked_at": "2026-07-02T12:00:00Z"}
+    ]
+  },
+  "compatibility": {
+    "runtime_min_version": "0.1.0",
+    "runtime_max_version": null,
+    "contract_versions": {
+      "layer_model": "0.1.0",
+      "okf_profile": "0.1.0",
+      "build_pipeline": "0.1.0",
+      "runtime_query": "0.1.0",
+      "provenance": "1.0"
+    }
+  },
+  "metadata": {
+    "environment": "example",
+    "r2_bucket": "knowledge-store"
+  }
+}
