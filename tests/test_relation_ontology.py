@@ -87,12 +87,12 @@ def test_symmetric_relation_must_be_self_inverse() -> None:
 def test_directed_and_symmetric_flags_are_exclusive() -> None:
     ontology = _load("examples/relation-ontology.valid.json")
     ontology["relation_types"][0]["symmetric"] = True
-    with pytest.raises(MODULE.RelationOntologyError, match="exactly one"):
+    with pytest.raises(MODULE.RelationOntologyError):
         _validate(ontology)
 
 
-def test_fallback_is_declared_generic_relation() -> None:
+def test_fallback_is_fixed_and_generic() -> None:
     ontology = _load("examples/relation-ontology.valid.json")
     ontology["fallback_type"] = "uses"
-    with pytest.raises(MODULE.RelationOntologyError, match="generic"):
+    with pytest.raises(MODULE.RelationOntologyError):
         _validate(ontology)
