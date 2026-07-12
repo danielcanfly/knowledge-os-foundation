@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://knowledge-os.invalid/schemas/relation-ontology-v0.1.schema.json",
+  "title": "Knowledge OS Relation Ontology v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "ontology_id", "version", "status", "relation_types"],
+  "properties": {
+    "schema_version": {"const": "knowledge-os-relation-ontology/v0.1"},
+    "ontology_id": {"const": "daniel-knowledge-os/relation-ontology"},
+    "version": {"type": "string", "pattern": "^0\\.1\\.[0-9]+$"},
+    "status": {"enum": ["normative_draft", "active", "deprecated"]},
+    "fallback_type": {"const": "related_to"},
+    "relation_types": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/relation_type"}
+    }
+  },
+  "$defs": {
+    "identifier": {"type": "string", "pattern": "^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$"},
+    "relation_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type", "directed", "symmetric", "inverse", "provenance_expectation",
+        "allowed_qualifiers", "retrieval_semantics", "description"
+      ],
+      "properties": {
+        "type": {"$ref": "#/$defs/identifier"},
+        "directed": {"type": "boolean"},
+        "symmetric": {"type": "boolean"},
+        "inverse": {"$ref": "#/$defs/identifier"},
+        "provenance_expectation": {
+          "enum": ["required_factual", "reviewed_structural", "required_or_reviewed_structural"]
+        },
+        "allowed_qualifiers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"enum": ["scope", "context", "valid_from", "valid_to"]}
+        },
+        "retrieval_semantics": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["taxonomy", "composition", "dependency", "implementation", "production", "comparison", "complement", "evolution", "generic"]
+          }
+        },
+        "description": {"type": "string", "minLength": 20, "maxLength": 300}
+      }
+    }
+  }
+}
