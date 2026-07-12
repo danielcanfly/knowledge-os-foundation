@@ -1,0 +1,349 @@
+{
+  "schema_version": "knowledge-os-relation-ontology/v0.1",
+  "ontology_id": "daniel-knowledge-os/relation-ontology",
+  "version": "0.1.0",
+  "status": "normative_draft",
+  "fallback_type": "related_to",
+  "relation_types": [
+    {
+      "type": "is_a",
+      "directed": true,
+      "symmetric": false,
+      "inverse": "has_subtype",
+      "provenance_expectation": "reviewed_structural",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "taxonomy"
+      ],
+      "description": "The source concept is a subtype or instance of the target concept."
+    },
+    {
+      "type": "has_subtype",
+      "directed": true,
+      "symmetric": false,
+      "inverse": "is_a",
+      "provenance_expectation": "reviewed_structural",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "taxonomy"
+      ],
+      "description": "The source concept has the target concept as a subtype or instance."
+    },
+    {
+      "type": "part_of",
+      "directed": true,
+      "symmetric": false,
+      "inverse": "has_part",
+      "provenance_expectation": "reviewed_structural",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "composition"
+      ],
+      "description": "The source concept is a constituent part of the target concept."
+    },
+    {
+      "type": "has_part",
+      "directed": true,
+      "symmetric": false,
+      "inverse": "part_of",
+      "provenance_expectation": "reviewed_structural",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "composition"
+      ],
+      "description": "The source concept contains the target concept as a constituent part."
+    },
+    {
+      "type": "uses",
+      "directed": true,
+      "symmetric": false,
+      "inverse": "used_by",
+      "provenance_expectation": "required_or_reviewed_structural",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "dependency"
+      ],
+      "description": "The source concept uses the target concept as an operational dependency or technique."
+    },
+    {
+      "type": "used_by",
+      "directed": true,
+      "symmetric": false,
+      "inverse": "uses",
+      "provenance_expectation": "required_or_reviewed_structural",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "dependency"
+      ],
+      "description": "The source concept is used by the target concept as a dependency or technique."
+    },
+    {
+      "type": "produces",
+      "directed": true,
+      "symmetric": false,
+      "inverse": "produced_by",
+      "provenance_expectation": "required_factual",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "production"
+      ],
+      "description": "The source concept produces the target concept as an explicit output."
+    },
+    {
+      "type": "produced_by",
+      "directed": true,
+      "symmetric": false,
+      "inverse": "produces",
+      "provenance_expectation": "required_factual",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "production"
+      ],
+      "description": "The source concept is produced by the target concept as an explicit output."
+    },
+    {
+      "type": "requires",
+      "directed": true,
+      "symmetric": false,
+      "inverse": "required_by",
+      "provenance_expectation": "required_factual",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "dependency"
+      ],
+      "description": "The source concept requires the target concept as a stated precondition."
+    },
+    {
+      "type": "required_by",
+      "directed": true,
+      "symmetric": false,
+      "inverse": "requires",
+      "provenance_expectation": "required_factual",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "dependency"
+      ],
+      "description": "The source concept is required by the target concept as a stated precondition."
+    },
+    {
+      "type": "implements",
+      "directed": true,
+      "symmetric": false,
+      "inverse": "implemented_by",
+      "provenance_expectation": "required_or_reviewed_structural",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "implementation"
+      ],
+      "description": "The source concept implements the target contract, pattern, or specification."
+    },
+    {
+      "type": "implemented_by",
+      "directed": true,
+      "symmetric": false,
+      "inverse": "implements",
+      "provenance_expectation": "required_or_reviewed_structural",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "implementation"
+      ],
+      "description": "The source concept is implemented by the target concept."
+    },
+    {
+      "type": "supports",
+      "directed": true,
+      "symmetric": false,
+      "inverse": "supported_by",
+      "provenance_expectation": "required_factual",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "dependency"
+      ],
+      "description": "The source concept provides explicit support for the target concept."
+    },
+    {
+      "type": "supported_by",
+      "directed": true,
+      "symmetric": false,
+      "inverse": "supports",
+      "provenance_expectation": "required_factual",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "dependency"
+      ],
+      "description": "The source concept receives explicit support from the target concept."
+    },
+    {
+      "type": "contrasts_with",
+      "directed": false,
+      "symmetric": true,
+      "inverse": "contrasts_with",
+      "provenance_expectation": "required_factual",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "comparison"
+      ],
+      "description": "The concepts are explicitly contrasted along a stated dimension."
+    },
+    {
+      "type": "complements",
+      "directed": false,
+      "symmetric": true,
+      "inverse": "complements",
+      "provenance_expectation": "required_factual",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "complement"
+      ],
+      "description": "The concepts provide distinct capabilities that work together."
+    },
+    {
+      "type": "alternative_to",
+      "directed": false,
+      "symmetric": true,
+      "inverse": "alternative_to",
+      "provenance_expectation": "required_factual",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "comparison"
+      ],
+      "description": "The concepts are explicit alternatives for a comparable role or decision."
+    },
+    {
+      "type": "supersedes",
+      "directed": true,
+      "symmetric": false,
+      "inverse": "superseded_by",
+      "provenance_expectation": "required_factual",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "evolution"
+      ],
+      "description": "The source concept explicitly replaces or makes the target concept obsolete."
+    },
+    {
+      "type": "superseded_by",
+      "directed": true,
+      "symmetric": false,
+      "inverse": "supersedes",
+      "provenance_expectation": "required_factual",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "evolution"
+      ],
+      "description": "The source concept is explicitly replaced or made obsolete by the target concept."
+    },
+    {
+      "type": "related_to",
+      "directed": false,
+      "symmetric": true,
+      "inverse": "related_to",
+      "provenance_expectation": "required_factual",
+      "allowed_qualifiers": [
+        "scope",
+        "context",
+        "valid_from",
+        "valid_to"
+      ],
+      "retrieval_semantics": [
+        "generic"
+      ],
+      "description": "The concepts have a reviewed relationship for which no narrower approved type applies."
+    }
+  ]
+}

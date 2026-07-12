@@ -1,0 +1,19 @@
+{
+  "schema_version": "knowledge-os-relation-ontology/v0.1",
+  "ontology_id": "daniel-knowledge-os/relation-ontology",
+  "version": "0.1.0",
+  "status": "normative_draft",
+  "fallback_type": "related_to",
+  "relation_types": [
+    {
+      "type": "broken_relation",
+      "directed": true,
+      "symmetric": true,
+      "inverse": "missing_inverse",
+      "provenance_expectation": "required_factual",
+      "allowed_qualifiers": [],
+      "retrieval_semantics": ["generic"],
+      "description": "This deliberately invalid relation violates cross-field ontology rules."
+    }
+  ]
+}
