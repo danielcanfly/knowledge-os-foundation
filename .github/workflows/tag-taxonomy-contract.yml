@@ -1,0 +1,26 @@
+name: Tag taxonomy contract
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install 'jsonschema>=4.23,<5' 'pytest>=8.3,<9' 'ruff>=0.9,<1'
+      - run: python scripts/validate_tag_taxonomy.py
+      - run: ruff check scripts/validate_tag_taxonomy.py tests/test_tag_taxonomy.py
+      - run: pytest -q tests/test_tag_taxonomy.py
+      - run: python -m compileall -q scripts tests
