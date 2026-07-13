@@ -1,0 +1,37 @@
+{
+  "schema_version": "knowledge-os-tag-taxonomy/v0.1",
+  "taxonomy_id": "daniel-knowledge-os/tag-taxonomy",
+  "version": "0.1.0",
+  "status": "active",
+  "dimensions": {
+    "domain": [
+      "agents",
+      "evaluation",
+      "knowledge-systems",
+      "rag"
+    ],
+    "concern": [
+      "governance",
+      "observability",
+      "reliability",
+      "security"
+    ],
+    "lifecycle": [
+      "build",
+      "design",
+      "operations",
+      "runtime"
+    ],
+    "technique": [
+      "planning",
+      "retrieval",
+      "routing",
+      "verification"
+    ]
+  },
+  "tag_aliases": {
+    "knowledge-system": "knowledge-systems",
+    "observability-engineering": "observability",
+    "retrieval-augmented-generation": "rag"
+  }
+}
