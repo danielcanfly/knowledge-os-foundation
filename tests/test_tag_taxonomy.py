@@ -48,6 +48,7 @@ def test_unknown_alias_target_fails() -> None:
 def test_alias_shadowing_fails() -> None:
     value = load("examples/tag-taxonomy.valid.json")
     value["tag_aliases"]["agents"] = "rag"
+    value["tag_aliases"] = dict(sorted(value["tag_aliases"].items()))
     with pytest.raises(MODULE.TagTaxonomyError, match="shadows"):
         validate(value)
 
