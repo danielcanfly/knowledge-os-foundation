@@ -1,0 +1,28 @@
+{
+  "base_commit": "f746822503b7b27b2f5d4bb98ad406b15f558732",
+  "branch": "m27/context-native-runtime-spec",
+  "created_utc": "2026-10-03T07:21:55Z",
+  "docs": [
+    "00_m27_architecture_overview.md",
+    "01_contracts.md",
+    "02_request_flow.md",
+    "03_context_planner.md",
+    "04_context_compiler.md",
+    "05_compute_policy.md",
+    "06_tool_and_capability_registry.md",
+    "07_skill_runtime.md",
+    "08_workspace_and_memory.md",
+    "09_governance_eval_release.md",
+    "10_migration_plan.md",
+    "11_stage0_acceptance_gate.md",
+    "README.md"
+  ],
+  "freeze_dirs": [
+    "/home/ubuntu/production-freezes/m26-production-freeze-20261003T060811Z",
+    "/home/ubuntu/production-freezes/m26-production-freeze-generic-fallback-guard-20261003T063245Z"
+  ],
+  "production_line": "llm_wiki-knowledge-engine-1\tknowledge-engine:f7468225-generic-fallback-guard-20261003T061416Z\tUp About an hour (healthy)\t127.0.0.1:8080->8080/tcp",
+  "production_modified": false,
+  "schema": "m27-prework/v1",
+  "workspace": "/home/ubuntu/LLM_Wiki-m27-context-runtime"
+}
