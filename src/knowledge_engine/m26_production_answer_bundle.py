@@ -1,4 +1,5 @@
 from __future__ import annotations
+import os
 
 import json
 from collections.abc import Mapping
@@ -39,6 +40,14 @@ FULL_PRODUCTION_ADMISSION_SHA256 = (
     "f5f01d82c7a1a38cf15fc54c890b904c4c015f608e2d25e294f9469f9b1927f2"
 )
 
+# Current M26 production release observed from the active production pointer.
+# The legacy m25 constants above remain as test/fixture defaults only; runtime
+# loading must bind to channels/production.json when it is available.
+M26_CURRENT_PRODUCTION_RELEASE_ID = "m26blog-2882cfb8adae-b73886128198-212ced6f5c79"
+M26_CURRENT_QDRANT_COLLECTION = (
+    "m26_blog_m26blog_2882cfb8adae_b73886128198_212ced6f5c79"
+)
+
 RUNTIME_REQUIRED_KINDS = frozenset({"graph", "graph_v2", "lexical_index", "provenance"})
 COMPATIBILITY_REQUIRED_KINDS = frozenset(
     {
@@ -72,6 +81,9 @@ class ProductionAnswerBundle:
     artifact_sha256: dict[str, str]
     artifact_keys: dict[str, str]
     loaded_at: str
+    manifest_key: str = FULL_PRODUCTION_MANIFEST_KEY
+    accepted_release_id: str | None = None
+    accepted_qdrant_collection: str | None = None
     production_pointer: dict[str, Any] | None = None
     production_pointer_sha256: str | None = None
     production_manifest: dict[str, Any] | None = None
@@ -95,6 +107,12 @@ def load_production_answer_bundle(
     if store is None:
         return _load_production_answer_bundle_from_env()
     return _load_production_answer_bundle_from_store(store)
+
+
+def invalidate_production_answer_bundle_cache() -> None:
+    """Drop process-local active-release state after production pointer promotion."""
+
+    _load_production_answer_bundle_from_env.cache_clear()
 
 
 @lru_cache(maxsize=1)
@@ -147,7 +165,7 @@ def build_production_answer_compatibility_report(
     qdrant_mismatches = [
         dict(sample)
         for sample in qdrant_samples
-        if not _qdrant_payload_matches_production(sample)
+        if not _qdrant_payload_matches_production(sample, bundle)
         or (
             sample.get("section_id")
             and semantic_section_ids
@@ -182,7 +200,8 @@ def build_production_answer_compatibility_report(
         "qdrant_payload_sample_mismatches": len(qdrant_mismatches),
         "qdrant_point_count_mismatch": int(
             qdrant_point_count is not None
-            and qdrant_point_count != FULL_PRODUCTION_SEMANTIC_POINT_COUNT
+            and expected_counts["expected"].get("semantic_documents") is not None
+            and qdrant_point_count != expected_counts["expected"].get("semantic_documents")
         ),
         "artifact_family_mismatches": len(artifact_family["mismatches"]),
         "manifest_count_mismatches": len(expected_counts["mismatches"]),
@@ -194,9 +213,9 @@ def build_production_answer_compatibility_report(
         "status": status,
         "release": {
             "release_id": bundle.release_id,
-            "manifest_key": FULL_PRODUCTION_MANIFEST_KEY,
+            "manifest_key": bundle.manifest_key,
             "manifest_sha256": bundle.manifest_sha256,
-            "promotion_manifest_key": FULL_PRODUCTION_PROMOTION_MANIFEST_KEY,
+            "promotion_manifest_key": bundle.manifest_key,
             "promotion_manifest_sha256": _promotion_manifest_sha(bundle),
             "pointer_key": FULL_PRODUCTION_POINTER_KEY,
             "pointer_sha256": _pointer_sha(bundle),
@@ -219,16 +238,16 @@ def build_production_answer_compatibility_report(
             "manifest_expected": expected_counts["observed"],
         },
         "expected": {
-            "release_id": FULL_PRODUCTION_RELEASE_ID,
-            "graph_v2_sha256": FULL_PRODUCTION_GRAPH_V2_SHA256,
-            "graph_nodes": FULL_PRODUCTION_NODE_COUNT,
-            "graph_edges": FULL_PRODUCTION_EDGE_COUNT,
-            "qdrant_collection": FULL_PRODUCTION_QDRANT_COLLECTION,
-            "qdrant_points": FULL_PRODUCTION_SEMANTIC_POINT_COUNT,
+            "release_id": bundle.release_id,
+            "graph_v2_sha256": bundle.artifact_sha256.get("graph_v2"),
+            "graph_nodes": expected_counts["expected"].get("document_graph_nodes"),
+            "graph_edges": expected_counts["expected"].get("document_graph_edges"),
+            "qdrant_collection": expected_qdrant_collection_for_bundle(bundle),
+            "qdrant_points": expected_counts["expected"].get("semantic_documents"),
         },
         "mismatch_counts": mismatch_counts,
         "qdrant": {
-            "collection": FULL_PRODUCTION_QDRANT_COLLECTION,
+            "collection": expected_qdrant_collection_for_bundle(bundle),
             "observed_point_count": qdrant_point_count,
             "payload_required_fields": _qdrant_required_fields(root),
             "payload_sample_count": len(qdrant_samples),
@@ -251,11 +270,15 @@ def build_production_answer_compatibility_report(
 def _load_production_answer_bundle_from_store(
     store: ReadOnlyObjectGetter,
 ) -> ProductionAnswerBundle:
-    manifest_data = store.get(FULL_PRODUCTION_MANIFEST_KEY)
+    binding = _resolve_active_production_binding(store)
+    manifest_data = store.get(binding["manifest_key"])
     manifest_sha256 = sha256_bytes(manifest_data)
+    if binding.get("manifest_sha256") and manifest_sha256 != binding["manifest_sha256"]:
+        raise ProductionAnswerBundleError("active production manifest digest mismatch")
     manifest = _json_object(manifest_data, "accepted production answer manifest")
-    if manifest.get("release_id") != FULL_PRODUCTION_RELEASE_ID:
-        raise ProductionAnswerBundleError("accepted production release identity mismatch")
+    release_id = binding["release_id"]
+    if manifest.get("release_id") != release_id:
+        raise ProductionAnswerBundleError("active production release identity mismatch")
     artifacts = _artifact_by_kind(manifest)
     missing = sorted(RUNTIME_REQUIRED_KINDS - set(artifacts))
     if missing:
@@ -266,25 +289,26 @@ def _load_production_answer_bundle_from_store(
     artifact_sha256: dict[str, str] = {}
     artifact_keys: dict[str, str] = {}
     for kind in sorted(RUNTIME_REQUIRED_KINDS | (COMPATIBILITY_REQUIRED_KINDS & set(artifacts))):
-        payload, digest, key = _load_artifact_json(store, manifest, kind)
+        payload, digest, key = _load_artifact_json(store, manifest, kind, release_id=release_id)
         artifact_payloads[kind] = payload
         artifact_sha256[kind] = digest
         artifact_keys[kind] = key
-    if artifact_sha256["graph_v2"] != FULL_PRODUCTION_GRAPH_V2_SHA256:
-        raise ProductionAnswerBundleError("accepted production graph_v2 digest mismatch")
     graph = artifact_payloads["graph"]
     graph_v2 = artifact_payloads["graph_v2"]
-    _validate_full_production_graphs(graph=graph, graph_v2=graph_v2)
-    if len(_list(graph_v2.get("nodes"), "graph_v2 nodes")) != FULL_PRODUCTION_NODE_COUNT:
-        raise ProductionAnswerBundleError("accepted production graph node count mismatch")
-    if len(_list(graph_v2.get("edges"), "graph_v2 edges")) != FULL_PRODUCTION_EDGE_COUNT:
-        raise ProductionAnswerBundleError("accepted production graph edge count mismatch")
-    pointer, pointer_sha256 = _optional_json(store, FULL_PRODUCTION_POINTER_KEY)
-    production_manifest, production_manifest_sha256 = _optional_json(
+    _validate_full_production_graphs(graph=graph, graph_v2=graph_v2, release_id=release_id)
+    _validate_manifest_counts(manifest, graph_v2=graph_v2, semantic_inputs=artifact_payloads.get("semantic_inputs"))
+    direct_manifest, direct_manifest_sha256 = _optional_json(
         store,
-        FULL_PRODUCTION_PROMOTION_MANIFEST_KEY,
+        f"releases/{release_id}/manifest.json",
     )
-    _validate_pointer_and_promotion_manifest(pointer, production_manifest, manifest)
+    production_manifest = manifest
+    production_manifest_sha256 = manifest_sha256
+    if direct_manifest is not None and binding["manifest_key"] != f"releases/{release_id}/manifest.json":
+        _validate_pointer_and_promotion_manifest(binding, production_manifest, direct_manifest)
+    else:
+        direct_manifest_sha256 = None
+    pointer = binding.get("pointer")
+    pointer_sha256 = binding.get("pointer_sha256")
     return ProductionAnswerBundle(
         manifest=manifest,
         graph=graph,
@@ -295,14 +319,88 @@ def _load_production_answer_bundle_from_store(
         artifact_sha256=artifact_sha256,
         artifact_keys=artifact_keys,
         loaded_at=datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
-        production_pointer=pointer,
-        production_pointer_sha256=pointer_sha256,
+        manifest_key=binding["manifest_key"],
+        accepted_release_id=release_id,
+        accepted_qdrant_collection=_accepted_qdrant_collection(release_id),
+        production_pointer=pointer if isinstance(pointer, dict) else None,
+        production_pointer_sha256=str(pointer_sha256) if pointer_sha256 else None,
         production_manifest=production_manifest,
         production_manifest_sha256=production_manifest_sha256,
         source_documents=artifact_payloads.get("source_documents"),
         document_source_index=artifact_payloads.get("document_source_index"),
         semantic_inputs=artifact_payloads.get("semantic_inputs"),
     )
+
+
+def _resolve_active_production_binding(store: ReadOnlyObjectGetter) -> dict[str, Any]:
+    pointer, pointer_sha256 = _optional_json(store, FULL_PRODUCTION_POINTER_KEY)
+    if pointer is not None:
+        release_id = str(pointer.get("release_id", ""))
+        manifest_key = str(pointer.get("manifest_key", ""))
+        manifest_sha256 = str(pointer.get("manifest_sha256", ""))
+        if not release_id or not manifest_key or not manifest_sha256:
+            raise ProductionAnswerBundleError("production pointer is missing release identity")
+        if not manifest_key.startswith(f"releases/{release_id}/"):
+            raise ProductionAnswerBundleError("production pointer manifest key escapes release")
+        return {
+            "release_id": release_id,
+            "manifest_key": manifest_key,
+            "manifest_sha256": manifest_sha256,
+            "pointer": pointer,
+            "pointer_sha256": pointer_sha256,
+        }
+    release_id = os.environ.get("M26_ACCEPTED_PRODUCTION_RELEASE_ID", "").strip() or FULL_PRODUCTION_RELEASE_ID
+    manifest_key = (
+        os.environ.get("M26_ACCEPTED_PRODUCTION_MANIFEST_KEY", "").strip()
+        or f"releases/{release_id}/manifest.json"
+    )
+    manifest_sha256 = os.environ.get("M26_ACCEPTED_PRODUCTION_MANIFEST_SHA256", "").strip()
+    return {
+        "release_id": release_id,
+        "manifest_key": manifest_key,
+        "manifest_sha256": manifest_sha256,
+        "pointer": None,
+        "pointer_sha256": None,
+    }
+
+
+def _accepted_qdrant_collection(release_id: str) -> str:
+    explicit = os.environ.get("M26_ACCEPTED_QDRANT_COLLECTION", "").strip()
+    if explicit:
+        return explicit
+    if release_id == M26_CURRENT_PRODUCTION_RELEASE_ID:
+        return M26_CURRENT_QDRANT_COLLECTION
+    if release_id == FULL_PRODUCTION_RELEASE_ID:
+        return FULL_PRODUCTION_QDRANT_COLLECTION
+    return f"m26_blog_{release_id.replace('-', '_').lower()}"
+
+
+def expected_qdrant_collection_for_bundle(bundle: ProductionAnswerBundle) -> str:
+    return bundle.accepted_qdrant_collection or _accepted_qdrant_collection(bundle.release_id)
+
+
+def _validate_manifest_counts(
+    manifest: Mapping[str, Any],
+    *,
+    graph_v2: Mapping[str, Any],
+    semantic_inputs: Mapping[str, Any] | None,
+) -> None:
+    counts = manifest.get("counts")
+    if not isinstance(counts, Mapping):
+        return
+    nodes = len(_list(graph_v2.get("nodes"), "graph_v2 nodes"))
+    edges = len(_list(graph_v2.get("edges"), "graph_v2 edges"))
+    expected_nodes = counts.get("document_graph_nodes")
+    expected_edges = counts.get("document_graph_edges")
+    if isinstance(expected_nodes, int) and nodes != expected_nodes:
+        raise ProductionAnswerBundleError("accepted production graph node count mismatch")
+    if isinstance(expected_edges, int) and edges != expected_edges:
+        raise ProductionAnswerBundleError("accepted production graph edge count mismatch")
+    expected_semantic = counts.get("semantic_documents")
+    if isinstance(expected_semantic, int) and semantic_inputs is not None:
+        documents = semantic_inputs.get("documents")
+        if isinstance(documents, list) and len(documents) != expected_semantic:
+            raise ProductionAnswerBundleError("accepted production semantic document count mismatch")
 
 
 def _artifact_by_kind(manifest: Mapping[str, Any]) -> dict[str, Mapping[str, Any]]:
@@ -326,12 +424,14 @@ def _load_artifact_json(
     store: ReadOnlyObjectGetter,
     manifest: Mapping[str, Any],
     kind: str,
+    *,
+    release_id: str,
 ) -> tuple[dict[str, Any], str, str]:
     entry = _artifact_by_kind(manifest).get(kind)
     if entry is None:
         raise ProductionAnswerBundleError(f"production answer artifact missing: {kind}")
     key = str(entry.get("key", ""))
-    if not key.startswith(f"releases/{FULL_PRODUCTION_RELEASE_ID}/"):
+    if not key.startswith(f"releases/{release_id}/"):
         raise ProductionAnswerBundleError(f"production answer artifact key escapes release: {kind}")
     data = store.get(key)
     expected_bytes = entry.get("bytes")
@@ -367,21 +467,15 @@ def _optional_json(
 
 
 def _validate_pointer_and_promotion_manifest(
-    pointer: Mapping[str, Any] | None,
-    production_manifest: Mapping[str, Any] | None,
+    binding: Mapping[str, Any],
+    production_manifest: Mapping[str, Any],
     direct_manifest: Mapping[str, Any],
 ) -> None:
-    if pointer is not None:
-        if pointer.get("release_id") != FULL_PRODUCTION_RELEASE_ID:
-            raise ProductionAnswerBundleError("production pointer release identity mismatch")
-        if pointer.get("manifest_key") != FULL_PRODUCTION_PROMOTION_MANIFEST_KEY:
-            raise ProductionAnswerBundleError("production pointer manifest key mismatch")
-        if pointer.get("manifest_sha256") != FULL_PRODUCTION_PROMOTION_MANIFEST_SHA256:
-            raise ProductionAnswerBundleError("production pointer manifest digest mismatch")
-    if production_manifest is None:
-        return
-    if production_manifest.get("release_id") != FULL_PRODUCTION_RELEASE_ID:
+    release_id = str(binding.get("release_id", ""))
+    if production_manifest.get("release_id") != release_id:
         raise ProductionAnswerBundleError("production promotion manifest release mismatch")
+    if direct_manifest.get("release_id") != release_id:
+        raise ProductionAnswerBundleError("production direct manifest release mismatch")
     production_artifacts = _artifact_by_kind(production_manifest)
     direct_artifacts = _artifact_by_kind(direct_manifest)
     for kind in RUNTIME_REQUIRED_KINDS:
@@ -397,15 +491,16 @@ def _validate_full_production_graphs(
     *,
     graph: Mapping[str, Any],
     graph_v2: Mapping[str, Any],
+    release_id: str,
 ) -> None:
     if graph.get("schema_version") != "knowledge-engine-document-graph/v1":
         raise ProductionAnswerBundleError("production graph schema mismatch")
     if graph_v2.get("schema_version") != "knowledge-engine-graph-v2/v1":
         raise ProductionAnswerBundleError("production graph_v2 schema mismatch")
-    if graph.get("release_id") != FULL_PRODUCTION_RELEASE_ID:
+    if graph.get("release_id") != release_id:
         raise ProductionAnswerBundleError("production graph release mismatch")
     release = graph_v2.get("release")
-    if not isinstance(release, Mapping) or release.get("release_id") != FULL_PRODUCTION_RELEASE_ID:
+    if not isinstance(release, Mapping) or release.get("release_id") != release_id:
         raise ProductionAnswerBundleError("production graph_v2 release mismatch")
     graph_nodes = _graph_node_ids(graph)
     graph_v2_nodes = _graph_v2_node_ids(graph_v2)
@@ -500,29 +595,49 @@ def _source_ids(bundle: ProductionAnswerBundle) -> set[str]:
 
 def _expected_counts(bundle: ProductionAnswerBundle) -> dict[str, Any]:
     counts = bundle.manifest.get("counts")
-    if not isinstance(counts, Mapping):
-        return {"observed": {}, "mismatches": ["counts_missing"]}
+    graph_nodes = len(_graph_v2_node_ids(bundle.graph_v2))
+    graph_edges = len(_list(bundle.graph_v2.get("edges"), "graph_v2 edges"))
+    semantic_documents = len(_semantic_documents(bundle)) or None
     expected = {
-        "document_graph_nodes": FULL_PRODUCTION_NODE_COUNT,
-        "document_graph_edges": FULL_PRODUCTION_EDGE_COUNT,
-        "semantic_documents": FULL_PRODUCTION_SEMANTIC_POINT_COUNT,
+        "document_graph_nodes": graph_nodes,
+        "document_graph_edges": graph_edges,
+        "semantic_documents": semantic_documents,
     }
+    if not isinstance(counts, Mapping):
+        return {"observed": {}, "expected": expected, "mismatches": []}
     mismatches = [
         key
         for key, value in expected.items()
-        if counts.get(key) != value
+        if value is not None and counts.get(key) is not None and counts.get(key) != value
     ]
-    return {"observed": dict(counts), "mismatches": mismatches}
+    return {"observed": dict(counts), "expected": expected, "mismatches": mismatches}
 
 
-def _qdrant_payload_matches_production(payload: Mapping[str, Any]) -> bool:
-    return (
-        payload.get("release_id") == FULL_PRODUCTION_RELEASE_ID
-        and payload.get("source_commit_sha") == FULL_PRODUCTION_SOURCE_SHA
-        and payload.get("admission_sha256") == FULL_PRODUCTION_ADMISSION_SHA256
-        and payload.get("candidate_release_eligible") is True
-        and payload.get("production_authority") is False
-    )
+def _qdrant_payload_matches_production(
+    payload: Mapping[str, Any],
+    bundle: ProductionAnswerBundle,
+) -> bool:
+    if payload.get("release_id") != bundle.release_id:
+        return False
+    source_sha = _manifest_identity_value(bundle.manifest, "source_commit_sha")
+    admission_sha = _manifest_identity_value(bundle.manifest, "admission_sha256")
+    if source_sha and payload.get("source_commit_sha") != source_sha:
+        return False
+    if admission_sha and payload.get("admission_sha256") != admission_sha:
+        return False
+    if "candidate_release_eligible" in payload and payload.get("candidate_release_eligible") is not True:
+        return False
+    return True
+
+
+def _manifest_identity_value(manifest: Mapping[str, Any], key: str) -> str:
+    value = manifest.get(key)
+    if isinstance(value, str):
+        return value
+    identity = manifest.get("identity")
+    if isinstance(identity, Mapping) and isinstance(identity.get(key), str):
+        return str(identity[key])
+    return ""
 
 
 def _old_m24_concepts(root: Path) -> set[str]:
@@ -565,8 +680,8 @@ def _artifact_family_report(bundle: ProductionAnswerBundle) -> dict[str, Any]:
             ).get("sha256"):
                 mismatches.append(kind)
     return {
-        "direct_manifest_key": FULL_PRODUCTION_MANIFEST_KEY,
-        "production_manifest_key": FULL_PRODUCTION_PROMOTION_MANIFEST_KEY,
+        "direct_manifest_key": bundle.manifest_key,
+        "production_manifest_key": bundle.manifest_key,
         "runtime_required_kinds": sorted(RUNTIME_REQUIRED_KINDS),
         "compatibility_required_kinds": sorted(COMPATIBILITY_REQUIRED_KINDS),
         "mismatches": mismatches,

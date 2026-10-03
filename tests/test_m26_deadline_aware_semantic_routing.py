@@ -7,6 +7,7 @@ from typing import Any
 import pytest
 
 from knowledge_engine import m26_aq_semantic_contract as contract
+from knowledge_engine.m26_pa5_v8_live import AnswerProviderAttemptBudget
 
 
 class _Provider:
@@ -24,6 +25,18 @@ class _Provider:
             "answer_text": "The evidence supports a narrow answer.",
             "citation_ids": ["ev-1"],
         }
+
+
+
+class _BudgetedProvider(_Provider):
+    def __init__(self, statuses: list[str], max_physical_attempts: int = 2) -> None:
+        super().__init__(statuses)
+        self.attempt_budget = AnswerProviderAttemptBudget(max_physical_attempts)
+
+    def call(self, payload: dict[str, Any], call_class: str) -> dict[str, Any]:
+        self.attempt_budget.consume(call_class=call_class, provider="test")
+        return super().call(payload, call_class)
+
 
 
 def _evidence(count: int = 8, sources: int = 4) -> list[dict[str, str]]:
@@ -258,3 +271,38 @@ def test_alignment_trace_distinguishes_bound_from_unbound_slots(
     assert trace[0]["selected_support_evidence_ids"] == ["ev-1"]
     assert trace[0]["support_relation"] == "runtime_semantic_or_paraphrase_candidate"
     assert trace[0]["decision"] == "accepted_for_slot_local_synthesis"
+
+
+def test_real_two_attempt_budget_allows_last_fast_retry(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _patch_fast_contract(monkeypatch, failures=[])
+    monkeypatch.setattr(
+        contract.legacy,
+        "_fast_answer_response",
+        lambda **_kwargs: {
+            "status": "owner_only_cited_answer",
+            "terminal_status": "answered",
+            "answer_text": "The evidence supports a narrow answer.",
+            "citations": [],
+            "answer_source": "fast_natural_cited_synthesis",
+        },
+    )
+    provider = _BudgetedProvider(["abstain", "answer"], max_physical_attempts=2)
+
+    outcome = _run(provider)
+
+    assert provider.calls == 2
+    assert outcome.response is not None
+    assert outcome.response["status"] == "owner_only_cited_answer"
+    snapshot = provider.attempt_budget.snapshot()
+    assert snapshot["consumed_physical_attempts"] == 2
+    assert snapshot["remaining_physical_attempts"] == 0
+
+
+def test_question_focus_does_not_collapse_to_single_post_cue_token() -> None:
+    terms = contract._question_focus_terms(
+        "How do Codex hooks and plugins change what I can automate?"
+    )
+    assert {"codex", "hooks", "plugins"} <= terms
+    assert "automate" in terms

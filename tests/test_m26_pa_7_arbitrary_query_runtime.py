@@ -3787,6 +3787,18 @@ def test_tool_migration_rationale_prefers_direct_migration_evidence() -> None:
     assert not runtime_module._direct_facet_text_matches(rationale, adjacent_but_wrong)
 
 
+def test_non_tool_move_from_a_to_b_does_not_trigger_migration_facets() -> None:
+    question = "How should a founder move from pain point to venture system?"
+    contract = runtime_module._question_contract(
+        question=question,
+        intent_class="direct_grounded_knowledge",
+    )
+    facet_ids = {item["facet_id"] for item in contract["required_facets"]}
+
+    assert "migration_rationale" not in facet_ids
+    assert "migration_transition_event" not in facet_ids
+
+
 def test_workflow_agent_comparison_requires_control_model_distinction() -> None:
     question = "What is the difference between a workflow and an agent in Daniel's writing?"
     contract = runtime_module._question_contract(
@@ -3937,3 +3949,25 @@ def test_deterministic_answer_surface_does_not_truncate_strong_facet_contract() 
 
     assert runtime_module._direct_facet_text_matches(facet, answer)
     assert "codex supports parallel subagent workflows" in answer.casefold()
+
+
+def test_current_corpus_phrasing_satisfies_hook_plugin_and_acceptance_facets() -> None:
+    hook = {"facet_id": "hook_lifecycle_behavior"}
+    plugin = {"facet_id": "plugin_host_capability"}
+    acceptance = {"facet_id": "acceptance_evidence"}
+
+    assert runtime._direct_facet_text_matches(
+        hook,
+        "A Hook attaches logic to emitted lifecycle events and supplies the trigger.",
+    )
+    assert runtime._direct_facet_text_matches(
+        plugin,
+        "A Plugin packages reusable setup for installation and distribution.",
+    )
+    assert runtime._direct_facet_text_matches(
+        acceptance,
+        (
+            "Before merge, start with the exact change set, inspect tests and required "
+            "checks, then review the evidence and pull request."
+        ),
+    )

@@ -8,6 +8,7 @@ import os
 import re
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from collections import defaultdict
 from collections.abc import Iterable
@@ -139,6 +140,22 @@ class GitHubClient:
             if isinstance(path, str) and isinstance(digest, str) and isinstance(size, int):
                 blobs.append(TreeBlob(path=path, sha=digest, size=size))
         return blobs
+
+    def resolve_commit(self, repository: str, ref: str) -> tuple[str, str]:
+        encoded = urllib.parse.quote(ref, safe="")
+        payload = self._request_json(f"https://api.github.com/repos/{repository}/commits/{encoded}")
+        commit = payload.get("sha")
+        commit_record = payload.get("commit")
+        committer = commit_record.get("committer") if isinstance(commit_record, dict) else None
+        committed_at = committer.get("date") if isinstance(committer, dict) else None
+        if (
+            not isinstance(commit, str)
+            or not re.fullmatch(r"[0-9a-f]{40}", commit)
+            or not isinstance(committed_at, str)
+            or not committed_at
+        ):
+            raise IntegrityError("M25-BLOG-005A GitHub commit identity is malformed")
+        return commit, committed_at
 
     def blob(self, repository: str, blob_sha: str) -> bytes:
         url = f"https://api.github.com/repos/{repository}/git/blobs/{blob_sha}"

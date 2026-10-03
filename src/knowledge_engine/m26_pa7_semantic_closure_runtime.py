@@ -14,10 +14,6 @@ import httpx
 from . import m26_pa7_arbitrary_query_runtime as legacy
 from .m26_pa5_v8_live import LiveGateError, MiniMaxClient
 from .m26_production_answer_bundle import (
-    FULL_PRODUCTION_EDGE_COUNT,
-    FULL_PRODUCTION_GRAPH_V2_SHA256,
-    FULL_PRODUCTION_NODE_COUNT,
-    FULL_PRODUCTION_RELEASE_ID,
     ProductionAnswerBundle,
     load_production_answer_bundle,
 )
@@ -492,21 +488,26 @@ def _run_semantic_closure_internal(
 def _assert_full_production_graph(bundle: ProductionAnswerBundle) -> None:
     nodes = legacy._list(bundle.graph_v2.get("nodes"), "graph_v2 nodes")
     edges = legacy._list(bundle.graph_v2.get("edges"), "graph_v2 edges")
-    if bundle.release_id != FULL_PRODUCTION_RELEASE_ID:
+    accepted_release_id = bundle.accepted_release_id or bundle.release_id
+    if bundle.release_id != accepted_release_id:
         raise PA7ArbitraryQueryError(
             "PA7_PRODUCTION_BUNDLE_RELEASE_MISMATCH",
             "answer runtime is not bound to the accepted full production release",
         )
-    if bundle.artifact_sha256.get("graph_v2") != FULL_PRODUCTION_GRAPH_V2_SHA256:
-        raise PA7ArbitraryQueryError(
-            "PA7_PRODUCTION_GRAPH_DIGEST_MISMATCH",
-            "answer runtime graph digest is not the accepted production graph",
-        )
-    if len(nodes) != FULL_PRODUCTION_NODE_COUNT or len(edges) != FULL_PRODUCTION_EDGE_COUNT:
-        raise PA7ArbitraryQueryError(
-            "PA7_PRODUCTION_GRAPH_POPULATION_MISMATCH",
-            "answer runtime must use the 4,222-node / 8,525-edge production graph",
-        )
+    counts = bundle.manifest.get("counts")
+    if isinstance(counts, Mapping):
+        expected_nodes = counts.get("document_graph_nodes")
+        expected_edges = counts.get("document_graph_edges")
+        if isinstance(expected_nodes, int) and len(nodes) != expected_nodes:
+            raise PA7ArbitraryQueryError(
+                "PA7_PRODUCTION_GRAPH_POPULATION_MISMATCH",
+                "answer runtime graph node count does not match active manifest",
+            )
+        if isinstance(expected_edges, int) and len(edges) != expected_edges:
+            raise PA7ArbitraryQueryError(
+                "PA7_PRODUCTION_GRAPH_POPULATION_MISMATCH",
+                "answer runtime graph edge count does not match active manifest",
+            )
 
 
 def _response_from_verification(
@@ -3454,12 +3455,14 @@ def _supported_task_text_matches(
     normalized = re.sub(r"\s+", " ", str(text).casefold())
     direct_parallel_coding = bool(
         re.search(
-            r"\bparallel(?:\s+\w+){0,2}\s+coding agents?\b"
-            r"|\bcoding agents?.{0,160}\b(?:parallel|subagents?|worktrees?)\b"
-            r"|\b(?:repository|repo|worktree|git branch).{0,160}\b"
-            r"(?:parallel agents?|parallel sessions?|subagents?|workers? in parallel)\b"
-            r"|\b(?:parallel agents?|parallel sessions?|subagents?|workers? in parallel)"
-            r".{0,160}\b(?:repository|repo|worktree|git branch)\b",
+            r"\bparallel(?:\s+\w+){0,3}\s+(?:coding\s+)?agents?\b"
+            r"|\bcoding agents?.{0,200}\b(?:parallel|subagents?|worktrees?|workers?)\b"
+            r"|\b(?:repository|repo|worktree|git branch|workspace).{0,200}\b"
+            r"(?:parallel agents?|parallel sessions?|subagents?|workers? in parallel|multi-agent)\b"
+            r"|\b(?:parallel agents?|parallel sessions?|subagents?|workers? in parallel|multi-agent)"
+            r".{0,200}\b(?:repository|repo|worktree|git branch|workspace|isolation|concurrency|decision owner|coordination)\b"
+            r"|\bcodex.{0,200}\b(?:multi-agent|several agents|multiple agents|subagent models|parallel agents|parallel subagents?)\b"
+            r"|\b(?:multi-agent|several agents|multiple agents|subagent models|parallel agents|parallel subagents?).{0,200}\bcodex\b",
             normalized,
             flags=re.I,
         )

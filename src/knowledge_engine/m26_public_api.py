@@ -31,6 +31,7 @@ from .m26_cloudflare_provider_router import (
     MINIMAX_PROVIDER,
     provider_status_dto,
 )
+from .m26_production_answer_bundle import load_production_answer_bundle
 from .m26_pa7_arbitrary_query_runtime import (
     MAX_QUERY_CHARS,
     LocalDenseProjectionChannel,
@@ -42,7 +43,6 @@ PROBLEM_TYPE_BASE = "https://api-staging.danielcanfly.com/problems/"
 MAX_BODY_BYTES = 4096
 HEARTBEAT_SECONDS = 10
 HARD_DEADLINE_SECONDS = 90
-PER_IP_DAILY_LIMIT = 10
 
 
 def _positive_int_from_env(name: str, default: int) -> int:
@@ -56,6 +56,11 @@ def _positive_int_from_env(name: str, default: int) -> int:
     return value if value > 0 else default
 
 
+DEFAULT_PER_IP_DAILY_LIMIT = 10
+PER_IP_DAILY_LIMIT = _positive_int_from_env(
+    "M26_PUBLIC_PER_IP_DAILY_LIMIT",
+    DEFAULT_PER_IP_DAILY_LIMIT,
+)
 DEFAULT_BURST_PER_MINUTE_LIMIT = 10
 BURST_PER_MINUTE_LIMIT = _positive_int_from_env(
     "M26_PUBLIC_BURST_PER_MINUTE_LIMIT",
@@ -63,11 +68,23 @@ BURST_PER_MINUTE_LIMIT = _positive_int_from_env(
 )
 ACTIVE_PER_IP_LIMIT = 1
 GLOBAL_ACTIVE_LIMIT = 3
-GLOBAL_DAILY_LIMIT = 50
-FALLBACK_DAILY_LIMIT = 10
+DEFAULT_GLOBAL_DAILY_LIMIT = 50
+GLOBAL_DAILY_LIMIT = _positive_int_from_env(
+    "M26_PUBLIC_GLOBAL_DAILY_LIMIT",
+    DEFAULT_GLOBAL_DAILY_LIMIT,
+)
+DEFAULT_FALLBACK_DAILY_LIMIT = 10
+FALLBACK_DAILY_LIMIT = _positive_int_from_env(
+    "M26_PUBLIC_FALLBACK_DAILY_LIMIT",
+    DEFAULT_FALLBACK_DAILY_LIMIT,
+)
 PUBLIC_FAST_ANSWER_MAX_PROVIDER_CALLS = 2
 PUBLIC_REQUEST_SCHEMA = "danielcanfly-answers-request/v1"
 PUBLIC_HEALTH_SCHEMA = "danielcanfly-answers-health/v1"
+_QA_INTERNAL_CONTEXT_TTL_SECONDS = 300
+_QA_INTERNAL_CONTEXT_LIMIT = 256
+_qa_internal_context_lock = threading.Lock()
+_qa_internal_contexts: dict[str, tuple[float, dict[str, Any]]] = {}
 
 ALLOWED_FIELDS = {"question"}
 FORBIDDEN_SELECTION_FIELDS = {"provider", "model"}
@@ -78,6 +95,8 @@ DEFAULT_ALLOWED_ORIGINS = (
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 )
+OWNER_BYPASS_HEADER = "x-m26-owner-bypass"
+
 DEFAULT_TRUSTED_PROXY_CIDRS = (
     "127.0.0.0/8",
     "::1/128",
@@ -331,6 +350,14 @@ def create_app(
     app.state.public_root = app_root
     app.state.public_gate_path = resolved_gate_path
     app.state.public_quota_ledger = ledger
+    app.state.public_answer_bundle_preloaded = False
+    app.state.public_answer_bundle_preload_error = ""
+    if os.environ.get("M26_PUBLIC_PRELOAD_ANSWER_BUNDLE", "1").strip().lower() not in {"0", "false", "no", "off"}:
+        try:
+            load_production_answer_bundle()
+            app.state.public_answer_bundle_preloaded = True
+        except Exception as exc:
+            app.state.public_answer_bundle_preload_error = type(exc).__name__
 
     @app.get("/v1/health")
     async def health(request: Request) -> JSONResponse:
@@ -356,6 +383,7 @@ def create_app(
         return JSONResponse(
             {
                 "schema_version": PUBLIC_HEALTH_SCHEMA,
+                "ok": True,
                 "status": "ok",
                 "request_id": request_id,
                 "answers_url": "/v1/answers",
@@ -364,6 +392,10 @@ def create_app(
                     "entrypoint": internal.get("canonical_runtime", {}).get("entrypoint", ""),
                 },
                 "limits": _limits_dto(),
+                "preload": {
+                    "answer_bundle_preloaded": bool(getattr(app.state, "public_answer_bundle_preloaded", False)),
+                    "answer_bundle_preload_error": str(getattr(app.state, "public_answer_bundle_preload_error", "")),
+                },
             },
             headers=_response_headers(origin=_request_origin(request)),
         )
@@ -414,12 +446,14 @@ def create_app(
         provider_problem = _provider_guard_problem()
         if provider_problem is not None:
             return _problem_response(provider_problem, request_id=request_id, origin=origin)
-        fallback_problem = ledger.fallback_budget_available()
-        if fallback_problem is not None and _fallback_expected():
-            return _problem_response(fallback_problem, request_id=request_id, origin=origin)
-        admission_problem = ledger.admit(ip_key=ip_key)
-        if admission_problem is not None:
-            return _problem_response(admission_problem, request_id=request_id, origin=origin)
+        owner_bypass = _owner_bypass_matches(request)
+        if not owner_bypass:
+            fallback_problem = ledger.fallback_budget_available()
+            if fallback_problem is not None and _fallback_expected():
+                return _problem_response(fallback_problem, request_id=request_id, origin=origin)
+            admission_problem = ledger.admit(ip_key=ip_key)
+            if admission_problem is not None:
+                return _problem_response(admission_problem, request_id=request_id, origin=origin)
         admission = Admission(
             request_id=request_id,
             ip_key=ip_key,
@@ -632,6 +666,7 @@ async def _answer_event_stream(
                 continue
             if item.get("type") == "_dto":
                 dto = dict(item.get("dto") if isinstance(item.get("dto"), Mapping) else {})
+                _publish_qa_internal_context(admission.request_id, dto)
                 for event in _model_events_from_dto(dto):
                     yield emit(str(event.pop("type")), **event)
                 terminal = _terminal_event_from_dto(dto)
@@ -791,6 +826,50 @@ def _terminal_event_from_dto(dto: Mapping[str, Any]) -> dict[str, Any]:
         "retryable": True,
         "provider_routing": _public_provider_routing(dto),
     }
+
+
+def _publish_qa_internal_context(request_id: str, dto: Mapping[str, Any]) -> None:
+    """Publish evidence to the in-process QA observer without changing public SSE."""
+    allowed = {
+        "selected_evidence",
+        "evidence_utilization_trace",
+        "semantic_closure",
+        "retrieval",
+        "integrity",
+        "identities",
+        "canonical_runtime",
+        "reason_codes",
+        "safe_abstention",
+        "status",
+    }
+    context = {key: dto[key] for key in allowed if key in dto}
+    qa_evidence = dto.get("_qa_evidence_context")
+    if isinstance(qa_evidence, list):
+        context["_qa_evidence_context"] = [
+            dict(item) for item in qa_evidence if isinstance(item, Mapping)
+        ]
+    now = time.monotonic()
+    with _qa_internal_context_lock:
+        expired = [
+            key
+            for key, (created, _) in _qa_internal_contexts.items()
+            if now - created > _QA_INTERNAL_CONTEXT_TTL_SECONDS
+        ]
+        for key in expired:
+            _qa_internal_contexts.pop(key, None)
+        while len(_qa_internal_contexts) >= _QA_INTERNAL_CONTEXT_LIMIT:
+            oldest = min(_qa_internal_contexts, key=lambda key: _qa_internal_contexts[key][0])
+            _qa_internal_contexts.pop(oldest, None)
+        _qa_internal_contexts[request_id] = (now, context)
+
+
+def consume_qa_internal_context(request_id: str) -> dict[str, Any]:
+    """Consume a one-shot backend-only QA context for the completed request."""
+    with _qa_internal_context_lock:
+        item = _qa_internal_contexts.pop(request_id, None)
+    if item is None or time.monotonic() - item[0] > _QA_INTERNAL_CONTEXT_TTL_SECONDS:
+        return {}
+    return item[1]
 
 
 def _public_citations(value: Any) -> list[dict[str, Any]]:
@@ -955,7 +1034,7 @@ def _preflight_headers(*, origin: str | None) -> dict[str, str]:
     headers.update(
         {
             "Access-Control-Allow-Methods": "POST, OPTIONS",
-            "Access-Control-Allow-Headers": "content-type",
+            "Access-Control-Allow-Headers": f"content-type, {OWNER_BYPASS_HEADER}",
             "Access-Control-Max-Age": "300",
         }
     )
@@ -981,6 +1060,27 @@ def _pseudonymous_ip_key(request: Request, *, now: datetime) -> str:
     digest = hmac.new(secret, f"{day}:{raw_ip}".encode(), hashlib.sha256).hexdigest()
     return f"ipday_{day}_{digest}"
 
+
+
+def _owner_bypass_matches(request: Request) -> bool:
+    """Accept only the provisioned owner token for per-IP quota bypass."""
+    expected_digest = os.environ.get("M26_ASK_OWNER_BYPASS_TOKEN_SHA256", "").strip().lower()
+    supplied = request.headers.get(OWNER_BYPASS_HEADER, "")
+    if not expected_digest or not supplied:
+        return False
+    if len(expected_digest) != 64 or any(
+        char not in "0123456789abcdef" for char in expected_digest
+    ):
+        return False
+    supplied_digest = hashlib.sha256(supplied.encode("utf-8")).hexdigest()
+    return hmac.compare_digest(supplied_digest, expected_digest)
+
+
+def _owner_bypass_digest_configured() -> bool:
+    expected_digest = os.environ.get("M26_ASK_OWNER_BYPASS_TOKEN_SHA256", "").strip().lower()
+    return len(expected_digest) == 64 and all(
+        char in "0123456789abcdef" for char in expected_digest
+    )
 
 def _authoritative_client_ip(request: Request) -> str:
     remote = request.client.host if request.client is not None else ""
@@ -1021,6 +1121,7 @@ def _limits_dto() -> dict[str, int]:
         "minimax_fallback_daily": FALLBACK_DAILY_LIMIT,
         "heartbeat_seconds": HEARTBEAT_SECONDS,
         "hard_deadline_seconds": HARD_DEADLINE_SECONDS,
+        "owner_bypass_configured": int(_owner_bypass_digest_configured()),
     }
 
 

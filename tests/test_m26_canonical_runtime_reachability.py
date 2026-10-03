@@ -480,6 +480,41 @@ def test_fast_candidate_requires_citations_for_strong_migration_facets() -> None
     assert "FAST_CITATION_REQUIRED_FACET_MISSING:migration_rationale" in failures
 
 
+def test_fast_candidate_allows_required_facet_support_distributed_across_citations() -> None:
+    question = "How should lead agents, workers, and checkers split multi-agent coding work?"
+    evidence = [
+        {
+            "evidence_id": "ev_role",
+            "title": "How Should the Lead Agent, Workers, and Checkers Split the Work?",
+            "passage_text": "The Lead Agent is the coordinator and decision owner.",
+            "source_id": "role-split",
+        },
+        {
+            "evidence_id": "ev_actions",
+            "passage_text": (
+                "The coordinator decomposes the task, assigns bounded work, and performs "
+                "the final synthesis after worker evidence is checked."
+            ),
+            "source_id": "role-split",
+        },
+    ]
+
+    failures = contract._fast_required_facet_citation_failures(
+        question=question,
+        intent_class="direct_grounded_knowledge",
+        evidence=evidence,
+        publication={
+            "answer_text": (
+                "The Lead Agent coordinates and assigns bounded work before synthesising "
+                "checked worker results."
+            ),
+            "citation_ids": ["ev_role", "ev_actions"],
+        },
+    )
+
+    assert "FAST_CITATION_REQUIRED_FACET_MISSING:lead_agent_role" not in failures
+
+
 def test_fast_candidate_accepts_citations_that_cover_strong_migration_facets() -> None:
     question = "Why did the team shift most engineering work from OpenClaw to Codex?"
     evidence = [

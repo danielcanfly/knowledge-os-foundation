@@ -31,15 +31,7 @@ from .m26_pa7_arbitrary_query_runtime import (
     PA7ArbitraryQueryError,
     ProviderClient,
 )
-from .m26_production_answer_bundle import (
-    FULL_PRODUCTION_EDGE_COUNT,
-    FULL_PRODUCTION_GRAPH_V2_SHA256,
-    FULL_PRODUCTION_MANIFEST_KEY,
-    FULL_PRODUCTION_NODE_COUNT,
-    FULL_PRODUCTION_POINTER_SHA256,
-    FULL_PRODUCTION_RELEASE_ID,
-    load_production_answer_bundle,
-)
+from .m26_production_answer_bundle import load_production_answer_bundle
 from .m26_production_promotion_closure import load_json
 from .m26_retrieval_envelope import sha256_value
 from .m26_verified_answer_citation_gate import canonical_sha256
@@ -64,18 +56,12 @@ MAX_OWNER_GRAPH_NODES = 50_000
 MAX_OWNER_GRAPH_EDGES = 100_000
 SEMANTIC_CLOSURE_MAX_PROVIDER_CALLS = 4
 
-FULL_GRAPH_RELEASE_ID = FULL_PRODUCTION_RELEASE_ID
-FULL_GRAPH_MANIFEST_SHA256 = ""
-FULL_GRAPH_V2_SHA256 = FULL_PRODUCTION_GRAPH_V2_SHA256
-FULL_GRAPH_POINTER_SHA256 = FULL_PRODUCTION_POINTER_SHA256
-FULL_GRAPH_NODE_COUNT = FULL_PRODUCTION_NODE_COUNT
-FULL_GRAPH_EDGE_COUNT = FULL_PRODUCTION_EDGE_COUNT
 FULL_GRAPH_INVENTORY_RUN_ID = 30680636103
 FULL_GRAPH_INVENTORY_ARTIFACT_ID = 8812152272
 FULL_GRAPH_PA2_ACCEPTANCE_SELF_SHA256 = (
     "f6f597699390135b0bf7a8e31417c2e8e6f48af2dc2af4168eca1fd1e7f24f67"
 )
-FULL_GRAPH_MANIFEST_KEY = FULL_PRODUCTION_MANIFEST_KEY
+
 
 
 class M26AskApiError(ValueError):
@@ -382,17 +368,17 @@ def build_health_dto(*, root: Path, gate_path: Path) -> dict[str, Any]:
 def build_owner_graph_dto(
     active: Any,
     *,
-    expected_release_id: str = FULL_GRAPH_RELEASE_ID,
-    expected_manifest_sha256: str = FULL_GRAPH_MANIFEST_SHA256,
-    expected_graph_v2_sha256: str = FULL_GRAPH_V2_SHA256,
-    expected_node_count: int = FULL_GRAPH_NODE_COUNT,
-    expected_edge_count: int = FULL_GRAPH_EDGE_COUNT,
+    expected_release_id: str | None = None,
+    expected_manifest_sha256: str | None = None,
+    expected_graph_v2_sha256: str | None = None,
+    expected_node_count: int | None = None,
+    expected_edge_count: int | None = None,
 ) -> dict[str, Any]:
     release_id = str(getattr(active, "release_id", ""))
     manifest_sha256 = str(getattr(active, "manifest_sha256", ""))
     manifest = getattr(active, "manifest", None)
     graph = getattr(active, "graph_v2", None)
-    if release_id != expected_release_id:
+    if expected_release_id and release_id != expected_release_id:
         raise M26AskApiError(
             "M26_OWNER_GRAPH_RELEASE_IDENTITY_MISMATCH",
             "current production release does not match the accepted full graph binding",
@@ -408,7 +394,7 @@ def build_owner_graph_dto(
             "current production relation graph is unavailable",
         )
     graph_v2_sha256 = _manifest_graph_v2_sha256(manifest)
-    if graph_v2_sha256 != expected_graph_v2_sha256:
+    if expected_graph_v2_sha256 and graph_v2_sha256 != expected_graph_v2_sha256:
         raise M26AskApiError(
             "M26_OWNER_GRAPH_ARTIFACT_IDENTITY_MISMATCH",
             "current production graph artifact does not match the accepted binding",
@@ -420,10 +406,22 @@ def build_owner_graph_dto(
             "M26_OWNER_GRAPH_BOUND_EXCEEDED",
             "current production graph exceeds the owner browser bound",
         )
-    if len(nodes) != expected_node_count or len(edges) != expected_edge_count:
+    counts = manifest.get("counts")
+    if expected_node_count is None and isinstance(counts, Mapping):
+        value = counts.get("document_graph_nodes")
+        expected_node_count = value if isinstance(value, int) else None
+    if expected_edge_count is None and isinstance(counts, Mapping):
+        value = counts.get("document_graph_edges")
+        expected_edge_count = value if isinstance(value, int) else None
+    if expected_node_count is not None and len(nodes) != expected_node_count:
         raise M26AskApiError(
             "M26_OWNER_GRAPH_COUNT_MISMATCH",
-            "current production graph counts do not match the accepted inventory",
+            "current production graph node count does not match the active manifest",
+        )
+    if expected_edge_count is not None and len(edges) != expected_edge_count:
+        raise M26AskApiError(
+            "M26_OWNER_GRAPH_COUNT_MISMATCH",
+            "current production graph edge count does not match the active manifest",
         )
 
     payload = {
@@ -452,11 +450,11 @@ def build_owner_graph_dto(
             ],
             "binding": {
                 "production_pointer_key": "channels/production.json",
-                "production_pointer_sha256": FULL_GRAPH_POINTER_SHA256,
+                "production_pointer_sha256": getattr(active, "production_pointer_sha256", None),
                 "pa2_acceptance_self_sha256": FULL_GRAPH_PA2_ACCEPTANCE_SELF_SHA256,
                 "inventory_run_id": FULL_GRAPH_INVENTORY_RUN_ID,
                 "inventory_artifact_id": FULL_GRAPH_INVENTORY_ARTIFACT_ID,
-                "direct_manifest_key_sha256": canonical_sha256(FULL_GRAPH_MANIFEST_KEY),
+                "direct_manifest_key_sha256": canonical_sha256(str(getattr(active, "manifest_key", ""))),
             },
             "authority": {
                 "owner_only": True,

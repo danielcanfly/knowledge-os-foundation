@@ -1,0 +1,23 @@
+services:
+  m27-context-runtime:
+    build: .
+    image: knowledge-engine:m27-context-runtime-stage0c
+    container_name: llm_wiki-m27-context-runtime-1
+    restart: "no"
+    env_file:
+      - ${M27_RUNTIME_ENV_FILE:-.env.m27}
+    command: ["uvicorn", "knowledge_engine.m26_console_api:app", "--host", "0.0.0.0", "--port", "8080"]
+    ports:
+      - "127.0.0.1:18080:8080"
+    volumes:
+      - knowledge-engine-m27-cache:/var/lib/knowledge-engine/cache
+      - knowledge-engine-m27-public-api:/var/lib/knowledge-engine/public-api
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  knowledge-engine-m27-cache:
+  knowledge-engine-m27-public-api:

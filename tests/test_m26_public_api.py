@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import sqlite3
 from collections.abc import Iterator
@@ -278,6 +279,7 @@ def test_cors_allows_configured_origin_and_rejects_invalid_origin(client: TestCl
     allowed = client.options("/v1/answers", headers={"origin": "https://danielcanfly.com"})
     assert allowed.status_code == 204
     assert allowed.headers["access-control-allow-origin"] == "https://danielcanfly.com"
+    assert "x-m26-owner-bypass" in allowed.headers["access-control-allow-headers"]
     rejected = client.post(
         "/v1/answers",
         headers={"origin": "https://evil.example"},
@@ -285,6 +287,32 @@ def test_cors_allows_configured_origin_and_rejects_invalid_origin(client: TestCl
     )
     assert _problem(rejected)["code"] == "PUBLIC_ADMISSION_DENIED"
 
+
+def test_owner_bypass_header_skips_public_quota(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    token = "owner-test-token"
+    monkeypatch.setenv(
+        "M26_ASK_OWNER_BYPASS_TOKEN_SHA256",
+        hashlib.sha256(token.encode("utf-8")).hexdigest(),
+    )
+    _patch_answer(monkeypatch)
+
+    for _ in range(m26_public_api.PER_IP_DAILY_LIMIT + 2):
+        response = client.post(
+            "/v1/answers",
+            headers={"x-m26-owner-bypass": token},
+            json={"question": "What is safe?"},
+        )
+        assert response.status_code == 200
+        assert _sse_events(response)[-1]["type"] == "answer.completed"
+
+    with sqlite3.connect(client.app.state.test_quota_path) as db:
+        quota_rows = db.execute("SELECT scope, count FROM quota_counts").fetchall()
+        active_rows = db.execute("SELECT scope, count FROM active_counts").fetchall()
+    assert quota_rows == []
+    assert active_rows == []
 
 def test_direct_origin_spoofed_cf_header_does_not_share_quota_key(
     client: TestClient,
