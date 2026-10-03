@@ -4,10 +4,11 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import Literal, Protocol, runtime_checkable
 
+from .m27_decision_trace import DecisionTraceEvent
+
 STAGE1_UNAVAILABLE = "unavailable_in_stage1"
 Stage1Unavailable = Literal["unavailable_in_stage1"]
 Stage1Availability = Literal["available", "unavailable_in_stage1"]
-ScalarTraceValue = str | int | float | bool | None
 
 
 @dataclass(frozen=True)
@@ -79,15 +80,6 @@ class VerificationDecision:
     citation_count: int | Stage1Unavailable
     answer_source: str | Stage1Unavailable
     source: str = "legacy_m26_verifier"
-
-
-@dataclass(frozen=True)
-class DecisionTraceEvent:
-    trace_id: str
-    stage: str
-    decision: PolicyDecision
-    occurred_at: str | Stage1Unavailable = STAGE1_UNAVAILABLE
-    metadata: Mapping[str, ScalarTraceValue] = field(default_factory=dict)
 
 
 @runtime_checkable
