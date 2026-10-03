@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Literal, Protocol, runtime_checkable
 
@@ -110,3 +110,62 @@ class ContextCompiler(Protocol):
 class Verifier(Protocol):
     def normalize(self, verification_output: Mapping[str, object]) -> VerificationDecision:
         """Normalize an already-produced M26 verification/final response."""
+
+
+STAGE3_UNAVAILABLE = "unavailable_in_stage3"
+Stage3Unavailable = Literal["unavailable_in_stage3"]
+
+
+@dataclass(frozen=True, slots=True)
+class EvidenceIdentity:
+    """Privacy-safe identity view of one already-selected M26 evidence item."""
+
+    evidence_id: str | Stage3Unavailable = STAGE3_UNAVAILABLE
+    passage_id: str | Stage3Unavailable = STAGE3_UNAVAILABLE
+    source_identity: str | Stage3Unavailable = STAGE3_UNAVAILABLE
+    locator_id: str | Stage3Unavailable = STAGE3_UNAVAILABLE
+    evidence_type: str | Stage3Unavailable = STAGE3_UNAVAILABLE
+
+
+@dataclass(frozen=True, slots=True)
+class EvidenceGapSummary:
+    """Normalized existing M26 coverage/sufficiency signals; never a new policy."""
+
+    covered_requirement_ids: tuple[str, ...] | Stage3Unavailable = STAGE3_UNAVAILABLE
+    missing_requirement_ids: tuple[str, ...] | Stage3Unavailable = STAGE3_UNAVAILABLE
+    coverage_status: str | Stage3Unavailable = STAGE3_UNAVAILABLE
+    sufficiency_status: str | Stage3Unavailable = STAGE3_UNAVAILABLE
+    recovered_requirement_ids: tuple[str, ...] | Stage3Unavailable = STAGE3_UNAVAILABLE
+    bounded_recovery_used: bool | Stage3Unavailable = STAGE3_UNAVAILABLE
+    reason_codes: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class EvidencePlanningResult:
+    """Stage 3 evidence-planning boundary with identities only, never evidence bodies."""
+
+    selected_evidence: tuple[EvidenceIdentity, ...]
+    selected_evidence_count: int
+    selected_evidence_ids: tuple[str, ...] | Stage3Unavailable
+    selected_passage_ids: tuple[str, ...] | Stage3Unavailable
+    source_identities: tuple[str, ...] | Stage3Unavailable
+    distinct_source_count: int | Stage3Unavailable
+    locator_ids: tuple[str, ...] | Stage3Unavailable
+    requirement_ids: tuple[str, ...] | Stage3Unavailable
+    gap: EvidenceGapSummary
+    source: str = "legacy_m26_existing_evidence_signals"
+
+
+@runtime_checkable
+class EvidencePlanner(Protocol):
+    def normalize(
+        self,
+        *,
+        selected_evidence: Sequence[Mapping[str, object]],
+        requirements: Sequence[object] = (),
+        support_classification: Sequence[Mapping[str, object]] | None = None,
+        endpoint_proof: Mapping[str, object] | None = None,
+        sufficiency_status: str | None = None,
+        reason_codes: Sequence[str] = (),
+    ) -> EvidencePlanningResult:
+        """Normalize already-produced M26 evidence signals without selecting again."""
