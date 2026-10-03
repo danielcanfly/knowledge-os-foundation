@@ -168,6 +168,61 @@ def test_second_round_runs_once_and_adopts_only_when_material_gap_improves(
     assert result.endpoint_proof == {"round": 2}
 
 
+def test_second_round_reverts_if_it_trades_one_gap_for_another(monkeypatch) -> None:
+    _install_support_classifier(monkeypatch)
+
+    monkeypatch.setattr(
+        subject.legacy,
+        "_run_lexical_primary_retrieval",
+        lambda **_kwargs: (
+            {"results": [{"section_id": "s2"}]},
+            {
+                "candidates": [{"section_id": "s2"}],
+                "backend_identity": {"provider": "test"},
+            },
+        ),
+    )
+    monkeypatch.setattr(
+        subject.legacy,
+        "_select_evidence",
+        lambda **_kwargs: [_evidence("s2", ("latency",))],
+    )
+    monkeypatch.setattr(
+        subject.semantic_runtime,
+        "_strengthen_evidence",
+        lambda **kwargs: (list(kwargs["evidence"]), {"round": 2}),
+    )
+
+    first = _evidence("s1", ("core_answer",))
+    result = subject.run_bounded_agentic_second_round(
+        normalized_question="subject",
+        retrieval_question="subject",
+        intent_class="direct_grounded_knowledge",
+        trace_id="trace",
+        bundle=_bundle(),
+        lexical_result={"results": [{"section_id": "s1"}]},
+        dense_result={
+            "candidates": [{"section_id": "s1"}],
+            "backend_identity": {"provider": "test"},
+        },
+        evidence=[first],
+        endpoint_proof={"round": 1},
+        requirements=REQUIREMENTS,
+        dense_channel=None,
+        dense_fallback_channel=None,
+        require_remote_dense=False,
+        event_sink=None,
+        deadline_remaining_ms=12_000,
+        provider_attempts_remaining=2,
+        post_retrieval_reserve_ms=4_500,
+        flags=BoundedRetrievalFlags(True, True),
+    )
+    assert result.audit.second_round_adopted is False
+    assert result.audit.missing_before == ("latency",)
+    assert result.audit.missing_after == ("core_answer",)
+    assert result.evidence == (first,)
+
+
 def test_second_round_reverts_when_gap_does_not_improve(monkeypatch) -> None:
     _install_support_classifier(monkeypatch)
     calls = 0

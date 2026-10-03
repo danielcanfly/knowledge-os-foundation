@@ -166,7 +166,7 @@ def run_bounded_agentic_second_round(
         lexical_result=merged_lexical,
         dense_result=merged_dense,
         trace_id=trace_id,
-        question=normalized_question,
+        question=retrieval_question,
         intent_class=intent_class,
     )
     strengthened, strengthened_endpoint_proof = semantic_runtime._strengthen_evidence(
@@ -187,7 +187,7 @@ def run_bounded_agentic_second_round(
         support_classification=support_after,
     )
 
-    if len(missing_after) >= len(missing_before):
+    if not set(missing_after) < set(missing_before):
         return BoundedRetrievalRuntimeResult(
             lexical_result=lexical_result,
             dense_result=dense_result,
