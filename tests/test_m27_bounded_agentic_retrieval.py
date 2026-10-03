@@ -241,3 +241,18 @@ def test_merge_dense_candidates_preserves_primary_backend_identity() -> None:
     )
     assert [item["section_id"] for item in merged["candidates"]] == ["s1", "s2"]
     assert merged["backend_identity"] == {"provider": "primary"}
+
+def test_merge_preserves_opaque_items_without_stable_identity() -> None:
+    primary = {"results": [{"score": 1, "kind": "opaque"}]}
+    secondary = {"results": [{"score": 2, "kind": "opaque"}]}
+
+    merged = merge_retrieval_round_mapping(
+        primary,
+        secondary,
+        collection_field="results",
+    )
+
+    assert merged["results"] == [
+        {"score": 1, "kind": "opaque"},
+        {"score": 2, "kind": "opaque"},
+    ]

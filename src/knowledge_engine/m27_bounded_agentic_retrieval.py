@@ -237,9 +237,10 @@ def merge_retrieval_round_mapping(
     combined: list[dict[str, Any]] = []
     for item in (*primary_items, *secondary_items):
         key = _retrieval_item_key(item)
-        if key in seen:
-            continue
-        seen.add(key)
+        if key is not None:
+            if key in seen:
+                continue
+            seen.add(key)
         combined.append(item)
     merged[collection_field] = combined
 
@@ -270,14 +271,15 @@ def _dedupe_mappings(items: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]
     result: list[dict[str, Any]] = []
     for item in items:
         key = _retrieval_item_key(item)
-        if key in seen:
-            continue
-        seen.add(key)
+        if key is not None:
+            if key in seen:
+                continue
+            seen.add(key)
         result.append(dict(item))
     return result
 
 
-def _retrieval_item_key(item: Mapping[str, Any]) -> tuple[str, str]:
+def _retrieval_item_key(item: Mapping[str, Any]) -> tuple[str, str] | None:
     for field in ("section_id", "passage_id", "evidence_id", "edge_id", "id"):
         value = str(item.get(field) or "").strip()
         if value:
@@ -286,7 +288,8 @@ def _retrieval_item_key(item: Mapping[str, Any]) -> tuple[str, str]:
     locator = str(item.get("locator_id") or item.get("uri") or "").strip()
     if source or locator:
         return "source_locator", f"{source}#{locator}"
-    return "opaque", repr(sorted((str(k), type(v).__name__) for k, v in item.items()))
+    # No stable domain identity: preserve both items instead of deduping by shape.
+    return None
 
 
 def _requirement_id(requirement: object) -> str:
