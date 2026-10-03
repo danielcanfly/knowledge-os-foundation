@@ -126,7 +126,7 @@ def synthetic_full_production_answer_bundle() -> ProductionAnswerBundle:
             "document_graph_nodes": FULL_PRODUCTION_NODE_COUNT,
             "document_graph_edges": FULL_PRODUCTION_EDGE_COUNT,
             "document_sections": FULL_PRODUCTION_NODE_COUNT,
-            "semantic_documents": 4197,
+            "semantic_documents": FULL_PRODUCTION_NODE_COUNT,
         },
         "artifacts": [
             {

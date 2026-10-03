@@ -15,6 +15,7 @@ import pytest
 from jsonschema import Draft202012Validator
 
 from knowledge_engine import m26_pa7_arbitrary_query_runtime as runtime_module
+from knowledge_engine import m26_aq_semantic_contract as semantic_contract
 from knowledge_engine.m26_pa7_arbitrary_query_runtime import (
     LocalDenseProjectionChannel,
     PA7ArbitraryQueryError,
@@ -33,8 +34,17 @@ OWNER_SUBJECT_HASH = "93c8aaae82e498dc2e6bfdcaa48b8823fe21a5ceef44ca2cf9cf35cf63
 
 @pytest.fixture(autouse=True)
 def _production_answer_bundle(monkeypatch: pytest.MonkeyPatch) -> None:
+    # The reconciled production path delegates arbitrary-query serving into
+    # m26_aq_semantic_contract.canonical_run(), so patch both the legacy module
+    # facade and the canonical semantic runtime loader. Keep this fixture-only;
+    # runtime code must still load the real production bundle outside tests.
     monkeypatch.setattr(
         runtime_module,
+        "load_production_answer_bundle",
+        synthetic_full_production_answer_bundle,
+    )
+    monkeypatch.setattr(
+        semantic_contract,
         "load_production_answer_bundle",
         synthetic_full_production_answer_bundle,
     )
@@ -3956,15 +3966,15 @@ def test_current_corpus_phrasing_satisfies_hook_plugin_and_acceptance_facets() -
     plugin = {"facet_id": "plugin_host_capability"}
     acceptance = {"facet_id": "acceptance_evidence"}
 
-    assert runtime._direct_facet_text_matches(
+    assert runtime_module._direct_facet_text_matches(
         hook,
         "A Hook attaches logic to emitted lifecycle events and supplies the trigger.",
     )
-    assert runtime._direct_facet_text_matches(
+    assert runtime_module._direct_facet_text_matches(
         plugin,
         "A Plugin packages reusable setup for installation and distribution.",
     )
-    assert runtime._direct_facet_text_matches(
+    assert runtime_module._direct_facet_text_matches(
         acceptance,
         (
             "Before merge, start with the exact change set, inspect tests and required "
