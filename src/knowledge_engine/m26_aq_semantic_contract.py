@@ -30,6 +30,9 @@ from .m26_semantic_r3_candidate_release import (
     semantic_r3_authority_mismatch,
 )
 from .m26_verified_answer_citation_gate import canonical_sha256
+from .m27_bounded_agentic_retrieval_runtime import (
+    run_bounded_agentic_second_round,
+)
 
 CONTRACT_SCHEMA_VERSION = "m26-aq-canonical-semantic-contract/v1"
 CONTRACT_MATCHER_VERSION = "authority-boundary-natural-equivalence/v2"
@@ -6098,6 +6101,29 @@ def run_owner_arbitrary_query(
         intent_class=intent_class,
         requirements=requirements,
     )
+    m27_bounded_retrieval = run_bounded_agentic_second_round(
+        normalized_question=normalized_question,
+        retrieval_question=retrieval_question,
+        intent_class=intent_class,
+        trace_id=trace_id,
+        bundle=bundle,
+        lexical_result=lexical,
+        dense_result=dense,
+        evidence=evidence,
+        endpoint_proof=endpoint_proof,
+        requirements=requirements,
+        dense_channel=dense_channel,
+        dense_fallback_channel=dense_fallback_channel,
+        require_remote_dense=require_remote_dense,
+        event_sink=event_sink,
+        deadline_remaining_ms=_deadline_remaining_ms(started),
+        provider_attempts_remaining=_provider_attempts_remaining(provider),
+        post_retrieval_reserve_ms=_route_minimum_budget_ms(SEMANTIC_CLOSURE),
+    )
+    lexical = dict(m27_bounded_retrieval.lexical_result)
+    dense = dict(m27_bounded_retrieval.dense_result)
+    evidence = [dict(item) for item in m27_bounded_retrieval.evidence]
+    endpoint_proof = dict(m27_bounded_retrieval.endpoint_proof)
     legacy._emit_runtime_event(
         event_sink,
         "stage.completed",
