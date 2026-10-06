@@ -1,4 +1,4 @@
-# M27 Isolated Admission Infrastructure Reuse Audit Report (44b)
+# M27 Isolated Admission Infrastructure Reuse Audit (44b)
 
 Status: `ADMISSION_INFRA_REUSE_PLAN_READY`
 Date: 2026-10-06
@@ -6,145 +6,183 @@ Workspace: `/home/ubuntu/LLM_Wiki-m27-admission-infra-audit`
 Branch: `m27/admission-infra-audit`
 Base: `8c86b523d7ef6340ad580ac37e2bf0deb29bd176`
 
-## Mission and boundary
+## Scope and non-actions
 
-This session audited post-Stage12 commits `06681024..3592b22b` plus the reconciliation table in report 43. It did not run admission, did not mutate production, did not alter runtime behavior, and did not import dirty state from `/home/ubuntu/LLM_Wiki-m27-context-runtime`.
+This session audited post-Stage12 evaluation, quota, smoke, and single-VM stability material in `06681024..3592b22b` plus the classification table in report 43. It did not run admission, did not run Stage13/14, did not execute smoke cases, did not build/start/stop/restart any production service, and did not modify runtime behavior. Dirty artifacts in `/home/ubuntu/LLM_Wiki-m27-context-runtime` were treated as forensic only.
 
-The objective was to identify reusable evaluation, quota, smoke, and production-stability infrastructure while excluding benchmark-specific runtime changes.
+No code extraction was performed. That is intentional: the reusable value is split across benchmark-specific runners and runtime-mutating quota fixes. Copying either wholesale would violate the clean-base requirement. The safest output of this audit is a bounded implementation plan for Sessions 04 and 05.
 
-## Audit conclusion
+## Source classification
 
-A clean reusable admission infrastructure path exists, but it should be reconstructed as isolated evaluation tooling rather than cherry-picked wholesale from Stage13/14 history.
+| Commit | Audit disposition | Reuse decision |
+|---|---|---|
+| `06681024` | Stage12 integration history | forensic only |
+| `6e147d23` | Stage13 endpoint smoke/eval tooling plus benchmark artifacts | reuse selected runner concepts only; do not cherry-pick |
+| `c8f8f678` | integration report | forensic only |
+| `649908f2` | benchmark-facing M26 PA7 runtime edits | exclude |
+| `8799d774` | Stage14b endpoint proof artifacts | reuse evidence-shape lessons only |
+| `34f7b808` | canonical/legacy M26 runtime provider-contract edits | exclude |
+| `8b567264` | integration report | forensic only |
+| `ab597e2a` | blocked smoke evidence | forensic failure-mode input |
+| `5889fcbd` | quota-blocked retry evidence | forensic failure-mode input |
+| `8dfeb516` | integration report | forensic only |
+| `6db19db8` | quota lease root-cause report | reuse lifecycle requirements, not code |
+| `fe8ed9b5` | quota lease fix in public runtime plus tests | **do not import runtime patch**; re-express lifecycle as isolated harness checks |
+| `bac017cd` | quota probe and proof artifacts | reuse probe invariants and evidence fields |
+| `a946933f` | integration report | forensic only |
+| `3d1dcae0` | repaired smoke evidence and cases | reuse case organization and safety receipts; do not reuse stale benchmark result as admission proof |
+| `09aa3a1e` | integration report | forensic only |
+| `3592b22b` | single-VM production-stability policy/report | reuse policy requirements, with wording correction from report 43 |
 
-Reusable concepts and isolated tooling patterns are strong enough to support Sessions 04 and 05. Runtime modifications from Stage13/14 remain excluded.
+Report 43 already classifies `649908f2` and `34f7b808` as category C and explicitly excludes them. This audit confirms that boundary. It also tightens the treatment of `fe8ed9b5`: although its intent is reusable quota support, the implementation changes `src/knowledge_engine/m26_public_api.py` and `m26_multilingual_public_api.py`; therefore the commit is not a clean infrastructure import.
 
-## Commit classification and reuse decision
+## Reusable admission infrastructure
 
-| Commit | Existing category | Reuse decision | Rationale |
-|---|---|---|---|
-| `06681024` | D | reference only | Stage12 integration history; no executable admission infrastructure to import. |
-| `6e147d23` | B | selective reimplementation | `tools/m27_stage13_admission_smoke.py` contains useful bounded SSE collection, latency, TTFT, citation, provider-call and abstention measurements. `scripts/m27_stage13_endpoint_quality.py` contains reusable request/evidence aggregation patterns, but its scorer and case wiring are Stage13-specific. Do not cherry-pick artifacts or benchmark decisions. |
-| `c8f8f678` | D | reference only | Stage13 integration report. |
-| `649908f2` | C | reject from reuse path | Benchmark-facing M26 runtime edits. Runtime authority and answer behavior are outside this audit. |
-| `8799d774` | B | evidence-pattern reference only | Large endpoint proof corpus demonstrates isolated endpoint and read-only bundle proof patterns, but consists mainly of Stage14B benchmark artifacts rather than clean reusable code. |
-| `34f7b808` | C | reject from reuse path | M26 canonical/legacy runtime modifications for Stage14B provider contract. |
-| `8b567264` | D | reference only | Stage14 repair integration report. |
-| `ab597e2a`, `5889fcbd`, `8dfeb516` | D | forensic only | Blocked smoke/quota evidence; useful for failure taxonomy, not source import. |
-| `6db19db8` | D | design reference | Quota lease root-cause report precisely identifies terminal-state lease semantics. |
-| `fe8ed9b5` | B | test semantics reusable; runtime patch excluded | The 10 quota lifecycle tests encode valuable invariants: release before terminal completion, idempotent release, no lease on failed acquire, no sequential poisoning. The source patch modifies M26 public API and therefore must not be imported in this session. |
-| `bac017cd` | B | probe pattern reusable | Isolated quota probe and receipts are useful patterns for Session 04/05 validation, not source-of-truth runtime behavior. |
-| `a946933f` | D | reference only | Quota integration report. |
-| `3d1dcae0` | B | runbook/evidence pattern reusable | Fresh isolated image, read-only bundle mount, before/after production health, active lease zero checks, and smoke artifact receipts are reusable. Stage13R2 case corpus and gate decisions are not. |
-| `09aa3a1e` | D | reference only | Stage13R2 integration report. |
-| `3592b22b` | D | policy reusable after correction | Single-VM production-first constraints are useful. Historical restart-policy mutation from report 30 must not be repeated. The new plan treats production as read-only and uses health/identity observation only. |
+### 1. Endpoint evidence collector concepts from `6e147d23`
 
-## Reusable isolated admission harness contract
+Reusable mechanics:
 
-The following elements can be reused or rebuilt without changing runtime behavior:
+- one case at a time against a caller-supplied isolated endpoint;
+- capture HTTP status, terminal SSE event, cited-final-answer presence, safe abstention, citation count, answer length/hash, latency, first SSE, first answer text, provider-call observations, surfaced generic/bad-template markers, and transport errors;
+- JSONL per-case rows plus machine-readable summary;
+- percentile calculation from completed HTTP-200 rows;
+- preserve unknown unsupported-claim count as unknown rather than manufacturing zero.
 
-1. **Bounded endpoint collector**
-   - Localhost-only target supplied explicitly by caller.
-   - POST question payload to `/v1/answers`.
-   - Parse SSE incrementally.
-   - Record first SSE time, first answer-text time, terminal event, latency, HTTP status, provider-call count, citation count, safe abstention and transport errors.
-   - Hash question and answer for receipts instead of storing unnecessary raw content.
+Required redesign before Session 05:
 
-2. **Evidence validity rules**
-   - HTTP 429 with `provider_calls=0` is quota/admission evidence, never quality evidence.
-   - Missing numeric unsupported-claim telemetry remains `null`; never reinterpret unknown as zero.
-   - A cited final answer requires a completed terminal event, non-empty answer text and citation presence. Any stronger claim-support gate must come from the runtime/evidence bridge proven separately.
-   - Preserve failed and blocked rows rather than silently filtering them.
+- deny production URLs/ports by default and require an explicit loopback isolated endpoint;
+- pin expected build identity and fail closed on mismatch;
+- separate collector schema from Stage13 naming and benchmark-specific generic-prefix heuristics;
+- record compiler/evidence bridge identity needed by the new M27 admission chain;
+- record pre/post quota state and host guard receipts;
+- do not infer provider calls solely from a legacy `model.started` event if the new runtime exposes a stronger counter;
+- enforce a hard maximum case count for small smoke.
 
-3. **Isolated run manifest**
-   - Base commit and image/container identity.
-   - Explicit localhost port.
-   - Read-only evidence bundle identity and manifest digest supplied by Session 01/bridge work.
-   - Feature/config snapshot for the isolated endpoint.
-   - Start/end production health and identity receipts.
-   - Host memory/swap/load receipts.
-   - Per-case rows plus aggregate summary.
+### 2. Case/evidence organization from `3d1dcae0`
 
-4. **Quota lifecycle proof**
-   - Do not transplant `fe8ed9b5` M26 API changes into the accepted runtime.
-   - Reuse its invariants as black-box/isolated validation: sequential requests must not accumulate active leases; terminal completion/abstention/failure/cancel must leave no stale active request; 429 must occur only when the configured concurrency boundary is genuinely exceeded.
-   - Any discovered lifecycle defect in the accepted runtime becomes a separate blocker/repair scope rather than an implicit admission-harness patch.
+Reusable pattern:
 
-5. **Single-VM safety guard**
-   - Production health must be HTTP 200 before and after each isolated batch.
-   - Only one non-production M27 endpoint/container may run at a time.
-   - No concurrent docker build, test run and endpoint evaluation.
-   - Use explicit container resource limits; historical safe example was `--memory 384m --memory-swap 768m --cpus 0.75`.
-   - Stop on production health failure, low memory/aggressive swap growth, or quota poison.
-   - No production restart-policy change, restart, stop, rebuild, deployment, route mutation or production data-store write is authorized by this policy.
+- immutable input case file;
+- separate output directories for each configuration;
+- baseline identity and health receipts before execution;
+- final isolated and production health/identity receipts;
+- explicit aggregate receipt with HTTP, citation, abstention, provider, quota, and latency facts.
 
-## Rejected imports
+Not reusable as authority:
 
-The following must not enter Sessions 04/05 through this audit branch:
+- the old Stage13R2 pass/fail thresholds;
+- prior smoke results;
+- the old Stage6 ON/OFF benchmark semantics;
+- filesystem snapshot identity from that historical run.
 
-- Stage14/14B M26 runtime/provider-contract patches from `649908f2` or `34f7b808`.
-- Stage13/14 benchmark-specific answer repairs, retrieval tuning, generic-fallback repair, PA7 tuning, or scorer-driven runtime behavior.
-- Historical benchmark result artifacts as fresh admission evidence.
-- Dirty uncommitted files from `/home/ubuntu/LLM_Wiki-m27-context-runtime`.
-- Production quota sqlite resets or production quota-state mutation.
-- Historical production restart-policy hardening from report 30.
+### 3. Quota lifecycle invariants from `6db19db8`, `fe8ed9b5`, `bac017cd`
 
-## Why no code was extracted in this session
+The old failure mode was a leaked active-request lease. The useful invariant is lifecycle correctness, not the runtime patch itself.
 
-The useful code in the audited range is entangled with Stage13 naming, scorer/case assumptions, or M26 public-API runtime changes. A blind cherry-pick would violate the requirement to separate harness infrastructure from runtime behavior.
+The isolated harness must prove:
 
-The safest small extraction is therefore deferred to Session 04, where a new neutral isolated collector can be authored directly against the accepted M27 base and the production-grade evidence bridge from Session 01. This keeps provenance obvious and makes unit tests authoritative for the new harness rather than inherited benchmark code.
+1. preflight active count is zero (or a documented clean expected value);
+2. one admitted request acquires at most one active lease;
+3. normal terminal completion releases it;
+4. safe abstention/failure releases it;
+5. client cancellation/timeout path releases it when exercised by a dedicated harness test;
+6. post-batch active count returns to the preflight value;
+7. HTTP 429 with `provider_calls=0` is infrastructure poison, not quality evidence, and stops the smoke;
+8. owner bypass and public quota semantics are not silently conflated.
 
-## Plan for Session 04: isolated admission harness
+Session 04 should implement these as isolated tooling/probes around the isolated endpoint or test-owned quota store. It must not modify M26 public runtime just to make the smoke pass.
 
-Session 04 should implement a neutral tool, suggested location `tools/m27_isolated_admission_smoke.py`, with no import from production runtime internals.
+### 4. Production-stability guard from `3592b22b`
 
-Required behavior:
+Reuse these hard rules:
 
-- Require explicit endpoint, cases file, output directory and timeout.
-- Refuse non-loopback endpoint by default unless separately authorized.
-- Parse SSE incrementally and emit deterministic JSONL rows + summary JSON.
-- Preserve unknown telemetry as unknown.
-- Emit run manifest containing git/image/bundle/config identities.
-- Add unit tests for SSE parsing, terminal classification, percentile math, 429 invalidation, unknown unsupported-claim telemetry, output collision/refusal, and endpoint loopback guard.
-- Do not contain benchmark thresholds or runtime repair logic.
+- production health before and after every eval batch;
+- only one non-production M27 container at a time;
+- no concurrent docker build, pytest, and endpoint evaluation;
+- no full523 continuous run on the 1 GiB production VM;
+- stop immediately if production health is not HTTP 200;
+- stop on low available memory or aggressive swap growth;
+- stop and preserve evidence on HTTP 429/provider_calls=0;
+- explicit container resource limits;
+- stop the eval container after the session.
 
-Session 04 completion should establish a testable collector and manifest contract only. It should not run fresh admission unless its own prompt explicitly authorizes the smoke.
+For the next small smoke, use an even narrower rule: one isolated endpoint, one small bounded batch, no 100-case/full523.
 
-## Plan for Session 05: safe small smoke execution
+Wording must follow report 43 semantics. Host-level evaluation means production host impact was monitored; it is inaccurate to claim the host was completely untouched merely because production containers were not mutated.
 
-Only after the production-grade compiler/evidence-bundle bridge is proven and Session 04 harness tests pass:
+## Runtime behavior modifications that are excluded
 
-1. Verify production health/identity read-only.
-2. Verify host RAM/swap/load and absence of other M27 eval containers.
-3. Build/start exactly one isolated endpoint from an explicitly pinned accepted commit, with resource limits and read-only bundle mount.
-4. Confirm isolated health, build identity, feature/config snapshot and bundle/manifest binding.
-5. Run the smallest authorized smoke population sequentially.
-6. Stop immediately on production health degradation, quota poison, provider-call-zero 429, bundle identity mismatch or host pressure.
-7. Preserve all rows and receipts.
-8. Stop/remove only the session-owned isolated container.
-9. Re-check production health/identity and host metrics.
-10. Return an evidence-based readiness decision. Do not infer 100-case/full523 readiness unless the Session 05 prompt explicitly defines that gate.
+The following are not admission infrastructure and must not enter Sessions 04/05 by cherry-pick, copy, or accidental merge:
 
-## Production boundary for Sessions 04/05
+- `649908f2` changes to `m26_pa7_arbitrary_query_runtime.py`;
+- `34f7b808` changes to `m26_aq_semantic_contract.py` and `m26_pa7_arbitrary_query_runtime.py`;
+- `fe8ed9b5` changes to M26 public API runtime, even though their lifecycle lesson is retained;
+- any dirty/uncommitted repair from `/home/ubuntu/LLM_Wiki-m27-context-runtime`;
+- benchmark-specific Stage13/14 admission thresholds or historical PASS claims.
 
-Allowed:
-- read-only `/v1/health` checks;
-- read-only container identity inspection;
-- host metric inspection;
-- one explicitly isolated non-production endpoint;
-- isolated output directories and read-only evidence bundle mounts.
+A future need for a runtime change must be independently justified and authorized. It cannot be smuggled in as "harness reuse."
 
-Forbidden:
-- production restart/stop/rebuild/deploy;
-- production route change;
-- production R2/Qdrant/SQLite writes;
-- production quota reset;
-- importing Stage13/14 runtime patches;
-- legacy Stage13/14 admission continuation;
-- full523 unless separately authorized.
+## Clean plan for Session 04: isolated admission harness
+
+Session 04 should start from the accepted post-bridge base chosen by the master, not from Stage13/14 branches. Its deliverable should be architecture-neutral tooling only.
+
+Required components:
+
+1. **Target guard**: loopback-only default, explicit isolated port allowlist/config, production hostname/IP deny rules, expected build-SHA check.
+2. **Host preflight**: production `/v1/health` read-only check, production container/image identity capture, memory/swap/load capture, and assertion that no other M27 eval container is running.
+3. **Quota preflight/probe**: read-only or test-owned inspection that establishes active-request state without altering production quota data.
+4. **Generic SSE collector**: new schema name, bounded timeout, terminal-event validation, citation/abstention/latency/TTFT fields, and bridge identity fields.
+5. **Safety stop rules**: fail closed on production health degradation, identity drift, target mismatch, quota poison, memory/swap guard, or malformed terminal stream.
+6. **Postflight**: quota active count restored, isolated endpoint identity unchanged, production health and identity unchanged, eval container cleaned up.
+7. **Unit tests**: target rejection, build mismatch, malformed SSE, 429 poison, quota lifecycle assertions, percentile/summary correctness, and no-network pure parser tests.
+
+Session 04 must not run admission smoke. It prepares tooling and proves the tooling with unit/fixture tests only.
+
+## Clean plan for Session 05: fresh small smoke
+
+Session 05 may run only after both prerequisites are true:
+
+- production-grade compiler/evidence bridge has a positive handoff from Session 01;
+- Session 04 isolated admission harness is complete and its safety gates pass.
+
+Execution order:
+
+1. establish production read-only health/identity baseline;
+2. establish host resource baseline and exclusivity;
+3. build/start exactly one isolated image/container from the authorized clean commit, with explicit memory/CPU limits and read-only production-equivalent evidence inputs as authorized by Session 01;
+4. verify isolated build identity and evidence/compiler binding before sending a question;
+5. verify quota preflight clean state;
+6. run a deliberately small fixed smoke set only;
+7. after each case (or smallest practical micro-batch), evaluate hard stop conditions;
+8. stop immediately on production degradation, identity drift, quota poison, target mismatch, malformed terminal transport, or host resource danger;
+9. capture postflight quota/host/production receipts;
+10. stop/remove the isolated eval container;
+11. report observations without upgrading them to 100-case/full523 readiness unless a separate owner-authorized gate says so.
+
+## Small-smoke evidence contract
+
+Every case row should minimally include:
+
+- case ID and question SHA-256;
+- isolated endpoint and verified build identity;
+- evidence/compiler bridge identity or digest;
+- HTTP status and terminal event/code;
+- cited final answer / safe abstention;
+- citation count and citation-binding status;
+- unsupported-claim metric with explicit measured/unknown state;
+- provider-call count from authoritative telemetry when available;
+- total latency, first SSE, first answer-text latency;
+- quota pre/post active state;
+- stop-reason field if the session terminates early.
+
+The session summary should include production pre/post health and identity, host-resource receipts, isolated container identity, case-count bound, and whether any hard-stop condition fired.
+
+## Why no code was extracted in this audit
+
+The prompt permits a small extraction only when safe. The old runner is tightly named and shaped around Stage13, and the quota fix is coupled to public runtime. A clean generic harness needs new fail-closed target/identity/quota/stability contracts. Implementing that belongs in Session 04, where it can receive dedicated tests. Creating a partial helper here would increase cross-session ambiguity without reducing risk.
 
 ## Completion
 
 `ADMISSION_INFRA_REUSE_PLAN_READY`
 
-No admission was run. No runtime behavior was changed. No production mutation occurred.
+The audit found enough reusable design/evidence patterns to proceed, while excluding benchmark-specific runtime modifications. No admission was run and no production mutation occurred.

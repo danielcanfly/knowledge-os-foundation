@@ -1,76 +1,98 @@
 # Admission Infrastructure to Small Smoke Handoff
 
-Status: `ADMISSION_INFRA_REUSE_PLAN_READY`
-Date: 2026-10-06
-Source workspace: `/home/ubuntu/LLM_Wiki-m27-admission-infra-audit`
-Base: `8c86b523d7ef6340ad580ac37e2bf0deb29bd176`
+State: `ADMISSION_INFRA_REUSE_PLAN_READY`
+Source audit: `docs/m27/research/44b_admission_infra_reuse_audit_report.md`
+Base audited: `8c86b523d7ef6340ad580ac37e2bf0deb29bd176`
 
-## Decision
+## What Session 04 may reuse
 
-Post-Stage12 history contains reusable admission infrastructure patterns, but no historical commit should be wholesale imported into the accepted M27 runtime.
+Reuse ideas and contracts, not old commits wholesale:
 
-Proceed by rebuilding a neutral isolated admission collector and safety wrapper on the accepted base. Keep Stage13/14 benchmark runtime patches excluded.
+- SSE row/summary collection pattern from `6e147d23`;
+- immutable case + baseline/final receipt structure from `3d1dcae0`;
+- quota lease lifecycle invariants from `6db19db8` / `fe8ed9b5` / `bac017cd`;
+- single-VM production-first guard rules from `3592b22b`.
 
-## Reuse these patterns
+## What Session 04/05 must not import
 
-- Incremental SSE collector from `6e147d23` as a design reference: terminal type, HTTP status, total latency, first SSE, first answer text, provider-call count, citation count, safe abstention and transport error.
-- Quota lifecycle invariants from `fe8ed9b5` tests and `6db19db8` diagnosis: no stale active lease after terminal paths; release is effectively idempotent; failed acquire/owner bypass cannot require release; sequential requests cannot poison the next request.
-- Stage13R2 operational pattern from `3d1dcae0`: fresh isolated image, localhost endpoint, read-only evidence mount, explicit identity receipts, before/after production checks, preservation of quota failures as non-quality evidence.
-- Single-VM constraints from `3592b22b`: one isolated endpoint, bounded resources, no overlapping build/test/eval, chunked execution, stop on host or production instability.
+- `649908f2` runtime changes;
+- `34f7b808` runtime changes;
+- `fe8ed9b5` M26 public-runtime changes as a cherry-pick or copy;
+- dirty changes from `/home/ubuntu/LLM_Wiki-m27-context-runtime`;
+- Stage13/14 historical PASS decisions as current authority.
 
-## Do not reuse
+## Session 04 required output
 
-- M26 runtime patches from `649908f2`, `34f7b808`, or `fe8ed9b5` by cherry-pick.
-- Stage13/14 benchmark-specific answer/retrieval/provider repairs.
-- Old benchmark artifacts as fresh evidence.
-- Dirty `/home/ubuntu/LLM_Wiki-m27-context-runtime` state.
-- Historical production restart-policy mutation from report 30.
+Build a new isolated admission harness with all of these fail-closed properties:
 
-## Session 04 contract
+- refuses production targets and defaults to loopback isolated endpoint only;
+- verifies expected isolated build SHA before requests;
+- captures production health/identity read-only before and after;
+- enforces single-eval-container and host resource guard;
+- verifies quota/active-request lifecycle without production quota mutation;
+- captures generic SSE terminal/citation/latency/TTFT/provider telemetry;
+- stops on 429 + zero provider calls, malformed terminal stream, build drift, production health failure, or resource danger;
+- cleans up the isolated eval container;
+- has unit tests for the above;
+- **does not run admission smoke**.
 
-Build neutral isolated tooling, preferably `tools/m27_isolated_admission_smoke.py`, with unit tests. It should:
+## Session 05 admission prerequisites
 
-- accept only explicit inputs;
-- default to loopback endpoints;
-- parse SSE and write deterministic JSONL + summary + run manifest;
-- preserve unknown metrics as unknown;
-- classify 429/provider_calls=0 as invalid quality evidence;
-- contain no benchmark gate thresholds and no runtime behavior changes.
+Do not start the fresh small smoke until:
 
-Session 04 should remain tooling-only unless separately authorized to execute a smoke.
+1. Session 01 has positively proven the production-grade compiler/evidence bridge and provided its pinned identity/digest contract.
+2. Session 04 harness is green and produces a safety receipt.
+3. The authorized isolated build commit is explicit.
+4. Production health is HTTP 200 and identity captured.
+5. No other M27 eval container/build/test workload is active.
+6. Host memory/swap/load are inside the Session 04 guard.
+7. Isolated quota active state is clean.
 
-## Session 05 preflight gate
+If any prerequisite is false, stop before sending the first question.
 
-A small smoke may start only when all are true:
+## Session 05 bounded execution
 
-1. Production-grade compiler/evidence bundle bridge is proven and pinned.
-2. Session 04 harness tests pass.
-3. Production health is HTTP 200 and production identity is recorded.
-4. Host memory/swap/load are acceptable.
-5. No other non-production M27 endpoint/container is running.
-6. The isolated image commit, localhost port, feature/config snapshot and read-only bundle identity are recorded.
+- exactly one isolated endpoint/container;
+- fixed small smoke only, no Stage13/14 legacy chain, no 100-case, no full523;
+- explicit resource limits;
+- read-only evidence inputs authorized by Session 01;
+- verify target build and evidence/compiler binding before first request;
+- evaluate hard-stop rules continuously at case/micro-batch boundaries;
+- preserve partial evidence if stopped;
+- postflight production health/identity, host resources, quota active state, and isolated cleanup are mandatory.
 
-During the run, stop on production health degradation, host pressure, bundle mismatch, provider-backed 429 with zero provider calls, or other evidence-invalidating infrastructure failure.
+## Hard stop conditions
 
-After the run, remove only the session-owned isolated container and verify production health/identity again.
+Stop the smoke immediately if any occurs:
 
-## Wording discipline
+- production `/v1/health` != HTTP 200;
+- production identity changes;
+- request target is not the verified isolated endpoint;
+- isolated build identity changes/mismatches;
+- compiler/evidence bridge binding mismatches;
+- HTTP 429 with `provider_calls=0` or equivalent quota poison;
+- active-request count does not return to expected state;
+- malformed/missing terminal SSE event;
+- available memory guard trips or swap grows beyond the configured bound;
+- another eval/build/test workload violates exclusivity.
 
-Because evaluation shares the production host, use:
+Do not convert infrastructure-poisoned rows into quality evidence.
 
-`production deploy/restart/image mutation: NO`
+## Minimum output receipt for Session 05
 
-`production host impact: monitored`
+- authorized source commit and image/container identity;
+- compiler/evidence bridge digest/identity;
+- production pre/post health + identity;
+- host pre/post resource snapshot;
+- quota pre/post active state;
+- per-case JSONL and summary JSON;
+- cited/abstained/transport/provider/latency facts;
+- explicit unknown-vs-measured unsupported-claim status;
+- cleanup confirmation;
+- final decision scoped only to the fresh small smoke.
 
-`production health checked before/after each batch`
+## Canonical handoff
 
-Do not claim `production untouched` merely because no deployment occurred.
+Session 04 can proceed to implement and unit-test the clean isolated harness. Session 05 remains gated on both Session 01 evidence-bridge proof and Session 04 harness readiness.
 
-## Current authorization
-
-- Fresh small admission smoke: **not executed here**.
-- Stage13/14 legacy admission chain: **not authorized**.
-- 100-case/full523: **not authorized**.
-- Runtime behavior changes: **none**.
-
-Next owner should use report `44b_admission_infra_reuse_audit_report.md` as the authoritative reuse map.
+`ADMISSION_INFRA_REUSE_PLAN_READY`
