@@ -1,26 +1,23 @@
 services:
-  m27-context-runtime:
+  m27-isolated-eval:
     build: .
-    image: knowledge-engine:m27-context-runtime-stage0c
-    container_name: llm_wiki-m27-context-runtime-1
+    image: knowledge-engine:m27-smoke-preflight-repair
+    container_name: m27-isolated-eval-05r
     restart: "no"
-    env_file:
-      - ${M27_RUNTIME_ENV_FILE:-.env.m27}
     environment:
       M27_ISOLATED_RUNTIME: "true"
-      M27_BOUNDED_AGENTIC_RETRIEVAL_ENABLED: "false"
-    command: ["uvicorn", "knowledge_engine.m26_console_api:app", "--host", "0.0.0.0", "--port", "8080"]
+      M27_BUILD_SHA: "${M27_BUILD_SHA:-cbc3ec9d7353f564ef11687ca590830e36253c2e}"
+      M27_IMAGE_DIGEST: "${M27_IMAGE_DIGEST:-compose-build-local}"
+    command: ["uvicorn", "knowledge_engine.m27_isolated_http:app", "--host", "0.0.0.0", "--port", "8080"]
     ports:
       - "127.0.0.1:18080:8080"
-    volumes:
-      - knowledge-engine-m27-cache:/var/lib/knowledge-engine/cache
-      - knowledge-engine-m27-public-api:/var/lib/knowledge-engine/public-api
+    labels:
+      com.daniel.m27.eval: "true"
+      com.daniel.m27.session: "05R"
     read_only: true
     tmpfs:
       - /tmp
     security_opt:
       - no-new-privileges:true
-
-volumes:
-  knowledge-engine-m27-cache:
-  knowledge-engine-m27-public-api:
+    mem_limit: 256m
+    memswap_limit: 768m
