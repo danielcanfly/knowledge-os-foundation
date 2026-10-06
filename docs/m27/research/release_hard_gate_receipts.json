@@ -1,0 +1,205 @@
+{
+  "admission_head": "f406be4a07ae360655e073c4dea1e13fe2796689",
+  "combined_decision": {
+    "admission_receipts": {
+      "full523": {
+        "case_count": 523,
+        "citation_provenance_integrity": 1.0,
+        "cited_final_answer_rate": 1.0,
+        "passed_count": 523,
+        "quality_score": null,
+        "safe_terminal_correct_count": 130,
+        "safe_terminal_correctness": 1.0,
+        "safe_terminal_expected_count": 130,
+        "streaming_status": "not_yet_supported_by_isolated_preflight_endpoint; evaluation exercises terminal runtime receipts",
+        "verified_answer_cited_count": 237,
+        "verified_answer_expected_count": 237
+      },
+      "passed": true,
+      "production_no_mutation": true,
+      "reason_codes": [],
+      "release_report_only": true,
+      "schema_version": "m27-admission-receipt-hard-gate-checks/v1"
+    },
+    "decision_id": "m27_release_hard_gate_2ef41c1de5af669a03386a53",
+    "deployment_performed": false,
+    "production_deployment_ready": false,
+    "production_touched": false,
+    "quality_gate": {
+      "admission_receipts": {
+        "full523": {
+          "case_count": 523,
+          "citation_provenance_integrity": 1.0,
+          "cited_final_answer_rate": 1.0,
+          "passed_count": 523,
+          "quality_score": null,
+          "safe_terminal_correct_count": 130,
+          "safe_terminal_correctness": 1.0,
+          "safe_terminal_expected_count": 130,
+          "streaming_status": "not_yet_supported_by_isolated_preflight_endpoint; evaluation exercises terminal runtime receipts",
+          "verified_answer_cited_count": 237,
+          "verified_answer_expected_count": 237
+        },
+        "passed": true,
+        "production_no_mutation": true,
+        "reason_codes": [],
+        "release_report_only": true,
+        "schema_version": "m27-admission-receipt-hard-gate-checks/v1"
+      },
+      "artifact_id": "m27_quality_gate_9a6f36ece6d02a5a17eaaacb",
+      "artifact_version": null,
+      "deterministic_admission_is_not_quality_score": true,
+      "evaluator_identity": null,
+      "independent_quality_score_available": false,
+      "notes": "No independent semantic quality evaluator was configured for the deterministic admission harness.",
+      "passed": false,
+      "quality_score": null,
+      "reason_codes": [
+        "MISSING_EVALUATOR_IDENTITY",
+        "MISSING_RUBRIC_VERSION",
+        "QUALITY_SCORER_UNAVAILABLE"
+      ],
+      "release_blocking": true,
+      "rubric_version": null,
+      "schema_version": "m27-release-quality-hard-gate/v1",
+      "stale": false,
+      "threshold": 85.0
+    },
+    "release_ready": false,
+    "remaining_blockers": [
+      "MISSING_EVALUATOR_IDENTITY",
+      "MISSING_RUBRIC_VERSION",
+      "QUALITY_SCORER_UNAVAILABLE"
+    ],
+    "report_only_candidate_preserved": true,
+    "schema_version": "m27-release-hard-gates/v1",
+    "status": "M27_RELEASE_HARD_GATES_NOT_READY_WITH_DIAGNOSIS",
+    "streaming_gate": {
+      "artifact_id": "m27_streaming_gate_06470ed8c600e4761616867a",
+      "endpoint_path": "/v1/answers/stream",
+      "event_sequence": [
+        "request_started",
+        "verified_claim_ready",
+        "cited_segment_ready",
+        "final_answer_done"
+      ],
+      "final_answer_done_index": 3,
+      "final_answer_parity_checked": true,
+      "first_material_event_index": 1,
+      "passed": true,
+      "reason_codes": [],
+      "release_blocking": false,
+      "safe_terminal_emits_no_material_text": true,
+      "schema_version": "m27-first-answer-text-streaming-gate/v1",
+      "stream_schema": "m27-isolated-first-answer-stream/v1"
+    }
+  },
+  "deployment_performed": false,
+  "production_touched": false,
+  "quality_gate": {
+    "admission_receipts": {
+      "full523": {
+        "case_count": 523,
+        "citation_provenance_integrity": 1.0,
+        "cited_final_answer_rate": 1.0,
+        "passed_count": 523,
+        "quality_score": null,
+        "safe_terminal_correct_count": 130,
+        "safe_terminal_correctness": 1.0,
+        "safe_terminal_expected_count": 130,
+        "streaming_status": "not_yet_supported_by_isolated_preflight_endpoint; evaluation exercises terminal runtime receipts",
+        "verified_answer_cited_count": 237,
+        "verified_answer_expected_count": 237
+      },
+      "passed": true,
+      "production_no_mutation": true,
+      "reason_codes": [],
+      "release_report_only": true,
+      "schema_version": "m27-admission-receipt-hard-gate-checks/v1"
+    },
+    "artifact_id": "m27_quality_gate_9a6f36ece6d02a5a17eaaacb",
+    "artifact_version": null,
+    "deterministic_admission_is_not_quality_score": true,
+    "evaluator_identity": null,
+    "independent_quality_score_available": false,
+    "notes": "No independent semantic quality evaluator was configured for the deterministic admission harness.",
+    "passed": false,
+    "quality_score": null,
+    "reason_codes": [
+      "MISSING_EVALUATOR_IDENTITY",
+      "MISSING_RUBRIC_VERSION",
+      "QUALITY_SCORER_UNAVAILABLE"
+    ],
+    "release_blocking": true,
+    "rubric_version": null,
+    "schema_version": "m27-release-quality-hard-gate/v1",
+    "stale": false,
+    "threshold": 85.0
+  },
+  "schema_version": "m27-release-hard-gate-receipts/v1",
+  "source_admission_receipts": "docs/m27/research/admission_ladder_receipts.json",
+  "streaming_gate": {
+    "artifact_id": "m27_streaming_gate_06470ed8c600e4761616867a",
+    "endpoint_path": "/v1/answers/stream",
+    "event_sequence": [
+      "request_started",
+      "verified_claim_ready",
+      "cited_segment_ready",
+      "final_answer_done"
+    ],
+    "final_answer_done_index": 3,
+    "final_answer_parity_checked": true,
+    "first_material_event_index": 1,
+    "passed": true,
+    "reason_codes": [],
+    "release_blocking": false,
+    "safe_terminal_emits_no_material_text": true,
+    "schema_version": "m27-first-answer-text-streaming-gate/v1",
+    "stream_schema": "m27-isolated-first-answer-stream/v1"
+  },
+  "streaming_proof_events": [
+    {
+      "authoritative_runtime": "m27-isolated-runtime",
+      "event": "request_started",
+      "isolated_runtime": true,
+      "production_touched": false,
+      "question_sha256": "stream-proof-synthetic-isolated",
+      "schema_version": "m27-isolated-first-answer-stream/v1"
+    },
+    {
+      "citations": [
+        {
+          "citation_id": "c1",
+          "claim_id": "claim_1",
+          "locator_id": "loc_1",
+          "source_identity": "source_1"
+        }
+      ],
+      "claim_id": "claim_1",
+      "event": "verified_claim_ready",
+      "schema_version": "m27-isolated-first-answer-stream/v1",
+      "text": "Graphology keeps and analyzes graph data."
+    },
+    {
+      "citations": [
+        {
+          "citation_id": "c1",
+          "claim_id": "claim_1",
+          "locator_id": "loc_1",
+          "source_identity": "source_1"
+        }
+      ],
+      "event": "cited_segment_ready",
+      "schema_version": "m27-isolated-first-answer-stream/v1",
+      "text": "Graphology keeps and analyzes graph data."
+    },
+    {
+      "event": "final_answer_done",
+      "response": {
+        "answer_text": "Graphology keeps and analyzes graph data.",
+        "production_touched": false
+      },
+      "schema_version": "m27-isolated-first-answer-stream/v1"
+    }
+  ]
+}
