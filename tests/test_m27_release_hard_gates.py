@@ -82,8 +82,15 @@ def test_quality_gate_passes_only_with_independent_identity_rubric_and_score() -
         evidence=QualityScoreEvidence(
             score=91.0,
             evaluator_identity="independent-semantic-quality-evaluator:v1",
-            rubric_version="m27-release-quality-rubric:v1",
+            rubric_version="ANSWER_QUALITY_RUBRIC_v1",
             artifact_version="quality-artifact-001",
+            evaluator_provider="independent-provider",
+            evaluator_model="independent-model",
+            scoring_policy_version="m27-independent-quality-scoring-policy/v1",
+            source_receipts_sha256="abc",
+            case_count_scored=237,
+            sampling_policy="all verified-answer rows",
+            per_case_scores_digest="digest",
         ),
     )
     assert gate["passed"] is True
@@ -147,7 +154,14 @@ def test_combined_gate_ready_only_when_quality_and_streaming_pass() -> None:
         evidence=QualityScoreEvidence(
             score=90.0,
             evaluator_identity="independent-semantic-quality-evaluator:v1",
-            rubric_version="m27-release-quality-rubric:v1",
+            rubric_version="ANSWER_QUALITY_RUBRIC_v1",
+            evaluator_provider="independent-provider",
+            evaluator_model="independent-model",
+            scoring_policy_version="m27-independent-quality-scoring-policy/v1",
+            source_receipts_sha256="abc",
+            case_count_scored=237,
+            sampling_policy="all verified-answer rows",
+            per_case_scores_digest="digest",
         ),
     )
     streaming = evaluate_streaming_hard_gate(

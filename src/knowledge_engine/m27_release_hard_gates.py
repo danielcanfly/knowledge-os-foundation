@@ -106,6 +106,14 @@ class QualityScoreEvidence:
     evaluator_identity: str | None
     rubric_version: str | None
     artifact_version: str | None = None
+    evaluator_provider: str | None = None
+    evaluator_model: str | None = None
+    scoring_policy_version: str | None = None
+    source_receipts_sha256: str | None = None
+    source_receipts_match: bool = True
+    case_count_scored: int = 0
+    sampling_policy: str | None = None
+    per_case_scores_digest: str | None = None
     stale: bool = False
     notes: str = ""
 
@@ -133,6 +141,20 @@ def evaluate_quality_hard_gate(
         reasons.append("MISSING_EVALUATOR_IDENTITY")
     if not evidence.rubric_version:
         reasons.append("MISSING_RUBRIC_VERSION")
+    if evidence.score is not None and not evidence.evaluator_provider:
+        reasons.append("MISSING_EVALUATOR_PROVIDER")
+    if evidence.score is not None and not evidence.evaluator_model:
+        reasons.append("MISSING_EVALUATOR_MODEL")
+    if evidence.score is not None and not evidence.scoring_policy_version:
+        reasons.append("MISSING_SCORING_POLICY_VERSION")
+    if evidence.score is not None and evidence.case_count_scored <= 0:
+        reasons.append("NO_SEMANTIC_CASES_SCORED")
+    if evidence.score is not None and not evidence.sampling_policy:
+        reasons.append("MISSING_SAMPLING_POLICY")
+    if evidence.score is not None and not evidence.per_case_scores_digest:
+        reasons.append("MISSING_PER_CASE_SCORE_EVIDENCE")
+    if not evidence.source_receipts_match:
+        reasons.append("QUALITY_ARTIFACT_SOURCE_RECEIPTS_MISMATCH")
     if evidence.stale:
         reasons.append("STALE_QUALITY_ARTIFACT")
     if evidence.score is not None and float(evidence.score) < threshold:
@@ -145,10 +167,23 @@ def evaluate_quality_hard_gate(
         "evaluator_identity": evidence.evaluator_identity,
         "rubric_version": evidence.rubric_version,
         "artifact_version": evidence.artifact_version,
+        "evaluator_provider": evidence.evaluator_provider,
+        "evaluator_model": evidence.evaluator_model,
+        "scoring_policy_version": evidence.scoring_policy_version,
+        "source_receipts_sha256": evidence.source_receipts_sha256,
+        "source_receipts_match": evidence.source_receipts_match,
+        "case_count_scored": evidence.case_count_scored,
+        "sampling_policy": evidence.sampling_policy,
+        "per_case_scores_digest": evidence.per_case_scores_digest,
         "stale": evidence.stale,
         "independent_quality_score_available": evidence.score is not None
         and bool(evidence.evaluator_identity)
-        and bool(evidence.rubric_version),
+        and bool(evidence.rubric_version)
+        and bool(evidence.evaluator_provider)
+        and bool(evidence.evaluator_model)
+        and bool(evidence.scoring_policy_version)
+        and evidence.case_count_scored > 0
+        and evidence.source_receipts_match,
         "deterministic_admission_is_not_quality_score": True,
         "admission_receipts": receipt_checks,
         "passed": passed,
