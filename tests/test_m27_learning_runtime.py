@@ -221,8 +221,7 @@ def test_learning_modules_have_no_stage7_stage8_stage9_stage10_runtime_dependenc
         "m27_memory",
     )
     assert all(
-        not any(fragment in imported for fragment in forbidden_fragments)
-        for imported in imports
+        not any(fragment in imported for fragment in forbidden_fragments) for imported in imports
     )
 
 
@@ -249,7 +248,11 @@ def test_learning_modules_have_no_provider_or_backend_dependencies() -> None:
 def test_stage11_is_not_wired_into_existing_m27_runtime_modules() -> None:
     offenders: list[str] = []
     for path in sorted(SRC_ROOT.glob("m27_*.py")):
-        if path.name in {"m27_learning_contracts.py", "m27_learning_runtime.py"}:
+        if path.name in {
+            "m27_learning_contracts.py",
+            "m27_learning_runtime.py",
+            "m27_learning_meta_loop.py",
+        }:
             continue
         if "m27_learning" in path.read_text(encoding="utf-8"):
             offenders.append(path.name)

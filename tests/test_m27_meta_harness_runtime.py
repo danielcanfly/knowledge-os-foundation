@@ -341,7 +341,7 @@ def test_stage12_modules_have_no_filesystem_or_process_imports() -> None:
 def test_existing_m27_source_does_not_import_stage12() -> None:
     source_dir = _ROOT / "src/knowledge_engine"
     for path in source_dir.glob("m27_*.py"):
-        if path.name.startswith("m27_meta_harness"):
+        if path.name.startswith("m27_meta_harness") or path.name == "m27_learning_meta_loop.py":
             continue
         text = path.read_text(encoding="utf-8")
         assert "m27_meta_harness" not in text, path
