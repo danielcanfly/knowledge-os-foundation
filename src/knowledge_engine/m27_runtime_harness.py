@@ -34,6 +34,10 @@ from .m27_legacy_m26_adapters import (
     LegacyM26SemanticRoutingAdapter,
     LegacyM26VerifierAdapter,
 )
+from .m27_memory_activation import (
+    answer_with_auxiliary_memory,
+    read_auxiliary_memory_context,
+)
 from .m27_readonly_tools import (
     RuntimeProvider,
     runtime_budget_view,
@@ -89,6 +93,7 @@ class M27RuntimeHarnessResult:
     verification: Mapping[str, object] | None = None
     terminal_reason: str | None = None
     runtime_telemetry: Mapping[str, object] | None = None
+    auxiliary_memory_context: Mapping[str, object] | None = None
 
     def as_summary(self) -> dict[str, object]:
         return {
@@ -111,6 +116,11 @@ class M27RuntimeHarnessResult:
             "execution_rounds": list(self.execution_rounds),
             "terminal_reason": self.terminal_reason,
             "runtime_telemetry": dict(self.runtime_telemetry) if self.runtime_telemetry else None,
+            "auxiliary_memory_context": (
+                dict(self.auxiliary_memory_context)
+                if self.auxiliary_memory_context
+                else None
+            ),
         }
 
 
@@ -250,7 +260,7 @@ class M27RuntimeHarness:
             plan=plan,
         )
 
-        memory_ids, retained_count = self._memory_step(
+        memory_ids, retained_count, memory_context = self._memory_step(
             task=runtime_input.task,
             plan=plan,
             trace=trace,
@@ -266,6 +276,8 @@ class M27RuntimeHarness:
             "tool_records": [item.as_dict() for item in tool_records],
             "continuation": continuation.as_dict(),
             "memory_candidate_count": len(memory_ids),
+            "retained_memory_count": retained_count,
+            "auxiliary_memory_context": memory_context.as_dict(),
             "learning_proposal_count": len(learning_ids),
             "meta_candidate_count": len(meta_ids),
             "production_touched": False,
@@ -294,6 +306,7 @@ class M27RuntimeHarness:
             retained_memory_count=retained_count,
             learning_proposal_ids=learning_ids,
             meta_candidate_ids=meta_ids,
+            auxiliary_memory_context=memory_context.as_dict(),
         )
 
     def _run_executable(self, runtime_input: M27RuntimeHarnessInput) -> M27RuntimeHarnessResult:
@@ -366,7 +379,7 @@ class M27RuntimeHarness:
         workspace_id = WorkspaceId.from_safe_token(
             scope=WorkspaceScope.TASK, task_token=runtime_input.task.task_id
         )
-        memory_ids, retained_count = self._memory_step(
+        memory_ids, retained_count, memory_context = self._memory_step(
             task=runtime_input.task, plan=plan, trace=trace
         )
         learning_ids = self._learning_step(trace=trace, workspace_id=workspace_id, plan=plan)
@@ -395,10 +408,14 @@ class M27RuntimeHarness:
             learning_proposal_ids=learning_ids,
             meta_candidate_ids=meta_ids,
             execution_rounds=rounds,
-            answer=executed["answer"],
+            answer=answer_with_auxiliary_memory(
+                answer=dict(executed["answer"]),
+                memory_context=memory_context.auxiliary_context,
+            ),
             verification=executed["verification"],
             terminal_reason=str(executed["terminal_reason"]),
             runtime_telemetry=dict(executed["telemetry"]),
+            auxiliary_memory_context=memory_context.as_dict(),
         )
 
     def _memory_step(
@@ -407,10 +424,13 @@ class M27RuntimeHarness:
         task: M27RuntimeTask,
         plan: M27RuntimePlan,
         trace: DecisionTraceEvent,
-    ) -> tuple[tuple[str, ...], int]:
+    ):
+        memory_context = read_auxiliary_memory_context(
+            task=task,
+            memory_runtime=self._memory_runtime,
+        )
         if self._memory_runtime is None or not plan.memory_read_enabled:
-            return (), 0
-        retained = self._memory_runtime.list_retained_candidates(scope_token=task.task_id)
+            return (), memory_context.retained_count, memory_context
         candidate = self._memory_runtime.propose_candidate(
             memory_class="PROJECT",
             scope_token=task.task_id,
@@ -421,7 +441,7 @@ class M27RuntimeHarness:
             ),
             tags=("composition", "runtime"),
         )
-        return (candidate.memory_id.value,), len(retained)
+        return (candidate.memory_id.value,), memory_context.retained_count, memory_context
 
     def _learning_step(
         self,

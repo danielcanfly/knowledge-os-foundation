@@ -392,10 +392,15 @@ def test_memory_modules_have_no_workspace_mcp_skill_or_backend_import_dependency
 
 def test_memory_runtime_is_not_wired_into_existing_m27_modules() -> None:
     root = Path(__file__).resolve().parents[1] / "src" / "knowledge_engine"
+    allowed_memory_modules = {
+        "m27_memory_activation.py",
+        "m27_memory_contracts.py",
+        "m27_memory_runtime.py",
+    }
     existing = tuple(
         path
         for path in root.glob("m27_*.py")
-        if path.name not in {"m27_memory_contracts.py", "m27_memory_runtime.py"}
+        if path.name not in allowed_memory_modules
     )
 
     for path in existing:
