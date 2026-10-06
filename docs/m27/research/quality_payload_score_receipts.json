@@ -1,0 +1,3064 @@
+{
+  "aggregate_quality_score": 91.222,
+  "artifact_id": "m27-quality-payload-score-20261007",
+  "case_count_scored": 9,
+  "deterministic_admission_is_not_quality_score": true,
+  "eligible_verified_answer_row_count": 237,
+  "evaluator_identity": "repo-qualified-minimax-answer-quality-evaluator",
+  "evaluator_model": "MiniMax-M3",
+  "evaluator_provider": "minimax",
+  "evaluator_version": "aq-semantic-evaluator/v3",
+  "hard_gate_head": "e864417c2380f2ce8d6c24576fb129c37b95ccad",
+  "passed": true,
+  "payload_capture_label": "isolated quality-scoring payload capture; not admission authority",
+  "payload_records": [
+    {
+      "answer_payload": {
+        "answer_claims": [
+          {
+            "citation_ids": [
+              "claim_1_ref_1"
+            ],
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "claim_type": "EVIDENCE_FACT",
+            "facet_ids": [],
+            "source_identities": [
+              "source-graphology"
+            ],
+            "support_mode": "exact_quote",
+            "support_ref_count": 1,
+            "surface_text": "Graphology keeps and analyzes graph data."
+          }
+        ],
+        "answer_source": "provider_verified_runtime_bound_semantic_closure",
+        "answer_text": "Graphology keeps and analyzes graph data.",
+        "auxiliary_memory": {
+          "answer_overridden": false,
+          "authority": {
+            "can_override_answer": false,
+            "can_promote_to_knowledge": false,
+            "can_satisfy_evidence_requirements": false,
+            "citation_eligible": false,
+            "knowledge_authority": false,
+            "locator_eligible": false,
+            "production_write": false,
+            "release_eligible": false,
+            "source_identity_eligible": false,
+            "status": "AUXILIARY_CONTEXT_ONLY"
+          },
+          "memory_ids": [],
+          "retained_count": 0,
+          "used_for_authority": false
+        },
+        "citation_locator_valid": true,
+        "citations": [
+          {
+            "citation_id": "claim_1_ref_1",
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "exact_quote_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "release_id": "m27-prod-bridge-release",
+            "runtime_owned_locator": true,
+            "section_id": "Graphology#overview",
+            "source_artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_locator": "releases/m27-prod-bridge-release/artifacts/lexical-index.json#Graphology#overview",
+            "support_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875"
+          }
+        ],
+        "integrity": {
+          "citation_locator_valid": true,
+          "material_claim_support_verified": true,
+          "unsupported_accepted_claims": 0
+        },
+        "material_claim_support_verified": true,
+        "multi_evidence_verification": {
+          "bounded_repair_attempted": false,
+          "claim_count": 1,
+          "claim_evidence_subset_contract": {
+            "attempted": true,
+            "claim_count": 0,
+            "claim_traces": [],
+            "dropped_claim_count": 0,
+            "parse_ok": true,
+            "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+            "rejected_claim_count": 0,
+            "rejection_reasons": [],
+            "validated_claim_count": 0
+          },
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "deterministic_evidence_synthesis_used": false,
+          "distinct_source_count": 1,
+          "dropped_claim_count": 0,
+          "locator_validity": 1.0,
+          "missing_facets": [],
+          "natural_answer_fallback_used": false,
+          "partial_answer": false,
+          "provider_attempt_telemetry": [
+            {
+              "attempt": 1,
+              "call_class": "aq_semantic_closure",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 366,
+              "stop_reason": "",
+              "truncation_detected": false
+            },
+            {
+              "attempt": 2,
+              "call_class": "aq_claim_semantic_entailment",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 256,
+              "stop_reason": "",
+              "truncation_detected": false
+            }
+          ],
+          "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+          "provider_parse": {
+            "missing_keys": [],
+            "parse_subtype": "exact_json",
+            "unknown_keys": []
+          },
+          "provider_status": "answer_candidate",
+          "repair_exhausted": false,
+          "repair_kind": "NONE",
+          "repair_result": "not_needed",
+          "repair_succeeded": false,
+          "repair_trigger": [],
+          "repair_trigger_codes": [],
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "semantic_review": {
+            "claim_judgments": [
+              {
+                "claim_id": "claim_1",
+                "evidence_ids": [
+                  "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+                ],
+                "verdict": "ENTAILED"
+              }
+            ],
+            "schema_version": "m26-claim-entailment-review/v1",
+            "visible_coverage": {
+              "uncovered_assertions": [],
+              "verdict": "COVERED"
+            }
+          },
+          "single_primary_passage_used": false,
+          "support_precision": 1.0,
+          "support_ref_count": 1,
+          "unanswered_dimensions": [],
+          "unsupported_accepted_claims": 0,
+          "verification_failure_codes_by_attempt": []
+        },
+        "payg_equivalent_cost_usd": "0.00002",
+        "provider_call_count": 2,
+        "reason_codes": [],
+        "relationship_summary": {
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "intent_class": "direct_grounded_knowledge",
+          "missing_facets": [],
+          "relation": "null",
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "selected_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ],
+          "selected_graph_edge_ids": [],
+          "used_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ]
+        },
+        "repair_attempted": false,
+        "repair_exhausted": false,
+        "repair_kind": "NONE",
+        "repair_succeeded": false,
+        "repair_trigger_codes": [],
+        "safe_abstention": false,
+        "selected_evidence": [
+          {
+            "artifact_key": "releases/m27-prod-bridge-release/artifacts/lexical-index.json",
+            "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "audience": "internal",
+            "channels": [
+              "lexical",
+              "production_equivalent_bridge"
+            ],
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "passage_text": "Graphology stores graph data and supports graph analysis.",
+            "passage_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "relation_expansions": [],
+            "release_id": "m27-prod-bridge-release",
+            "retrieval_metadata": {
+              "bridge_fixture": true
+            },
+            "retrieved_at": "",
+            "section_id": "Graphology#overview",
+            "section_title": "Overview",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_uri_sha256": "45bcfd06eb0c4b7360b483261dda6845506a2c4868fe58f8a3c88002cd9b3281",
+            "title": "Graphology"
+          }
+        ],
+        "semantic_contract_fingerprint": "d3cfbc61e2d8343b85774c80d8fc3249e650793bf369361f08012d0fed3aefed",
+        "status": "owner_only_cited_answer",
+        "terminal_status": "answered",
+        "unsupported_accepted_claims": 0
+      },
+      "case_id": "F523-001-R01",
+      "category": "cited_answer",
+      "forensic_trace": {
+        "production_touched": false,
+        "runtime_status": "M27_RUNTIME_COMPOSED",
+        "runtime_telemetry": {
+          "budget_class": "HEALTHY",
+          "compiler_latency_ms": 0.333,
+          "compute_tier": "STANDARD",
+          "continuation_rounds": 0,
+          "cost_reason_code": "COST_UNAVAILABLE",
+          "estimated_cost_usd": null,
+          "feature_flags": {
+            "ISOLATED_EXECUTABLE_RUNTIME": true,
+            "M27_ENABLED": true,
+            "PRODUCTION_EQUIVALENT_EVIDENCE": true
+          },
+          "model_call_count": 2,
+          "model_latency_ms": 0.067,
+          "provider_call_count": 2,
+          "provider_latency_ms": 0.067,
+          "reason_codes": [
+            "TASK_KIND_KNOWLEDGE",
+            "TASK_PROFILE_GENERAL",
+            "KNOWLEDGE_SELECTED",
+            "DIRECT_KNOWLEDGE_STANDARD"
+          ],
+          "request_id": "request:fresh-smoke:quality:F523-001-R01",
+          "retrieval_evidence_count": 1,
+          "rounds": [
+            {
+              "budget_class": "HEALTHY",
+              "compiler_status": "COMPILED",
+              "compute_tier": "STANDARD",
+              "continuation_allowed": false,
+              "continuation_decision": "TERMINAL",
+              "continuation_reason": "INITIAL",
+              "cost_reason_code": "COST_UNAVAILABLE",
+              "estimated_cost_usd": null,
+              "evidence_delta": 1,
+              "model_call_count": 2,
+              "model_latency_ms": 0.067,
+              "provider_call_count": 2,
+              "provider_calls": [
+                {
+                  "call_class": "AQ_SEMANTIC_CLOSURE",
+                  "call_index": 1,
+                  "latency_ms": 0.035,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                },
+                {
+                  "call_class": "AQ_CLAIM_SEMANTIC_ENTAILMENT",
+                  "call_index": 2,
+                  "latency_ms": 0.032,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                }
+              ],
+              "provider_latency_ms": 0.067,
+              "retrieval_evidence_count": 1,
+              "round_index": 0,
+              "route": "SEMANTIC_CLOSURE",
+              "stage_latency_ms": {
+                "compiler_ms": 0.333,
+                "evidence_binding_ms": 0.088,
+                "provider_ms": 0.067,
+                "round_total_ms": 21.521,
+                "tool_ms": 0.034,
+                "verifier_ms": 20.96
+              },
+              "task_kind": "KNOWLEDGE",
+              "terminal_reason": "VERIFIED_CITED_ANSWER",
+              "tool_call_count": 1,
+              "tool_calls": [
+                "KNOWLEDGE.SEARCH"
+              ],
+              "verifier_latency_ms": 20.96,
+              "verifier_status": "OWNER_ONLY_CITED_ANSWER"
+            }
+          ],
+          "route": "SEMANTIC_CLOSURE",
+          "schema_version": "m27-runtime-telemetry/v1",
+          "task_id": "task:fresh-smoke:quality:F523-001-R01",
+          "task_kind": "KNOWLEDGE",
+          "terminal_reason": "VERIFIED_CITED_ANSWER",
+          "tool_call_count": 1,
+          "total_latency_ms": 26.571,
+          "verifier_latency_ms": 20.96
+        },
+        "terminal_reason": "VERIFIED_CITED_ANSWER"
+      },
+      "input_digest": "c41e2fb609a3dbf27498133591bc6a99d8f9fc301a7f8bdd4035f718a95ebcb7",
+      "question": "What does Graphology do for graph data?",
+      "source_case_id": "F523-001-R01"
+    },
+    {
+      "answer_payload": {
+        "answer_claims": [
+          {
+            "citation_ids": [
+              "claim_1_ref_1"
+            ],
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "claim_type": "EVIDENCE_FACT",
+            "facet_ids": [],
+            "source_identities": [
+              "source-graphology"
+            ],
+            "support_mode": "exact_quote",
+            "support_ref_count": 1,
+            "surface_text": "Graphology keeps and analyzes graph data."
+          }
+        ],
+        "answer_source": "provider_verified_runtime_bound_semantic_closure",
+        "answer_text": "Graphology keeps and analyzes graph data.",
+        "auxiliary_memory": {
+          "answer_overridden": false,
+          "authority": {
+            "can_override_answer": false,
+            "can_promote_to_knowledge": false,
+            "can_satisfy_evidence_requirements": false,
+            "citation_eligible": false,
+            "knowledge_authority": false,
+            "locator_eligible": false,
+            "production_write": false,
+            "release_eligible": false,
+            "source_identity_eligible": false,
+            "status": "AUXILIARY_CONTEXT_ONLY"
+          },
+          "memory_ids": [],
+          "retained_count": 0,
+          "used_for_authority": false
+        },
+        "citation_locator_valid": true,
+        "citations": [
+          {
+            "citation_id": "claim_1_ref_1",
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "exact_quote_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "release_id": "m27-prod-bridge-release",
+            "runtime_owned_locator": true,
+            "section_id": "Graphology#overview",
+            "source_artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_locator": "releases/m27-prod-bridge-release/artifacts/lexical-index.json#Graphology#overview",
+            "support_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875"
+          }
+        ],
+        "integrity": {
+          "citation_locator_valid": true,
+          "material_claim_support_verified": true,
+          "unsupported_accepted_claims": 0
+        },
+        "material_claim_support_verified": true,
+        "multi_evidence_verification": {
+          "bounded_repair_attempted": false,
+          "claim_count": 1,
+          "claim_evidence_subset_contract": {
+            "attempted": true,
+            "claim_count": 0,
+            "claim_traces": [],
+            "dropped_claim_count": 0,
+            "parse_ok": true,
+            "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+            "rejected_claim_count": 0,
+            "rejection_reasons": [],
+            "validated_claim_count": 0
+          },
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "deterministic_evidence_synthesis_used": false,
+          "distinct_source_count": 1,
+          "dropped_claim_count": 0,
+          "locator_validity": 1.0,
+          "missing_facets": [],
+          "natural_answer_fallback_used": false,
+          "partial_answer": false,
+          "provider_attempt_telemetry": [
+            {
+              "attempt": 1,
+              "call_class": "aq_semantic_closure",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 366,
+              "stop_reason": "",
+              "truncation_detected": false
+            },
+            {
+              "attempt": 2,
+              "call_class": "aq_claim_semantic_entailment",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 256,
+              "stop_reason": "",
+              "truncation_detected": false
+            }
+          ],
+          "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+          "provider_parse": {
+            "missing_keys": [],
+            "parse_subtype": "exact_json",
+            "unknown_keys": []
+          },
+          "provider_status": "answer_candidate",
+          "repair_exhausted": false,
+          "repair_kind": "NONE",
+          "repair_result": "not_needed",
+          "repair_succeeded": false,
+          "repair_trigger": [],
+          "repair_trigger_codes": [],
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "semantic_review": {
+            "claim_judgments": [
+              {
+                "claim_id": "claim_1",
+                "evidence_ids": [
+                  "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+                ],
+                "verdict": "ENTAILED"
+              }
+            ],
+            "schema_version": "m26-claim-entailment-review/v1",
+            "visible_coverage": {
+              "uncovered_assertions": [],
+              "verdict": "COVERED"
+            }
+          },
+          "single_primary_passage_used": false,
+          "support_precision": 1.0,
+          "support_ref_count": 1,
+          "unanswered_dimensions": [],
+          "unsupported_accepted_claims": 0,
+          "verification_failure_codes_by_attempt": []
+        },
+        "payg_equivalent_cost_usd": "0.00002",
+        "provider_call_count": 2,
+        "reason_codes": [],
+        "relationship_summary": {
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "intent_class": "direct_grounded_knowledge",
+          "missing_facets": [],
+          "relation": "null",
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "selected_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ],
+          "selected_graph_edge_ids": [],
+          "used_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ]
+        },
+        "repair_attempted": false,
+        "repair_exhausted": false,
+        "repair_kind": "NONE",
+        "repair_succeeded": false,
+        "repair_trigger_codes": [],
+        "safe_abstention": false,
+        "selected_evidence": [
+          {
+            "artifact_key": "releases/m27-prod-bridge-release/artifacts/lexical-index.json",
+            "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "audience": "internal",
+            "channels": [
+              "lexical",
+              "production_equivalent_bridge"
+            ],
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "passage_text": "Graphology stores graph data and supports graph analysis.",
+            "passage_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "relation_expansions": [],
+            "release_id": "m27-prod-bridge-release",
+            "retrieval_metadata": {
+              "bridge_fixture": true
+            },
+            "retrieved_at": "",
+            "section_id": "Graphology#overview",
+            "section_title": "Overview",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_uri_sha256": "45bcfd06eb0c4b7360b483261dda6845506a2c4868fe58f8a3c88002cd9b3281",
+            "title": "Graphology"
+          }
+        ],
+        "semantic_contract_fingerprint": "d3cfbc61e2d8343b85774c80d8fc3249e650793bf369361f08012d0fed3aefed",
+        "status": "owner_only_cited_answer",
+        "terminal_status": "answered",
+        "unsupported_accepted_claims": 0
+      },
+      "case_id": "F523-002-R02",
+      "category": "cited_answer",
+      "forensic_trace": {
+        "production_touched": false,
+        "runtime_status": "M27_RUNTIME_COMPOSED",
+        "runtime_telemetry": {
+          "budget_class": "HEALTHY",
+          "compiler_latency_ms": 0.272,
+          "compute_tier": "STANDARD",
+          "continuation_rounds": 0,
+          "cost_reason_code": "COST_UNAVAILABLE",
+          "estimated_cost_usd": null,
+          "feature_flags": {
+            "ISOLATED_EXECUTABLE_RUNTIME": true,
+            "M27_ENABLED": true,
+            "PRODUCTION_EQUIVALENT_EVIDENCE": true
+          },
+          "model_call_count": 2,
+          "model_latency_ms": 0.038,
+          "provider_call_count": 2,
+          "provider_latency_ms": 0.038,
+          "reason_codes": [
+            "TASK_KIND_KNOWLEDGE",
+            "TASK_PROFILE_GENERAL",
+            "KNOWLEDGE_SELECTED",
+            "DIRECT_KNOWLEDGE_STANDARD"
+          ],
+          "request_id": "request:fresh-smoke:quality:F523-002-R02",
+          "retrieval_evidence_count": 1,
+          "rounds": [
+            {
+              "budget_class": "HEALTHY",
+              "compiler_status": "COMPILED",
+              "compute_tier": "STANDARD",
+              "continuation_allowed": false,
+              "continuation_decision": "TERMINAL",
+              "continuation_reason": "INITIAL",
+              "cost_reason_code": "COST_UNAVAILABLE",
+              "estimated_cost_usd": null,
+              "evidence_delta": 1,
+              "model_call_count": 2,
+              "model_latency_ms": 0.038,
+              "provider_call_count": 2,
+              "provider_calls": [
+                {
+                  "call_class": "AQ_SEMANTIC_CLOSURE",
+                  "call_index": 1,
+                  "latency_ms": 0.012,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                },
+                {
+                  "call_class": "AQ_CLAIM_SEMANTIC_ENTAILMENT",
+                  "call_index": 2,
+                  "latency_ms": 0.026,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                }
+              ],
+              "provider_latency_ms": 0.038,
+              "retrieval_evidence_count": 1,
+              "round_index": 0,
+              "route": "SEMANTIC_CLOSURE",
+              "stage_latency_ms": {
+                "compiler_ms": 0.272,
+                "evidence_binding_ms": 0.078,
+                "provider_ms": 0.038,
+                "round_total_ms": 3.812,
+                "tool_ms": 0.029,
+                "verifier_ms": 3.375
+              },
+              "task_kind": "KNOWLEDGE",
+              "terminal_reason": "VERIFIED_CITED_ANSWER",
+              "tool_call_count": 1,
+              "tool_calls": [
+                "KNOWLEDGE.SEARCH"
+              ],
+              "verifier_latency_ms": 3.375,
+              "verifier_status": "OWNER_ONLY_CITED_ANSWER"
+            }
+          ],
+          "route": "SEMANTIC_CLOSURE",
+          "schema_version": "m27-runtime-telemetry/v1",
+          "task_id": "task:fresh-smoke:quality:F523-002-R02",
+          "task_kind": "KNOWLEDGE",
+          "terminal_reason": "VERIFIED_CITED_ANSWER",
+          "tool_call_count": 1,
+          "total_latency_ms": 7.916,
+          "verifier_latency_ms": 3.375
+        },
+        "terminal_reason": "VERIFIED_CITED_ANSWER"
+      },
+      "input_digest": "d886310c4fbc1a3c3097ccc6a8fbc70d04751e9df4cb1957cb80d61863ed7686",
+      "question": "How does Graphology help with graph analysis?",
+      "source_case_id": "F523-002-R02"
+    },
+    {
+      "answer_payload": {
+        "answer_claims": [
+          {
+            "citation_ids": [
+              "claim_1_ref_1"
+            ],
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "claim_type": "EVIDENCE_FACT",
+            "facet_ids": [],
+            "source_identities": [
+              "source-graphology"
+            ],
+            "support_mode": "exact_quote",
+            "support_ref_count": 1,
+            "surface_text": "Graphology keeps and analyzes graph data."
+          }
+        ],
+        "answer_source": "provider_verified_runtime_bound_semantic_closure",
+        "answer_text": "Graphology keeps and analyzes graph data.",
+        "auxiliary_memory": {
+          "answer_overridden": false,
+          "authority": {
+            "can_override_answer": false,
+            "can_promote_to_knowledge": false,
+            "can_satisfy_evidence_requirements": false,
+            "citation_eligible": false,
+            "knowledge_authority": false,
+            "locator_eligible": false,
+            "production_write": false,
+            "release_eligible": false,
+            "source_identity_eligible": false,
+            "status": "AUXILIARY_CONTEXT_ONLY"
+          },
+          "memory_ids": [],
+          "retained_count": 0,
+          "used_for_authority": false
+        },
+        "citation_locator_valid": true,
+        "citations": [
+          {
+            "citation_id": "claim_1_ref_1",
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "exact_quote_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "release_id": "m27-prod-bridge-release",
+            "runtime_owned_locator": true,
+            "section_id": "Graphology#overview",
+            "source_artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_locator": "releases/m27-prod-bridge-release/artifacts/lexical-index.json#Graphology#overview",
+            "support_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875"
+          }
+        ],
+        "integrity": {
+          "citation_locator_valid": true,
+          "material_claim_support_verified": true,
+          "unsupported_accepted_claims": 0
+        },
+        "material_claim_support_verified": true,
+        "multi_evidence_verification": {
+          "bounded_repair_attempted": false,
+          "claim_count": 1,
+          "claim_evidence_subset_contract": {
+            "attempted": true,
+            "claim_count": 0,
+            "claim_traces": [],
+            "dropped_claim_count": 0,
+            "parse_ok": true,
+            "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+            "rejected_claim_count": 0,
+            "rejection_reasons": [],
+            "validated_claim_count": 0
+          },
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "deterministic_evidence_synthesis_used": false,
+          "distinct_source_count": 1,
+          "dropped_claim_count": 0,
+          "locator_validity": 1.0,
+          "missing_facets": [],
+          "natural_answer_fallback_used": false,
+          "partial_answer": false,
+          "provider_attempt_telemetry": [
+            {
+              "attempt": 1,
+              "call_class": "aq_semantic_closure",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 366,
+              "stop_reason": "",
+              "truncation_detected": false
+            },
+            {
+              "attempt": 2,
+              "call_class": "aq_claim_semantic_entailment",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 256,
+              "stop_reason": "",
+              "truncation_detected": false
+            }
+          ],
+          "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+          "provider_parse": {
+            "missing_keys": [],
+            "parse_subtype": "exact_json",
+            "unknown_keys": []
+          },
+          "provider_status": "answer_candidate",
+          "repair_exhausted": false,
+          "repair_kind": "NONE",
+          "repair_result": "not_needed",
+          "repair_succeeded": false,
+          "repair_trigger": [],
+          "repair_trigger_codes": [],
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "semantic_review": {
+            "claim_judgments": [
+              {
+                "claim_id": "claim_1",
+                "evidence_ids": [
+                  "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+                ],
+                "verdict": "ENTAILED"
+              }
+            ],
+            "schema_version": "m26-claim-entailment-review/v1",
+            "visible_coverage": {
+              "uncovered_assertions": [],
+              "verdict": "COVERED"
+            }
+          },
+          "single_primary_passage_used": false,
+          "support_precision": 1.0,
+          "support_ref_count": 1,
+          "unanswered_dimensions": [],
+          "unsupported_accepted_claims": 0,
+          "verification_failure_codes_by_attempt": []
+        },
+        "payg_equivalent_cost_usd": "0.00002",
+        "provider_call_count": 2,
+        "reason_codes": [],
+        "relationship_summary": {
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "intent_class": "direct_grounded_knowledge",
+          "missing_facets": [],
+          "relation": "null",
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "selected_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ],
+          "selected_graph_edge_ids": [],
+          "used_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ]
+        },
+        "repair_attempted": false,
+        "repair_exhausted": false,
+        "repair_kind": "NONE",
+        "repair_succeeded": false,
+        "repair_trigger_codes": [],
+        "safe_abstention": false,
+        "selected_evidence": [
+          {
+            "artifact_key": "releases/m27-prod-bridge-release/artifacts/lexical-index.json",
+            "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "audience": "internal",
+            "channels": [
+              "lexical",
+              "production_equivalent_bridge"
+            ],
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "passage_text": "Graphology stores graph data and supports graph analysis.",
+            "passage_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "relation_expansions": [],
+            "release_id": "m27-prod-bridge-release",
+            "retrieval_metadata": {
+              "bridge_fixture": true
+            },
+            "retrieved_at": "",
+            "section_id": "Graphology#overview",
+            "section_title": "Overview",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_uri_sha256": "45bcfd06eb0c4b7360b483261dda6845506a2c4868fe58f8a3c88002cd9b3281",
+            "title": "Graphology"
+          }
+        ],
+        "semantic_contract_fingerprint": "d3cfbc61e2d8343b85774c80d8fc3249e650793bf369361f08012d0fed3aefed",
+        "status": "owner_only_cited_answer",
+        "terminal_status": "answered",
+        "unsupported_accepted_claims": 0
+      },
+      "case_id": "F523-003-R03",
+      "category": "cited_answer",
+      "forensic_trace": {
+        "production_touched": false,
+        "runtime_status": "M27_RUNTIME_COMPOSED",
+        "runtime_telemetry": {
+          "budget_class": "HEALTHY",
+          "compiler_latency_ms": 0.276,
+          "compute_tier": "STANDARD",
+          "continuation_rounds": 0,
+          "cost_reason_code": "COST_UNAVAILABLE",
+          "estimated_cost_usd": null,
+          "feature_flags": {
+            "ISOLATED_EXECUTABLE_RUNTIME": true,
+            "M27_ENABLED": true,
+            "PRODUCTION_EQUIVALENT_EVIDENCE": true
+          },
+          "model_call_count": 2,
+          "model_latency_ms": 0.038,
+          "provider_call_count": 2,
+          "provider_latency_ms": 0.038,
+          "reason_codes": [
+            "TASK_KIND_KNOWLEDGE",
+            "TASK_PROFILE_GENERAL",
+            "KNOWLEDGE_SELECTED",
+            "DIRECT_KNOWLEDGE_STANDARD"
+          ],
+          "request_id": "request:fresh-smoke:quality:F523-003-R03",
+          "retrieval_evidence_count": 1,
+          "rounds": [
+            {
+              "budget_class": "HEALTHY",
+              "compiler_status": "COMPILED",
+              "compute_tier": "STANDARD",
+              "continuation_allowed": false,
+              "continuation_decision": "TERMINAL",
+              "continuation_reason": "INITIAL",
+              "cost_reason_code": "COST_UNAVAILABLE",
+              "estimated_cost_usd": null,
+              "evidence_delta": 1,
+              "model_call_count": 2,
+              "model_latency_ms": 0.038,
+              "provider_call_count": 2,
+              "provider_calls": [
+                {
+                  "call_class": "AQ_SEMANTIC_CLOSURE",
+                  "call_index": 1,
+                  "latency_ms": 0.012,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                },
+                {
+                  "call_class": "AQ_CLAIM_SEMANTIC_ENTAILMENT",
+                  "call_index": 2,
+                  "latency_ms": 0.026,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                }
+              ],
+              "provider_latency_ms": 0.038,
+              "retrieval_evidence_count": 1,
+              "round_index": 0,
+              "route": "SEMANTIC_CLOSURE",
+              "stage_latency_ms": {
+                "compiler_ms": 0.276,
+                "evidence_binding_ms": 0.071,
+                "provider_ms": 0.038,
+                "round_total_ms": 3.685,
+                "tool_ms": 0.022,
+                "verifier_ms": 3.262
+              },
+              "task_kind": "KNOWLEDGE",
+              "terminal_reason": "VERIFIED_CITED_ANSWER",
+              "tool_call_count": 1,
+              "tool_calls": [
+                "KNOWLEDGE.SEARCH"
+              ],
+              "verifier_latency_ms": 3.262,
+              "verifier_status": "OWNER_ONLY_CITED_ANSWER"
+            }
+          ],
+          "route": "SEMANTIC_CLOSURE",
+          "schema_version": "m27-runtime-telemetry/v1",
+          "task_id": "task:fresh-smoke:quality:F523-003-R03",
+          "task_kind": "KNOWLEDGE",
+          "terminal_reason": "VERIFIED_CITED_ANSWER",
+          "tool_call_count": 1,
+          "total_latency_ms": 7.516,
+          "verifier_latency_ms": 3.262
+        },
+        "terminal_reason": "VERIFIED_CITED_ANSWER"
+      },
+      "input_digest": "ac2bf1efde097fb07827605b114a88d8752d99d5e87c0bfb0350da52eebe9127",
+      "question": "What storage role does Graphology provide?",
+      "source_case_id": "F523-003-R03"
+    },
+    {
+      "answer_payload": {
+        "answer_claims": [
+          {
+            "citation_ids": [
+              "claim_1_ref_1"
+            ],
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "claim_type": "EVIDENCE_FACT",
+            "facet_ids": [],
+            "source_identities": [
+              "source-graphology"
+            ],
+            "support_mode": "exact_quote",
+            "support_ref_count": 1,
+            "surface_text": "Graphology keeps and analyzes graph data."
+          }
+        ],
+        "answer_source": "provider_verified_runtime_bound_semantic_closure",
+        "answer_text": "Graphology keeps and analyzes graph data.",
+        "auxiliary_memory": {
+          "answer_overridden": false,
+          "authority": {
+            "can_override_answer": false,
+            "can_promote_to_knowledge": false,
+            "can_satisfy_evidence_requirements": false,
+            "citation_eligible": false,
+            "knowledge_authority": false,
+            "locator_eligible": false,
+            "production_write": false,
+            "release_eligible": false,
+            "source_identity_eligible": false,
+            "status": "AUXILIARY_CONTEXT_ONLY"
+          },
+          "memory_ids": [],
+          "retained_count": 0,
+          "used_for_authority": false
+        },
+        "citation_locator_valid": true,
+        "citations": [
+          {
+            "citation_id": "claim_1_ref_1",
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "exact_quote_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "release_id": "m27-prod-bridge-release",
+            "runtime_owned_locator": true,
+            "section_id": "Graphology#overview",
+            "source_artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_locator": "releases/m27-prod-bridge-release/artifacts/lexical-index.json#Graphology#overview",
+            "support_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875"
+          }
+        ],
+        "integrity": {
+          "citation_locator_valid": true,
+          "material_claim_support_verified": true,
+          "unsupported_accepted_claims": 0
+        },
+        "material_claim_support_verified": true,
+        "multi_evidence_verification": {
+          "bounded_repair_attempted": false,
+          "claim_count": 1,
+          "claim_evidence_subset_contract": {
+            "attempted": true,
+            "claim_count": 0,
+            "claim_traces": [],
+            "dropped_claim_count": 0,
+            "parse_ok": true,
+            "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+            "rejected_claim_count": 0,
+            "rejection_reasons": [],
+            "validated_claim_count": 0
+          },
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "deterministic_evidence_synthesis_used": false,
+          "distinct_source_count": 1,
+          "dropped_claim_count": 0,
+          "locator_validity": 1.0,
+          "missing_facets": [],
+          "natural_answer_fallback_used": false,
+          "partial_answer": false,
+          "provider_attempt_telemetry": [
+            {
+              "attempt": 1,
+              "call_class": "aq_semantic_closure",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 366,
+              "stop_reason": "",
+              "truncation_detected": false
+            },
+            {
+              "attempt": 2,
+              "call_class": "aq_claim_semantic_entailment",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 256,
+              "stop_reason": "",
+              "truncation_detected": false
+            }
+          ],
+          "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+          "provider_parse": {
+            "missing_keys": [],
+            "parse_subtype": "exact_json",
+            "unknown_keys": []
+          },
+          "provider_status": "answer_candidate",
+          "repair_exhausted": false,
+          "repair_kind": "NONE",
+          "repair_result": "not_needed",
+          "repair_succeeded": false,
+          "repair_trigger": [],
+          "repair_trigger_codes": [],
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "semantic_review": {
+            "claim_judgments": [
+              {
+                "claim_id": "claim_1",
+                "evidence_ids": [
+                  "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+                ],
+                "verdict": "ENTAILED"
+              }
+            ],
+            "schema_version": "m26-claim-entailment-review/v1",
+            "visible_coverage": {
+              "uncovered_assertions": [],
+              "verdict": "COVERED"
+            }
+          },
+          "single_primary_passage_used": false,
+          "support_precision": 1.0,
+          "support_ref_count": 1,
+          "unanswered_dimensions": [],
+          "unsupported_accepted_claims": 0,
+          "verification_failure_codes_by_attempt": []
+        },
+        "payg_equivalent_cost_usd": "0.00002",
+        "provider_call_count": 2,
+        "reason_codes": [],
+        "relationship_summary": {
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "intent_class": "direct_grounded_knowledge",
+          "missing_facets": [],
+          "relation": "null",
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "selected_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ],
+          "selected_graph_edge_ids": [],
+          "used_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ]
+        },
+        "repair_attempted": false,
+        "repair_exhausted": false,
+        "repair_kind": "NONE",
+        "repair_succeeded": false,
+        "repair_trigger_codes": [],
+        "safe_abstention": false,
+        "selected_evidence": [
+          {
+            "artifact_key": "releases/m27-prod-bridge-release/artifacts/lexical-index.json",
+            "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "audience": "internal",
+            "channels": [
+              "lexical",
+              "production_equivalent_bridge"
+            ],
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "passage_text": "Graphology stores graph data and supports graph analysis.",
+            "passage_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "relation_expansions": [],
+            "release_id": "m27-prod-bridge-release",
+            "retrieval_metadata": {
+              "bridge_fixture": true
+            },
+            "retrieved_at": "",
+            "section_id": "Graphology#overview",
+            "section_title": "Overview",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_uri_sha256": "45bcfd06eb0c4b7360b483261dda6845506a2c4868fe58f8a3c88002cd9b3281",
+            "title": "Graphology"
+          }
+        ],
+        "semantic_contract_fingerprint": "d3cfbc61e2d8343b85774c80d8fc3249e650793bf369361f08012d0fed3aefed",
+        "status": "owner_only_cited_answer",
+        "terminal_status": "answered",
+        "unsupported_accepted_claims": 0
+      },
+      "case_id": "F523-004-R04",
+      "category": "multilingual",
+      "forensic_trace": {
+        "production_touched": false,
+        "runtime_status": "M27_RUNTIME_COMPOSED",
+        "runtime_telemetry": {
+          "budget_class": "HEALTHY",
+          "compiler_latency_ms": 0.276,
+          "compute_tier": "STANDARD",
+          "continuation_rounds": 0,
+          "cost_reason_code": "COST_UNAVAILABLE",
+          "estimated_cost_usd": null,
+          "feature_flags": {
+            "ISOLATED_EXECUTABLE_RUNTIME": true,
+            "M27_ENABLED": true,
+            "PRODUCTION_EQUIVALENT_EVIDENCE": true
+          },
+          "model_call_count": 2,
+          "model_latency_ms": 0.055,
+          "provider_call_count": 2,
+          "provider_latency_ms": 0.055,
+          "reason_codes": [
+            "TASK_KIND_KNOWLEDGE",
+            "TASK_PROFILE_GENERAL",
+            "KNOWLEDGE_SELECTED",
+            "DIRECT_KNOWLEDGE_STANDARD"
+          ],
+          "request_id": "request:fresh-smoke:quality:F523-004-R04",
+          "retrieval_evidence_count": 1,
+          "rounds": [
+            {
+              "budget_class": "HEALTHY",
+              "compiler_status": "COMPILED",
+              "compute_tier": "STANDARD",
+              "continuation_allowed": false,
+              "continuation_decision": "TERMINAL",
+              "continuation_reason": "INITIAL",
+              "cost_reason_code": "COST_UNAVAILABLE",
+              "estimated_cost_usd": null,
+              "evidence_delta": 1,
+              "model_call_count": 2,
+              "model_latency_ms": 0.055,
+              "provider_call_count": 2,
+              "provider_calls": [
+                {
+                  "call_class": "AQ_SEMANTIC_CLOSURE",
+                  "call_index": 1,
+                  "latency_ms": 0.013,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                },
+                {
+                  "call_class": "AQ_CLAIM_SEMANTIC_ENTAILMENT",
+                  "call_index": 2,
+                  "latency_ms": 0.042,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                }
+              ],
+              "provider_latency_ms": 0.055,
+              "retrieval_evidence_count": 1,
+              "round_index": 0,
+              "route": "SEMANTIC_CLOSURE",
+              "stage_latency_ms": {
+                "compiler_ms": 0.276,
+                "evidence_binding_ms": 0.072,
+                "provider_ms": 0.055,
+                "round_total_ms": 4.059,
+                "tool_ms": 0.023,
+                "verifier_ms": 3.614
+              },
+              "task_kind": "KNOWLEDGE",
+              "terminal_reason": "VERIFIED_CITED_ANSWER",
+              "tool_call_count": 1,
+              "tool_calls": [
+                "KNOWLEDGE.SEARCH"
+              ],
+              "verifier_latency_ms": 3.614,
+              "verifier_status": "OWNER_ONLY_CITED_ANSWER"
+            }
+          ],
+          "route": "SEMANTIC_CLOSURE",
+          "schema_version": "m27-runtime-telemetry/v1",
+          "task_id": "task:fresh-smoke:quality:F523-004-R04",
+          "task_kind": "KNOWLEDGE",
+          "terminal_reason": "VERIFIED_CITED_ANSWER",
+          "tool_call_count": 1,
+          "total_latency_ms": 7.843,
+          "verifier_latency_ms": 3.614
+        },
+        "terminal_reason": "VERIFIED_CITED_ANSWER"
+      },
+      "input_digest": "de14f57d744bfeb403a2e315b38854db21d7fbaf5151feb98caaf29362ff90d3",
+      "question": "Graphology 對 graph data 的用途是什麼？",
+      "source_case_id": "F523-004-R04"
+    },
+    {
+      "answer_payload": {
+        "answer_claims": [
+          {
+            "citation_ids": [
+              "claim_1_ref_1"
+            ],
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "claim_type": "EVIDENCE_FACT",
+            "facet_ids": [],
+            "source_identities": [
+              "source-graphology"
+            ],
+            "support_mode": "exact_quote",
+            "support_ref_count": 1,
+            "surface_text": "Graphology keeps and analyzes graph data."
+          }
+        ],
+        "answer_source": "provider_verified_runtime_bound_semantic_closure",
+        "answer_text": "Graphology keeps and analyzes graph data.",
+        "auxiliary_memory": {
+          "answer_overridden": false,
+          "authority": {
+            "can_override_answer": false,
+            "can_promote_to_knowledge": false,
+            "can_satisfy_evidence_requirements": false,
+            "citation_eligible": false,
+            "knowledge_authority": false,
+            "locator_eligible": false,
+            "production_write": false,
+            "release_eligible": false,
+            "source_identity_eligible": false,
+            "status": "AUXILIARY_CONTEXT_ONLY"
+          },
+          "memory_ids": [],
+          "retained_count": 0,
+          "used_for_authority": false
+        },
+        "citation_locator_valid": true,
+        "citations": [
+          {
+            "citation_id": "claim_1_ref_1",
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "exact_quote_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "release_id": "m27-prod-bridge-release",
+            "runtime_owned_locator": true,
+            "section_id": "Graphology#overview",
+            "source_artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_locator": "releases/m27-prod-bridge-release/artifacts/lexical-index.json#Graphology#overview",
+            "support_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875"
+          }
+        ],
+        "integrity": {
+          "citation_locator_valid": true,
+          "material_claim_support_verified": true,
+          "unsupported_accepted_claims": 0
+        },
+        "material_claim_support_verified": true,
+        "multi_evidence_verification": {
+          "bounded_repair_attempted": false,
+          "claim_count": 1,
+          "claim_evidence_subset_contract": {
+            "attempted": true,
+            "claim_count": 0,
+            "claim_traces": [],
+            "dropped_claim_count": 0,
+            "parse_ok": true,
+            "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+            "rejected_claim_count": 0,
+            "rejection_reasons": [],
+            "validated_claim_count": 0
+          },
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "deterministic_evidence_synthesis_used": false,
+          "distinct_source_count": 1,
+          "dropped_claim_count": 0,
+          "locator_validity": 1.0,
+          "missing_facets": [],
+          "natural_answer_fallback_used": false,
+          "partial_answer": false,
+          "provider_attempt_telemetry": [
+            {
+              "attempt": 1,
+              "call_class": "aq_semantic_closure",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 366,
+              "stop_reason": "",
+              "truncation_detected": false
+            },
+            {
+              "attempt": 2,
+              "call_class": "aq_claim_semantic_entailment",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 256,
+              "stop_reason": "",
+              "truncation_detected": false
+            }
+          ],
+          "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+          "provider_parse": {
+            "missing_keys": [],
+            "parse_subtype": "exact_json",
+            "unknown_keys": []
+          },
+          "provider_status": "answer_candidate",
+          "repair_exhausted": false,
+          "repair_kind": "NONE",
+          "repair_result": "not_needed",
+          "repair_succeeded": false,
+          "repair_trigger": [],
+          "repair_trigger_codes": [],
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "semantic_review": {
+            "claim_judgments": [
+              {
+                "claim_id": "claim_1",
+                "evidence_ids": [
+                  "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+                ],
+                "verdict": "ENTAILED"
+              }
+            ],
+            "schema_version": "m26-claim-entailment-review/v1",
+            "visible_coverage": {
+              "uncovered_assertions": [],
+              "verdict": "COVERED"
+            }
+          },
+          "single_primary_passage_used": false,
+          "support_precision": 1.0,
+          "support_ref_count": 1,
+          "unanswered_dimensions": [],
+          "unsupported_accepted_claims": 0,
+          "verification_failure_codes_by_attempt": []
+        },
+        "payg_equivalent_cost_usd": "0.00002",
+        "provider_call_count": 2,
+        "reason_codes": [],
+        "relationship_summary": {
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "intent_class": "direct_grounded_knowledge",
+          "missing_facets": [],
+          "relation": "null",
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "selected_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ],
+          "selected_graph_edge_ids": [],
+          "used_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ]
+        },
+        "repair_attempted": false,
+        "repair_exhausted": false,
+        "repair_kind": "NONE",
+        "repair_succeeded": false,
+        "repair_trigger_codes": [],
+        "safe_abstention": false,
+        "selected_evidence": [
+          {
+            "artifact_key": "releases/m27-prod-bridge-release/artifacts/lexical-index.json",
+            "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "audience": "internal",
+            "channels": [
+              "lexical",
+              "production_equivalent_bridge"
+            ],
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "passage_text": "Graphology stores graph data and supports graph analysis.",
+            "passage_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "relation_expansions": [],
+            "release_id": "m27-prod-bridge-release",
+            "retrieval_metadata": {
+              "bridge_fixture": true
+            },
+            "retrieved_at": "",
+            "section_id": "Graphology#overview",
+            "section_title": "Overview",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_uri_sha256": "45bcfd06eb0c4b7360b483261dda6845506a2c4868fe58f8a3c88002cd9b3281",
+            "title": "Graphology"
+          }
+        ],
+        "semantic_contract_fingerprint": "d3cfbc61e2d8343b85774c80d8fc3249e650793bf369361f08012d0fed3aefed",
+        "status": "owner_only_cited_answer",
+        "terminal_status": "answered",
+        "unsupported_accepted_claims": 0
+      },
+      "case_id": "F523-005-R05",
+      "category": "multilingual",
+      "forensic_trace": {
+        "production_touched": false,
+        "runtime_status": "M27_RUNTIME_COMPOSED",
+        "runtime_telemetry": {
+          "budget_class": "HEALTHY",
+          "compiler_latency_ms": 0.259,
+          "compute_tier": "STANDARD",
+          "continuation_rounds": 0,
+          "cost_reason_code": "COST_UNAVAILABLE",
+          "estimated_cost_usd": null,
+          "feature_flags": {
+            "ISOLATED_EXECUTABLE_RUNTIME": true,
+            "M27_ENABLED": true,
+            "PRODUCTION_EQUIVALENT_EVIDENCE": true
+          },
+          "model_call_count": 2,
+          "model_latency_ms": 0.041,
+          "provider_call_count": 2,
+          "provider_latency_ms": 0.041,
+          "reason_codes": [
+            "TASK_KIND_KNOWLEDGE",
+            "TASK_PROFILE_GENERAL",
+            "KNOWLEDGE_SELECTED",
+            "DIRECT_KNOWLEDGE_STANDARD"
+          ],
+          "request_id": "request:fresh-smoke:quality:F523-005-R05",
+          "retrieval_evidence_count": 1,
+          "rounds": [
+            {
+              "budget_class": "HEALTHY",
+              "compiler_status": "COMPILED",
+              "compute_tier": "STANDARD",
+              "continuation_allowed": false,
+              "continuation_decision": "TERMINAL",
+              "continuation_reason": "INITIAL",
+              "cost_reason_code": "COST_UNAVAILABLE",
+              "estimated_cost_usd": null,
+              "evidence_delta": 1,
+              "model_call_count": 2,
+              "model_latency_ms": 0.041,
+              "provider_call_count": 2,
+              "provider_calls": [
+                {
+                  "call_class": "AQ_SEMANTIC_CLOSURE",
+                  "call_index": 1,
+                  "latency_ms": 0.012,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                },
+                {
+                  "call_class": "AQ_CLAIM_SEMANTIC_ENTAILMENT",
+                  "call_index": 2,
+                  "latency_ms": 0.029,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                }
+              ],
+              "provider_latency_ms": 0.041,
+              "retrieval_evidence_count": 1,
+              "round_index": 0,
+              "route": "SEMANTIC_CLOSURE",
+              "stage_latency_ms": {
+                "compiler_ms": 0.259,
+                "evidence_binding_ms": 0.073,
+                "provider_ms": 0.041,
+                "round_total_ms": 3.892,
+                "tool_ms": 0.022,
+                "verifier_ms": 3.48
+              },
+              "task_kind": "KNOWLEDGE",
+              "terminal_reason": "VERIFIED_CITED_ANSWER",
+              "tool_call_count": 1,
+              "tool_calls": [
+                "KNOWLEDGE.SEARCH"
+              ],
+              "verifier_latency_ms": 3.48,
+              "verifier_status": "OWNER_ONLY_CITED_ANSWER"
+            }
+          ],
+          "route": "SEMANTIC_CLOSURE",
+          "schema_version": "m27-runtime-telemetry/v1",
+          "task_id": "task:fresh-smoke:quality:F523-005-R05",
+          "task_kind": "KNOWLEDGE",
+          "terminal_reason": "VERIFIED_CITED_ANSWER",
+          "tool_call_count": 1,
+          "total_latency_ms": 7.505,
+          "verifier_latency_ms": 3.48
+        },
+        "terminal_reason": "VERIFIED_CITED_ANSWER"
+      },
+      "input_digest": "3941f4e8cdf78ec0946a736cc3007cca77ed51718b112f49274f7f6afb23e04a",
+      "question": "請只根據證據說明 Graphology 的用途。",
+      "source_case_id": "F523-005-R05"
+    },
+    {
+      "answer_payload": {
+        "answer_claims": [
+          {
+            "citation_ids": [
+              "claim_1_ref_1"
+            ],
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "claim_type": "EVIDENCE_FACT",
+            "facet_ids": [],
+            "source_identities": [
+              "source-graphology"
+            ],
+            "support_mode": "exact_quote",
+            "support_ref_count": 1,
+            "surface_text": "Graphology keeps and analyzes graph data."
+          }
+        ],
+        "answer_source": "provider_verified_runtime_bound_semantic_closure",
+        "answer_text": "Graphology keeps and analyzes graph data.",
+        "auxiliary_memory": {
+          "answer_overridden": false,
+          "authority": {
+            "can_override_answer": false,
+            "can_promote_to_knowledge": false,
+            "can_satisfy_evidence_requirements": false,
+            "citation_eligible": false,
+            "knowledge_authority": false,
+            "locator_eligible": false,
+            "production_write": false,
+            "release_eligible": false,
+            "source_identity_eligible": false,
+            "status": "AUXILIARY_CONTEXT_ONLY"
+          },
+          "memory_ids": [],
+          "retained_count": 0,
+          "used_for_authority": false
+        },
+        "citation_locator_valid": true,
+        "citations": [
+          {
+            "citation_id": "claim_1_ref_1",
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "exact_quote_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "release_id": "m27-prod-bridge-release",
+            "runtime_owned_locator": true,
+            "section_id": "Graphology#overview",
+            "source_artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_locator": "releases/m27-prod-bridge-release/artifacts/lexical-index.json#Graphology#overview",
+            "support_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875"
+          }
+        ],
+        "integrity": {
+          "citation_locator_valid": true,
+          "material_claim_support_verified": true,
+          "unsupported_accepted_claims": 0
+        },
+        "material_claim_support_verified": true,
+        "multi_evidence_verification": {
+          "bounded_repair_attempted": false,
+          "claim_count": 1,
+          "claim_evidence_subset_contract": {
+            "attempted": true,
+            "claim_count": 0,
+            "claim_traces": [],
+            "dropped_claim_count": 0,
+            "parse_ok": true,
+            "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+            "rejected_claim_count": 0,
+            "rejection_reasons": [],
+            "validated_claim_count": 0
+          },
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "deterministic_evidence_synthesis_used": false,
+          "distinct_source_count": 1,
+          "dropped_claim_count": 0,
+          "locator_validity": 1.0,
+          "missing_facets": [],
+          "natural_answer_fallback_used": false,
+          "partial_answer": false,
+          "provider_attempt_telemetry": [
+            {
+              "attempt": 1,
+              "call_class": "aq_semantic_closure",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 366,
+              "stop_reason": "",
+              "truncation_detected": false
+            },
+            {
+              "attempt": 2,
+              "call_class": "aq_claim_semantic_entailment",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 256,
+              "stop_reason": "",
+              "truncation_detected": false
+            }
+          ],
+          "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+          "provider_parse": {
+            "missing_keys": [],
+            "parse_subtype": "exact_json",
+            "unknown_keys": []
+          },
+          "provider_status": "answer_candidate",
+          "repair_exhausted": false,
+          "repair_kind": "NONE",
+          "repair_result": "not_needed",
+          "repair_succeeded": false,
+          "repair_trigger": [],
+          "repair_trigger_codes": [],
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "semantic_review": {
+            "claim_judgments": [
+              {
+                "claim_id": "claim_1",
+                "evidence_ids": [
+                  "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+                ],
+                "verdict": "ENTAILED"
+              }
+            ],
+            "schema_version": "m26-claim-entailment-review/v1",
+            "visible_coverage": {
+              "uncovered_assertions": [],
+              "verdict": "COVERED"
+            }
+          },
+          "single_primary_passage_used": false,
+          "support_precision": 1.0,
+          "support_ref_count": 1,
+          "unanswered_dimensions": [],
+          "unsupported_accepted_claims": 0,
+          "verification_failure_codes_by_attempt": []
+        },
+        "payg_equivalent_cost_usd": "0.00002",
+        "provider_call_count": 2,
+        "reason_codes": [],
+        "relationship_summary": {
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "intent_class": "direct_grounded_knowledge",
+          "missing_facets": [],
+          "relation": "null",
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "selected_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ],
+          "selected_graph_edge_ids": [],
+          "used_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ]
+        },
+        "repair_attempted": false,
+        "repair_exhausted": false,
+        "repair_kind": "NONE",
+        "repair_succeeded": false,
+        "repair_trigger_codes": [],
+        "safe_abstention": false,
+        "selected_evidence": [
+          {
+            "artifact_key": "releases/m27-prod-bridge-release/artifacts/lexical-index.json",
+            "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "audience": "internal",
+            "channels": [
+              "lexical",
+              "production_equivalent_bridge"
+            ],
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "passage_text": "Graphology stores graph data and supports graph analysis.",
+            "passage_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "relation_expansions": [],
+            "release_id": "m27-prod-bridge-release",
+            "retrieval_metadata": {
+              "bridge_fixture": true
+            },
+            "retrieved_at": "",
+            "section_id": "Graphology#overview",
+            "section_title": "Overview",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_uri_sha256": "45bcfd06eb0c4b7360b483261dda6845506a2c4868fe58f8a3c88002cd9b3281",
+            "title": "Graphology"
+          }
+        ],
+        "semantic_contract_fingerprint": "d3cfbc61e2d8343b85774c80d8fc3249e650793bf369361f08012d0fed3aefed",
+        "status": "owner_only_cited_answer",
+        "terminal_status": "answered",
+        "unsupported_accepted_claims": 0
+      },
+      "case_id": "F523-006-R06",
+      "category": "retrieval_hard",
+      "forensic_trace": {
+        "production_touched": false,
+        "runtime_status": "M27_RUNTIME_COMPOSED",
+        "runtime_telemetry": {
+          "budget_class": "HEALTHY",
+          "compiler_latency_ms": 0.247,
+          "compute_tier": "STANDARD",
+          "continuation_rounds": 0,
+          "cost_reason_code": "COST_UNAVAILABLE",
+          "estimated_cost_usd": null,
+          "feature_flags": {
+            "ISOLATED_EXECUTABLE_RUNTIME": true,
+            "M27_ENABLED": true,
+            "PRODUCTION_EQUIVALENT_EVIDENCE": true
+          },
+          "model_call_count": 2,
+          "model_latency_ms": 0.035,
+          "provider_call_count": 2,
+          "provider_latency_ms": 0.035,
+          "reason_codes": [
+            "TASK_KIND_KNOWLEDGE",
+            "TASK_PROFILE_GENERAL",
+            "KNOWLEDGE_SELECTED",
+            "DIRECT_KNOWLEDGE_STANDARD"
+          ],
+          "request_id": "request:fresh-smoke:quality:F523-006-R06",
+          "retrieval_evidence_count": 1,
+          "rounds": [
+            {
+              "budget_class": "HEALTHY",
+              "compiler_status": "COMPILED",
+              "compute_tier": "STANDARD",
+              "continuation_allowed": false,
+              "continuation_decision": "TERMINAL",
+              "continuation_reason": "INITIAL",
+              "cost_reason_code": "COST_UNAVAILABLE",
+              "estimated_cost_usd": null,
+              "evidence_delta": 1,
+              "model_call_count": 2,
+              "model_latency_ms": 0.035,
+              "provider_call_count": 2,
+              "provider_calls": [
+                {
+                  "call_class": "AQ_SEMANTIC_CLOSURE",
+                  "call_index": 1,
+                  "latency_ms": 0.011,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                },
+                {
+                  "call_class": "AQ_CLAIM_SEMANTIC_ENTAILMENT",
+                  "call_index": 2,
+                  "latency_ms": 0.024,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                }
+              ],
+              "provider_latency_ms": 0.035,
+              "retrieval_evidence_count": 1,
+              "round_index": 0,
+              "route": "SEMANTIC_CLOSURE",
+              "stage_latency_ms": {
+                "compiler_ms": 0.247,
+                "evidence_binding_ms": 0.068,
+                "provider_ms": 0.035,
+                "round_total_ms": 28.671,
+                "tool_ms": 0.019,
+                "verifier_ms": 28.286
+              },
+              "task_kind": "KNOWLEDGE",
+              "terminal_reason": "VERIFIED_CITED_ANSWER",
+              "tool_call_count": 1,
+              "tool_calls": [
+                "KNOWLEDGE.SEARCH"
+              ],
+              "verifier_latency_ms": 28.286,
+              "verifier_status": "OWNER_ONLY_CITED_ANSWER"
+            }
+          ],
+          "route": "SEMANTIC_CLOSURE",
+          "schema_version": "m27-runtime-telemetry/v1",
+          "task_id": "task:fresh-smoke:quality:F523-006-R06",
+          "task_kind": "KNOWLEDGE",
+          "terminal_reason": "VERIFIED_CITED_ANSWER",
+          "tool_call_count": 1,
+          "total_latency_ms": 32.407,
+          "verifier_latency_ms": 28.286
+        },
+        "terminal_reason": "VERIFIED_CITED_ANSWER"
+      },
+      "input_digest": "d91850672d4c0fb2ca3b50b61960c22ff159a70d51ef69394095c2111d815ce2",
+      "question": "When evidence is bound, what does Graphology do?",
+      "source_case_id": "F523-006-R06"
+    },
+    {
+      "answer_payload": {
+        "answer_claims": [
+          {
+            "citation_ids": [
+              "claim_1_ref_1"
+            ],
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "claim_type": "EVIDENCE_FACT",
+            "facet_ids": [],
+            "source_identities": [
+              "source-graphology"
+            ],
+            "support_mode": "exact_quote",
+            "support_ref_count": 1,
+            "surface_text": "Graphology keeps and analyzes graph data."
+          }
+        ],
+        "answer_source": "provider_verified_runtime_bound_semantic_closure",
+        "answer_text": "Graphology keeps and analyzes graph data.",
+        "auxiliary_memory": {
+          "answer_overridden": false,
+          "authority": {
+            "can_override_answer": false,
+            "can_promote_to_knowledge": false,
+            "can_satisfy_evidence_requirements": false,
+            "citation_eligible": false,
+            "knowledge_authority": false,
+            "locator_eligible": false,
+            "production_write": false,
+            "release_eligible": false,
+            "source_identity_eligible": false,
+            "status": "AUXILIARY_CONTEXT_ONLY"
+          },
+          "memory_ids": [],
+          "retained_count": 0,
+          "used_for_authority": false
+        },
+        "citation_locator_valid": true,
+        "citations": [
+          {
+            "citation_id": "claim_1_ref_1",
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "exact_quote_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "release_id": "m27-prod-bridge-release",
+            "runtime_owned_locator": true,
+            "section_id": "Graphology#overview",
+            "source_artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_locator": "releases/m27-prod-bridge-release/artifacts/lexical-index.json#Graphology#overview",
+            "support_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875"
+          }
+        ],
+        "integrity": {
+          "citation_locator_valid": true,
+          "material_claim_support_verified": true,
+          "unsupported_accepted_claims": 0
+        },
+        "material_claim_support_verified": true,
+        "multi_evidence_verification": {
+          "bounded_repair_attempted": false,
+          "claim_count": 1,
+          "claim_evidence_subset_contract": {
+            "attempted": true,
+            "claim_count": 0,
+            "claim_traces": [],
+            "dropped_claim_count": 0,
+            "parse_ok": true,
+            "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+            "rejected_claim_count": 0,
+            "rejection_reasons": [],
+            "validated_claim_count": 0
+          },
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "deterministic_evidence_synthesis_used": false,
+          "distinct_source_count": 1,
+          "dropped_claim_count": 0,
+          "locator_validity": 1.0,
+          "missing_facets": [],
+          "natural_answer_fallback_used": false,
+          "partial_answer": false,
+          "provider_attempt_telemetry": [
+            {
+              "attempt": 1,
+              "call_class": "aq_semantic_closure",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 366,
+              "stop_reason": "",
+              "truncation_detected": false
+            },
+            {
+              "attempt": 2,
+              "call_class": "aq_claim_semantic_entailment",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 256,
+              "stop_reason": "",
+              "truncation_detected": false
+            }
+          ],
+          "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+          "provider_parse": {
+            "missing_keys": [],
+            "parse_subtype": "exact_json",
+            "unknown_keys": []
+          },
+          "provider_status": "answer_candidate",
+          "repair_exhausted": false,
+          "repair_kind": "NONE",
+          "repair_result": "not_needed",
+          "repair_succeeded": false,
+          "repair_trigger": [],
+          "repair_trigger_codes": [],
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "semantic_review": {
+            "claim_judgments": [
+              {
+                "claim_id": "claim_1",
+                "evidence_ids": [
+                  "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+                ],
+                "verdict": "ENTAILED"
+              }
+            ],
+            "schema_version": "m26-claim-entailment-review/v1",
+            "visible_coverage": {
+              "uncovered_assertions": [],
+              "verdict": "COVERED"
+            }
+          },
+          "single_primary_passage_used": false,
+          "support_precision": 1.0,
+          "support_ref_count": 1,
+          "unanswered_dimensions": [],
+          "unsupported_accepted_claims": 0,
+          "verification_failure_codes_by_attempt": []
+        },
+        "payg_equivalent_cost_usd": "0.00002",
+        "provider_call_count": 2,
+        "reason_codes": [],
+        "relationship_summary": {
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "intent_class": "direct_grounded_knowledge",
+          "missing_facets": [],
+          "relation": "null",
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "selected_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ],
+          "selected_graph_edge_ids": [],
+          "used_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ]
+        },
+        "repair_attempted": false,
+        "repair_exhausted": false,
+        "repair_kind": "NONE",
+        "repair_succeeded": false,
+        "repair_trigger_codes": [],
+        "safe_abstention": false,
+        "selected_evidence": [
+          {
+            "artifact_key": "releases/m27-prod-bridge-release/artifacts/lexical-index.json",
+            "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "audience": "internal",
+            "channels": [
+              "lexical",
+              "production_equivalent_bridge"
+            ],
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "passage_text": "Graphology stores graph data and supports graph analysis.",
+            "passage_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "relation_expansions": [],
+            "release_id": "m27-prod-bridge-release",
+            "retrieval_metadata": {
+              "bridge_fixture": true
+            },
+            "retrieved_at": "",
+            "section_id": "Graphology#overview",
+            "section_title": "Overview",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_uri_sha256": "45bcfd06eb0c4b7360b483261dda6845506a2c4868fe58f8a3c88002cd9b3281",
+            "title": "Graphology"
+          }
+        ],
+        "semantic_contract_fingerprint": "d3cfbc61e2d8343b85774c80d8fc3249e650793bf369361f08012d0fed3aefed",
+        "status": "owner_only_cited_answer",
+        "terminal_status": "answered",
+        "unsupported_accepted_claims": 0
+      },
+      "case_id": "F523-013-R13",
+      "category": "cited_answer",
+      "forensic_trace": {
+        "production_touched": false,
+        "runtime_status": "M27_RUNTIME_COMPOSED",
+        "runtime_telemetry": {
+          "budget_class": "HEALTHY",
+          "compiler_latency_ms": 0.296,
+          "compute_tier": "STANDARD",
+          "continuation_rounds": 0,
+          "cost_reason_code": "COST_UNAVAILABLE",
+          "estimated_cost_usd": null,
+          "feature_flags": {
+            "ISOLATED_EXECUTABLE_RUNTIME": true,
+            "M27_ENABLED": true,
+            "PRODUCTION_EQUIVALENT_EVIDENCE": true
+          },
+          "model_call_count": 2,
+          "model_latency_ms": 0.037,
+          "provider_call_count": 2,
+          "provider_latency_ms": 0.037,
+          "reason_codes": [
+            "TASK_KIND_KNOWLEDGE",
+            "TASK_PROFILE_GENERAL",
+            "KNOWLEDGE_SELECTED",
+            "DIRECT_KNOWLEDGE_STANDARD"
+          ],
+          "request_id": "request:fresh-smoke:quality:F523-013-R13",
+          "retrieval_evidence_count": 1,
+          "rounds": [
+            {
+              "budget_class": "HEALTHY",
+              "compiler_status": "COMPILED",
+              "compute_tier": "STANDARD",
+              "continuation_allowed": false,
+              "continuation_decision": "TERMINAL",
+              "continuation_reason": "INITIAL",
+              "cost_reason_code": "COST_UNAVAILABLE",
+              "estimated_cost_usd": null,
+              "evidence_delta": 1,
+              "model_call_count": 2,
+              "model_latency_ms": 0.037,
+              "provider_call_count": 2,
+              "provider_calls": [
+                {
+                  "call_class": "AQ_SEMANTIC_CLOSURE",
+                  "call_index": 1,
+                  "latency_ms": 0.011,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                },
+                {
+                  "call_class": "AQ_CLAIM_SEMANTIC_ENTAILMENT",
+                  "call_index": 2,
+                  "latency_ms": 0.026,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                }
+              ],
+              "provider_latency_ms": 0.037,
+              "retrieval_evidence_count": 1,
+              "round_index": 0,
+              "route": "SEMANTIC_CLOSURE",
+              "stage_latency_ms": {
+                "compiler_ms": 0.296,
+                "evidence_binding_ms": 0.074,
+                "provider_ms": 0.037,
+                "round_total_ms": 3.785,
+                "tool_ms": 0.023,
+                "verifier_ms": 3.339
+              },
+              "task_kind": "KNOWLEDGE",
+              "terminal_reason": "VERIFIED_CITED_ANSWER",
+              "tool_call_count": 1,
+              "tool_calls": [
+                "KNOWLEDGE.SEARCH"
+              ],
+              "verifier_latency_ms": 3.339,
+              "verifier_status": "OWNER_ONLY_CITED_ANSWER"
+            }
+          ],
+          "route": "SEMANTIC_CLOSURE",
+          "schema_version": "m27-runtime-telemetry/v1",
+          "task_id": "task:fresh-smoke:quality:F523-013-R13",
+          "task_kind": "KNOWLEDGE",
+          "terminal_reason": "VERIFIED_CITED_ANSWER",
+          "tool_call_count": 1,
+          "total_latency_ms": 7.219,
+          "verifier_latency_ms": 3.339
+        },
+        "terminal_reason": "VERIFIED_CITED_ANSWER"
+      },
+      "input_digest": "20991992e0f08a9b0489b0440802376a95e1c2a3addb31bb6bc23174a0b5cc56",
+      "question": "Summarize Graphology using only bound evidence.",
+      "source_case_id": "F523-013-R13"
+    },
+    {
+      "answer_payload": {
+        "answer_claims": [
+          {
+            "citation_ids": [
+              "claim_1_ref_1"
+            ],
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "claim_type": "EVIDENCE_FACT",
+            "facet_ids": [],
+            "source_identities": [
+              "source-graphology"
+            ],
+            "support_mode": "exact_quote",
+            "support_ref_count": 1,
+            "surface_text": "Graphology keeps and analyzes graph data."
+          }
+        ],
+        "answer_source": "provider_verified_runtime_bound_semantic_closure",
+        "answer_text": "Graphology keeps and analyzes graph data.",
+        "auxiliary_memory": {
+          "answer_overridden": false,
+          "authority": {
+            "can_override_answer": false,
+            "can_promote_to_knowledge": false,
+            "can_satisfy_evidence_requirements": false,
+            "citation_eligible": false,
+            "knowledge_authority": false,
+            "locator_eligible": false,
+            "production_write": false,
+            "release_eligible": false,
+            "source_identity_eligible": false,
+            "status": "AUXILIARY_CONTEXT_ONLY"
+          },
+          "memory_ids": [],
+          "retained_count": 0,
+          "used_for_authority": false
+        },
+        "citation_locator_valid": true,
+        "citations": [
+          {
+            "citation_id": "claim_1_ref_1",
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "exact_quote_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "release_id": "m27-prod-bridge-release",
+            "runtime_owned_locator": true,
+            "section_id": "Graphology#overview",
+            "source_artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_locator": "releases/m27-prod-bridge-release/artifacts/lexical-index.json#Graphology#overview",
+            "support_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875"
+          }
+        ],
+        "integrity": {
+          "citation_locator_valid": true,
+          "material_claim_support_verified": true,
+          "unsupported_accepted_claims": 0
+        },
+        "material_claim_support_verified": true,
+        "multi_evidence_verification": {
+          "bounded_repair_attempted": false,
+          "claim_count": 1,
+          "claim_evidence_subset_contract": {
+            "attempted": true,
+            "claim_count": 0,
+            "claim_traces": [],
+            "dropped_claim_count": 0,
+            "parse_ok": true,
+            "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+            "rejected_claim_count": 0,
+            "rejection_reasons": [],
+            "validated_claim_count": 0
+          },
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "deterministic_evidence_synthesis_used": false,
+          "distinct_source_count": 1,
+          "dropped_claim_count": 0,
+          "locator_validity": 1.0,
+          "missing_facets": [],
+          "natural_answer_fallback_used": false,
+          "partial_answer": false,
+          "provider_attempt_telemetry": [
+            {
+              "attempt": 1,
+              "call_class": "aq_semantic_closure",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 366,
+              "stop_reason": "",
+              "truncation_detected": false
+            },
+            {
+              "attempt": 2,
+              "call_class": "aq_claim_semantic_entailment",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 256,
+              "stop_reason": "",
+              "truncation_detected": false
+            }
+          ],
+          "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+          "provider_parse": {
+            "missing_keys": [],
+            "parse_subtype": "exact_json",
+            "unknown_keys": []
+          },
+          "provider_status": "answer_candidate",
+          "repair_exhausted": false,
+          "repair_kind": "NONE",
+          "repair_result": "not_needed",
+          "repair_succeeded": false,
+          "repair_trigger": [],
+          "repair_trigger_codes": [],
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "semantic_review": {
+            "claim_judgments": [
+              {
+                "claim_id": "claim_1",
+                "evidence_ids": [
+                  "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+                ],
+                "verdict": "ENTAILED"
+              }
+            ],
+            "schema_version": "m26-claim-entailment-review/v1",
+            "visible_coverage": {
+              "uncovered_assertions": [],
+              "verdict": "COVERED"
+            }
+          },
+          "single_primary_passage_used": false,
+          "support_precision": 1.0,
+          "support_ref_count": 1,
+          "unanswered_dimensions": [],
+          "unsupported_accepted_claims": 0,
+          "verification_failure_codes_by_attempt": []
+        },
+        "payg_equivalent_cost_usd": "0.00002",
+        "provider_call_count": 2,
+        "reason_codes": [],
+        "relationship_summary": {
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "intent_class": "direct_grounded_knowledge",
+          "missing_facets": [],
+          "relation": "null",
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "selected_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ],
+          "selected_graph_edge_ids": [],
+          "used_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ]
+        },
+        "repair_attempted": false,
+        "repair_exhausted": false,
+        "repair_kind": "NONE",
+        "repair_succeeded": false,
+        "repair_trigger_codes": [],
+        "safe_abstention": false,
+        "selected_evidence": [
+          {
+            "artifact_key": "releases/m27-prod-bridge-release/artifacts/lexical-index.json",
+            "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "audience": "internal",
+            "channels": [
+              "lexical",
+              "production_equivalent_bridge"
+            ],
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "passage_text": "Graphology stores graph data and supports graph analysis.",
+            "passage_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "relation_expansions": [],
+            "release_id": "m27-prod-bridge-release",
+            "retrieval_metadata": {
+              "bridge_fixture": true
+            },
+            "retrieved_at": "",
+            "section_id": "Graphology#overview",
+            "section_title": "Overview",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_uri_sha256": "45bcfd06eb0c4b7360b483261dda6845506a2c4868fe58f8a3c88002cd9b3281",
+            "title": "Graphology"
+          }
+        ],
+        "semantic_contract_fingerprint": "d3cfbc61e2d8343b85774c80d8fc3249e650793bf369361f08012d0fed3aefed",
+        "status": "owner_only_cited_answer",
+        "terminal_status": "answered",
+        "unsupported_accepted_claims": 0
+      },
+      "case_id": "F523-014-R14",
+      "category": "cited_answer",
+      "forensic_trace": {
+        "production_touched": false,
+        "runtime_status": "M27_RUNTIME_COMPOSED",
+        "runtime_telemetry": {
+          "budget_class": "HEALTHY",
+          "compiler_latency_ms": 0.317,
+          "compute_tier": "STANDARD",
+          "continuation_rounds": 0,
+          "cost_reason_code": "COST_UNAVAILABLE",
+          "estimated_cost_usd": null,
+          "feature_flags": {
+            "ISOLATED_EXECUTABLE_RUNTIME": true,
+            "M27_ENABLED": true,
+            "PRODUCTION_EQUIVALENT_EVIDENCE": true
+          },
+          "model_call_count": 2,
+          "model_latency_ms": 0.036,
+          "provider_call_count": 2,
+          "provider_latency_ms": 0.036,
+          "reason_codes": [
+            "TASK_KIND_KNOWLEDGE",
+            "TASK_PROFILE_GENERAL",
+            "KNOWLEDGE_SELECTED",
+            "DIRECT_KNOWLEDGE_STANDARD"
+          ],
+          "request_id": "request:fresh-smoke:quality:F523-014-R14",
+          "retrieval_evidence_count": 1,
+          "rounds": [
+            {
+              "budget_class": "HEALTHY",
+              "compiler_status": "COMPILED",
+              "compute_tier": "STANDARD",
+              "continuation_allowed": false,
+              "continuation_decision": "TERMINAL",
+              "continuation_reason": "INITIAL",
+              "cost_reason_code": "COST_UNAVAILABLE",
+              "estimated_cost_usd": null,
+              "evidence_delta": 1,
+              "model_call_count": 2,
+              "model_latency_ms": 0.036,
+              "provider_call_count": 2,
+              "provider_calls": [
+                {
+                  "call_class": "AQ_SEMANTIC_CLOSURE",
+                  "call_index": 1,
+                  "latency_ms": 0.012,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                },
+                {
+                  "call_class": "AQ_CLAIM_SEMANTIC_ENTAILMENT",
+                  "call_index": 2,
+                  "latency_ms": 0.024,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                }
+              ],
+              "provider_latency_ms": 0.036,
+              "retrieval_evidence_count": 1,
+              "round_index": 0,
+              "route": "SEMANTIC_CLOSURE",
+              "stage_latency_ms": {
+                "compiler_ms": 0.317,
+                "evidence_binding_ms": 0.071,
+                "provider_ms": 0.036,
+                "round_total_ms": 4.513,
+                "tool_ms": 0.032,
+                "verifier_ms": 4.041
+              },
+              "task_kind": "KNOWLEDGE",
+              "terminal_reason": "VERIFIED_CITED_ANSWER",
+              "tool_call_count": 1,
+              "tool_calls": [
+                "KNOWLEDGE.SEARCH"
+              ],
+              "verifier_latency_ms": 4.041,
+              "verifier_status": "OWNER_ONLY_CITED_ANSWER"
+            }
+          ],
+          "route": "SEMANTIC_CLOSURE",
+          "schema_version": "m27-runtime-telemetry/v1",
+          "task_id": "task:fresh-smoke:quality:F523-014-R14",
+          "task_kind": "KNOWLEDGE",
+          "terminal_reason": "VERIFIED_CITED_ANSWER",
+          "tool_call_count": 1,
+          "total_latency_ms": 8.273,
+          "verifier_latency_ms": 4.041
+        },
+        "terminal_reason": "VERIFIED_CITED_ANSWER"
+      },
+      "input_digest": "7fae955d161e2f62a2d22e2cc1ab12b35b8ee181f20279a74bec5143c0435d75",
+      "question": "State Graphology graph-data role from evidence only.",
+      "source_case_id": "F523-014-R14"
+    },
+    {
+      "answer_payload": {
+        "answer_claims": [
+          {
+            "citation_ids": [
+              "claim_1_ref_1"
+            ],
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "claim_type": "EVIDENCE_FACT",
+            "facet_ids": [],
+            "source_identities": [
+              "source-graphology"
+            ],
+            "support_mode": "exact_quote",
+            "support_ref_count": 1,
+            "surface_text": "Graphology keeps and analyzes graph data."
+          }
+        ],
+        "answer_source": "provider_verified_runtime_bound_semantic_closure",
+        "answer_text": "Graphology keeps and analyzes graph data.",
+        "auxiliary_memory": {
+          "answer_overridden": false,
+          "authority": {
+            "can_override_answer": false,
+            "can_promote_to_knowledge": false,
+            "can_satisfy_evidence_requirements": false,
+            "citation_eligible": false,
+            "knowledge_authority": false,
+            "locator_eligible": false,
+            "production_write": false,
+            "release_eligible": false,
+            "source_identity_eligible": false,
+            "status": "AUXILIARY_CONTEXT_ONLY"
+          },
+          "memory_ids": [],
+          "retained_count": 0,
+          "used_for_authority": false
+        },
+        "citation_locator_valid": true,
+        "citations": [
+          {
+            "citation_id": "claim_1_ref_1",
+            "claim_id": "claim_1",
+            "claim_role": "direct",
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "exact_quote_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "release_id": "m27-prod-bridge-release",
+            "runtime_owned_locator": true,
+            "section_id": "Graphology#overview",
+            "source_artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_locator": "releases/m27-prod-bridge-release/artifacts/lexical-index.json#Graphology#overview",
+            "support_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875"
+          }
+        ],
+        "integrity": {
+          "citation_locator_valid": true,
+          "material_claim_support_verified": true,
+          "unsupported_accepted_claims": 0
+        },
+        "material_claim_support_verified": true,
+        "multi_evidence_verification": {
+          "bounded_repair_attempted": false,
+          "claim_count": 1,
+          "claim_evidence_subset_contract": {
+            "attempted": true,
+            "claim_count": 0,
+            "claim_traces": [],
+            "dropped_claim_count": 0,
+            "parse_ok": true,
+            "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+            "rejected_claim_count": 0,
+            "rejection_reasons": [],
+            "validated_claim_count": 0
+          },
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "deterministic_evidence_synthesis_used": false,
+          "distinct_source_count": 1,
+          "dropped_claim_count": 0,
+          "locator_validity": 1.0,
+          "missing_facets": [],
+          "natural_answer_fallback_used": false,
+          "partial_answer": false,
+          "provider_attempt_telemetry": [
+            {
+              "attempt": 1,
+              "call_class": "aq_semantic_closure",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 366,
+              "stop_reason": "",
+              "truncation_detected": false
+            },
+            {
+              "attempt": 2,
+              "call_class": "aq_claim_semantic_entailment",
+              "content_block_types": [],
+              "output_tokens": 32,
+              "parse_telemetry": {
+                "parse_ok": true,
+                "parse_subtype": "compact_semantic_closure_json"
+              },
+              "provider_text_char_count": 256,
+              "stop_reason": "",
+              "truncation_detected": false
+            }
+          ],
+          "provider_contract": "claim_evidence_subset_semantic_closure/v1",
+          "provider_parse": {
+            "missing_keys": [],
+            "parse_subtype": "exact_json",
+            "unknown_keys": []
+          },
+          "provider_status": "answer_candidate",
+          "repair_exhausted": false,
+          "repair_kind": "NONE",
+          "repair_result": "not_needed",
+          "repair_succeeded": false,
+          "repair_trigger": [],
+          "repair_trigger_codes": [],
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "semantic_review": {
+            "claim_judgments": [
+              {
+                "claim_id": "claim_1",
+                "evidence_ids": [
+                  "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+                ],
+                "verdict": "ENTAILED"
+              }
+            ],
+            "schema_version": "m26-claim-entailment-review/v1",
+            "visible_coverage": {
+              "uncovered_assertions": [],
+              "verdict": "COVERED"
+            }
+          },
+          "single_primary_passage_used": false,
+          "support_precision": 1.0,
+          "support_ref_count": 1,
+          "unanswered_dimensions": [],
+          "unsupported_accepted_claims": 0,
+          "verification_failure_codes_by_attempt": []
+        },
+        "payg_equivalent_cost_usd": "0.00002",
+        "provider_call_count": 2,
+        "reason_codes": [],
+        "relationship_summary": {
+          "covered_facets": [
+            "entity_graphology"
+          ],
+          "intent_class": "direct_grounded_knowledge",
+          "missing_facets": [],
+          "relation": "null",
+          "required_facets": [
+            "entity_graphology"
+          ],
+          "selected_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ],
+          "selected_graph_edge_ids": [],
+          "used_evidence_ids": [
+            "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78"
+          ]
+        },
+        "repair_attempted": false,
+        "repair_exhausted": false,
+        "repair_kind": "NONE",
+        "repair_succeeded": false,
+        "repair_trigger_codes": [],
+        "safe_abstention": false,
+        "selected_evidence": [
+          {
+            "artifact_key": "releases/m27-prod-bridge-release/artifacts/lexical-index.json",
+            "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "audience": "internal",
+            "channels": [
+              "lexical",
+              "production_equivalent_bridge"
+            ],
+            "concept_id": "Graphology",
+            "evidence_id": "m26pa7ev_67e1249e50813d33bbd47a0db2e97c78",
+            "evidence_type": "passage",
+            "locator_id": "m26pa7loc_0db371c0b7ce261b69c8813d97ddc2ea",
+            "passage_text": "Graphology stores graph data and supports graph analysis.",
+            "passage_text_sha256": "ab1a2e893e61cf168771cc1a43f7fa1cd5b3ed9eb3379e44772ede19f71f4875",
+            "provenance_record_sha256": "107f5b005759cc7201606fd21f4c8fafd1868f3494ed586e4480653cd18a968a",
+            "relation_expansions": [],
+            "release_id": "m27-prod-bridge-release",
+            "retrieval_metadata": {
+              "bridge_fixture": true
+            },
+            "retrieved_at": "",
+            "section_id": "Graphology#overview",
+            "section_title": "Overview",
+            "source_id": "source-graphology",
+            "source_identity": "source-graphology",
+            "source_uri_sha256": "45bcfd06eb0c4b7360b483261dda6845506a2c4868fe58f8a3c88002cd9b3281",
+            "title": "Graphology"
+          }
+        ],
+        "semantic_contract_fingerprint": "d3cfbc61e2d8343b85774c80d8fc3249e650793bf369361f08012d0fed3aefed",
+        "status": "owner_only_cited_answer",
+        "terminal_status": "answered",
+        "unsupported_accepted_claims": 0
+      },
+      "case_id": "F523-015-R15",
+      "category": "cited_answer",
+      "forensic_trace": {
+        "production_touched": false,
+        "runtime_status": "M27_RUNTIME_COMPOSED",
+        "runtime_telemetry": {
+          "budget_class": "HEALTHY",
+          "compiler_latency_ms": 0.267,
+          "compute_tier": "STANDARD",
+          "continuation_rounds": 0,
+          "cost_reason_code": "COST_UNAVAILABLE",
+          "estimated_cost_usd": null,
+          "feature_flags": {
+            "ISOLATED_EXECUTABLE_RUNTIME": true,
+            "M27_ENABLED": true,
+            "PRODUCTION_EQUIVALENT_EVIDENCE": true
+          },
+          "model_call_count": 2,
+          "model_latency_ms": 0.036,
+          "provider_call_count": 2,
+          "provider_latency_ms": 0.036,
+          "reason_codes": [
+            "TASK_KIND_KNOWLEDGE",
+            "TASK_PROFILE_GENERAL",
+            "KNOWLEDGE_SELECTED",
+            "DIRECT_KNOWLEDGE_STANDARD"
+          ],
+          "request_id": "request:fresh-smoke:quality:F523-015-R15",
+          "retrieval_evidence_count": 1,
+          "rounds": [
+            {
+              "budget_class": "HEALTHY",
+              "compiler_status": "COMPILED",
+              "compute_tier": "STANDARD",
+              "continuation_allowed": false,
+              "continuation_decision": "TERMINAL",
+              "continuation_reason": "INITIAL",
+              "cost_reason_code": "COST_UNAVAILABLE",
+              "estimated_cost_usd": null,
+              "evidence_delta": 1,
+              "model_call_count": 2,
+              "model_latency_ms": 0.036,
+              "provider_call_count": 2,
+              "provider_calls": [
+                {
+                  "call_class": "AQ_SEMANTIC_CLOSURE",
+                  "call_index": 1,
+                  "latency_ms": 0.012,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                },
+                {
+                  "call_class": "AQ_CLAIM_SEMANTIC_ENTAILMENT",
+                  "call_index": 2,
+                  "latency_ms": 0.024,
+                  "reason_code": "PROVIDER_CALL_OK",
+                  "success": true
+                }
+              ],
+              "provider_latency_ms": 0.036,
+              "retrieval_evidence_count": 1,
+              "round_index": 0,
+              "route": "SEMANTIC_CLOSURE",
+              "stage_latency_ms": {
+                "compiler_ms": 0.267,
+                "evidence_binding_ms": 0.068,
+                "provider_ms": 0.036,
+                "round_total_ms": 3.687,
+                "tool_ms": 0.018,
+                "verifier_ms": 3.284
+              },
+              "task_kind": "KNOWLEDGE",
+              "terminal_reason": "VERIFIED_CITED_ANSWER",
+              "tool_call_count": 1,
+              "tool_calls": [
+                "KNOWLEDGE.SEARCH"
+              ],
+              "verifier_latency_ms": 3.284,
+              "verifier_status": "OWNER_ONLY_CITED_ANSWER"
+            }
+          ],
+          "route": "SEMANTIC_CLOSURE",
+          "schema_version": "m27-runtime-telemetry/v1",
+          "task_id": "task:fresh-smoke:quality:F523-015-R15",
+          "task_kind": "KNOWLEDGE",
+          "terminal_reason": "VERIFIED_CITED_ANSWER",
+          "tool_call_count": 1,
+          "total_latency_ms": 7.402,
+          "verifier_latency_ms": 3.284
+        },
+        "terminal_reason": "VERIFIED_CITED_ANSWER"
+      },
+      "input_digest": "74f89117f17ea77d29dd7b20db62773e1514df061d9d91256e5d113ea58c5b24",
+      "question": "Give a concise evidence-bound Graphology description.",
+      "source_case_id": "F523-015-R15"
+    }
+  ],
+  "per_case_scores": [
+    {
+      "case_id": "F523-001-R01",
+      "category": "cited_answer",
+      "criterion_scores": {
+        "abstention_appropriateness": 5,
+        "citation_support": 15,
+        "completeness_facets": 12,
+        "correctness_grounding": 25,
+        "directness_intent": 15,
+        "evidence_coverage": 14,
+        "hallucination_control": 10
+      },
+      "hard_fail_codes": [],
+      "input_digest": "c41e2fb609a3dbf27498133591bc6a99d8f9fc301a7f8bdd4035f718a95ebcb7",
+      "question_digest": "88ebf64022940115811bc813ce9a9114ec45ea7f5e45d7280ffba85b6ce1f0eb",
+      "result": "pass",
+      "score": 96,
+      "score_output_digest": "693af49b305933ed96ccdfbaa8f3a949e0bb1eda6ee7646e6234464494e76929"
+    },
+    {
+      "case_id": "F523-002-R02",
+      "category": "cited_answer",
+      "criterion_scores": {
+        "abstention_appropriateness": 5,
+        "citation_support": 15,
+        "completeness_facets": 8,
+        "correctness_grounding": 20,
+        "directness_intent": 15,
+        "evidence_coverage": 10,
+        "hallucination_control": 10
+      },
+      "hard_fail_codes": [
+        "BORDERLINE_SEMANTIC_SCORE"
+      ],
+      "input_digest": "d886310c4fbc1a3c3097ccc6a8fbc70d04751e9df4cb1957cb80d61863ed7686",
+      "question_digest": "1f5fd8bf2c6a0e819796116aeb3edc7825bcc0b76f6df036e0bc43b47c9b1d35",
+      "result": "fail",
+      "score": 83,
+      "score_output_digest": "6eb7f1cc206d994f2c6fbd61ec793febd45fd09b89969ba235ea154beb45227c"
+    },
+    {
+      "case_id": "F523-003-R03",
+      "category": "cited_answer",
+      "criterion_scores": {
+        "abstention_appropriateness": 5,
+        "citation_support": 15,
+        "completeness_facets": 8,
+        "correctness_grounding": 22,
+        "directness_intent": 14,
+        "evidence_coverage": 13,
+        "hallucination_control": 10
+      },
+      "hard_fail_codes": [
+        "BORDERLINE_SEMANTIC_SCORE"
+      ],
+      "input_digest": "ac2bf1efde097fb07827605b114a88d8752d99d5e87c0bfb0350da52eebe9127",
+      "question_digest": "8a5692da97ab53c0de84abad8230332639097a7b5e7aefdf3182470ac16dc8e7",
+      "result": "fail",
+      "score": 87,
+      "score_output_digest": "5098ed1c2ba98001acdc12a7435157bfe6cc2edf244548bc40e8283f38be6a99"
+    },
+    {
+      "case_id": "F523-004-R04",
+      "category": "multilingual",
+      "criterion_scores": {
+        "abstention_appropriateness": 5,
+        "citation_support": 14,
+        "completeness_facets": 8,
+        "correctness_grounding": 22,
+        "directness_intent": 14,
+        "evidence_coverage": 11,
+        "hallucination_control": 10
+      },
+      "hard_fail_codes": [
+        "BORDERLINE_SEMANTIC_SCORE"
+      ],
+      "input_digest": "de14f57d744bfeb403a2e315b38854db21d7fbaf5151feb98caaf29362ff90d3",
+      "question_digest": "89b5694c221a9e4b833c414f5a1b7dd59e02806fb3e39526922ca930807cb08b",
+      "result": "fail",
+      "score": 84,
+      "score_output_digest": "c2d420d290f67261cce610df6c66025f6a9968cd13af900bd853a9d16ceb4afc"
+    },
+    {
+      "case_id": "F523-005-R05",
+      "category": "multilingual",
+      "criterion_scores": {
+        "abstention_appropriateness": 5,
+        "citation_support": 15,
+        "completeness_facets": 12,
+        "correctness_grounding": 22,
+        "directness_intent": 14,
+        "evidence_coverage": 14,
+        "hallucination_control": 10
+      },
+      "hard_fail_codes": [],
+      "input_digest": "3941f4e8cdf78ec0946a736cc3007cca77ed51718b112f49274f7f6afb23e04a",
+      "question_digest": "f46454457eeaa3dc004602e4323237c4c0b19f5a231b280e4abc1037e4fd9f9a",
+      "result": "pass",
+      "score": 92,
+      "score_output_digest": "8c4a28405d64e9fd7dd32cc818da11e1d5974ca305d46b5f0bb138c0bfb844f7"
+    },
+    {
+      "case_id": "F523-006-R06",
+      "category": "retrieval_hard",
+      "criterion_scores": {
+        "abstention_appropriateness": 5,
+        "citation_support": 15,
+        "completeness_facets": 15,
+        "correctness_grounding": 25,
+        "directness_intent": 15,
+        "evidence_coverage": 15,
+        "hallucination_control": 10
+      },
+      "hard_fail_codes": [],
+      "input_digest": "d91850672d4c0fb2ca3b50b61960c22ff159a70d51ef69394095c2111d815ce2",
+      "question_digest": "14ae099953834aa449b71b48a65fba82af989fe0a728297a7b7e5b45045a4560",
+      "result": "pass",
+      "score": 100,
+      "score_output_digest": "ef37fd6e9f1cf77bb47eb020d6327385206c72e46df0ff1f032830699e3cb1ad"
+    },
+    {
+      "case_id": "F523-013-R13",
+      "category": "cited_answer",
+      "criterion_scores": {
+        "abstention_appropriateness": 5,
+        "citation_support": 14,
+        "completeness_facets": 13,
+        "correctness_grounding": 22,
+        "directness_intent": 13,
+        "evidence_coverage": 12,
+        "hallucination_control": 10
+      },
+      "hard_fail_codes": [],
+      "input_digest": "20991992e0f08a9b0489b0440802376a95e1c2a3addb31bb6bc23174a0b5cc56",
+      "question_digest": "326a6cb32eb7bd15b520f319434b7bd8fc46664649775025f3ef0b07da070171",
+      "result": "pass",
+      "score": 89,
+      "score_output_digest": "f3cc30f16c3c6e3967398ead697fdaf557e2120f0e97fb7deca0a33f4d9d7634"
+    },
+    {
+      "case_id": "F523-014-R14",
+      "category": "cited_answer",
+      "criterion_scores": {
+        "abstention_appropriateness": 5,
+        "citation_support": 15,
+        "completeness_facets": 13,
+        "correctness_grounding": 24,
+        "directness_intent": 15,
+        "evidence_coverage": 14,
+        "hallucination_control": 10
+      },
+      "hard_fail_codes": [],
+      "input_digest": "7fae955d161e2f62a2d22e2cc1ab12b35b8ee181f20279a74bec5143c0435d75",
+      "question_digest": "f3d69eae9581a384ac036d1ff8f9021f43130bcb042c27aa7890f7fed84c6546",
+      "result": "pass",
+      "score": 96,
+      "score_output_digest": "8cded31cea16111b4f44949492874330e4ff2c46664a82ea6635da92ea3a3f07"
+    },
+    {
+      "case_id": "F523-015-R15",
+      "category": "cited_answer",
+      "criterion_scores": {
+        "abstention_appropriateness": 5,
+        "citation_support": 15,
+        "completeness_facets": 11,
+        "correctness_grounding": 24,
+        "directness_intent": 15,
+        "evidence_coverage": 14,
+        "hallucination_control": 10
+      },
+      "hard_fail_codes": [],
+      "input_digest": "74f89117f17ea77d29dd7b20db62773e1514df061d9d91256e5d113ea58c5b24",
+      "question_digest": "42ec7cbb08164bf5c0e058c08b8e963d7e18008a00422a325ea5f386e9156d9e",
+      "result": "pass",
+      "score": 94,
+      "score_output_digest": "c1713a433efac06e486ffbf6fa057e4ad428b221b9bcb816955b80a3bc899727"
+    }
+  ],
+  "per_case_scores_digest": "a527790fb37e27142709f7b782cf67fe9f0bf5f53b3bbab03890b74549a1abf3",
+  "production_no_mutation_proof": {
+    "capture_runtime": "isolated in-process M27 harness using production-equivalent read-only fixture evidence",
+    "production_datastore_writes": false,
+    "production_endpoint_called_for_answers": false,
+    "release_pointer_mutation": false
+  },
+  "production_touched": false,
+  "quality_gate_head": "80b0b0ddc1ccc52ccb86b3acb1d2e9782579102a",
+  "quality_score": 91.222,
+  "reason_codes": [],
+  "release_candidate_head": "f406be4a07ae360655e073c4dea1e13fe2796689",
+  "rubric_version": "ANSWER_QUALITY_RUBRIC_v1",
+  "safe_terminals_policy": "excluded from semantic quality score; correctness remains separate admission evidence",
+  "sampling_policy": "unique-question-stratified-all-verified-categories/v1",
+  "schema_version": "m27-independent-quality-score/v1",
+  "score_output_digest": "a527790fb37e27142709f7b782cf67fe9f0bf5f53b3bbab03890b74549a1abf3",
+  "scored_case_count": 9,
+  "scoring_policy_version": "m27-independent-quality-scoring-policy/v1",
+  "skipped_reason": "duplicate semantic prompt instances across deterministic full523 repetitions; all 9 unique verified prompts scored",
+  "skipped_rows": 228,
+  "source_admission_head": "f406be4a07ae360655e073c4dea1e13fe2796689",
+  "source_input_digest": "bfd667c5e865a52e0a68d2135ccfa2a3e4a270297b017c0d25039e444b2f061c",
+  "source_receipts_sha256": "e2f5677e1f81b056697ffea791e986efde368614e8ad296f3b5d99f173446137",
+  "threshold": 85
+}
