@@ -1,0 +1,1051 @@
+{
+  "case_count": 12,
+  "cases": [
+    {
+      "answer_present": true,
+      "case_id": "SMOKE001",
+      "category": "cited_answer",
+      "citation_count": 1,
+      "expectation": "verified_cited_answer",
+      "feature_off": false,
+      "knowledge_searches": 1,
+      "latency_ms": 39.096,
+      "passed": true,
+      "production_touched": false,
+      "provider_calls": 2,
+      "question": "What does Graphology do for graph data?",
+      "round_terminal_reason": "VERIFIED_CITED_ANSWER",
+      "runtime_telemetry": {
+        "budget_class": "HEALTHY",
+        "compiler_latency_ms": 0.281,
+        "compute_tier": "STANDARD",
+        "continuation_rounds": 0,
+        "cost_reason_code": "COST_UNAVAILABLE",
+        "estimated_cost_usd": null,
+        "feature_flags": {
+          "ISOLATED_EXECUTABLE_RUNTIME": true,
+          "M27_ENABLED": true,
+          "PRODUCTION_EQUIVALENT_EVIDENCE": true
+        },
+        "model_call_count": 2,
+        "model_latency_ms": 0.06,
+        "provider_call_count": 2,
+        "provider_latency_ms": 0.06,
+        "reason_codes": [
+          "TASK_KIND_KNOWLEDGE",
+          "KNOWLEDGE_SELECTED"
+        ],
+        "request_id": "request:fresh-smoke:SMOKE001",
+        "retrieval_evidence_count": 1,
+        "rounds": [
+          {
+            "budget_class": "HEALTHY",
+            "compiler_status": "COMPILED",
+            "compute_tier": "STANDARD",
+            "continuation_allowed": false,
+            "continuation_decision": "TERMINAL",
+            "continuation_reason": "INITIAL",
+            "cost_reason_code": "COST_UNAVAILABLE",
+            "estimated_cost_usd": null,
+            "evidence_delta": 1,
+            "model_call_count": 2,
+            "model_latency_ms": 0.06,
+            "provider_call_count": 2,
+            "provider_calls": [
+              {
+                "call_class": "AQ_SEMANTIC_CLOSURE",
+                "call_index": 1,
+                "latency_ms": 0.031,
+                "reason_code": "PROVIDER_CALL_OK",
+                "success": true
+              },
+              {
+                "call_class": "AQ_CLAIM_SEMANTIC_ENTAILMENT",
+                "call_index": 2,
+                "latency_ms": 0.029,
+                "reason_code": "PROVIDER_CALL_OK",
+                "success": true
+              }
+            ],
+            "provider_latency_ms": 0.06,
+            "retrieval_evidence_count": 1,
+            "round_index": 0,
+            "route": "SEMANTIC_CLOSURE",
+            "stage_latency_ms": {
+              "compiler_ms": 0.281,
+              "evidence_binding_ms": 0.109,
+              "provider_ms": 0.06,
+              "round_total_ms": 20.227,
+              "tool_ms": 0.04,
+              "verifier_ms": 19.704
+            },
+            "task_kind": "KNOWLEDGE",
+            "terminal_reason": "VERIFIED_CITED_ANSWER",
+            "tool_call_count": 1,
+            "tool_calls": [
+              "KNOWLEDGE.SEARCH"
+            ],
+            "verifier_latency_ms": 19.704,
+            "verifier_status": "OWNER_ONLY_CITED_ANSWER"
+          }
+        ],
+        "route": "SEMANTIC_CLOSURE",
+        "schema_version": "m27-runtime-telemetry/v1",
+        "task_id": "task:fresh-smoke:SMOKE001",
+        "task_kind": "KNOWLEDGE",
+        "terminal_reason": "VERIFIED_CITED_ANSWER",
+        "tool_call_count": 1,
+        "total_latency_ms": 26.929,
+        "verifier_latency_ms": 19.704
+      },
+      "status_code": "M27_RUNTIME_COMPOSED",
+      "terminal_reason": "VERIFIED_CITED_ANSWER"
+    },
+    {
+      "answer_present": true,
+      "case_id": "SMOKE002",
+      "category": "cited_answer",
+      "citation_count": 1,
+      "expectation": "verified_cited_answer",
+      "feature_off": false,
+      "knowledge_searches": 1,
+      "latency_ms": 69.463,
+      "passed": true,
+      "production_touched": false,
+      "provider_calls": 2,
+      "question": "How does Graphology help with graph analysis?",
+      "round_terminal_reason": "VERIFIED_CITED_ANSWER",
+      "runtime_telemetry": {
+        "budget_class": "HEALTHY",
+        "compiler_latency_ms": 0.263,
+        "compute_tier": "STANDARD",
+        "continuation_rounds": 0,
+        "cost_reason_code": "COST_UNAVAILABLE",
+        "estimated_cost_usd": null,
+        "feature_flags": {
+          "ISOLATED_EXECUTABLE_RUNTIME": true,
+          "M27_ENABLED": true,
+          "PRODUCTION_EQUIVALENT_EVIDENCE": true
+        },
+        "model_call_count": 2,
+        "model_latency_ms": 0.04,
+        "provider_call_count": 2,
+        "provider_latency_ms": 0.04,
+        "reason_codes": [
+          "TASK_KIND_KNOWLEDGE",
+          "KNOWLEDGE_SELECTED"
+        ],
+        "request_id": "request:fresh-smoke:SMOKE002",
+        "retrieval_evidence_count": 1,
+        "rounds": [
+          {
+            "budget_class": "HEALTHY",
+            "compiler_status": "COMPILED",
+            "compute_tier": "STANDARD",
+            "continuation_allowed": false,
+            "continuation_decision": "TERMINAL",
+            "continuation_reason": "INITIAL",
+            "cost_reason_code": "COST_UNAVAILABLE",
+            "estimated_cost_usd": null,
+            "evidence_delta": 1,
+            "model_call_count": 2,
+            "model_latency_ms": 0.04,
+            "provider_call_count": 2,
+            "provider_calls": [
+              {
+                "call_class": "AQ_SEMANTIC_CLOSURE",
+                "call_index": 1,
+                "latency_ms": 0.013,
+                "reason_code": "PROVIDER_CALL_OK",
+                "success": true
+              },
+              {
+                "call_class": "AQ_CLAIM_SEMANTIC_ENTAILMENT",
+                "call_index": 2,
+                "latency_ms": 0.027,
+                "reason_code": "PROVIDER_CALL_OK",
+                "success": true
+              }
+            ],
+            "provider_latency_ms": 0.04,
+            "retrieval_evidence_count": 1,
+            "round_index": 0,
+            "route": "SEMANTIC_CLOSURE",
+            "stage_latency_ms": {
+              "compiler_ms": 0.263,
+              "evidence_binding_ms": 0.092,
+              "provider_ms": 0.04,
+              "round_total_ms": 4.063,
+              "tool_ms": 0.033,
+              "verifier_ms": 3.621
+            },
+            "task_kind": "KNOWLEDGE",
+            "terminal_reason": "VERIFIED_CITED_ANSWER",
+            "tool_call_count": 1,
+            "tool_calls": [
+              "KNOWLEDGE.SEARCH"
+            ],
+            "verifier_latency_ms": 3.621,
+            "verifier_status": "OWNER_ONLY_CITED_ANSWER"
+          }
+        ],
+        "route": "SEMANTIC_CLOSURE",
+        "schema_version": "m27-runtime-telemetry/v1",
+        "task_id": "task:fresh-smoke:SMOKE002",
+        "task_kind": "KNOWLEDGE",
+        "terminal_reason": "VERIFIED_CITED_ANSWER",
+        "tool_call_count": 1,
+        "total_latency_ms": 7.672,
+        "verifier_latency_ms": 3.621
+      },
+      "status_code": "M27_RUNTIME_COMPOSED",
+      "terminal_reason": "VERIFIED_CITED_ANSWER"
+    },
+    {
+      "answer_present": true,
+      "case_id": "SMOKE003",
+      "category": "cited_answer",
+      "citation_count": 1,
+      "expectation": "verified_cited_answer",
+      "feature_off": false,
+      "knowledge_searches": 1,
+      "latency_ms": 20.35,
+      "passed": true,
+      "production_touched": false,
+      "provider_calls": 2,
+      "question": "What storage role does Graphology provide?",
+      "round_terminal_reason": "VERIFIED_CITED_ANSWER",
+      "runtime_telemetry": {
+        "budget_class": "HEALTHY",
+        "compiler_latency_ms": 0.3,
+        "compute_tier": "STANDARD",
+        "continuation_rounds": 0,
+        "cost_reason_code": "COST_UNAVAILABLE",
+        "estimated_cost_usd": null,
+        "feature_flags": {
+          "ISOLATED_EXECUTABLE_RUNTIME": true,
+          "M27_ENABLED": true,
+          "PRODUCTION_EQUIVALENT_EVIDENCE": true
+        },
+        "model_call_count": 2,
+        "model_latency_ms": 0.041,
+        "provider_call_count": 2,
+        "provider_latency_ms": 0.041,
+        "reason_codes": [
+          "TASK_KIND_KNOWLEDGE",
+          "KNOWLEDGE_SELECTED"
+        ],
+        "request_id": "request:fresh-smoke:SMOKE003",
+        "retrieval_evidence_count": 1,
+        "rounds": [
+          {
+            "budget_class": "HEALTHY",
+            "compiler_status": "COMPILED",
+            "compute_tier": "STANDARD",
+            "continuation_allowed": false,
+            "continuation_decision": "TERMINAL",
+            "continuation_reason": "INITIAL",
+            "cost_reason_code": "COST_UNAVAILABLE",
+            "estimated_cost_usd": null,
+            "evidence_delta": 1,
+            "model_call_count": 2,
+            "model_latency_ms": 0.041,
+            "provider_call_count": 2,
+            "provider_calls": [
+              {
+                "call_class": "AQ_SEMANTIC_CLOSURE",
+                "call_index": 1,
+                "latency_ms": 0.015,
+                "reason_code": "PROVIDER_CALL_OK",
+                "success": true
+              },
+              {
+                "call_class": "AQ_CLAIM_SEMANTIC_ENTAILMENT",
+                "call_index": 2,
+                "latency_ms": 0.026,
+                "reason_code": "PROVIDER_CALL_OK",
+                "success": true
+              }
+            ],
+            "provider_latency_ms": 0.041,
+            "retrieval_evidence_count": 1,
+            "round_index": 0,
+            "route": "SEMANTIC_CLOSURE",
+            "stage_latency_ms": {
+              "compiler_ms": 0.3,
+              "evidence_binding_ms": 0.075,
+              "provider_ms": 0.041,
+              "round_total_ms": 4.057,
+              "tool_ms": 0.028,
+              "verifier_ms": 3.603
+            },
+            "task_kind": "KNOWLEDGE",
+            "terminal_reason": "VERIFIED_CITED_ANSWER",
+            "tool_call_count": 1,
+            "tool_calls": [
+              "KNOWLEDGE.SEARCH"
+            ],
+            "verifier_latency_ms": 3.603,
+            "verifier_status": "OWNER_ONLY_CITED_ANSWER"
+          }
+        ],
+        "route": "SEMANTIC_CLOSURE",
+        "schema_version": "m27-runtime-telemetry/v1",
+        "task_id": "task:fresh-smoke:SMOKE003",
+        "task_kind": "KNOWLEDGE",
+        "terminal_reason": "VERIFIED_CITED_ANSWER",
+        "tool_call_count": 1,
+        "total_latency_ms": 8.009,
+        "verifier_latency_ms": 3.603
+      },
+      "status_code": "M27_RUNTIME_COMPOSED",
+      "terminal_reason": "VERIFIED_CITED_ANSWER"
+    },
+    {
+      "answer_present": true,
+      "case_id": "SMOKE004",
+      "category": "multilingual",
+      "citation_count": 1,
+      "expectation": "verified_cited_answer",
+      "feature_off": false,
+      "knowledge_searches": 1,
+      "latency_ms": 26.846,
+      "passed": true,
+      "production_touched": false,
+      "provider_calls": 2,
+      "question": "Graphology \u5c0d graph data \u7684\u7528\u9014\u662f\u4ec0\u9ebc\uff1f",
+      "round_terminal_reason": "VERIFIED_CITED_ANSWER",
+      "runtime_telemetry": {
+        "budget_class": "HEALTHY",
+        "compiler_latency_ms": 0.261,
+        "compute_tier": "STANDARD",
+        "continuation_rounds": 0,
+        "cost_reason_code": "COST_UNAVAILABLE",
+        "estimated_cost_usd": null,
+        "feature_flags": {
+          "ISOLATED_EXECUTABLE_RUNTIME": true,
+          "M27_ENABLED": true,
+          "PRODUCTION_EQUIVALENT_EVIDENCE": true
+        },
+        "model_call_count": 2,
+        "model_latency_ms": 0.042,
+        "provider_call_count": 2,
+        "provider_latency_ms": 0.042,
+        "reason_codes": [
+          "TASK_KIND_KNOWLEDGE",
+          "KNOWLEDGE_SELECTED"
+        ],
+        "request_id": "request:fresh-smoke:SMOKE004",
+        "retrieval_evidence_count": 1,
+        "rounds": [
+          {
+            "budget_class": "HEALTHY",
+            "compiler_status": "COMPILED",
+            "compute_tier": "STANDARD",
+            "continuation_allowed": false,
+            "continuation_decision": "TERMINAL",
+            "continuation_reason": "INITIAL",
+            "cost_reason_code": "COST_UNAVAILABLE",
+            "estimated_cost_usd": null,
+            "evidence_delta": 1,
+            "model_call_count": 2,
+            "model_latency_ms": 0.042,
+            "provider_call_count": 2,
+            "provider_calls": [
+              {
+                "call_class": "AQ_SEMANTIC_CLOSURE",
+                "call_index": 1,
+                "latency_ms": 0.012,
+                "reason_code": "PROVIDER_CALL_OK",
+                "success": true
+              },
+              {
+                "call_class": "AQ_CLAIM_SEMANTIC_ENTAILMENT",
+                "call_index": 2,
+                "latency_ms": 0.03,
+                "reason_code": "PROVIDER_CALL_OK",
+                "success": true
+              }
+            ],
+            "provider_latency_ms": 0.042,
+            "retrieval_evidence_count": 1,
+            "round_index": 0,
+            "route": "SEMANTIC_CLOSURE",
+            "stage_latency_ms": {
+              "compiler_ms": 0.261,
+              "evidence_binding_ms": 0.068,
+              "provider_ms": 0.042,
+              "round_total_ms": 3.902,
+              "tool_ms": 0.023,
+              "verifier_ms": 3.498
+            },
+            "task_kind": "KNOWLEDGE",
+            "terminal_reason": "VERIFIED_CITED_ANSWER",
+            "tool_call_count": 1,
+            "tool_calls": [
+              "KNOWLEDGE.SEARCH"
+            ],
+            "verifier_latency_ms": 3.498,
+            "verifier_status": "OWNER_ONLY_CITED_ANSWER"
+          }
+        ],
+        "route": "SEMANTIC_CLOSURE",
+        "schema_version": "m27-runtime-telemetry/v1",
+        "task_id": "task:fresh-smoke:SMOKE004",
+        "task_kind": "KNOWLEDGE",
+        "terminal_reason": "VERIFIED_CITED_ANSWER",
+        "tool_call_count": 1,
+        "total_latency_ms": 7.545,
+        "verifier_latency_ms": 3.498
+      },
+      "status_code": "M27_RUNTIME_COMPOSED",
+      "terminal_reason": "VERIFIED_CITED_ANSWER"
+    },
+    {
+      "answer_present": true,
+      "case_id": "SMOKE005",
+      "category": "retrieval_hard",
+      "citation_count": 1,
+      "expectation": "verified_cited_answer",
+      "feature_off": false,
+      "knowledge_searches": 1,
+      "latency_ms": 41.147,
+      "passed": true,
+      "production_touched": false,
+      "provider_calls": 2,
+      "question": "When evidence is bound, what does Graphology do?",
+      "round_terminal_reason": "VERIFIED_CITED_ANSWER",
+      "runtime_telemetry": {
+        "budget_class": "HEALTHY",
+        "compiler_latency_ms": 0.301,
+        "compute_tier": "STANDARD",
+        "continuation_rounds": 0,
+        "cost_reason_code": "COST_UNAVAILABLE",
+        "estimated_cost_usd": null,
+        "feature_flags": {
+          "ISOLATED_EXECUTABLE_RUNTIME": true,
+          "M27_ENABLED": true,
+          "PRODUCTION_EQUIVALENT_EVIDENCE": true
+        },
+        "model_call_count": 2,
+        "model_latency_ms": 0.039,
+        "provider_call_count": 2,
+        "provider_latency_ms": 0.039,
+        "reason_codes": [
+          "TASK_KIND_KNOWLEDGE",
+          "KNOWLEDGE_SELECTED"
+        ],
+        "request_id": "request:fresh-smoke:SMOKE005",
+        "retrieval_evidence_count": 1,
+        "rounds": [
+          {
+            "budget_class": "HEALTHY",
+            "compiler_status": "COMPILED",
+            "compute_tier": "STANDARD",
+            "continuation_allowed": false,
+            "continuation_decision": "TERMINAL",
+            "continuation_reason": "INITIAL",
+            "cost_reason_code": "COST_UNAVAILABLE",
+            "estimated_cost_usd": null,
+            "evidence_delta": 1,
+            "model_call_count": 2,
+            "model_latency_ms": 0.039,
+            "provider_call_count": 2,
+            "provider_calls": [
+              {
+                "call_class": "AQ_SEMANTIC_CLOSURE",
+                "call_index": 1,
+                "latency_ms": 0.013,
+                "reason_code": "PROVIDER_CALL_OK",
+                "success": true
+              },
+              {
+                "call_class": "AQ_CLAIM_SEMANTIC_ENTAILMENT",
+                "call_index": 2,
+                "latency_ms": 0.026,
+                "reason_code": "PROVIDER_CALL_OK",
+                "success": true
+              }
+            ],
+            "provider_latency_ms": 0.039,
+            "retrieval_evidence_count": 1,
+            "round_index": 0,
+            "route": "SEMANTIC_CLOSURE",
+            "stage_latency_ms": {
+              "compiler_ms": 0.301,
+              "evidence_binding_ms": 0.107,
+              "provider_ms": 0.039,
+              "round_total_ms": 3.806,
+              "tool_ms": 0.027,
+              "verifier_ms": 3.322
+            },
+            "task_kind": "KNOWLEDGE",
+            "terminal_reason": "VERIFIED_CITED_ANSWER",
+            "tool_call_count": 1,
+            "tool_calls": [
+              "KNOWLEDGE.SEARCH"
+            ],
+            "verifier_latency_ms": 3.322,
+            "verifier_status": "OWNER_ONLY_CITED_ANSWER"
+          }
+        ],
+        "route": "SEMANTIC_CLOSURE",
+        "schema_version": "m27-runtime-telemetry/v1",
+        "task_id": "task:fresh-smoke:SMOKE005",
+        "task_kind": "KNOWLEDGE",
+        "terminal_reason": "VERIFIED_CITED_ANSWER",
+        "tool_call_count": 1,
+        "total_latency_ms": 8.711,
+        "verifier_latency_ms": 3.322
+      },
+      "status_code": "M27_RUNTIME_COMPOSED",
+      "terminal_reason": "VERIFIED_CITED_ANSWER"
+    },
+    {
+      "answer_present": true,
+      "case_id": "SMOKE006",
+      "category": "abstention",
+      "citation_count": 0,
+      "expectation": "safe_abstention",
+      "feature_off": false,
+      "knowledge_searches": 1,
+      "latency_ms": 18.775,
+      "passed": true,
+      "production_touched": false,
+      "provider_calls": 2,
+      "question": "Only answer if the evidence supports every requested detail about Graphology pricing.",
+      "round_terminal_reason": "VERIFIER_GAP_SAFE_TERMINAL",
+      "runtime_telemetry": {
+        "budget_class": "HEALTHY",
+        "compiler_latency_ms": 0.353,
+        "compute_tier": "STANDARD",
+        "continuation_rounds": 0,
+        "cost_reason_code": "COST_UNAVAILABLE",
+        "estimated_cost_usd": null,
+        "feature_flags": {
+          "ISOLATED_EXECUTABLE_RUNTIME": true,
+          "M27_ENABLED": true,
+          "PRODUCTION_EQUIVALENT_EVIDENCE": true
+        },
+        "model_call_count": 2,
+        "model_latency_ms": 0.021,
+        "provider_call_count": 2,
+        "provider_latency_ms": 0.021,
+        "reason_codes": [
+          "TASK_KIND_KNOWLEDGE",
+          "KNOWLEDGE_SELECTED"
+        ],
+        "request_id": "request:fresh-smoke:SMOKE006",
+        "retrieval_evidence_count": 1,
+        "rounds": [
+          {
+            "budget_class": "HEALTHY",
+            "compiler_status": "COMPILED",
+            "compute_tier": "STANDARD",
+            "continuation_allowed": false,
+            "continuation_decision": "TERMINAL",
+            "continuation_reason": "INITIAL",
+            "cost_reason_code": "COST_UNAVAILABLE",
+            "estimated_cost_usd": null,
+            "evidence_delta": 1,
+            "model_call_count": 2,
+            "model_latency_ms": 0.021,
+            "provider_call_count": 2,
+            "provider_calls": [
+              {
+                "call_class": "AQ_SEMANTIC_CLOSURE",
+                "call_index": 1,
+                "latency_ms": 0.012,
+                "reason_code": "PROVIDER_CALL_OK",
+                "success": true
+              },
+              {
+                "call_class": "AQ_SEMANTIC_CLOSURE_REPAIR",
+                "call_index": 2,
+                "latency_ms": 0.009,
+                "reason_code": "PROVIDER_CALL_OK",
+                "success": true
+              }
+            ],
+            "provider_latency_ms": 0.021,
+            "retrieval_evidence_count": 1,
+            "round_index": 0,
+            "route": "SEMANTIC_CLOSURE",
+            "stage_latency_ms": {
+              "compiler_ms": 0.353,
+              "evidence_binding_ms": 0.074,
+              "provider_ms": 0.021,
+              "round_total_ms": 3.786,
+              "tool_ms": 0.027,
+              "verifier_ms": 3.304
+            },
+            "task_kind": "KNOWLEDGE",
+            "terminal_reason": "VERIFIER_GAP_SAFE_TERMINAL",
+            "tool_call_count": 1,
+            "tool_calls": [
+              "KNOWLEDGE.SEARCH"
+            ],
+            "verifier_latency_ms": 3.304,
+            "verifier_status": "OWNER_ONLY_SAFE_ABSTENTION"
+          }
+        ],
+        "route": "SEMANTIC_CLOSURE",
+        "schema_version": "m27-runtime-telemetry/v1",
+        "task_id": "task:fresh-smoke:SMOKE006",
+        "task_kind": "KNOWLEDGE",
+        "terminal_reason": "VERIFIER_GAP_SAFE_TERMINAL",
+        "tool_call_count": 1,
+        "total_latency_ms": 7.733,
+        "verifier_latency_ms": 3.304
+      },
+      "status_code": "M27_RUNTIME_SAFE_TERMINAL",
+      "terminal_reason": "VERIFIER_GAP_SAFE_TERMINAL"
+    },
+    {
+      "answer_present": true,
+      "case_id": "SMOKE007",
+      "category": "abstention",
+      "citation_count": 0,
+      "expectation": "safe_abstention",
+      "feature_off": false,
+      "knowledge_searches": 1,
+      "latency_ms": 27.043,
+      "passed": true,
+      "production_touched": false,
+      "provider_calls": 2,
+      "question": "Only answer if evidence states Graphology deployment dates.",
+      "round_terminal_reason": "VERIFIER_GAP_SAFE_TERMINAL",
+      "runtime_telemetry": {
+        "budget_class": "HEALTHY",
+        "compiler_latency_ms": 0.257,
+        "compute_tier": "STANDARD",
+        "continuation_rounds": 0,
+        "cost_reason_code": "COST_UNAVAILABLE",
+        "estimated_cost_usd": null,
+        "feature_flags": {
+          "ISOLATED_EXECUTABLE_RUNTIME": true,
+          "M27_ENABLED": true,
+          "PRODUCTION_EQUIVALENT_EVIDENCE": true
+        },
+        "model_call_count": 2,
+        "model_latency_ms": 0.02,
+        "provider_call_count": 2,
+        "provider_latency_ms": 0.02,
+        "reason_codes": [
+          "TASK_KIND_KNOWLEDGE",
+          "KNOWLEDGE_SELECTED"
+        ],
+        "request_id": "request:fresh-smoke:SMOKE007",
+        "retrieval_evidence_count": 1,
+        "rounds": [
+          {
+            "budget_class": "HEALTHY",
+            "compiler_status": "COMPILED",
+            "compute_tier": "STANDARD",
+            "continuation_allowed": false,
+            "continuation_decision": "TERMINAL",
+            "continuation_reason": "INITIAL",
+            "cost_reason_code": "COST_UNAVAILABLE",
+            "estimated_cost_usd": null,
+            "evidence_delta": 1,
+            "model_call_count": 2,
+            "model_latency_ms": 0.02,
+            "provider_call_count": 2,
+            "provider_calls": [
+              {
+                "call_class": "AQ_SEMANTIC_CLOSURE",
+                "call_index": 1,
+                "latency_ms": 0.012,
+                "reason_code": "PROVIDER_CALL_OK",
+                "success": true
+              },
+              {
+                "call_class": "AQ_SEMANTIC_CLOSURE_REPAIR",
+                "call_index": 2,
+                "latency_ms": 0.008,
+                "reason_code": "PROVIDER_CALL_OK",
+                "success": true
+              }
+            ],
+            "provider_latency_ms": 0.02,
+            "retrieval_evidence_count": 1,
+            "round_index": 0,
+            "route": "SEMANTIC_CLOSURE",
+            "stage_latency_ms": {
+              "compiler_ms": 0.257,
+              "evidence_binding_ms": 0.13,
+              "provider_ms": 0.02,
+              "round_total_ms": 3.687,
+              "tool_ms": 0.027,
+              "verifier_ms": 3.245
+            },
+            "task_kind": "KNOWLEDGE",
+            "terminal_reason": "VERIFIER_GAP_SAFE_TERMINAL",
+            "tool_call_count": 1,
+            "tool_calls": [
+              "KNOWLEDGE.SEARCH"
+            ],
+            "verifier_latency_ms": 3.245,
+            "verifier_status": "OWNER_ONLY_SAFE_ABSTENTION"
+          }
+        ],
+        "route": "SEMANTIC_CLOSURE",
+        "schema_version": "m27-runtime-telemetry/v1",
+        "task_id": "task:fresh-smoke:SMOKE007",
+        "task_kind": "KNOWLEDGE",
+        "terminal_reason": "VERIFIER_GAP_SAFE_TERMINAL",
+        "tool_call_count": 1,
+        "total_latency_ms": 7.422,
+        "verifier_latency_ms": 3.245
+      },
+      "status_code": "M27_RUNTIME_SAFE_TERMINAL",
+      "terminal_reason": "VERIFIER_GAP_SAFE_TERMINAL"
+    },
+    {
+      "answer_present": true,
+      "case_id": "SMOKE008",
+      "category": "retrieval_hard",
+      "citation_count": 0,
+      "expectation": "rejected_before_provider",
+      "feature_off": false,
+      "knowledge_searches": 1,
+      "latency_ms": 14.387,
+      "passed": true,
+      "production_touched": false,
+      "provider_calls": 0,
+      "question": "Reject drifted source identity before publication.",
+      "round_terminal_reason": "VERIFIER_GAP_SAFE_TERMINAL",
+      "runtime_telemetry": {
+        "budget_class": "HEALTHY",
+        "compiler_latency_ms": 0.154,
+        "compute_tier": "STANDARD",
+        "continuation_rounds": 0,
+        "cost_reason_code": "COST_UNAVAILABLE",
+        "estimated_cost_usd": null,
+        "feature_flags": {
+          "ISOLATED_EXECUTABLE_RUNTIME": true,
+          "M27_ENABLED": true,
+          "PRODUCTION_EQUIVALENT_EVIDENCE": true
+        },
+        "model_call_count": 0,
+        "model_latency_ms": 0,
+        "provider_call_count": 0,
+        "provider_latency_ms": 0,
+        "reason_codes": [
+          "TASK_KIND_KNOWLEDGE",
+          "KNOWLEDGE_SELECTED"
+        ],
+        "request_id": "request:fresh-smoke:SMOKE008",
+        "retrieval_evidence_count": 0,
+        "rounds": [
+          {
+            "budget_class": "HEALTHY",
+            "compiler_status": "ABSTAIN_REQUIRED",
+            "compute_tier": "STANDARD",
+            "continuation_allowed": false,
+            "continuation_decision": "TERMINAL",
+            "continuation_reason": "INITIAL",
+            "cost_reason_code": "COST_UNAVAILABLE",
+            "estimated_cost_usd": null,
+            "evidence_delta": 0,
+            "model_call_count": 0,
+            "model_latency_ms": 0,
+            "provider_call_count": 0,
+            "provider_calls": [],
+            "provider_latency_ms": 0,
+            "retrieval_evidence_count": 0,
+            "round_index": 0,
+            "route": "SEMANTIC_CLOSURE",
+            "stage_latency_ms": {
+              "compiler_ms": 0.154,
+              "evidence_binding_ms": 0.009,
+              "provider_ms": 0.0,
+              "round_total_ms": 0.191,
+              "tool_ms": 0.024,
+              "verifier_ms": 0.001
+            },
+            "task_kind": "KNOWLEDGE",
+            "terminal_reason": "VERIFIER_GAP_SAFE_TERMINAL",
+            "tool_call_count": 1,
+            "tool_calls": [
+              "KNOWLEDGE.SEARCH"
+            ],
+            "verifier_latency_ms": 0.001,
+            "verifier_status": "OWNER_ONLY_SAFE_ABSTENTION"
+          }
+        ],
+        "route": "SEMANTIC_CLOSURE",
+        "schema_version": "m27-runtime-telemetry/v1",
+        "task_id": "task:fresh-smoke:SMOKE008",
+        "task_kind": "KNOWLEDGE",
+        "terminal_reason": "VERIFIER_GAP_SAFE_TERMINAL",
+        "tool_call_count": 1,
+        "total_latency_ms": 3.887,
+        "verifier_latency_ms": 0.001
+      },
+      "status_code": "M27_RUNTIME_SAFE_TERMINAL",
+      "terminal_reason": "VERIFIER_GAP_SAFE_TERMINAL"
+    },
+    {
+      "answer_present": true,
+      "case_id": "SMOKE009",
+      "category": "retrieval_hard",
+      "citation_count": 0,
+      "expectation": "rejected_before_provider",
+      "feature_off": false,
+      "knowledge_searches": 1,
+      "latency_ms": 14.744,
+      "passed": true,
+      "production_touched": false,
+      "provider_calls": 0,
+      "question": "Reject drifted locator identity before publication.",
+      "round_terminal_reason": "VERIFIER_GAP_SAFE_TERMINAL",
+      "runtime_telemetry": {
+        "budget_class": "HEALTHY",
+        "compiler_latency_ms": 0.148,
+        "compute_tier": "STANDARD",
+        "continuation_rounds": 0,
+        "cost_reason_code": "COST_UNAVAILABLE",
+        "estimated_cost_usd": null,
+        "feature_flags": {
+          "ISOLATED_EXECUTABLE_RUNTIME": true,
+          "M27_ENABLED": true,
+          "PRODUCTION_EQUIVALENT_EVIDENCE": true
+        },
+        "model_call_count": 0,
+        "model_latency_ms": 0,
+        "provider_call_count": 0,
+        "provider_latency_ms": 0,
+        "reason_codes": [
+          "TASK_KIND_KNOWLEDGE",
+          "KNOWLEDGE_SELECTED"
+        ],
+        "request_id": "request:fresh-smoke:SMOKE009",
+        "retrieval_evidence_count": 0,
+        "rounds": [
+          {
+            "budget_class": "HEALTHY",
+            "compiler_status": "ABSTAIN_REQUIRED",
+            "compute_tier": "STANDARD",
+            "continuation_allowed": false,
+            "continuation_decision": "TERMINAL",
+            "continuation_reason": "INITIAL",
+            "cost_reason_code": "COST_UNAVAILABLE",
+            "estimated_cost_usd": null,
+            "evidence_delta": 0,
+            "model_call_count": 0,
+            "model_latency_ms": 0,
+            "provider_call_count": 0,
+            "provider_calls": [],
+            "provider_latency_ms": 0,
+            "retrieval_evidence_count": 0,
+            "round_index": 0,
+            "route": "SEMANTIC_CLOSURE",
+            "stage_latency_ms": {
+              "compiler_ms": 0.148,
+              "evidence_binding_ms": 0.009,
+              "provider_ms": 0.0,
+              "round_total_ms": 0.181,
+              "tool_ms": 0.021,
+              "verifier_ms": 0.001
+            },
+            "task_kind": "KNOWLEDGE",
+            "terminal_reason": "VERIFIER_GAP_SAFE_TERMINAL",
+            "tool_call_count": 1,
+            "tool_calls": [
+              "KNOWLEDGE.SEARCH"
+            ],
+            "verifier_latency_ms": 0.001,
+            "verifier_status": "OWNER_ONLY_SAFE_ABSTENTION"
+          }
+        ],
+        "route": "SEMANTIC_CLOSURE",
+        "schema_version": "m27-runtime-telemetry/v1",
+        "task_id": "task:fresh-smoke:SMOKE009",
+        "task_kind": "KNOWLEDGE",
+        "terminal_reason": "VERIFIER_GAP_SAFE_TERMINAL",
+        "tool_call_count": 1,
+        "total_latency_ms": 4.004,
+        "verifier_latency_ms": 0.001
+      },
+      "status_code": "M27_RUNTIME_SAFE_TERMINAL",
+      "terminal_reason": "VERIFIER_GAP_SAFE_TERMINAL"
+    },
+    {
+      "answer_present": true,
+      "case_id": "SMOKE010",
+      "category": "deadline_pressure",
+      "citation_count": 0,
+      "expectation": "budget_terminal",
+      "feature_off": false,
+      "knowledge_searches": 0,
+      "latency_ms": 37.661,
+      "passed": true,
+      "production_touched": false,
+      "provider_calls": 0,
+      "question": "What does Graphology do under exhausted provider budget?",
+      "round_terminal_reason": null,
+      "runtime_telemetry": {
+        "budget_class": "EXHAUSTED",
+        "compiler_latency_ms": 0,
+        "compute_tier": "STANDARD",
+        "continuation_rounds": 0,
+        "cost_reason_code": "COST_UNAVAILABLE",
+        "estimated_cost_usd": null,
+        "feature_flags": {
+          "ISOLATED_EXECUTABLE_RUNTIME": true,
+          "M27_ENABLED": true,
+          "PRODUCTION_EQUIVALENT_EVIDENCE": true
+        },
+        "model_call_count": 0,
+        "model_latency_ms": 0,
+        "provider_call_count": 0,
+        "provider_latency_ms": 0,
+        "reason_codes": [
+          "TASK_KIND_KNOWLEDGE",
+          "KNOWLEDGE_SELECTED"
+        ],
+        "request_id": "request:fresh-smoke:SMOKE010",
+        "retrieval_evidence_count": 0,
+        "rounds": [],
+        "route": "SEMANTIC_CLOSURE",
+        "schema_version": "m27-runtime-telemetry/v1",
+        "task_id": "task:fresh-smoke:SMOKE010",
+        "task_kind": "KNOWLEDGE",
+        "terminal_reason": "BUDGET_NOT_AUTHORITATIVE",
+        "tool_call_count": 0,
+        "total_latency_ms": 25.978,
+        "verifier_latency_ms": 0
+      },
+      "status_code": "M27_RUNTIME_SAFE_TERMINAL",
+      "terminal_reason": "BUDGET_NOT_AUTHORITATIVE"
+    },
+    {
+      "answer_present": false,
+      "case_id": "SMOKE011",
+      "category": "m26_baseline_invariant",
+      "citation_count": 0,
+      "expectation": "m26_invariant",
+      "feature_off": true,
+      "knowledge_searches": 0,
+      "latency_ms": 0.02,
+      "passed": true,
+      "production_touched": false,
+      "provider_calls": 0,
+      "question": "M27 feature off should leave M26 baseline unchanged.",
+      "round_terminal_reason": null,
+      "runtime_telemetry": null,
+      "status_code": "M26_BASELINE_UNCHANGED",
+      "terminal_reason": null
+    },
+    {
+      "answer_present": true,
+      "case_id": "SMOKE012",
+      "category": "cited_answer",
+      "citation_count": 1,
+      "expectation": "verified_cited_answer",
+      "feature_off": false,
+      "knowledge_searches": 1,
+      "latency_ms": 19.001,
+      "passed": true,
+      "production_touched": false,
+      "provider_calls": 2,
+      "question": "Summarize Graphology using only the bound evidence.",
+      "round_terminal_reason": "VERIFIED_CITED_ANSWER",
+      "runtime_telemetry": {
+        "budget_class": "HEALTHY",
+        "compiler_latency_ms": 0.283,
+        "compute_tier": "STANDARD",
+        "continuation_rounds": 0,
+        "cost_reason_code": "COST_UNAVAILABLE",
+        "estimated_cost_usd": null,
+        "feature_flags": {
+          "ISOLATED_EXECUTABLE_RUNTIME": true,
+          "M27_ENABLED": true,
+          "PRODUCTION_EQUIVALENT_EVIDENCE": true
+        },
+        "model_call_count": 2,
+        "model_latency_ms": 0.065,
+        "provider_call_count": 2,
+        "provider_latency_ms": 0.065,
+        "reason_codes": [
+          "TASK_KIND_KNOWLEDGE",
+          "KNOWLEDGE_SELECTED"
+        ],
+        "request_id": "request:fresh-smoke:SMOKE012",
+        "retrieval_evidence_count": 1,
+        "rounds": [
+          {
+            "budget_class": "HEALTHY",
+            "compiler_status": "COMPILED",
+            "compute_tier": "STANDARD",
+            "continuation_allowed": false,
+            "continuation_decision": "TERMINAL",
+            "continuation_reason": "INITIAL",
+            "cost_reason_code": "COST_UNAVAILABLE",
+            "estimated_cost_usd": null,
+            "evidence_delta": 1,
+            "model_call_count": 2,
+            "model_latency_ms": 0.065,
+            "provider_call_count": 2,
+            "provider_calls": [
+              {
+                "call_class": "AQ_SEMANTIC_CLOSURE",
+                "call_index": 1,
+                "latency_ms": 0.012,
+                "reason_code": "PROVIDER_CALL_OK",
+                "success": true
+              },
+              {
+                "call_class": "AQ_CLAIM_SEMANTIC_ENTAILMENT",
+                "call_index": 2,
+                "latency_ms": 0.053,
+                "reason_code": "PROVIDER_CALL_OK",
+                "success": true
+              }
+            ],
+            "provider_latency_ms": 0.065,
+            "retrieval_evidence_count": 1,
+            "round_index": 0,
+            "route": "SEMANTIC_CLOSURE",
+            "stage_latency_ms": {
+              "compiler_ms": 0.283,
+              "evidence_binding_ms": 0.07,
+              "provider_ms": 0.065,
+              "round_total_ms": 3.83,
+              "tool_ms": 0.043,
+              "verifier_ms": 3.36
+            },
+            "task_kind": "KNOWLEDGE",
+            "terminal_reason": "VERIFIED_CITED_ANSWER",
+            "tool_call_count": 1,
+            "tool_calls": [
+              "KNOWLEDGE.SEARCH"
+            ],
+            "verifier_latency_ms": 3.36,
+            "verifier_status": "OWNER_ONLY_CITED_ANSWER"
+          }
+        ],
+        "route": "SEMANTIC_CLOSURE",
+        "schema_version": "m27-runtime-telemetry/v1",
+        "task_id": "task:fresh-smoke:SMOKE012",
+        "task_kind": "KNOWLEDGE",
+        "terminal_reason": "VERIFIED_CITED_ANSWER",
+        "tool_call_count": 1,
+        "total_latency_ms": 8.004,
+        "verifier_latency_ms": 3.36
+      },
+      "status_code": "M27_RUNTIME_COMPOSED",
+      "terminal_reason": "VERIFIED_CITED_ANSWER"
+    }
+  ],
+  "failed_cases": [],
+  "max_latency_ms": 69.463,
+  "p50_latency_ms": 23.598,
+  "p95_latency_ms": 41.147,
+  "passed_count": 12,
+  "production_touched_any": false,
+  "provider_calls_total": 16,
+  "schema_version": "m27-fresh-small-smoke/v1",
+  "streaming_status": "unsupported_by_05R_preflight_endpoint; harness-level smoke records terminal answer receipts"
+}
