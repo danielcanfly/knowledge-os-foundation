@@ -5,75 +5,42 @@ Date: 2026-10-06
 Workspace: `/home/ubuntu/LLM_Wiki-m27-smoke-preflight-repair`
 Branch: `m27/smoke-preflight-repair`
 Base: `cbc3ec9d7353f564ef11687ca590830e36253c2e`
+Repair code HEAD: `aff6c16582a866d015140e0929c012a8ba6b0bed`
 
 fresh_small_smoke_may_rerun: YES
 
-## What is ready
+## Exact 05 preflight startup command
 
-A real loopback-only M27 production-equivalent isolated readiness surface is running at:
+`cd /home/ubuntu/LLM_Wiki-m27-smoke-preflight-repair && ./scripts/m27_smoke_preflight_start.sh`
 
-`http://127.0.0.1:18080`
+Then revalidate:
 
-Endpoint module:
+- `GET http://127.0.0.1:18080/v1/health`
+- `GET http://127.0.0.1:18080/v1/preflight`
+- exactly one container with label `com.daniel.m27.eval=true`
+- build SHA/image digest/container ID match
+- production `/v1/health` is HTTP 200 and identity stable
+- low-memory profile passes: available >=192 MB, swap <=768 MB, load <=8.0
+- quota active requests=0
+- provider calls=0 before question 1
+- no competing build/test/eval workload
 
-`knowledge_engine.m27_isolated_http:app`
+Cleanup command:
 
-Current isolated eval container:
+`cd /home/ubuntu/LLM_Wiki-m27-smoke-preflight-repair && ./scripts/m27_smoke_preflight_stop.sh`
 
-- name: `m27-isolated-eval-05r`
-- image: `knowledge-engine:m27-smoke-preflight-repair`
-- port: `127.0.0.1:18080->8080`
-- label: `com.daniel.m27.eval=true`
+The cleanup script is ownership-label guarded and must not remove production or test-page containers.
 
-This endpoint is not `knowledge_engine.m26_console_api:app` and does not use Stage13/14 legacy admission.
+## Current live identity
 
-## Command 05 should use before sending questions
-
-```bash
-cd /home/ubuntu/LLM_Wiki-m27-smoke-preflight-repair
-PATH=/home/ubuntu/.venvs/m27-runtime-composition/bin:$PATH \
-PYTHONPATH=src:. \
-/home/ubuntu/.venvs/m27-runtime-composition/bin/python \
-  scripts/m27_smoke_preflight_check.py
-```
-
-Only if that command returns `status: READY` should Session 05 proceed to its own bounded fresh small smoke questions.
-
-## If container restart is required
-
-Start or refresh only the owned isolated eval container:
-
-```bash
-cd /home/ubuntu/LLM_Wiki-m27-smoke-preflight-repair
-./scripts/m27_smoke_preflight_start.sh
-```
-
-Cleanup only the owned isolated eval container:
-
-```bash
-cd /home/ubuntu/LLM_Wiki-m27-smoke-preflight-repair
-./scripts/m27_smoke_preflight_stop.sh
-```
-
-The cleanup script refuses to remove production/test-page containers.
-
-## Final validated preflight facts
-
-- endpoint health: HTTP 200
+- endpoint: `http://127.0.0.1:18080`
+- module: `knowledge_engine.m27_isolated_http:app`
 - runtime identity: `m27-production-equivalent-runtime`
-- build SHA: `cbc3ec9d7353f564ef11687ca590830e36253c2e`
-- image digest: `sha256:c4fe0db1d96d0bf60634c6b6bec245f1f6c04f1b4b857df4a1faa801aa4dd550`
-- container id: `52b6ab3a1a2f`
-- eval container count: `1`
-- low-memory host guard: PASS under explicit 05R/05 limits
-- quota active requests: `0`
-- quota provider calls: `0`
-- smoke questions sent: `0`
-- provider calls: `0`
-- production identity stable: `true`
+- image: `knowledge-engine:m27-smoke-preflight-repair`
+- image digest: `sha256:fd69ccb3814af30345bf99afcd70cbb011c764d8df02129b95dd7bbd306f0009`
+- container: `m27-isolated-eval-05r`
+- production touched: false
+- smoke questions sent by 05R: 0
+- provider calls by 05R: 0
 
-## Boundaries preserved
-
-Production was not mutated, restarted, stopped, rebuilt, deployed, or written. No R2/Qdrant/SQLite/release pointer was touched. No smoke questions were sent. No admission, Stage13/14, Chunk002, 100-case, or full523 was run.
-
-`M27_ADMISSION_SMOKE_PREFLIGHT_READY`
+05R does not authorize answer execution itself. 05 must rerun its own preflight and only then decide whether to send its bounded 10-20 questions.

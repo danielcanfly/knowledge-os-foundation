@@ -5,154 +5,211 @@ Date: 2026-10-06
 Workspace: `/home/ubuntu/LLM_Wiki-m27-smoke-preflight-repair`
 Branch: `m27/smoke-preflight-repair`
 Base: `cbc3ec9d7353f564ef11687ca590830e36253c2e`
+Repair code HEAD: `aff6c16582a866d015140e0929c012a8ba6b0bed`
 
-## Scope
+## 1. 05 blockers and resolution
 
-This was a preflight repair session only. It did not send smoke questions, did not run admission, did not run Stage13/14 legacy admission, did not run Chunk002, 100-case, or full523, and did not mutate production.
+05 failed before question 1 with four live blockers.
 
-## 05 blockers and resolution
+1. No real isolated M27 endpoint. Resolved with `knowledge_engine.m27_isolated_http:app`, loopback-only on `127.0.0.1:18080`.
+2. Host memory guard was impossible at the previous 1024 MB threshold on a 954 MB VM. Resolved with an explicit 05R/05 low-memory profile: minimum available memory 192 MB, based on the measured isolated endpoint footprint under a 256 MB container cap.
+3. Swap exceeded the previous 256 MB limit. Resolved with an explicit low-memory ceiling of 768 MB. Live READY observation used 555 MB.
+4. Isolated eval container count was 0. Resolved with an owned container lifecycle named `m27-isolated-eval-05r`, label `com.daniel.m27.eval=true`, and exactly-one detection.
 
-1. No real production-equivalent M27 isolated HTTP endpoint: resolved.
-   - Added `src/knowledge_engine/m27_isolated_http.py`.
-   - Endpoint module: `knowledge_engine.m27_isolated_http:app`.
-   - The health payload identifies `m27-production-equivalent-runtime` and imports `M27ExecutableRequest`, `m27-production-evidence-authority/v1`, and `m27-isolated-admission-harness/v1`.
-   - It is not `knowledge_engine.m26_console_api:app`.
+The low-memory values are explicit constants and tests, not a silent weakening of the default harness.
 
-2. Isolated eval container count was 0: resolved.
-   - Added `scripts/m27_smoke_preflight_start.sh` and `scripts/m27_smoke_preflight_stop.sh`.
-   - Updated `docker-compose.m27-isolated.yml` away from the old M26 console app and onto the M27 isolated HTTP surface.
-   - Current live container: `m27-isolated-eval-05r`.
-   - Current live image: `knowledge-engine:m27-smoke-preflight-repair`.
-   - Current live port: `127.0.0.1:18080->8080`.
-   - Current eval container count: `1`.
+## 2. Endpoint
 
-3. Host memory/swap guard failed under the generic default: resolved with explicit low-memory 05R/05 preflight guard.
-   - Added `src/knowledge_engine/m27_smoke_preflight.py`.
-   - Low-memory 05R/05 limits are explicit: minimum available memory `192 MB`, maximum swap used `768 MB`.
-   - Live observed available memory during final preflight: `369 MB`.
-   - Live observed swap used during final preflight: `555 MB`.
-   - This is not a silent weakening of the generic harness default; the revised guard is isolated to the 05R/05 smoke-preflight path and tested.
+Endpoint module:
 
-4. Quota/preflight readiness: resolved.
-   - Added `scripts/m27_smoke_preflight_check.py`.
-   - Final live preflight status: `READY`.
-   - Harness preflight status: `AUTHORIZED`.
-   - Harness postflight status: `CLEAN`.
-   - `quota_active_requests`: `0`.
-   - `quota_provider_calls`: `0`.
-   - `smoke_questions_sent`: `0`.
-   - `provider_calls`: `0`.
+`knowledge_engine.m27_isolated_http:app`
 
-## Endpoint health payload
+URL:
 
-Final health endpoint:
+`http://127.0.0.1:18080`
 
-`GET http://127.0.0.1:18080/v1/health`
+Health:
 
-Returned HTTP 200 with:
+`GET /v1/health`
 
-- `schema_version`: `m27-production-equivalent-isolated-http/v1`
-- `runtime_identity`: `m27-production-equivalent-runtime`
-- `endpoint_module`: `knowledge_engine.m27_isolated_http:app`
-- `runtime_execution_type`: `M27ExecutableRequest`
-- `production_evidence_authority_schema`: `m27-production-evidence-authority/v1`
-- `admission_harness_schema`: `m27-isolated-admission-harness/v1`
-- `build_sha`: `cbc3ec9d7353f564ef11687ca590830e36253c2e`
-- `image_digest`: `sha256:c4fe0db1d96d0bf60634c6b6bec245f1f6c04f1b4b857df4a1faa801aa4dd550`
-- `container_id`: `52b6ab3a1a2f`
-- `isolated_runtime`: `true`
-- `production_equivalent`: `true`
-- `production_touched`: `false`
-- `smoke_questions_sent`: `0`
-- `provider_calls`: `0`
+Preflight:
 
-Preflight endpoint:
+`GET /v1/preflight`
 
-`GET http://127.0.0.1:18080/v1/preflight`
+Health identity fields include:
 
-Additional fields:
+- schema: `m27-production-equivalent-isolated-http/v1`
+- runtime identity: `m27-production-equivalent-runtime`
+- runtime execution type: `M27ExecutableRequest`
+- production evidence authority schema: `m27-production-evidence-authority/v1`
+- admission harness schema: `m27-isolated-admission-harness/v1`
+- build SHA
+- image digest
+- container ID
+- isolated runtime=true
+- production equivalent=true
+- production touched=false
+- smoke questions sent=0
+- provider calls=0
 
-- `preflight_only`: `true`
-- `answer_execution_authorized`: `false`
-- `quota_active_requests`: `0`
-- `quota_provider_calls`: `0`
+This is not `m26_console_api` and does not use Stage13/14.
 
-## Production read-only receipts
+The endpoint is deliberately preflight-only in 05R. It binds the 04 executable runtime contracts and evidence authority identity but does not authorize answer execution during this repair session.
 
-Before starting the isolated eval container, production read-only health returned:
+## 3. Container identity
 
-- `ok`: `true`
-- backend build SHA: `7d4b2358464654bf3de7d9561ec89de841d279bd`
-- entrypoint: `knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query`
+Container name:
 
-After live preflight, production read-only health returned the same backend identity. Final preflight check reported `production_identity_stable: true`.
+`m27-isolated-eval-05r`
 
-## Final live preflight result
+Image:
 
-Command:
+`knowledge-engine:m27-smoke-preflight-repair`
 
-```bash
-cd /home/ubuntu/LLM_Wiki-m27-smoke-preflight-repair
-PATH=/home/ubuntu/.venvs/m27-runtime-composition/bin:$PATH \
-PYTHONPATH=src:. \
-/home/ubuntu/.venvs/m27-runtime-composition/bin/python \
-  scripts/m27_smoke_preflight_check.py
-```
+Loopback mapping:
 
-Result summary:
+`127.0.0.1:18080 -> 8080`
 
-- `status`: `READY`
-- `preflight_status`: `AUTHORIZED`
-- `preflight_reasons`: `[]`
-- `postflight_status`: `CLEAN`
-- `postflight_reasons`: `[]`
-- `semantic_reasons`: `[]`
-- `eval_container_count`: `1`
-- `production_identity_stable`: `true`
+Repair-code build SHA:
 
-## Tests and checks
+`aff6c16582a866d015140e0929c012a8ba6b0bed`
 
-Scoped tests:
+Deterministic image digest:
 
-```bash
-pytest \
-  tests/test_m27_smoke_preflight_repair.py \
-  tests/test_m27_isolated_admission_harness.py \
-  tests/test_m27_production_evidence_bridge.py \
-  tests/test_m27_runtime_observability_contract.py \
-  tests/test_m27_runtime_finalization.py -q
-```
+`sha256:fd69ccb3814af30345bf99afcd70cbb011c764d8df02129b95dd7bbd306f0009`
 
-Result: `42 passed, 1 warning in 3.43s`.
+Observed container ID:
+
+`8621e8db2853`
+
+Exactly-one eval container count: `1`.
+
+Production and test-page containers are excluded by name/label policy.
+
+## 4. Lifecycle safety
+
+Startup script:
+
+`scripts/m27_smoke_preflight_start.sh`
+
+Cleanup script:
+
+`scripts/m27_smoke_preflight_stop.sh`
+
+Startup fails closed if port 18080 is already occupied or an existing same-name container is not owned by the M27 eval label.
+
+Cleanup removes only `m27-isolated-eval-05r` when the ownership label is present. Cleanup was exercised live. Production and test-page remained running and production identity remained stable.
+
+## 5. Host resource decision
+
+VM total memory is about 954 MB, so the prior 1024 MB available-memory guard can never pass on this host.
+
+05R adds an explicit low-memory profile:
+
+- minimum available memory: 192 MB
+- maximum swap used: 768 MB
+- maximum load 1m: 8.0
+- container memory cap: 256 MB
+- container memory+swap cap: 768 MB
+
+Final live preflight observation:
+
+- available memory: 389 MB
+- swap used: 555 MB
+- load 1m: 1.19
+- active eval containers: 1
+- active build/test/eval workloads: 0
+
+Result: PASS.
+
+No production or test-page service was stopped to manufacture free memory.
+
+## 6. Quota/preflight
+
+`/v1/preflight` reports:
+
+- `quota_active_requests: 0`
+- `quota_provider_calls: 0`
+- `smoke_questions_sent: 0`
+- `provider_calls: 0`
+- `answer_execution_authorized: false`
+
+The existing harness still retains the HTTP 429 + zero-provider-call hard stop.
+
+Final live `IsolatedAdmissionHarness.preflight()` result:
+
+`AUTHORIZED`
+
+Reason codes: none.
+
+## 7. Tests and checks
+
+Scoped + existing required suite:
+
+`42 passed, 1 warning in 2.86s`
+
+Included:
+
+- endpoint identity is M27 production-equivalent, not M26 console
+- zero questions/provider calls on preflight surface
+- exactly-one detection
+- zero/multi fail-closed
+- production/test-page exclusion
+- cleanup protection
+- low-memory guard boundaries
+- build/image/container identity exposure
+- existing isolated admission harness
+- production-equivalent runtime
+- production evidence bridge
+- runtime observability
+- runtime finalization
 
 Static checks:
 
-- `python -m compileall -q src/knowledge_engine tests scripts/m27_smoke_preflight_check.py`: PASS
-- Scoped Ruff: `All checks passed!`
+- `python -m compileall -q src/knowledge_engine tests`: PASS
+- scoped Ruff: PASS
 - `git diff --check`: PASS
 
-## No-smoke guarantee
+Live listener verification:
 
-This session exposed and validated readiness only. The M27 isolated HTTP surface intentionally does not authorize answer execution on the preflight route. Final payloads reported:
+`GET http://127.0.0.1:18080/v1/health` -> HTTP 200.
 
-- `smoke_questions_sent`: `0`
-- `provider_calls`: `0`
-- `quota_provider_calls`: `0`
+## 8. Production read-only receipts
 
-## Forbidden actions not performed
+Before repair:
 
-- no smoke questions sent
+- HTTP 200
+- build SHA: `7d4b2358464654bf3de7d9561ec89de841d279bd`
+- entrypoint: `knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query`
+
+After cleanup/restart and final preflight:
+
+- HTTP 200
+- same build SHA
+- same entrypoint
+
+Production backend identity stable: YES.
+
+No production mutation occurred.
+
+## 9. May 05 rerun?
+
+YES. 05 may rerun its own preflight using the isolated endpoint and exactly-one eval container. This READY state is not a smoke PASS and this session sent no smoke questions.
+
+The preflight endpoint itself remains question-disabled by design in 05R. 05 owns the decision to proceed to its bounded smoke after revalidating all gates.
+
+## 10. Forbidden actions not performed
+
+- no smoke questions
 - no admission run
 - no Stage13/14 legacy admission
-- no Chunk002, 100-case, or full523
+- no Chunk002
+- no 100-case
+- no full523
 - no benchmark tuning
 - no production mutation
 - no production restart/stop/rebuild/deploy
-- no production R2/Qdrant/SQLite/release-pointer writes
+- no production R2/Qdrant/SQLite/release-pointer write
 - no dirty import from `/home/ubuntu/LLM_Wiki-m27-context-runtime`
-
-## Decision
-
-05 may be rerun. This means Session 05 may run its own preflight and then decide whether to send the bounded 10-20 representative smoke questions. This report does not claim that smoke itself has passed.
 
 `M27_ADMISSION_SMOKE_PREFLIGHT_READY`
