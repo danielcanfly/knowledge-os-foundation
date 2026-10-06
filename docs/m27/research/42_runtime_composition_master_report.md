@@ -6,6 +6,12 @@ Workspace: `/home/ubuntu/LLM_Wiki-m27-runtime-composition`
 Branch: `m27/runtime-composition`
 Base: `06681024634b2590ce6115498a5c87ed887b9aea`
 
+## Finalization correction (2026-10-06)
+
+The initial upstream `M27_RUNTIME_COMPOSITION_COMPLETE` claim was premature: the original harness normalized caller-supplied compiler and verifier outputs and only calculated a continuation recommendation. It did not run the M26 answer/model seam or execute a verifier-driven second round. The new, independently audited finalization in `m27/runtime-composition-finalization` adds actual executable isolated composition, 13 acceptance guards, M26 compiler and verifier calls, budget-enforced repeated execution and an explicit fresh-smoke readiness decision. See `docs/m27/research/43_runtime_composition_finalization_report.md` and the updated handoff.
+
+The original 28-test receipt remains valid **for the upstream normalization-only composition mode**, not proof of end-to-end execution. The current isolated synthetic proof and 554-test safety gate supersede the upstream completion interpretation. It does **not** establish production-compiler authority; admission readiness is NO.
+
 ## Scope receipt
 
 This session executed only the runtime-composition subsession scope. It did not run or modify Stage13/14 admission mainline, did not start Chunk002, did not run full523, did not restart production, did not stop production, and did not change production configuration.

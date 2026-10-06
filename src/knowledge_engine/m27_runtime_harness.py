@@ -65,6 +65,7 @@ class M27RuntimeHarnessInput:
     verification_output: Mapping[str, object] | None = None
     health_payload: Mapping[str, object] | None = None
     m27_enabled: bool = True
+    executable_request: object | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -82,6 +83,10 @@ class M27RuntimeHarnessResult:
     meta_candidate_ids: tuple[str, ...]
     production_touched: bool = False
     feature_off: bool = False
+    execution_rounds: tuple[dict[str, object], ...] = ()
+    answer: Mapping[str, object] | None = None
+    verification: Mapping[str, object] | None = None
+    terminal_reason: str | None = None
 
     def as_summary(self) -> dict[str, object]:
         return {
@@ -101,6 +106,8 @@ class M27RuntimeHarnessResult:
             "meta_candidate_ids": list(self.meta_candidate_ids),
             "production_touched": self.production_touched,
             "feature_off": self.feature_off,
+            "execution_rounds": list(self.execution_rounds),
+            "terminal_reason": self.terminal_reason,
         }
 
 
@@ -174,6 +181,9 @@ class M27RuntimeHarness:
                 meta_candidate_ids=(),
                 feature_off=True,
             )
+
+        if runtime_input.executable_request is not None:
+            return self._run_executable(runtime_input)
 
         plan = self._orchestrator.plan(runtime_input.task)
         workspace_id = WorkspaceId.from_safe_token(
@@ -280,6 +290,82 @@ class M27RuntimeHarness:
             retained_memory_count=retained_count,
             learning_proposal_ids=learning_ids,
             meta_candidate_ids=meta_ids,
+        )
+
+    def _run_executable(self, runtime_input: M27RuntimeHarnessInput) -> M27RuntimeHarnessResult:
+        from .m27_runtime_execution import M27ExecutableRequest, execute_isolated
+
+        request = runtime_input.executable_request
+        if not isinstance(request, M27ExecutableRequest):
+            raise TypeError("executable_request must be M27ExecutableRequest")
+        if not isinstance(runtime_input.budget_signal, Mapping):
+            raise TypeError("executable execution requires explicit budget mapping")
+        plan = self._orchestrator.plan(runtime_input.task)
+        context_plan = self._routing_adapter.normalize(runtime_input.routing_signal)
+        compute_observation = self._compute_policy.classify(runtime_input.budget_signal)
+        executed = execute_isolated(
+            request=request,
+            task=runtime_input.task,
+            plan=plan,
+            budget_signal=runtime_input.budget_signal,
+            executor=self._tool_executor,
+            store=self._workspace_store,
+        )
+        rounds = tuple(executed["rounds"])
+        verification_output = dict(executed["verification"])
+        successful = executed["status_code"] == "M27_RUNTIME_COMPOSED"
+        verification_output["status"] = (
+            "verified_answer" if successful else "owner_only_safe_abstention"
+        )
+        verification_output["safe_abstention"] = not successful
+        verification_output["terminal_status"] = "answered" if successful else "safe_abstention"
+        evidence_result = self._evidence_adapter.normalize(
+            selected_evidence=executed["evidence_identities"],
+            reason_codes=plan.reason_codes,
+        )
+        verification = self._verifier_adapter.normalize(verification_output)
+        trace = _trace_event(
+            context_plan=context_plan,
+            compute_observation=compute_observation,
+            evidence_result=evidence_result,
+            verification=verification,
+            plan=plan,
+        )
+        workspace_id = WorkspaceId.from_safe_token(
+            scope=WorkspaceScope.TASK, task_token=runtime_input.task.task_id
+        )
+        memory_ids, retained_count = self._memory_step(
+            task=runtime_input.task, plan=plan, trace=trace
+        )
+        learning_ids = self._learning_step(trace=trace, workspace_id=workspace_id, plan=plan)
+        meta_ids = self._meta_step(trace=trace, workspace_id=workspace_id, plan=plan)
+        continuation = self._orchestrator.continuation_decision(
+            verification_status=str(verification.status),
+            material_claim_support_verified=verification.material_claim_support_verified,
+            citation_locator_valid=verification.citation_locator_valid,
+            unsupported_accepted_claims=verification.unsupported_accepted_claims,
+            safe_abstention=verification.safe_abstention,
+            compute_observation=compute_observation,
+            completed_rounds=max(0, len(rounds) - 1),
+            tool_calls=len(executed["tool_records"]),
+            plan=plan,
+        )
+        return M27RuntimeHarnessResult(
+            status_code=str(executed["status_code"]),
+            task_id=runtime_input.task.task_id,
+            plan=plan,
+            workspace_id=str(executed["workspace_id"]),
+            trace_event=trace,
+            tool_records=tuple(executed["tool_records"]),
+            continuation_decision=continuation,
+            memory_candidate_ids=memory_ids,
+            retained_memory_count=retained_count,
+            learning_proposal_ids=learning_ids,
+            meta_candidate_ids=meta_ids,
+            execution_rounds=rounds,
+            answer=executed["answer"],
+            verification=executed["verification"],
+            terminal_reason=str(executed["terminal_reason"]),
         )
 
     def _memory_step(

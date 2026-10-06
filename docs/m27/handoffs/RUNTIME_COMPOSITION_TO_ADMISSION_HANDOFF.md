@@ -1,98 +1,44 @@
 # Runtime Composition to Admission Handoff
 
-Status: `M27_RUNTIME_COMPOSITION_COMPLETE`
+Status: M27_RUNTIME_COMPOSITION_COMPLETE (isolated composition only)
 Date: 2026-10-06
-Branch: `m27/runtime-composition`
-Base: `06681024634b2590ce6115498a5c87ed887b9aea`
+Workspace: /home/ubuntu/LLM_Wiki-m27-runtime-finalization
+Branch: m27/runtime-composition-finalization
+Base: e20e27068fac746c3b901d620ddcb99b5d005570
 
-## What is ready
+## Correction to previous handoff
 
-The runtime-composition subsession produced the first executable M27 composition layer without touching Stage13/14 admission mainline or production runtime.
+The upstream composition candidate was only normalization + recommendation and did not invoke real compiler/model/verifier or perform continuation. The finalization branch adds an executable M27 composition option with actual read-only Stage5 knowledge gather, digest/source/locator identity checks, existing M26.3 synthetic-only context compilation, actual M26 canonical synthesis and verification, and guarded bounded continuation.
 
-Ready artifacts:
+The legacy normalization-only path remains for compatibility but must not be interpreted as executable answer proof. With the M27 feature flag disabled, M26 baseline is unchanged.
 
-- `docs/m27/research/runtime_composition_inventory.md`
-- `src/knowledge_engine/m27_tool_executor.py`
-- `src/knowledge_engine/m27_context_orchestrator.py`
-- `src/knowledge_engine/m27_runtime_harness.py`
-- `tests/test_m27_tool_executor.py`
-- `tests/test_m27_context_orchestrator.py`
-- `tests/test_m27_runtime_composition_eval.py`
-- `docs/m27/research/42_runtime_composition_master_report.md`
+## Actual execution and gates
 
-## Commits to review
+- New: src/knowledge_engine/m27_runtime_execution.py
+- Modified: src/knowledge_engine/m27_runtime_harness.py
+- Tests: tests/test_m27_runtime_finalization.py (14 new acceptance guards).
+- M26 semantic answer/verification implementation: knowledge_engine.m26_aq_semantic_contract.synthesize_and_verify.
+- Compiler: knowledge_engine.m26_context_compiler.compile_context_package, only with digest-bound synthetic M26 evidence policy.
+- Verified round-0 cited publication; initial M26 verification gap then actual second gather/compile/answer/verify cited publication; exhausted provider/tool/deadline gates stop; unauthorized capabilities fail closed.
+- Existing Tool, OPS Skill selection and read-only workspace lifecycle are covered by the retained composition tests.
+- 14 new tests passed; 28 prior composition tests retained; Stage1-12 + M26 safety equivalent: 555 passed, 1 existing dependency deprecation warning.
+- Ruff and compileall passed; production read-only health HTTP 200 before and after; no production mutation.
+- Git post-Stage12 reconciliation: detailed A/B/C/D/E table in report 43; NO cherry-picks.
 
-- `abc55175 docs(m27): inventory runtime composition primitives`
-- `cfb33527 feat(m27): compose isolated runtime primitives`
-- Final report/handoff commit follows this file.
+## Admission authority and decision
 
-## Admission-facing summary
+ready_for_fresh_small_admission_smoke: NO
 
-The new runtime composition path is intentionally isolated and feature-switchable:
+The isolated executable E2E proof uses the explicitly synthetic-only M26.3 context compiler. A production-grade compiler/evidence-bundle and provenance equivalence bridge has NOT been proven. Do not treat this as production readiness or authorization to run admission. Separately establish and audit that evidence authority and explicit isolated admission plan, then make a fresh smoke decision.
 
-- Disabled mode returns `M26_BASELINE_UNCHANGED` and performs no new work.
-- Enabled mode builds an isolated workspace and uses existing Stage1/3 adapters for M26 signals.
-- Tool calls pass only through Stage5 read-only descriptors and injected providers.
-- Stage7 skills remain descriptor-only.
-- Stage10 memory remains candidate-only and non-authoritative.
-- Stage11 learning remains proposal-only.
-- Stage12 meta-harness remains offline/review-only.
-- No production write, release, rollback, R2, Qdrant, SQLite, shell, or MCP execution authority is introduced.
+## Forbidden actions not performed
 
-## Gate evidence
+No Stage13/14 mainline/admission; no Chunk002/100-case/full523; no benchmark-tuned runtime changes; no production restart, stop, rebuild, config changes or R2/Qdrant/SQLite writes; no modification to other M27 worktrees.
 
-New composition tests:
+## Reports
 
-```text
-28 passed in 1.13s
-```
+- docs/m27/research/runtime_composition_finalization_design.md
+- docs/m27/research/42_runtime_composition_master_report.md (corrected)
+- docs/m27/research/43_runtime_composition_finalization_report.md
 
-Lint and compile:
-
-```text
-ruff: All checks passed!
-compileall: PASS
-```
-
-Stage1-12 plus M26 safety gate:
-
-```text
-541 passed, 1 warning in 12.96s
-```
-
-The only warning was a package-level FastAPI/httpx deprecation warning from the test environment.
-
-## Production proof
-
-Production was only read:
-
-```text
-llm_wiki-knowledge-engine-1|knowledge-engine:f7468225-generic-fallback-guard-20261003T061416Z|Up 43 hours (healthy)|127.0.0.1:8080->8080/tcp
-HTTP/1.1 200 OK
-answer_bundle_preloaded: true
-answer_bundle_preload_error: ""
-```
-
-No production restart/stop/deploy/config change was performed.
-
-## Explicitly not done
-
-This handoff does not claim Stage13/14 admission readiness.
-
-Not performed:
-
-- No Stage13/14 mainline mutation.
-- No Chunk002.
-- No full523.
-- No production container restart.
-- No production image rebuild.
-- No production config mutation.
-- No admission scoring.
-
-## Suggested next admission step
-
-Use this branch as a composition candidate only. The next owner should run an explicit isolated admission plan against this branch, starting from the new harness tests and then deciding whether and how it should be compared against Stage13/14 constraints. Do not treat this as an automatic Stage13/14 continuation.
-
-## Stop state
-
-`M27_RUNTIME_COMPOSITION_COMPLETE`
+Final status: M27_RUNTIME_COMPOSITION_COMPLETE (scope: isolated executable composition, NOT admission).
