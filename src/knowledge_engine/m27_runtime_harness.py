@@ -87,6 +87,7 @@ class M27RuntimeHarnessResult:
     answer: Mapping[str, object] | None = None
     verification: Mapping[str, object] | None = None
     terminal_reason: str | None = None
+    runtime_telemetry: Mapping[str, object] | None = None
 
     def as_summary(self) -> dict[str, object]:
         return {
@@ -108,6 +109,7 @@ class M27RuntimeHarnessResult:
             "feature_off": self.feature_off,
             "execution_rounds": list(self.execution_rounds),
             "terminal_reason": self.terminal_reason,
+            "runtime_telemetry": dict(self.runtime_telemetry) if self.runtime_telemetry else None,
         }
 
 
@@ -303,6 +305,22 @@ class M27RuntimeHarness:
         plan = self._orchestrator.plan(runtime_input.task)
         context_plan = self._routing_adapter.normalize(runtime_input.routing_signal)
         compute_observation = self._compute_policy.classify(runtime_input.budget_signal)
+        deadline_class = getattr(
+            compute_observation, "deadline_budget_class", BudgetClass.UNAVAILABLE_IN_STAGE1
+        )
+        provider_class = getattr(
+            compute_observation, "provider_budget_class", BudgetClass.UNAVAILABLE_IN_STAGE1
+        )
+        budget_classes = {deadline_class.value, provider_class.value}
+        budget_class = (
+            "EXHAUSTED"
+            if "EXHAUSTED" in budget_classes
+            else "CONSTRAINED"
+            if "CONSTRAINED" in budget_classes
+            else "HEALTHY"
+            if "HEALTHY" in budget_classes
+            else "UNAVAILABLE"
+        )
         executed = execute_isolated(
             request=request,
             task=runtime_input.task,
@@ -310,6 +328,13 @@ class M27RuntimeHarness:
             budget_signal=runtime_input.budget_signal,
             executor=self._tool_executor,
             store=self._workspace_store,
+            route=str(getattr(context_plan, "route", "UNAVAILABLE")),
+            compute_tier=getattr(
+                compute_observation,
+                "shadow_compute_tier",
+                ComputeTier.UNAVAILABLE_IN_STAGE1,
+            ).value,
+            budget_class=budget_class,
         )
         rounds = tuple(executed["rounds"])
         verification_output = dict(executed["verification"])
@@ -366,6 +391,7 @@ class M27RuntimeHarness:
             answer=executed["answer"],
             verification=executed["verification"],
             terminal_reason=str(executed["terminal_reason"]),
+            runtime_telemetry=dict(executed["telemetry"]),
         )
 
     def _memory_step(

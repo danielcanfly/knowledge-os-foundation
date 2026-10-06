@@ -17,6 +17,13 @@ from .m27_production_evidence_bridge import (
     citation_bindings_preserved,
     validate_production_authority,
 )
+from .m27_runtime_telemetry import (
+    M27RoundTelemetry,
+    M27RuntimeTelemetry,
+    ProviderCallTelemetry,
+    assert_privacy_safe_telemetry,
+    elapsed_ms,
+)
 from .m27_tool_contracts import KnowledgeSearchInput
 from .m27_tool_executor import ReadOnlyToolExecutor, ToolExecutionPolicy
 from .m27_workspace_contracts import WorkspaceArtifactKind, WorkspaceId, WorkspaceScope
@@ -48,12 +55,36 @@ class ProviderQuota:
         self.max_calls = max_calls
         self.deadline_at = deadline_at
         self.calls = 0
+        self.telemetry: list[ProviderCallTelemetry] = []
 
     def call(self, payload: Mapping[str, Any], call_class: str) -> object:
         if self.calls >= self.max_calls or time.monotonic() >= self.deadline_at:
             raise ProviderQuotaExhausted("isolated M27 provider budget exhausted")
         self.calls += 1
-        return self._provider.call(payload, call_class)
+        start_ns = time.perf_counter_ns()
+        try:
+            result = self._provider.call(payload, call_class)
+        except Exception:
+            self.telemetry.append(
+                ProviderCallTelemetry(
+                    call_index=self.calls,
+                    call_class=call_class,
+                    latency_ms=elapsed_ms(start_ns, time.perf_counter_ns()),
+                    success=False,
+                    reason_code="PROVIDER_EXCEPTION",
+                )
+            )
+            raise
+        self.telemetry.append(
+            ProviderCallTelemetry(
+                call_index=self.calls,
+                call_class=call_class,
+                latency_ms=elapsed_ms(start_ns, time.perf_counter_ns()),
+                success=True,
+                reason_code="PROVIDER_CALL_OK",
+            )
+        )
+        return result
 
 
 def _evidence_authority(request: M27ExecutableRequest) -> str:
@@ -181,14 +212,19 @@ def execute_isolated(
     budget_signal: Mapping[str, object],
     executor: ReadOnlyToolExecutor,
     store: WorkspaceStore,
+    route: str = "UNAVAILABLE",
+    compute_tier: str = "UNAVAILABLE",
+    budget_class: str = "UNAVAILABLE",
 ) -> dict[str, object]:
     """Execute actual Stage5 gather, M26.3 compile and canonical M26 verification.
 
     No caller-supplied compiled/verification output enters this route.
     """
+    execution_start_ns = time.perf_counter_ns()
     workspace_id = WorkspaceId.from_safe_token(scope=WorkspaceScope.TASK, task_token=task.task_id)
     store.create_workspace(workspace_id=workspace_id, scope=WorkspaceScope.TASK)
     rounds: list[dict[str, object]] = []
+    telemetry_rounds: list[M27RoundTelemetry] = []
     records: list[object] = []
     gathered: dict[str, dict[str, Any]] = {}
     answer: dict[str, Any] = {}
@@ -243,14 +279,19 @@ def execute_isolated(
             if provider.calls >= provider.max_calls or time.monotonic() >= provider.deadline_at:
                 terminal_reason = "PROVIDER_OR_DEADLINE_EXHAUSTED"
                 break
+            round_start_ns = time.perf_counter_ns()
+            provider_start_index = len(provider.telemetry)
+            tool_start_ns = time.perf_counter_ns()
             retrieval = executor.execute(
                 "knowledge.search",
                 KnowledgeSearchInput(request_token=task.request_token),
                 policy=policy,
                 authorization_token=task.task_id,
             )
+            tool_end_ns = time.perf_counter_ns()
             records.append(retrieval.record)
             previous_count = len(gathered)
+            binding_start_ns = time.perf_counter_ns()
             bound = _bound_evidence(output=retrieval.output, catalog=request.evidence_catalog)
             if production_authority is not None:
                 try:
@@ -258,6 +299,7 @@ def execute_isolated(
                         evidence=bound, authority=production_authority
                     )
                 except ProductionEvidenceBridgeError as exc:
+                    binding_end_ns = time.perf_counter_ns()
                     terminal_reason = "PRODUCTION_EVIDENCE_AUTHORITY_REJECTED"
                     verification = {
                         "status": "owner_only_safe_abstention",
@@ -268,6 +310,34 @@ def execute_isolated(
                         "citations": [],
                         "reason_codes": ("PRODUCTION_EVIDENCE_AUTHORITY_REJECTED", exc.reason_code),
                     }
+                    round_end_ns = time.perf_counter_ns()
+                    provider_round = tuple(provider.telemetry[provider_start_index:])
+                    round_telemetry = M27RoundTelemetry(
+                        round_index=round_index,
+                        continuation_reason="INITIAL" if round_index == 0 else "VERIFIER_GAP",
+                        route=route,
+                        task_kind=task.kind.value,
+                        compute_tier=compute_tier,
+                        budget_class=budget_class,
+                        stage_latency_ms={
+                            "tool_ms": elapsed_ms(tool_start_ns, tool_end_ns),
+                            "evidence_binding_ms": elapsed_ms(binding_start_ns, binding_end_ns),
+                            "compiler_ms": 0.0,
+                            "provider_ms": 0.0,
+                            "verifier_ms": 0.0,
+                            "round_total_ms": elapsed_ms(round_start_ns, round_end_ns),
+                        },
+                        tool_calls=("knowledge.search",),
+                        retrieval_evidence_count=len(gathered),
+                        evidence_delta=0,
+                        compiler_status="authority_rejected",
+                        provider_calls=provider_round,
+                        verifier_status="owner_only_safe_abstention",
+                        continuation_allowed=False,
+                        continuation_decision="TERMINAL",
+                        terminal_reason=terminal_reason,
+                    )
+                    telemetry_rounds.append(round_telemetry)
                     rounds.append(
                         {
                             "round_index": round_index,
@@ -290,14 +360,18 @@ def execute_isolated(
                     break
             for evidence in bound:
                 gathered[str(evidence["evidence_id"])] = evidence
+            binding_end_ns = time.perf_counter_ns()
+            compiler_start_ns = time.perf_counter_ns()
             compiled, selected = _compile_synthetic(
                 evidence=tuple(gathered.values()),
                 request_id=f"{task.task_id}:{round_index}",
                 policy=request.compiler_policy,
                 release=_release_for_compiler(request),
             )
+            compiler_end_ns = time.perf_counter_ns()
             compiler_status = str(compiled.get("status", "unavailable"))
             if not selected:
+                verifier_start_ns = time.perf_counter_ns()
                 verification = {
                     "status": "owner_only_safe_abstention",
                     "safe_abstention": True,
@@ -312,6 +386,7 @@ def execute_isolated(
                 requirements = request.requirements or derive_semantic_requirements(
                     request.question, request.intent_class
                 )
+                verifier_start_ns = time.perf_counter_ns()
                 try:
                     answer, _closure = synthesize_and_verify(
                         question=request.question,
@@ -353,6 +428,7 @@ def execute_isolated(
                         "citations": [],
                         "reason_codes": ("PROVIDER_BUDGET_EXHAUSTED",),
                     }
+            verifier_end_ns = time.perf_counter_ns()
             status = str(verification.get("status", "unknown"))
             citations = verification.get("citations", [])
             verified = (
@@ -378,6 +454,37 @@ def execute_isolated(
                 if can_continue
                 else "VERIFIER_GAP_SAFE_TERMINAL"
             )
+            round_end_ns = time.perf_counter_ns()
+            provider_round = tuple(provider.telemetry[provider_start_index:])
+            provider_ms = round(sum(item.latency_ms for item in provider_round), 3)
+            verifier_total_ms = elapsed_ms(verifier_start_ns, verifier_end_ns)
+            verifier_exclusive_ms = round(max(0.0, verifier_total_ms - provider_ms), 3)
+            round_telemetry = M27RoundTelemetry(
+                round_index=round_index,
+                continuation_reason="INITIAL" if round_index == 0 else "VERIFIER_GAP",
+                route=route,
+                task_kind=task.kind.value,
+                compute_tier=compute_tier,
+                budget_class=budget_class,
+                stage_latency_ms={
+                    "tool_ms": elapsed_ms(tool_start_ns, tool_end_ns),
+                    "evidence_binding_ms": elapsed_ms(binding_start_ns, binding_end_ns),
+                    "compiler_ms": elapsed_ms(compiler_start_ns, compiler_end_ns),
+                    "provider_ms": provider_ms,
+                    "verifier_ms": verifier_exclusive_ms,
+                    "round_total_ms": elapsed_ms(round_start_ns, round_end_ns),
+                },
+                tool_calls=("knowledge.search",),
+                retrieval_evidence_count=len(gathered),
+                evidence_delta=len(gathered) - previous_count,
+                compiler_status=compiler_status,
+                provider_calls=provider_round,
+                verifier_status=status,
+                continuation_allowed=can_continue,
+                continuation_decision="CONTINUE" if can_continue else "TERMINAL",
+                terminal_reason=terminal_reason,
+            )
+            telemetry_rounds.append(round_telemetry)
             rounds.append(
                 {
                     "round_index": round_index,
@@ -411,6 +518,24 @@ def execute_isolated(
         "evidence_authority": authority_label,
         "production_evidence_authority": production_authority is not None,
     }
+    telemetry = M27RuntimeTelemetry(
+        request_id=task.request_token,
+        task_id=task.task_id,
+        route=route,
+        task_kind=task.kind.value,
+        compute_tier=compute_tier,
+        budget_class=budget_class,
+        rounds=tuple(telemetry_rounds),
+        terminal_reason=terminal_reason,
+        feature_flags={
+            "M27_ENABLED": True,
+            "ISOLATED_EXECUTABLE_RUNTIME": True,
+            "PRODUCTION_EQUIVALENT_EVIDENCE": production_authority is not None,
+        },
+        reason_codes=tuple(str(code) for code in getattr(plan, "reason_codes", ())),
+        total_latency_ms=elapsed_ms(execution_start_ns, time.perf_counter_ns()),
+    ).as_dict()
+    assert_privacy_safe_telemetry(telemetry)
     result = {
         "status_code": "M27_RUNTIME_COMPOSED"
         if terminal_reason == "VERIFIED_CITED_ANSWER"
@@ -437,6 +562,7 @@ def execute_isolated(
         "terminal_reason": terminal_reason,
         "evidence_authority": authority_label,
         "production_touched": False,
+        "telemetry": telemetry,
     }
     store.write_json_artifact(
         workspace_id=workspace_id,
@@ -450,6 +576,13 @@ def execute_isolated(
             "provider_calls": provider.calls,
             "production_touched": False,
             "evidence_authority": authority_label,
+            "telemetry_schema_version": telemetry["schema_version"],
         },
+    )
+    store.write_json_artifact(
+        workspace_id=workspace_id,
+        kind=WorkspaceArtifactKind.DIAGNOSTIC,
+        relative_path="runtime/telemetry.json",
+        payload=telemetry,
     )
     return result
