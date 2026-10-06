@@ -218,10 +218,14 @@ def test_no_unbounded_continuation_even_with_large_budget(tmp_path: Path) -> Non
     result = _harness(tmp_path, knowledge).run(
         _input(_request(_CompactAbstainingProvider()), max_rounds=2, attempts=30)
     )
-    assert knowledge.searches == 3
-    assert len(result.execution_rounds) == 3
-    assert result.execution_rounds[-1]["round_index"] == 2
+    assert knowledge.searches == 2
+    assert len(result.execution_rounds) == 2
+    assert result.execution_rounds[-1]["round_index"] == 1
     assert result.execution_rounds[-1]["terminal_reason"] == "VERIFIER_GAP_SAFE_TERMINAL"
+    assert (
+        result.execution_rounds[-1]["adaptive_continuation_reason"]
+        == "TELEMETRY_NO_EVIDENCE_GAIN"
+    )
 
 
 def test_provider_budget_blocks_second_round(tmp_path: Path) -> None:

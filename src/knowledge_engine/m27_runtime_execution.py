@@ -9,6 +9,7 @@ from typing import Any
 from .m26_aq_semantic_contract import synthesize_and_verify
 from .m26_context_compiler import compile_context_package
 from .m26_retrieval_envelope import with_self_digest
+from .m27_adaptive_compute import AdaptiveComputeBudget, AdaptiveComputeController
 from .m27_context_orchestrator import M27RuntimeTask
 from .m27_production_evidence_bridge import (
     ProductionEvidenceAuthority,
@@ -215,6 +216,8 @@ def execute_isolated(
     route: str = "UNAVAILABLE",
     compute_tier: str = "UNAVAILABLE",
     budget_class: str = "UNAVAILABLE",
+    adaptive_budget: AdaptiveComputeBudget | None = None,
+    adaptive_controller: AdaptiveComputeController | None = None,
 ) -> dict[str, object]:
     """Execute actual Stage5 gather, M26.3 compile and canonical M26 verification.
 
@@ -241,16 +244,31 @@ def execute_isolated(
         and attempts > 0
         and budget_signal.get("affordable") is True
     )
+    adaptive_provider_cap = (
+        adaptive_budget.max_provider_calls if adaptive_budget is not None else 4
+    )
     provider = ProviderQuota(
         request.semantic_provider,
-        max_calls=attempts if type(attempts) is int and attempts > 0 else 0,
+        max_calls=(
+            min(attempts, adaptive_provider_cap)
+            if type(attempts) is int and attempts > 0
+            else 0
+        ),
         deadline_at=time.monotonic()
         + (deadline_ms / 1000 if type(deadline_ms) is int and deadline_ms > 0 else 0),
     )
     capabilities = tuple(getattr(plan, "tool_capabilities", ()))
+    effective_tool_cap = (
+        adaptive_budget.max_tool_calls if adaptive_budget is not None else task.max_tool_calls
+    )
+    effective_round_cap = (
+        adaptive_budget.max_continuation_rounds
+        if adaptive_budget is not None
+        else task.max_continuation_rounds
+    )
     permitted = (
         bool(capabilities)
-        and len(capabilities) <= task.max_tool_calls
+        and len(capabilities) <= effective_tool_cap
         and all(capability == "knowledge.search" for capability in capabilities)
     )
     production_authority = request.production_evidence_authority
@@ -272,8 +290,8 @@ def execute_isolated(
             authorized_capabilities=tuple(sorted(capabilities)),
             authorization_token=task.task_id,
         )
-        for round_index in range(task.max_continuation_rounds + 1):
-            if len(records) >= task.max_tool_calls:
+        for round_index in range(effective_round_cap + 1):
+            if len(records) >= effective_tool_cap:
                 terminal_reason = "TOOL_CALL_BUDGET_EXHAUSTED"
                 break
             if provider.calls >= provider.max_calls or time.monotonic() >= provider.deadline_at:
@@ -443,10 +461,26 @@ def execute_isolated(
             budget_ok = (
                 provider.calls < provider.max_calls
                 and time.monotonic() < provider.deadline_at
-                and len(records) < task.max_tool_calls
+                and len(records) < effective_tool_cap
             )
             has_gap = not verified
-            can_continue = has_gap and round_index < task.max_continuation_rounds and budget_ok
+            if adaptive_budget is not None and adaptive_controller is not None:
+                adaptive_continuation = adaptive_controller.decide_continuation(
+                    budget=adaptive_budget,
+                    telemetry={
+                        "evidence_delta": len(gathered) - previous_count,
+                        "round_total_ms": elapsed_ms(round_start_ns, time.perf_counter_ns()),
+                    },
+                    completed_rounds=round_index,
+                    tool_calls=len(records),
+                    provider_calls=provider.calls,
+                    verified=verified,
+                )
+                can_continue = has_gap and budget_ok and adaptive_continuation.allowed
+                adaptive_continuation_reason = adaptive_continuation.reason_code.value
+            else:
+                can_continue = has_gap and round_index < effective_round_cap and budget_ok
+                adaptive_continuation_reason = "LEGACY_BOUNDED_CONTINUATION"
             terminal_reason = (
                 "VERIFIED_CITED_ANSWER"
                 if verified
@@ -498,6 +532,7 @@ def execute_isolated(
                     "provider_calls": provider.calls,
                     "tool_calls": len(records),
                     "terminal_reason": terminal_reason,
+                    "adaptive_continuation_reason": adaptive_continuation_reason,
                     "evidence_authority": (
                         "production_equivalent"
                         if production_authority is not None
@@ -532,7 +567,8 @@ def execute_isolated(
             "ISOLATED_EXECUTABLE_RUNTIME": True,
             "PRODUCTION_EQUIVALENT_EVIDENCE": production_authority is not None,
         },
-        reason_codes=tuple(str(code) for code in getattr(plan, "reason_codes", ())),
+        reason_codes=tuple(str(code) for code in getattr(plan, "reason_codes", ()))
+        + tuple(adaptive_budget.reason_codes if adaptive_budget is not None else ()),
         total_latency_ms=elapsed_ms(execution_start_ns, time.perf_counter_ns()),
     ).as_dict()
     assert_privacy_safe_telemetry(telemetry)

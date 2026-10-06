@@ -15,6 +15,17 @@ class RuntimeTaskKind(StrEnum):
     OPS = "OPS"
 
 
+class RuntimeTaskProfile(StrEnum):
+    GENERAL = "GENERAL"
+    DIRECT_KNOWLEDGE = "DIRECT_KNOWLEDGE"
+    MULTILINGUAL_KNOWLEDGE = "MULTILINGUAL_KNOWLEDGE"
+    RETRIEVAL_HARD = "RETRIEVAL_HARD"
+    DEADLINE_PRESSURE = "DEADLINE_PRESSURE"
+    SAFE_ABSTENTION = "SAFE_ABSTENTION"
+    TOOL_LOOKUP = "TOOL_LOOKUP"
+    OPS_DIAGNOSTIC = "OPS_DIAGNOSTIC"
+
+
 class RuntimeContextSource(StrEnum):
     KNOWLEDGE = "KNOWLEDGE"
     TOOL = "TOOL"
@@ -39,6 +50,7 @@ class M27RuntimeTask:
     requested_capability: str | None = None
     ops_intent: str | None = None
     allow_memory_read: bool = False
+    profile: RuntimeTaskProfile = RuntimeTaskProfile.GENERAL
     max_continuation_rounds: int = 1
     max_tool_calls: int = 6
 
@@ -49,6 +61,8 @@ class M27RuntimeTask:
             raise ValueError("request_token must be a sanitized non-empty identifier")
         if not isinstance(self.kind, RuntimeTaskKind):
             raise TypeError("kind must be RuntimeTaskKind")
+        if not isinstance(self.profile, RuntimeTaskProfile):
+            raise TypeError("profile must be RuntimeTaskProfile")
         if self.max_continuation_rounds < 0:
             raise ValueError("max_continuation_rounds must be non-negative")
         if self.max_tool_calls < 0:
@@ -106,7 +120,7 @@ class M27ContextOrchestrator:
         capabilities: list[str] = []
         selected_skill_name: str | None = None
         selected_skill_plan: SkillPlan | None = None
-        reasons: list[str] = [f"TASK_KIND_{task.kind.value}"]
+        reasons: list[str] = [f"TASK_KIND_{task.kind.value}", f"TASK_PROFILE_{task.profile.value}"]
 
         if task.kind is RuntimeTaskKind.KNOWLEDGE:
             sources.append(RuntimeContextSource.KNOWLEDGE)
@@ -277,6 +291,7 @@ def _decision(
 
 __all__ = [
     "RuntimeTaskKind",
+    "RuntimeTaskProfile",
     "RuntimeContextSource",
     "ContinuationReasonCode",
     "M27RuntimeTask",

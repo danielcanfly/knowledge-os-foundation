@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from importlib import import_module
 from pathlib import Path
 
+from .m27_adaptive_compute import AdaptiveComputeController
 from .m27_compute_policy import RuleBasedComputePolicy
 from .m27_context_orchestrator import (
     ContinuationDecision,
@@ -163,6 +164,7 @@ class M27RuntimeHarness:
         )
         self._routing_adapter = LegacyM26SemanticRoutingAdapter()
         self._compute_policy = RuleBasedComputePolicy()
+        self._adaptive_compute = AdaptiveComputeController()
         self._evidence_adapter = LegacyM26EvidencePlannerAdapter()
         self._compiler_adapter = LegacyM26ContextCompilerAdapter()
         self._verifier_adapter = LegacyM26VerifierAdapter()
@@ -321,6 +323,13 @@ class M27RuntimeHarness:
             if "HEALTHY" in budget_classes
             else "UNAVAILABLE"
         )
+        adaptive_budget = self._adaptive_compute.decide_initial(
+            kind=runtime_input.task.kind,
+            profile=runtime_input.task.profile,
+            compute=compute_observation,
+            requested_max_rounds=runtime_input.task.max_continuation_rounds,
+            requested_max_tool_calls=runtime_input.task.max_tool_calls,
+        )
         executed = execute_isolated(
             request=request,
             task=runtime_input.task,
@@ -329,12 +338,10 @@ class M27RuntimeHarness:
             executor=self._tool_executor,
             store=self._workspace_store,
             route=str(getattr(context_plan, "route", "UNAVAILABLE")),
-            compute_tier=getattr(
-                compute_observation,
-                "shadow_compute_tier",
-                ComputeTier.UNAVAILABLE_IN_STAGE1,
-            ).value,
+            compute_tier=adaptive_budget.tier.value,
             budget_class=budget_class,
+            adaptive_budget=adaptive_budget,
+            adaptive_controller=self._adaptive_compute,
         )
         rounds = tuple(executed["rounds"])
         verification_output = dict(executed["verification"])
