@@ -10,6 +10,13 @@ from .m26_aq_semantic_contract import synthesize_and_verify
 from .m26_context_compiler import compile_context_package
 from .m26_retrieval_envelope import with_self_digest
 from .m27_context_orchestrator import M27RuntimeTask
+from .m27_production_evidence_bridge import (
+    ProductionEvidenceAuthority,
+    ProductionEvidenceBridgeError,
+    admit_production_evidence,
+    citation_bindings_preserved,
+    validate_production_authority,
+)
 from .m27_tool_contracts import KnowledgeSearchInput
 from .m27_tool_executor import ReadOnlyToolExecutor, ToolExecutionPolicy
 from .m27_workspace_contracts import WorkspaceArtifactKind, WorkspaceId, WorkspaceScope
@@ -18,12 +25,13 @@ from .m27_workspace_store import WorkspaceStore
 
 @dataclass(frozen=True, slots=True)
 class M27ExecutableRequest:
-    """Explicit isolated synthetic-evidence route, never the production bundle."""
+    """Explicit isolated route with synthetic or pinned production-equivalent evidence."""
 
     question: str
     evidence_catalog: Mapping[str, Mapping[str, Any]]
     compiler_policy: Mapping[str, Any]
     semantic_provider: object
+    production_evidence_authority: ProductionEvidenceAuthority | None = None
     requirements: Sequence[object] = ()
     intent_class: str = "direct_grounded_knowledge"
 
@@ -46,6 +54,44 @@ class ProviderQuota:
             raise ProviderQuotaExhausted("isolated M27 provider budget exhausted")
         self.calls += 1
         return self._provider.call(payload, call_class)
+
+
+def _evidence_authority(request: M27ExecutableRequest) -> str:
+    if request.production_evidence_authority is not None:
+        return "production_equivalent"
+    return "synthetic_only"
+
+
+def _release_for_compiler(request: M27ExecutableRequest) -> Mapping[str, Any]:
+    authority = request.production_evidence_authority
+    if authority is not None:
+        return {
+            "schema_version": "knowledge-engine-m27-production-evidence-bridge/v1",
+            "release_id": authority.release_id,
+            "manifest_sha256": authority.manifest_sha256,
+        }
+    return {"release_id": "isolated-synthetic"}
+
+
+def _verification_citations_are_selected(
+    verification: Mapping[str, Any],
+    selected: Sequence[Mapping[str, Any]],
+) -> bool:
+    selected_locators = {str(item.get("locator_id") or "") for item in selected}
+    selected_evidence_ids = {str(item.get("evidence_id") or "") for item in selected}
+    citations = verification.get("citations")
+    if not isinstance(citations, Sequence) or isinstance(citations, (str, bytes)):
+        return False
+    for citation in citations:
+        if not isinstance(citation, Mapping):
+            return False
+        locator_id = str(citation.get("locator_id") or "")
+        evidence_id = str(citation.get("evidence_id") or "")
+        if locator_id and locator_id not in selected_locators:
+            return False
+        if evidence_id and evidence_id not in selected_evidence_ids:
+            return False
+    return True
 
 
 def _bound_evidence(
@@ -81,6 +127,7 @@ def _compile_synthetic(
     evidence: Sequence[Mapping[str, Any]],
     request_id: str,
     policy: Mapping[str, Any],
+    release: Mapping[str, Any],
 ) -> tuple[dict[str, Any], tuple[dict[str, Any], ...]]:
     # M26.3 is synthetic-only by contract. Never treat this as production context.
     unique: dict[str, dict[str, Any]] = {}
@@ -105,7 +152,7 @@ def _compile_synthetic(
             "schema_version": "knowledge-engine-m26-evidence-envelope/v1",
             "request_id": request_id,
             "sufficiency": "sufficient" if unique else "insufficient",
-            "release": {"release_id": "isolated-synthetic"},
+            "release": dict(release),
             "passages": list(unique.values()),
             "excluded_evidence": [],
         }
@@ -170,9 +217,18 @@ def execute_isolated(
         and len(capabilities) <= task.max_tool_calls
         and all(capability == "knowledge.search" for capability in capabilities)
     )
+    production_authority = request.production_evidence_authority
+    authority_rejection: str | None = None
+    if production_authority is not None:
+        try:
+            validate_production_authority(production_authority)
+        except ProductionEvidenceBridgeError as exc:
+            authority_rejection = exc.reason_code
     # Fail closed when evidence authorities, budget or capability do not exist.
     if not allowed_budget:
         terminal_reason = "BUDGET_NOT_AUTHORITATIVE"
+    elif authority_rejection is not None:
+        terminal_reason = "PRODUCTION_EVIDENCE_AUTHORITY_REJECTED"
     elif not permitted:
         terminal_reason = "NO_AUTHORIZED_EVIDENCE_CAPABILITY"
     else:
@@ -195,14 +251,50 @@ def execute_isolated(
             )
             records.append(retrieval.record)
             previous_count = len(gathered)
-            for evidence in _bound_evidence(
-                output=retrieval.output, catalog=request.evidence_catalog
-            ):
+            bound = _bound_evidence(output=retrieval.output, catalog=request.evidence_catalog)
+            if production_authority is not None:
+                try:
+                    bound = admit_production_evidence(
+                        evidence=bound, authority=production_authority
+                    )
+                except ProductionEvidenceBridgeError as exc:
+                    terminal_reason = "PRODUCTION_EVIDENCE_AUTHORITY_REJECTED"
+                    verification = {
+                        "status": "owner_only_safe_abstention",
+                        "safe_abstention": True,
+                        "citation_locator_valid": False,
+                        "material_claim_support_verified": False,
+                        "unsupported_accepted_claims": 0,
+                        "citations": [],
+                        "reason_codes": ("PRODUCTION_EVIDENCE_AUTHORITY_REJECTED", exc.reason_code),
+                    }
+                    rounds.append(
+                        {
+                            "round_index": round_index,
+                            "continuation_reason": "INITIAL"
+                            if round_index == 0
+                            else "VERIFIER_GAP",
+                            "capabilities_invoked": ["knowledge.search"],
+                            "evidence_count": len(gathered),
+                            "evidence_delta": 0,
+                            "compiler_status": "authority_rejected",
+                            "verification_status": "owner_only_safe_abstention",
+                            "budget_outcome": "TERMINAL",
+                            "provider_calls": provider.calls,
+                            "tool_calls": len(records),
+                            "terminal_reason": terminal_reason,
+                            "evidence_authority": "production_equivalent",
+                            "compiler_authority": "m26_3_synthetic_selector_non_authoritative",
+                        }
+                    )
+                    break
+            for evidence in bound:
                 gathered[str(evidence["evidence_id"])] = evidence
             compiled, selected = _compile_synthetic(
                 evidence=tuple(gathered.values()),
                 request_id=f"{task.task_id}:{round_index}",
                 policy=request.compiler_policy,
+                release=_release_for_compiler(request),
             )
             compiler_status = str(compiled.get("status", "unavailable"))
             if not selected:
@@ -231,6 +323,25 @@ def execute_isolated(
                         endpoint_proof={"required": False, "matched": False},
                     )
                     verification = dict(answer)
+                    if (
+                        production_authority is not None
+                        and verification.get("status") == "owner_only_cited_answer"
+                        and not citation_bindings_preserved(
+                            citations=verification.get("citations"),
+                            selected_evidence=selected,
+                            authority=production_authority,
+                        )
+                    ):
+                        answer = {}
+                        verification = {
+                            "status": "owner_only_safe_abstention",
+                            "safe_abstention": True,
+                            "citation_locator_valid": False,
+                            "material_claim_support_verified": False,
+                            "unsupported_accepted_claims": 0,
+                            "citations": [],
+                            "reason_codes": ("PRODUCTION_CITATION_BINDING_DRIFT",),
+                        }
                 except ProviderQuotaExhausted:
                     answer = {}
                     verification = {
@@ -251,6 +362,7 @@ def execute_isolated(
                 and verification.get("unsupported_accepted_claims") == 0
                 and bool(citations)
                 and bool(selected)
+                and _verification_citations_are_selected(verification, selected)
             )
             budget_ok = (
                 provider.calls < provider.max_calls
@@ -279,10 +391,26 @@ def execute_isolated(
                     "provider_calls": provider.calls,
                     "tool_calls": len(records),
                     "terminal_reason": terminal_reason,
+                    "evidence_authority": (
+                        "production_equivalent"
+                        if production_authority is not None
+                        else "synthetic_only"
+                    ),
+                    "compiler_authority": (
+                        "m26_3_synthetic_selector_non_authoritative"
+                        if production_authority is not None
+                        else "m26_3_synthetic_only"
+                    ),
                 }
             )
             if not can_continue:
                 break
+    authority_label = _evidence_authority(request)
+    verification = {
+        **verification,
+        "evidence_authority": authority_label,
+        "production_evidence_authority": production_authority is not None,
+    }
     result = {
         "status_code": "M27_RUNTIME_COMPOSED"
         if terminal_reason == "VERIFIED_CITED_ANSWER"
@@ -296,6 +424,9 @@ def execute_isolated(
                 "source_identity": item["source_identity"],
                 "locator_id": item["locator_id"],
                 "evidence_type": item.get("evidence_type", "passage"),
+                "release_id": item.get("release_id", ""),
+                "artifact_sha256": item.get("artifact_sha256", ""),
+                "provenance_record_sha256": item.get("provenance_record_sha256", ""),
             }
             for item in gathered.values()
         ),
@@ -304,6 +435,7 @@ def execute_isolated(
         "answer": answer if terminal_reason == "VERIFIED_CITED_ANSWER" else {},
         "provider_calls": provider.calls,
         "terminal_reason": terminal_reason,
+        "evidence_authority": authority_label,
         "production_touched": False,
     }
     store.write_json_artifact(
@@ -317,6 +449,7 @@ def execute_isolated(
             "tool_calls": len(records),
             "provider_calls": provider.calls,
             "production_touched": False,
+            "evidence_authority": authority_label,
         },
     )
     return result
