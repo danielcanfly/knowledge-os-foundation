@@ -1,0 +1,62 @@
+{
+  "base_head": "4395de2a6d21707d0ced8958d7a22d853428a1dd",
+  "branch": "m27/test-page-owner-bypass-side-by-side-rerun",
+  "diagnosis": "Stage 18 M26 baseline requests omitted the owner bypass header; no approved non-disclosing server-side raw-token injection mechanism was available to the Stage 19 harness on oracle-vm.",
+  "execution": {
+    "bounded_20_case_comparison_executed": false,
+    "browser_use_warning_resolved": false,
+    "comparison_case_count": 0,
+    "m26_preflight_executed": false,
+    "quality_scoring_executed": false
+  },
+  "final_state": "M27_TEST_PAGE_OWNER_BYPASS_BLOCKED",
+  "forbidden_actions": {
+    "canary_activation": false,
+    "m26_bypass_material_sent_to_m27": false,
+    "m26_bypass_material_sent_to_production_8080": false,
+    "nginx_live_mutation": false,
+    "production_datastore_write": false,
+    "production_deploy": false,
+    "production_restart_or_rebuild": false,
+    "quota_reset": false,
+    "rate_limit_increase": false,
+    "release_pointer_mutation": false
+  },
+  "owner_bypass": {
+    "configured_on_m26_test_backend": true,
+    "m26_429_avoided": false,
+    "redaction_passed": true,
+    "safe_injector_available_to_harness": false,
+    "secret_material_recorded": false,
+    "used_for_m26_baseline": false
+  },
+  "production_after": {
+    "build_sha": "7d4b2358464654bf3de7d9561ec89de841d279bd",
+    "entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query",
+    "health_ok": true,
+    "nginx_checksum": "48c6a4ec1e1fd28ccf968490f07e34a1d7f755793b2108a3ed8670b1ee2a0aa2",
+    "port_18080_free": true,
+    "stage19_owned_eval_containers": 0
+  },
+  "production_before": {
+    "build_sha": "7d4b2358464654bf3de7d9561ec89de841d279bd",
+    "entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query",
+    "health_ok": true,
+    "nginx_checksum": "48c6a4ec1e1fd28ccf968490f07e34a1d7f755793b2108a3ed8670b1ee2a0aa2"
+  },
+  "schema_version": "m27-test-page-owner-bypass-side-by-side/v1",
+  "test_backend": {
+    "build_sha": "f746822503b7b27b2f5d4bb98ad406b15f558732",
+    "health_ok": true,
+    "owner_bypass_configured": true
+  },
+  "validation": {
+    "compileall": "PASS",
+    "focused_owner_bypass_test": "PASS",
+    "focused_owner_bypass_test_summary": "1 passed, 9 deselected",
+    "git_diff_check": "PASS",
+    "receipts_json": "PASS",
+    "ruff": "UNAVAILABLE"
+  },
+  "workspace": "/home/ubuntu/LLM_Wiki-m27-test-page-owner-bypass-rerun"
+}
