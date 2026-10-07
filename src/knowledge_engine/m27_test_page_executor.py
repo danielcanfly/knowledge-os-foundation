@@ -95,8 +95,13 @@ def build_owner_only_stream_executor(
         raise RuntimeError("M27_TEST_PAGE_BUNDLE_SNAPSHOT_MISSING")
     bundle = _load_bundle_snapshot(snapshot_path)
     m26._assert_canonical_answer_bundle(bundle)
-    root = Path(__file__).resolve().parents[2]
-    compiler_policy = json.loads((root / "pilot/m26/m26-3-context-policy.json").read_text())
+    root = Path(os.environ.get("KNOWLEDGE_ENGINE_ROOT", "/app"))
+    policy_path = root / "pilot/m26/m26-3-context-policy.json"
+    if not policy_path.is_file():
+        policy_path = Path.cwd() / "pilot/m26/m26-3-context-policy.json"
+    if not policy_path.is_file():
+        raise RuntimeError("M27_TEST_PAGE_COMPILER_POLICY_UNAVAILABLE")
+    compiler_policy = json.loads(policy_path.read_text())
     workspace_base = workspace_root or Path(
         os.environ.get(WORKSPACE_ROOT_ENV, str(DEFAULT_WORKSPACE_ROOT))
     )
