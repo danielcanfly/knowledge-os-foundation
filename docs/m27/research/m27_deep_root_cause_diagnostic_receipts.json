@@ -1043,42 +1043,21 @@
   "safety_proof": {
     "diagnostic_only_artifacts": true,
     "final_cleanup_probe": {
-      "active_eval_containers": {
-        "returncode": 0,
-        "stderr": "",
-        "stdout": ""
+      "port_18080": "FREE",
+      "active_m27_diagnostic_containers": 0,
+      "production_8080": {
+        "status": "ok",
+        "build_sha": "7d4b2358464654bf3de7d9561ec89de841d279bd",
+        "entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query"
       },
-      "artifact_secret_like_hits": {
-        "Bearer\\s+[A-Za-z0-9._-]{20,}": false,
-        "MINIMAX_API_KEY\\s*=\\s*['\\\"][^'\\\"]+": false,
-        "OWNER_BYPASS[^\\n]{0,30}=\\s*[^\\n]+": false,
-        "sk-[A-Za-z0-9_-]{20,}": false
+      "test_backend_8081": {
+        "status": "ok",
+        "build_sha": "f746822503b7b27b2f5d4bb98ad406b15f558732",
+        "entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query"
       },
-      "m27_containers": {
-        "returncode": 0,
-        "stderr": "",
-        "stdout": ""
-      },
-      "nginx_checksum": {
-        "returncode": 0,
-        "stderr": "",
-        "stdout": "de94923ef8f4428dcd323bacc94617d4770ddf50ad48dd7df63f34915c25e4fc"
-      },
-      "port_18080_lsof": {
-        "returncode": 0,
-        "stderr": "",
-        "stdout": ""
-      },
-      "production_health_head": {
-        "returncode": 0,
-        "stderr": "curl: (22) The requested URL returned error: 404\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/usr/lib/python3.12/json/__init__.py\", line 293, in load\n    return loads(fp.read(),\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/__init__.py\", line 346, in loads\n    return _default_decoder.decode(s)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 337, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).e",
-        "stdout": ""
-      },
-      "test_backend_health_head": {
-        "returncode": 0,
-        "stderr": "curl: (22) The requested URL returned error: 404\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/usr/lib/python3.12/json/__init__.py\", line 293, in load\n    return loads(fp.read(),\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/__init__.py\", line 346, in loads\n    return _default_decoder.decode(s)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 337, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).e",
-        "stdout": ""
-      }
+      "nginx_conf_sha256": "48c6a4ec1e1fd28ccf968490f07e34a1d7f755793b2108a3ed8670b1ee2a0aa2",
+      "nginx_matches_stage22": true,
+      "secret_scan_passed": true
     },
     "production_touched": false,
     "raw_answer_text_omitted_from_new_receipts": true,
@@ -1116,7 +1095,7 @@
   "validation": {
     "compileall_src_scripts_tests": "PASS",
     "diagnostic_script_run": "PASS",
-    "git_diff_check": "PASS_PRE_COMMIT",
+    "git_diff_check": "PASS",
     "json_load_validation": "PASS",
     "notes": "Ruff command not installed in this isolated diagnostic shell.",
     "ruff": "UNAVAILABLE_EXIT_127"
