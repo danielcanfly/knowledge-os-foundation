@@ -19,8 +19,6 @@ APP_SCHEMA = "m27-production-equivalent-isolated-http/v1"
 RUNTIME_IDENTITY = "m27-production-equivalent-runtime"
 ENDPOINT_MODULE = "knowledge_engine.m27_isolated_http:app"
 
-app = FastAPI(title="M27 Production-Equivalent Isolated Runtime", version="1.0.0")
-
 
 def _identity() -> dict[str, object]:
     return {
@@ -44,49 +42,58 @@ def _identity() -> dict[str, object]:
     }
 
 
-@app.get("/v1/health")
-def health() -> dict[str, object]:
-    return _identity()
+def create_app(*, stream_executor=None) -> FastAPI:
+    candidate = FastAPI(title="M27 Production-Equivalent Isolated Runtime", version="1.0.0")
+    if stream_executor is not None:
+        candidate.state.m27_stream_executor = stream_executor
 
+    @candidate.get("/v1/health")
+    def health() -> dict[str, object]:
+        return _identity()
 
-@app.get("/v1/preflight")
-def preflight() -> dict[str, object]:
-    payload = _identity()
-    payload.update(
-        {
-            "preflight_only": True,
-            "answer_execution_authorized": False,
-            "quota_active_requests": 0,
-            "quota_provider_calls": 0,
-        }
-    )
-    return payload
-
-
-@app.post(M27_ISOLATED_STREAM_PATH)
-async def stream_answer(request: Request, payload: dict[str, object]) -> StreamingResponse:
-    """Expose isolated M27 first-answer-text SSE without production side effects.
-
-    The authoritative executor is deliberately injected by the isolated harness.
-    Without that isolated executor, the route fails closed instead of pretending
-    that terminal receipts are streaming proof.
-    """
-
-    executor = getattr(request.app.state, "m27_stream_executor", None)
-    if executor is None:
-        raise HTTPException(
-            status_code=503,
-            detail={
-                "code": "M27_ISOLATED_STREAM_EXECUTOR_UNAVAILABLE",
-                "schema_version": M27_ISOLATED_STREAM_SCHEMA,
-                "production_touched": False,
-            },
+    @candidate.get("/v1/preflight")
+    def preflight() -> dict[str, object]:
+        payload = _identity()
+        payload.update(
+            {
+                "preflight_only": True,
+                "answer_execution_authorized": False,
+                "quota_active_requests": 0,
+                "quota_provider_calls": 0,
+            }
         )
-    return StreamingResponse(
-        m27_isolated_event_stream(
-            request=request,
-            request_payload=payload,
-            run_execution=executor,
-        ),
-        media_type="text/event-stream",
-    )
+        return payload
+
+    @candidate.post(M27_ISOLATED_STREAM_PATH)
+    async def stream_answer(request: Request, payload: dict[str, object]) -> StreamingResponse:
+        executor = getattr(request.app.state, "m27_stream_executor", None)
+        if executor is None:
+            raise HTTPException(
+                status_code=503,
+                detail={
+                    "code": "M27_ISOLATED_STREAM_EXECUTOR_UNAVAILABLE",
+                    "schema_version": M27_ISOLATED_STREAM_SCHEMA,
+                    "production_touched": False,
+                },
+            )
+        return StreamingResponse(
+            m27_isolated_event_stream(
+                request=request,
+                request_payload=payload,
+                run_execution=executor,
+            ),
+            media_type="text/event-stream",
+        )
+
+    return candidate
+
+
+def create_test_page_app() -> FastAPI:
+    from .m27_test_page_executor import build_owner_only_stream_executor
+
+    return create_app(stream_executor=build_owner_only_stream_executor())
+
+
+app = create_app()
+
+__all__ = ["app", "create_app", "create_test_page_app"]
