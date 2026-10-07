@@ -74,6 +74,17 @@ The product gate is not met. Latency remains above the 15s p95 target, final-ans
 - Product comparison receipt validation: `PASS`
 - `ruff`: `UNAVAILABLE`
 
+## Final cleanup proof
+
+- Session candidate container removed: `m27-isolated-eval-22`
+- Port 18080 after cleanup: `FREE`
+- Production 8080 unchanged: build `7d4b2358464654bf3de7d9561ec89de841d279bd`, entrypoint `knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query`
+- Test backend 8081 unchanged: build `f746822503b7b27b2f5d4bb98ad406b15f558732`, entrypoint `knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query`
+- Nginx checksum unchanged: `48c6a4ec1e1fd28ccf968490f07e34a1d7f755793b2108a3ed8670b1ee2a0aa2`
+- Active comparison runners: `0`
+- Production deploy / canary activation / release pointer mutation / production datastore write: `False`
+- Note: one old exited `m27-stage13-100r-chunked` container was visible; it was not created by this session and was not running.
+
 ## Artifacts
 
 - `docs/m27/research/provider_only_config_rerun_receipts.json`

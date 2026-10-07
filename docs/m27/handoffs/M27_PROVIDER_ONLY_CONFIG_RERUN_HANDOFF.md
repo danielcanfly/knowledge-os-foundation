@@ -21,6 +21,10 @@ M27 product-readiness is not ready: cited-answer rate `35.0`, p95 final `44915.4
 
 Repair product answer publication and latency before any canary consideration. Do not deploy, activate canary, mutate release pointer, change public routing, restart production M26, write production datastores, rerun admission/full523, or run Stage13/14/Chunk002 from this handoff.
 
+## Cleanup proof
+
+Session container removed, port 18080 free, production 8080 and test backend 8081 unchanged, Nginx checksum unchanged, no active compare runners, and no deploy/canary/release pointer/datastore write performed.
+
 ## Artifacts
 
 - `docs/m27/research/67_provider_only_config_rerun_report.md`

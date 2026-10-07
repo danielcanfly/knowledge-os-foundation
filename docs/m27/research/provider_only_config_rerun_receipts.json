@@ -1319,6 +1319,22 @@
       },
       "successful_cited_final_answers": 7
     },
+    "final_cleanup_proof": {
+      "active_compare_runners": 0,
+      "active_m27_stage22_containers": 0,
+      "canary_activation_performed": false,
+      "nginx_checksum": "48c6a4ec1e1fd28ccf968490f07e34a1d7f755793b2108a3ed8670b1ee2a0aa2",
+      "note": "Only an old exited m27-stage13-100r-chunked container was visible; it was not created by this session and was not running.",
+      "port_18080": "FREE",
+      "production_8080_build_sha": "7d4b2358464654bf3de7d9561ec89de841d279bd",
+      "production_8080_entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query",
+      "production_datastore_write_performed": false,
+      "production_deploy_performed": false,
+      "release_pointer_mutated": false,
+      "session_container_removed": "m27-isolated-eval-22",
+      "test_backend_8081_build_sha": "f746822503b7b27b2f5d4bb98ad406b15f558732",
+      "test_backend_8081_entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query"
+    },
     "final_state": "M27_PRODUCT_READINESS_NOT_READY_WITH_DIAGNOSIS",
     "head": "3b96a765e284a2aec470f7848cd96136bdf2be90",
     "owner_85_scoring": {
