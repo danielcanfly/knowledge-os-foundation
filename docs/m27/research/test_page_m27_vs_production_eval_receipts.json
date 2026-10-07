@@ -1,0 +1,227 @@
+{
+  "schema_version": "m27-test-page-eval-receipts/v1",
+  "final_state": "M27_TEST_PAGE_EVAL_NOT_READY_WITH_DIAGNOSIS",
+  "timestamp_utc": "2026-10-07T04:31:03Z",
+  "scope": "owner_only_local_test_page_equivalent_no_public_routing_mutation",
+  "base_head": "d4cd99e936df544c45a2065e9dada0d8f40163d8",
+  "candidate_proof_head": "f4c8692e9f7876dabd48626082cf2a8087459968",
+  "candidate_image": "sha256:3a5ac320208a2bba5560009aaa78016dfdd4d41fcf5a6c650d5e8ebf79a9342c",
+  "surfaces": {
+    "production_8080_health": {
+      "ok": true,
+      "http_status": 200,
+      "latency_ms": 96.073,
+      "body": {
+        "schema_version": "danielcanfly-answers-health/v1",
+        "ok": true,
+        "status": "ok",
+        "request_id": "req_5eb8912dd29f42e69fae4478dab4cba3",
+        "answers_url": "/v1/answers",
+        "backend": {
+          "build_sha": "7d4b2358464654bf3de7d9561ec89de841d279bd",
+          "entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query"
+        },
+        "limits": {
+          "per_ip_daily": 15,
+          "burst_per_minute": 10,
+          "active_per_ip": 1,
+          "global_active": 3,
+          "global_daily": 300,
+          "minimax_fallback_daily": 50,
+          "heartbeat_seconds": 10,
+          "hard_deadline_seconds": 90,
+          "owner_bypass_configured": 1
+        },
+        "preload": {
+          "answer_bundle_preloaded": true,
+          "answer_bundle_preload_error": ""
+        }
+      }
+    },
+    "test_backend_8081_health": {
+      "ok": true,
+      "http_status": 200,
+      "latency_ms": 6.192,
+      "body": {
+        "schema_version": "danielcanfly-answers-health/v1",
+        "status": "ok",
+        "request_id": "req_195542c6d3bb42e49aea80650bb3d582",
+        "answers_url": "/v1/answers",
+        "backend": {
+          "build_sha": "f746822503b7b27b2f5d4bb98ad406b15f558732",
+          "entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query"
+        },
+        "limits": {
+          "per_ip_daily": 10,
+          "burst_per_minute": 10,
+          "active_per_ip": 1,
+          "global_active": 3,
+          "global_daily": 50,
+          "minimax_fallback_daily": 10,
+          "heartbeat_seconds": 10,
+          "hard_deadline_seconds": 90,
+          "owner_bypass_configured": 1
+        },
+        "preload": {
+          "answer_bundle_preloaded": true,
+          "answer_bundle_preload_error": ""
+        }
+      }
+    },
+    "direct_8081_test_answers_status": {
+      "ok": false,
+      "http_status": 404,
+      "latency_ms": 8.441,
+      "body_preview": "{\"detail\":\"Not Found\"}"
+    },
+    "nginx_test_answers_mapping_observed_read_only": "/test/answers proxies to 127.0.0.1:8081/v1/answers; /test/answers/health proxies to 127.0.0.1:8081/v1/health; direct backend /test/answers is 404 because the route is an nginx mapping, not an app route.",
+    "m27_candidate_18080_health": {
+      "ok": true,
+      "http_status": 200,
+      "latency_ms": 2.894,
+      "body": {
+        "schema_version": "m27-production-equivalent-isolated-http/v1",
+        "ok": true,
+        "runtime_identity": "m27-production-equivalent-runtime",
+        "endpoint_module": "knowledge_engine.m27_isolated_http:app",
+        "runtime_execution_type": "M27ExecutableRequest",
+        "production_evidence_authority_schema": "m27-production-evidence-authority/v1",
+        "admission_harness_schema": "m27-isolated-admission-harness/v1",
+        "build_sha": "ef9d35c72fb3c39b247ca1454dce35e6802a9b38",
+        "image_digest": "sha256:3a5ac320208a2bba5560009aaa78016dfdd4d41fcf5a6c650d5e8ebf79a9342c",
+        "container_id": "91ac42c17c45",
+        "isolated_runtime": true,
+        "production_equivalent": true,
+        "production_touched": false,
+        "smoke_questions_sent": 0,
+        "provider_calls": 0,
+        "first_answer_stream_schema": "m27-isolated-first-answer-stream/v1",
+        "first_answer_stream_path": "/v1/answers/stream"
+      }
+    },
+    "m27_candidate_18080_preflight": {
+      "ok": true,
+      "http_status": 200,
+      "latency_ms": 10.239,
+      "body": {
+        "schema_version": "m27-production-equivalent-isolated-http/v1",
+        "ok": true,
+        "runtime_identity": "m27-production-equivalent-runtime",
+        "endpoint_module": "knowledge_engine.m27_isolated_http:app",
+        "runtime_execution_type": "M27ExecutableRequest",
+        "production_evidence_authority_schema": "m27-production-evidence-authority/v1",
+        "admission_harness_schema": "m27-isolated-admission-harness/v1",
+        "build_sha": "ef9d35c72fb3c39b247ca1454dce35e6802a9b38",
+        "image_digest": "sha256:3a5ac320208a2bba5560009aaa78016dfdd4d41fcf5a6c650d5e8ebf79a9342c",
+        "container_id": "91ac42c17c45",
+        "isolated_runtime": true,
+        "production_equivalent": true,
+        "production_touched": false,
+        "smoke_questions_sent": 0,
+        "provider_calls": 0,
+        "first_answer_stream_schema": "m27-isolated-first-answer-stream/v1",
+        "first_answer_stream_path": "/v1/answers/stream",
+        "preflight_only": true,
+        "answer_execution_authorized": false,
+        "quota_active_requests": 0,
+        "quota_provider_calls": 0
+      }
+    },
+    "m27_candidate_18080_stream_probe": {
+      "ok": false,
+      "http_status": 503,
+      "latency_ms": 139.217,
+      "body": {
+        "detail": {
+          "code": "M27_ISOLATED_STREAM_EXECUTOR_UNAVAILABLE",
+          "schema_version": "m27-isolated-first-answer-stream/v1",
+          "production_touched": false
+        }
+      },
+      "body_preview": "{\"detail\":{\"code\":\"M27_ISOLATED_STREAM_EXECUTOR_UNAVAILABLE\",\"schema_version\":\"m27-isolated-first-answer-stream/v1\",\"production_touched\":false}}"
+    }
+  },
+  "observed_m26_test_backend_answer_runs": [
+    {
+      "question": "What is safe?",
+      "endpoint": "http://127.0.0.1:8081/v1/answers",
+      "http_status": 200,
+      "content_type": "text/event-stream; charset=utf-8",
+      "ttfb_ms": 1086.8,
+      "latency_ms": 10697.76,
+      "bytes": 5802,
+      "notes": "first observed run, SSE preview showed request.accepted/stage progress; full body not persisted to avoid storing answer payload."
+    },
+    {
+      "question": "What is safe?",
+      "endpoint": "http://127.0.0.1:8081/v1/answers",
+      "http_status": 200,
+      "content_type": "text/event-stream; charset=utf-8",
+      "ttfb_ms": 74.86,
+      "latency_ms": 1901.91,
+      "event_count": 9,
+      "first_material_or_final_ms": 1843.86,
+      "final_event": "answer.completed",
+      "publication_status": "owner_only_cited_answer",
+      "notes": "parsed metrics only; answer text not stored."
+    }
+  ],
+  "historical_m27_hard_gate_evidence": {
+    "release_hard_gate_state": "M27_RELEASE_HARD_GATES_READY",
+    "full523_passed_count": 523,
+    "full523_total": 523,
+    "cited_final_answer_rate": 1.0,
+    "cited_final_answer_count": "237/237",
+    "safe_terminal_correctness": 1.0,
+    "safe_terminal_count": "130/130",
+    "admission_p95_latency_ms": 2365.529,
+    "isolated_streaming_passed": true,
+    "quality_score": 91.222,
+    "quality_scored_case_count": 9,
+    "limitation": "Historical isolated hard-gate evidence is not the same as current /test/answers product endpoint evidence."
+  },
+  "side_by_side_product_decision": {
+    "m26_test_backend_answer_available": true,
+    "m27_candidate_answer_endpoint_available": false,
+    "m27_blocker": "M27 /v1/answers/stream on the candidate HTTP container returned HTTP 503 M27_ISOLATED_STREAM_EXECUTOR_UNAVAILABLE; no answer-plane executor is wired in this product/test-page surface.",
+    "quality_comparison": "not_scored_fail_closed",
+    "latency_comparison": "m27_product_answer_latency_unavailable_due_503",
+    "streaming_comparison": "m26 emits progress and answer.completed; m27 product endpoint fails closed before streaming material answer text.",
+    "ready_for_canary_consideration": false
+  },
+  "architecture_verdict": "M27_ARCHITECTURE_ADVANCED_BUT_PRODUCT_RISK_REMAINS",
+  "safety": {
+    "public_production_routing_mutated": false,
+    "production_deploy_performed": false,
+    "canary_activation_performed": false,
+    "release_pointer_mutated": false,
+    "production_8080_answer_probe_sent": false,
+    "production_r2_qdrant_sqlite_write_by_session": false,
+    "candidate_container_label": "com.daniel.m27.eval=true",
+    "candidate_port": "127.0.0.1:18080 during probe only"
+  },
+  "validation": {
+    "pytest_available": false,
+    "manual_pure_function_tests": "passed",
+    "script_health_probe": "passed",
+    "compileall_changed_python": "passed",
+    "git_diff_check": "passed",
+    "ruff": "not_installed",
+    "pytest": "not_installed"
+  },
+  "post_cleanup": {
+    "candidate_container_removed": true,
+    "owned_m27_eval_containers_after_cleanup": [],
+    "port_18080_listener_after_cleanup": false,
+    "production_8080_health_after_cleanup": {
+      "ok": true,
+      "build_sha": "7d4b2358464654bf3de7d9561ec89de841d279bd",
+      "entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query"
+    },
+    "test_backend_8081_health_after_cleanup": {
+      "status": "ok",
+      "build_sha": "f746822503b7b27b2f5d4bb98ad406b15f558732",
+      "entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query"
+    }
+  }
+}
