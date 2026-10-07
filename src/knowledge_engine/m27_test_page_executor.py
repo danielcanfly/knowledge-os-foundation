@@ -4,27 +4,14 @@ import hashlib
 import json
 import os
 import re
-import shutil
 import time
-from dataclasses import asdict
-from decimal import Decimal
 from pathlib import Path
 from typing import Any, Mapping
 
 from . import m26_aq_semantic_contract as m26
 from . import m26_pa7_arbitrary_query_runtime as legacy
 from .m26_production_answer_bundle import ProductionAnswerBundle
-from .m27_context_orchestrator import M27RuntimeTask, RuntimeTaskKind
 from .m27_agent_product_runtime import build_agent_native_product_answer, canonicalize_question
-from .m27_production_evidence_bridge import (
-    ProductionEvidenceAuthority,
-    production_evidence_binding_sha256,
-)
-from .m27_runtime_execution import M27ExecutableRequest, SemanticProviderUnavailable
-from .m27_runtime_harness import M27RuntimeHarness, M27RuntimeHarnessInput
-from .m27_tool_contracts import KnowledgeItemRef, KnowledgeSearchOutput
-from .m27_tool_executor import ReadOnlyToolExecutor
-from .m27_workspace_store import WorkspaceStore
 
 BUNDLE_SNAPSHOT_ENV = "M27_TEST_PAGE_BUNDLE_SNAPSHOT"
 WORKSPACE_ROOT_ENV = "M27_TEST_PAGE_WORKSPACE_ROOT"
@@ -147,39 +134,6 @@ class M27SnapshotLexicalIndex:
         return evidence
 
 
-class _UnavailableSemanticProvider:
-    def call(self, payload: Mapping[str, Any], call_class: str) -> object:
-        raise SemanticProviderUnavailable("semantic provider unavailable for isolated candidate")
-
-
-class SnapshotKnowledgeProvider:
-    def __init__(self, rows: Mapping[str, Mapping[str, Any]]) -> None:
-        self._rows = dict(rows)
-        self.searches = 0
-
-    def search(self, request: object) -> KnowledgeSearchOutput:
-        self.searches += 1
-        # These rows are already the bounded canonical M26 selected/strengthened
-        # evidence set. Do not silently truncate that authoritative set again.
-        requested_limit = getattr(request, "max_results", None)
-        limit = min(len(self._rows), int(requested_limit)) if isinstance(requested_limit, int) and requested_limit > 0 else len(self._rows)
-        items = []
-        for knowledge_id, row in list(self._rows.items())[:limit]:
-            items.append(
-                KnowledgeItemRef(
-                    knowledge_id=knowledge_id,
-                    source_identity=str(row.get("source_identity") or "") or None,
-                    locator_id=str(row.get("locator_id") or "") or None,
-                    evidence_type=str(row.get("evidence_type") or "passage"),
-                )
-            )
-        return KnowledgeSearchOutput(
-            items=tuple(items),
-            total_count=len(self._rows),
-            truncated=len(self._rows) > limit,
-        )
-
-
 def _load_bundle_snapshot(path: Path) -> ProductionAnswerBundle:
     raw = json.loads(path.read_text())
     if raw.get("schema_version") != "m27-test-page-production-bundle-snapshot/v1":
@@ -221,18 +175,6 @@ def build_owner_only_stream_executor(
     bundle = _load_bundle_snapshot(snapshot_path)
     m26._assert_canonical_answer_bundle(bundle)
     snapshot_index = M27SnapshotLexicalIndex(bundle)
-    root = Path(os.environ.get("KNOWLEDGE_ENGINE_ROOT", "/app"))
-    policy_path = root / "pilot/m26/m26-3-context-policy.json"
-    if not policy_path.is_file():
-        policy_path = Path.cwd() / "pilot/m26/m26-3-context-policy.json"
-    if not policy_path.is_file():
-        raise RuntimeError("M27_TEST_PAGE_COMPILER_POLICY_UNAVAILABLE")
-    compiler_policy = json.loads(policy_path.read_text())
-    workspace_base = workspace_root or Path(
-        os.environ.get(WORKSPACE_ROOT_ENV, str(DEFAULT_WORKSPACE_ROOT))
-    )
-    workspace_base.mkdir(parents=True, exist_ok=True)
-
     def run_execution(
         *,
         request_payload: Mapping[str, Any],
@@ -269,13 +211,6 @@ def build_owner_only_stream_executor(
             trace_id=trace_id,
             limit=6,
         )
-        requirements: tuple[object, ...] = ()
-        _endpoint_proof = {
-            "retriever": "m27_snapshot_lexical_v1",
-            "canonicalization": "m27_multilingual_concept_expansion",
-            "production_snapshot_read_only": True,
-            "selected_evidence_count": len(evidence),
-        }
         retrieval_latency_ms = int((time.monotonic() - started) * 1000)
         event_sink(
             {
@@ -298,77 +233,6 @@ def build_owner_only_stream_executor(
         for runtime_event in product_result.stream_events():
             event_sink(runtime_event)
         return product_result.as_runtime_result(question_sha256=question_sha256)
-
-        rows: dict[str, dict[str, Any]] = {
-            f"ev-{idx:02d}": dict(item) for idx, item in enumerate(evidence, start=1)
-        }
-        bindings = {
-            str(item["evidence_id"]): production_evidence_binding_sha256(item)
-            for item in rows.values()
-        }
-        audiences = frozenset(
-            str(item.get("audience") or "internal") for item in rows.values()
-        )
-        authority = ProductionEvidenceAuthority(
-            bundle=bundle,
-            release_id=bundle.release_id,
-            manifest_sha256=bundle.manifest_sha256,
-            allowed_audiences=audiences,
-            evidence_binding_sha256_by_id=bindings,
-        )
-        try:
-            provider = m26.MiniMaxClient(
-                os.environ.get("MINIMAX_API_KEY", ""),
-                max_calls=1,
-                max_cost=Decimal("0.10"),
-            )
-        except Exception:
-            provider = _UnavailableSemanticProvider()
-        executable_request = M27ExecutableRequest(
-            question=normalized,
-            evidence_catalog=rows,
-            compiler_policy=compiler_policy,
-            semantic_provider=provider,
-            production_evidence_authority=authority,
-            requirements=requirements,
-            intent_class=intent_class,
-            endpoint_proof=dict(_endpoint_proof),
-            event_sink=event_sink,
-        )
-        token = question_sha256[:24]
-        task = M27RuntimeTask(
-            task_id=f"task:test-page:{token}",
-            kind=RuntimeTaskKind.KNOWLEDGE,
-            request_token=f"request:test-page:{token}",
-            max_continuation_rounds=1,
-            max_tool_calls=3,
-        )
-        case_workspace = workspace_base / token
-        if case_workspace.exists():
-            shutil.rmtree(case_workspace)
-        harness = M27RuntimeHarness(
-            workspace_store=WorkspaceStore(root=case_workspace),
-            tool_executor=ReadOnlyToolExecutor(
-                knowledge_provider=SnapshotKnowledgeProvider(rows)
-            ),
-        )
-        result = harness.run(
-            M27RuntimeHarnessInput(
-                task=task,
-                routing_signal={"route": "SEMANTIC_CLOSURE", "reason": "owner_only_test_page"},
-                budget_signal={
-                    "route": "SEMANTIC_CLOSURE",
-                    "reason": "bounded_semantic_recovery",
-                    "deadline_remaining_ms": 14500,
-                    "minimum_budget_ms": 500,
-                    "provider_attempts_remaining": 1,
-                    "affordable": True,
-                },
-                executable_request=executable_request,
-                m27_enabled=True,
-            )
-        )
-        return result
 
     return run_execution
 

@@ -1,0 +1,32 @@
+{
+  "schema_version": "m27-stage25-raw-compare-provenance-repair/v1",
+  "stage25_pointer": "docs/m27/research/m27_2027_agent_product_gate_repair_receipts.raw_compare2.json",
+  "raw_compare_recovered": false,
+  "search_scope": [
+    "/tmp",
+    "/home/ubuntu/LLM_Wiki-m27-2027-agent-product-gate-repair-25",
+    "/home/ubuntu/LLM_Wiki-m27-context-runtime"
+  ],
+  "fabricated_or_reconstructed_raw_rows": false,
+  "preserved_committed_evidence": [
+    "docs/m27/research/m27_2027_agent_product_gate_repair_receipts.json",
+    "docs/m27/research/70_m27_canary_authorization_review_report.md",
+    "docs/m27/research/m27_canary_authorization_review_receipts.json"
+  ],
+  "preserved_stage25_aggregate_metrics": {
+    "m27_p95_final_latency_ms": 9136.395,
+    "m27_p95_first_material_latency_ms": 9124.25,
+    "m27_http_success_rate": 100.0,
+    "m26_p95_final_latency_ms": 11495.034,
+    "m26_p95_first_material_latency_ms": 10421.557,
+    "m26_http_success_rate": 85.0,
+    "answerable_success": "18/18",
+    "intentional_safe_terminals": "2/2",
+    "owner_rubric_floor": 87,
+    "false_safe_terminal_count": 0,
+    "empty_nonterminal_count": 0,
+    "thin_cited_answer_count": 0
+  },
+  "readiness_assessment": "usable_with_provenance_warning",
+  "rationale": "The raw compare file could not be recovered and was not reconstructed. Stage 25 committed receipts retain the aggregate same-run metrics plus per-case M27 product receipts, and Stage 26 explicitly accepted this as a provenance warning rather than an authorization blocker. A future activation receipt must carry this warning forward."
+}
