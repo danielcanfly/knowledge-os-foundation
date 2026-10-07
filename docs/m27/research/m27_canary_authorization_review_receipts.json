@@ -1,0 +1,105 @@
+{
+  "branch": "m27/2027-agent-product-gate-repair-25",
+  "created_utc": "2026-10-07T16:04:01Z",
+  "evidence_integrity": {
+    "raw_compare_file_present": false,
+    "raw_compare_note": "Provenance warning only: committed report and receipts contain gate metrics and M27 per-case receipts, but the raw compare pointer references an uncommitted path. Preserve raw compare evidence in the later canary session.",
+    "raw_compare_pointer": "docs/m27/research/m27_2027_agent_product_gate_repair_receipts.raw_compare2.json",
+    "required_artifacts_present": true,
+    "same_20_case_set": true,
+    "same_run_m26_measured": true,
+    "same_run_m27_measured": true,
+    "stage25_final_state": "M27_2027_AGENT_PRODUCT_GATE_READY_FOR_CANARY_CONSIDERATION"
+  },
+  "final_state": "M27_CANARY_AUTHORIZATION_READY",
+  "m27_native_dependency_audit": {
+    "disallowed_composer_dependency_found": false,
+    "m26_mature_composer_wrapped": false,
+    "product_path_uses_run_owner_arbitrary_query": false,
+    "product_path_uses_synthesize_and_verify": false,
+    "suspicious_unreachable_legacy_tail_cleanup_required": true
+  },
+  "observability": {
+    "activation_session_must_add": [
+      "persisted route id",
+      "persisted candidate id",
+      "non-null retrieval and evidence admission timing where applicable"
+    ],
+    "owner_only_canary_ready": true,
+    "present": [
+      "product answer state transitions",
+      "first verified claim timestamp",
+      "first cited segment timestamp",
+      "first material timestamp",
+      "final timestamp",
+      "per-case metrics",
+      "gap taxonomy",
+      "safe-terminal reason",
+      "provider call count and duration",
+      "redacted execution summary"
+    ]
+  },
+  "owner_gates": {
+    "answerable_success_rate": 100.0,
+    "browser_use_warning_case_cleared": true,
+    "c15_c16_multilingual_passed": true,
+    "empty_nonterminal_count": 0,
+    "false_safe_terminal_count": 0,
+    "min_owner_rubric_score": 87,
+    "no_worse_than_same_run_m26": true,
+    "p95_final_latency_ms": 9136.395,
+    "p95_first_material_ms": 9124.25,
+    "thin_cited_answer_count": 0
+  },
+  "production_safety": {
+    "no_admission_full523_rerun_in_review": true,
+    "no_canary_activation_in_review": true,
+    "no_production_datastore_write_in_review": true,
+    "no_public_route_change_in_review": true,
+    "no_release_pointer_change_in_review": true,
+    "production_8080_build_sha_expected": "7d4b2358464654bf3de7d9561ec89de841d279bd",
+    "production_entrypoint_expected": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query",
+    "test_backend_8081_build_sha_expected": "f746822503b7b27b2f5d4bb98ad406b15f558732"
+  },
+  "required_pre_canary_cleanup_tasks": [
+    "Remove or hard-guard unreachable legacy tail after m27_test_page_executor.py line 300.",
+    "Preserve raw same-run compare evidence in committed canary-session receipts.",
+    "Persist route id and candidate id in canary metrics before any traffic is admitted."
+  ],
+  "reviewed_stage25_head": "6d0ac012e5b8f43a1de86b812a932bdf2f0dc3d4",
+  "same_run_comparison": {
+    "m26": {
+      "cases": 20,
+      "cited_answer_rate": 88.24,
+      "http_success_rate": 85.0,
+      "p50_final_latency_ms": 2031.543,
+      "p50_first_material_ms": 2030.45,
+      "p95_final_latency_ms": 11495.034,
+      "p95_first_material_ms": 10421.557,
+      "rate_429": 0.0,
+      "safe_terminal_rate": 5.88,
+      "timeout_or_error_rate": 15.0
+    },
+    "m27": {
+      "cases": 20,
+      "cited_answer_rate": 90.0,
+      "http_success_rate": 100.0,
+      "p50_final_latency_ms": 181.094,
+      "p50_first_material_ms": 179.957,
+      "p95_final_latency_ms": 9136.395,
+      "p95_first_material_ms": 9124.25,
+      "rate_429": 0.0,
+      "safe_terminal_rate": 10.0,
+      "timeout_or_error_rate": 0.0
+    }
+  },
+  "schema_version": "m27-canary-authorization-review/v1",
+  "stage25_expected_head": "6d0ac012e5b8f43a1de86b812a932bdf2f0dc3d4",
+  "validation": {
+    "compileall_src_scripts_tests_exit": 0,
+    "focused_pytest": "not runnable on host: No module named pytest",
+    "git_diff_check_pre_exit": 0,
+    "stage25_receipts_json_load_exit": 0
+  },
+  "workspace": "/home/ubuntu/LLM_Wiki-m27-2027-agent-product-gate-repair-25"
+}
