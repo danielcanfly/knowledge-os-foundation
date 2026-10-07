@@ -19,7 +19,7 @@ from .m27_production_evidence_bridge import (
     ProductionEvidenceAuthority,
     production_evidence_binding_sha256,
 )
-from .m27_runtime_execution import M27ExecutableRequest
+from .m27_runtime_execution import M27ExecutableRequest, SemanticProviderUnavailable
 from .m27_runtime_harness import M27RuntimeHarness, M27RuntimeHarnessInput
 from .m27_tool_contracts import KnowledgeItemRef, KnowledgeSearchOutput
 from .m27_tool_executor import ReadOnlyToolExecutor
@@ -28,6 +28,11 @@ from .m27_workspace_store import WorkspaceStore
 BUNDLE_SNAPSHOT_ENV = "M27_TEST_PAGE_BUNDLE_SNAPSHOT"
 WORKSPACE_ROOT_ENV = "M27_TEST_PAGE_WORKSPACE_ROOT"
 DEFAULT_WORKSPACE_ROOT = Path("/tmp/m27-test-page-workspaces")
+
+
+class _UnavailableSemanticProvider:
+    def call(self, payload: Mapping[str, Any], call_class: str) -> object:
+        raise SemanticProviderUnavailable("semantic provider unavailable for isolated candidate")
 
 
 class SnapshotKnowledgeProvider:
@@ -193,11 +198,14 @@ def build_owner_only_stream_executor(
             allowed_audiences=audiences,
             evidence_binding_sha256_by_id=bindings,
         )
-        provider = m26.MiniMaxClient(
-            os.environ.get("MINIMAX_API_KEY", ""),
-            max_calls=4,
-            max_cost=Decimal("0.10"),
-        )
+        try:
+            provider = m26.MiniMaxClient(
+                os.environ.get("MINIMAX_API_KEY", ""),
+                max_calls=4,
+                max_cost=Decimal("0.10"),
+            )
+        except Exception:
+            provider = _UnavailableSemanticProvider()
         executable_request = M27ExecutableRequest(
             question=normalized,
             evidence_catalog=rows,
