@@ -4,17 +4,14 @@ import hashlib
 import json
 import re
 import time
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
-from .m26_aq_semantic_contract import synthesize_and_verify
-from . import m26_aq_semantic_contract as canonical_m26
-from . import m26_pa7_arbitrary_query_runtime as legacy_m26
-from . import m26_pa7_semantic_closure_runtime as semantic_runtime
 from .m26_context_compiler import compile_context_package
 from .m26_retrieval_envelope import with_self_digest
 from .m27_adaptive_compute import AdaptiveComputeBudget, AdaptiveComputeController
+from .m27_agent_product_runtime import build_claim_native_answer
 from .m27_context_orchestrator import M27RuntimeTask
 from .m27_production_evidence_bridge import (
     ProductionEvidenceAuthority,
@@ -48,6 +45,7 @@ class M27ExecutableRequest:
     requirements: Sequence[object] = ()
     intent_class: str = "direct_grounded_knowledge"
     endpoint_proof: Mapping[str, Any] | None = None
+    event_sink: Callable[[Mapping[str, Any]], None] | None = None
 
 
 class ProviderQuotaExhausted(RuntimeError):
@@ -215,335 +213,6 @@ def _compile_synthetic(
     return compiled, tuple(dict(item) for item in evidence if item.get("evidence_id") in chosen)
 
 
-
-_M27_WORD_RE = re.compile(r"[a-z0-9][a-z0-9_'-]*", flags=re.I)
-
-
-def _m27_focus_terms(text: str) -> set[str]:
-    stop = {
-        "the", "and", "for", "with", "that", "this", "what", "why", "how", "does", "did",
-        "are", "was", "were", "after", "before", "into", "from", "about", "actually", "help",
-        "what", "when", "where", "which", "their", "them", "they", "your", "you", "can", "one",
-    }
-    return {
-        token.casefold()
-        for token in _M27_WORD_RE.findall(str(text or ""))
-        if len(token) >= 3 and token.casefold() not in stop
-    }
-
-
-def _m27_exact_quote_for_question(
-    *, question: str, evidence_item: Mapping[str, Any], max_chars: int = 320
-) -> str:
-    text = str(evidence_item.get("passage_text") or "").strip()
-    if not text:
-        return ""
-    terms = _m27_focus_terms(question)
-    # Prefer paragraph-like chunks so the quote stays readable and exact.
-    raw_chunks = re.split(r"(?:(?:\r?\n){2,}|(?<=[.!?。！？])\s+)", text)
-    chunks = [chunk.strip() for chunk in raw_chunks if chunk and chunk.strip()]
-    if not chunks:
-        chunks = [text]
-
-    def score(chunk: str) -> tuple[int, int, int]:
-        lower = chunk.casefold()
-        term_hits = sum(1 for term in terms if term in lower)
-        ai_infra_hits = sum(
-            1
-            for term in (
-                "ai", "infrastructure", "runtime", "kubernetes", "gpu", "rag", "mcp",
-                "retrieval", "verification", "citation", "latency", "streaming", "tenant",
-                "private", "tee", "cost", "observability", "browser", "localbridge",
-            )
-            if term in lower
-        )
-        # Keep enough words for a product answer, but avoid swallowing a whole article.
-        word_count = len(_M27_WORD_RE.findall(chunk))
-        length_score = -abs(min(word_count, 90) - 55)
-        return (term_hits, ai_infra_hits, length_score)
-
-    chosen = max(chunks, key=score)
-    if len(chosen) <= max_chars:
-        return chosen
-    lower = chosen.casefold()
-    hit_positions = [lower.find(term) for term in terms if lower.find(term) >= 0]
-    center = min(hit_positions) if hit_positions else 0
-    start = max(0, center - max_chars // 3)
-    end = min(len(chosen), start + max_chars)
-    start = max(0, end - max_chars)
-    window = chosen[start:end].strip()
-    # Move to word boundaries while preserving exact substring membership.
-    if start > 0 and " " in window:
-        window = window.split(" ", 1)[1].strip()
-    if end < len(chosen) and " " in window:
-        window = window.rsplit(" ", 1)[0].strip()
-    return window if window and window in text else chosen[:max_chars].strip()
-
-
-def _m27_product_answer_text(*, question: str, quotes: Sequence[str]) -> str:
-    q = str(question or "").strip().rstrip("?")
-    is_zh = any("\u4e00" <= ch <= "\u9fff" for ch in q)
-    is_ja = any("\u3040" <= ch <= "\u30ff" for ch in q)
-    clean_quotes = [re.sub(r"\s+", " ", quote).strip() for quote in quotes if quote and quote.strip()]
-    if not clean_quotes:
-        return ""
-    if is_zh:
-        lead = f"針對「{q}」，可引用的資料支持這樣回答："
-        bridge = " 重要依據包括："
-        close = " 因此，答案應限縮在這些已引用的資料範圍內，不額外推論未被資料支持的細節。"
-    elif is_ja:
-        lead = f"「{q}」について、引用済みの根拠から答えると次のようになります。"
-        bridge = " 根拠は次の通りです。"
-        close = " したがって、答えはこの引用された範囲に限定され、根拠のない追加主張は含めません。"
-    else:
-        lead = f"For {q}, the cited evidence supports this answer:"
-        bridge = " The key supported points are:"
-        close = " So the product answer should stay within those cited boundaries rather than adding unsupported details."
-    body = " ".join(f"{idx}. {quote}" for idx, quote in enumerate(clean_quotes[:3], start=1))
-    return f"{lead}{bridge} {body}{close}".strip()
-
-
-def _m27_product_evidence_candidate(
-    *,
-    question: str,
-    intent_class: str,
-    evidence: Sequence[Mapping[str, Any]],
-    requirements: Sequence[object],
-) -> dict[str, Any] | None:
-    passages = [item for item in evidence if item.get("evidence_type", "passage") == "passage"]
-    if not passages:
-        return None
-    terms = _m27_focus_terms(question)
-
-    def rank_item(item: Mapping[str, Any]) -> tuple[int, int, int]:
-        blob = " ".join(
-            str(item.get(key) or "")
-            for key in ("source_identity", "source_id", "section_id", "concept_id", "passage_text")
-        ).casefold()
-        term_hits = sum(1 for term in terms if term in blob)
-        source_bonus = sum(
-            1
-            for term in ("ai", "infra", "runtime", "m27", "kubernetes", "gpu", "rag", "mcp", "browser", "localbridge")
-            if term in blob
-        )
-        text_len = len(str(item.get("passage_text") or ""))
-        return (term_hits, source_bonus, min(text_len, 3000))
-
-    ranked = sorted(passages, key=rank_item, reverse=True)
-    selected: list[Mapping[str, Any]] = []
-    seen_sources: set[str] = set()
-    for item in ranked:
-        source = str(item.get("source_identity") or item.get("source_id") or item.get("section_id") or "")
-        if source in seen_sources and len(selected) >= 2:
-            continue
-        quote = _m27_exact_quote_for_question(question=question, evidence_item=item)
-        if not quote:
-            continue
-        selected.append(item)
-        seen_sources.add(source)
-        if len(selected) >= 3:
-            break
-    if not selected:
-        return None
-    support_refs: list[dict[str, Any]] = []
-    quotes: list[str] = []
-    for item in selected:
-        quote = _m27_exact_quote_for_question(question=question, evidence_item=item)
-        if not quote or quote not in str(item.get("passage_text") or ""):
-            continue
-        evidence_id = str(item.get("evidence_id") or "")
-        locator_id = str(item.get("locator_id") or "")
-        if not evidence_id or not locator_id:
-            continue
-        support_refs.append(
-            {
-                "evidence_id": evidence_id,
-                "locator_id": locator_id,
-                "exact_quote": quote,
-                "exact_support_snippet": quote,
-                "uncertainty": "low",
-            }
-        )
-        quotes.append(quote)
-    if not support_refs:
-        return None
-    required_facet_ids: list[str]
-    try:
-        required_facet_ids = [
-            str(item)
-            for item in legacy_m26._required_facet_ids(question=question, intent_class=intent_class)
-        ]
-    except Exception:
-        required_facet_ids = []
-    answer_text = _m27_product_answer_text(question=question, quotes=quotes)
-    if not answer_text:
-        return None
-    return {
-        "schema_version": "aq3-provider-candidate/v3",
-        "status": "answer_candidate",
-        "relation": None,
-        "selected_evidence_ids": [str(ref["evidence_id"]) for ref in support_refs],
-        "answer_text": answer_text,
-        "claims": [
-            {
-                "claim_id": "claim_1",
-                "claim_role": "direct",
-                "surface_text": " ".join(quotes),
-                "facet_ids": required_facet_ids,
-                "support_mode": "multi_evidence_exact",
-                "support_refs": support_refs,
-            }
-        ],
-        "missing_facets": [],
-        "abstention_reason": None,
-    }
-
-
-def _m27_apply_product_surface_if_better(
-    *, answer: dict[str, Any], candidate: Mapping[str, Any], question: str
-) -> None:
-    current = str(answer.get("answer_text") or "")
-    proposed = str(candidate.get("answer_text") or "").strip()
-    if not proposed:
-        return
-    current_words = len(_M27_WORD_RE.findall(current))
-    proposed_words = len(_M27_WORD_RE.findall(proposed))
-    if proposed_words > current_words or current_words < 55:
-        canonical_m26._use_verified_natural_surface(answer, proposed)
-
-
-def _try_canonical_evidence_bound_fast_path(
-    *,
-    question: str,
-    trace_id: str,
-    intent_class: str,
-    evidence: Sequence[Mapping[str, Any]],
-    requirements: Sequence[object],
-    endpoint_proof: Mapping[str, Any],
-) -> dict[str, Any] | None:
-    runtime_requirements = canonical_m26._runtime_semantic_requirements(requirements)
-    candidates: list[Mapping[str, Any]] = []
-    try:
-        candidate = legacy_m26._deterministic_provider_candidate(question=question, intent_class=intent_class, evidence=evidence)
-        if isinstance(candidate, Mapping): candidates.append(candidate)
-    except Exception:
-        pass
-    try:
-        recovery = canonical_m26._supported_semantic_recovery_candidate(question=question, intent_class=intent_class, evidence=evidence, requirements=runtime_requirements, endpoint_proof=endpoint_proof)
-    except Exception:
-        recovery = None
-    if isinstance(recovery, Mapping): candidates.append(recovery)
-    try:
-        candidates.extend(canonical_m26._deterministic_facet_local_preflight_candidates(question=question, intent_class=intent_class, evidence=evidence, requirements=runtime_requirements))
-    except Exception:
-        pass
-    product_candidate = _m27_product_evidence_candidate(
-        question=question,
-        intent_class=intent_class,
-        evidence=evidence,
-        requirements=runtime_requirements,
-    )
-    if isinstance(product_candidate, Mapping):
-        candidates.append(product_candidate)
-    seen: set[str] = set()
-    for candidate in candidates:
-        fp = canonical_m26.canonical_sha256(candidate)
-        if fp in seen: continue
-        seen.add(fp)
-        try:
-            verified = legacy_m26._verify_multi_evidence_provider_output(trace_id=trace_id, question=question, intent_class=intent_class, evidence=evidence, provider_text=json.dumps(semantic_runtime._verification_candidate(candidate), ensure_ascii=False, separators=(",", ":")))
-            answer = legacy_m26._verified_multi_evidence_answer(intent_class=intent_class, verified=verified, evidence=evidence, calls=[], repair_attempted=False)
-            canonical_m26._use_verified_natural_surface(answer, canonical_m26._public_candidate_surface(candidate, answer))
-            _m27_apply_product_surface_if_better(answer=answer, candidate=candidate, question=question)
-        except Exception:
-            continue
-        if answer.get("status") != "owner_only_cited_answer": continue
-        answer_text = str(answer.get("answer_text", ""))
-        if canonical_m26.evaluate_visible_semantics(answer_text, runtime_requirements, question): continue
-        if canonical_m26._internal_reference_leaks(answer_text, question): continue
-        if canonical_m26._question_answer_alignment_failures(question=question, answer_text=answer_text, evidence=evidence): continue
-        source_ids = sorted({str(item.get("source_identity", "")) for item in answer.get("citations", []) if isinstance(item, Mapping) and str(item.get("source_identity", ""))})
-        if canonical_m26._quality_surface_failures(question=question, answer_text=answer_text, source_identities=source_ids): continue
-        failures, _ = canonical_m26._endpoint_aware_requirement_support_failures(runtime=canonical_m26._RUNTIME_FACADE, requirements=runtime_requirements, evidence=canonical_m26._candidate_evidence(candidate, evidence), endpoint_proof=endpoint_proof)
-        if failures: continue
-        answer["answer_source"] = "m27_canonical_evidence_bound_preflight"
-        return dict(answer)
-    return None
-
-
-
-def _try_canonical_fast_provider_answer(
-    *,
-    question: str,
-    trace_id: str,
-    intent_class: str,
-    evidence: Sequence[Mapping[str, Any]],
-    provider: ProviderQuota,
-) -> dict[str, Any] | None:
-    payload = legacy_m26._fast_synthesis_payload(
-        question=question, trace_id=trace_id, intent_class=intent_class, evidence=evidence
-    )
-    try:
-        provider_result = provider.call(payload, legacy_m26.FAST_SYNTHESIS_CALL_CLASS)
-        normalized = legacy_m26._normalize_fast_provider_result(provider_result)
-    except Exception:
-        return None
-    if legacy_m26._fast_public_abstention_publication(normalized) is not None:
-        return None
-    publication = legacy_m26._validate_fast_provider_candidate(
-        question=question, selected_evidence=evidence, provider_output=normalized
-    )
-    if publication is None:
-        return None
-    if canonical_m26._question_answer_alignment_failures(
-        question=question, answer_text=str(publication.get("answer_text", "")), evidence=evidence
-    ):
-        return None
-    if canonical_m26._fast_required_facet_citation_failures(
-        question=question, intent_class=intent_class, evidence=evidence, publication=publication
-    ):
-        return None
-    evidence_by_id = {str(item["evidence_id"]): item for item in evidence}
-    citations: list[dict[str, Any]] = []
-    support_refs = list(publication.get("support_refs", []))
-    for index, citation_id in enumerate(publication.get("citation_ids", []), start=1):
-        citation_id = str(citation_id)
-        selected = evidence_by_id.get(citation_id)
-        if selected is None:
-            return None
-        support_ref = support_refs[index - 1] if index - 1 < len(support_refs) else legacy_m26._deterministic_support_ref(selected)
-        if support_ref is None:
-            snippet = str(selected.get("passage_text", ""))[:240]
-            support_ref = {
-                "evidence_id": citation_id,
-                "locator_id": str(selected["locator_id"]),
-                "exact_quote": snippet,
-                "exact_support_snippet": snippet,
-                "exact_quote_sha256": hashlib.sha256(snippet.encode("utf-8")).hexdigest(),
-                "uncertainty": "low",
-            }
-        citations.append(legacy_m26._public_citation(
-            selected, {"claim_id": "claim_1", "claim_role": "direct"}, support_ref, index
-        ))
-    answer_text = str(publication.get("answer_text", "")).strip()
-    if not answer_text or not citations:
-        return None
-    return {
-        "status": "owner_only_cited_answer",
-        "terminal_status": "fast_answer_ready",
-        "answer_text": answer_text,
-        "citations": citations,
-        "answer_claims": [{
-            "claim_id": "claim_1", "claim_role": "direct", "surface_text": answer_text,
-            "citation_ids": [item["citation_id"] for item in citations],
-            "support_ref_count": len(citations),
-        }],
-        "safe_abstention": False, "reason_codes": [], "provider_invoked": True,
-        "provider_call_count": 1, "material_claim_support_verified": True,
-        "citation_locator_valid": True, "unsupported_accepted_claims": 0,
-        "repair_attempted": False,
-        "answer_source": "m27_canonical_fast_natural_cited_synthesis",
-    }
 
 
 def execute_isolated(
@@ -744,58 +413,22 @@ def execute_isolated(
                     "citations": [],
                 }
             else:
-                from .m26_aq_semantic_contract import derive_semantic_requirements
-
-                requirements = request.requirements or derive_semantic_requirements(
-                    request.question, request.intent_class
-                )
                 verifier_start_ns = time.perf_counter_ns()
-                try:
-                    endpoint_proof = dict(request.endpoint_proof or {"required": False, "matched": False})
-                    fast_answer = _try_canonical_evidence_bound_fast_path(question=request.question, trace_id=f"{task.task_id}:r{round_index}", intent_class=request.intent_class, evidence=selected, requirements=requirements, endpoint_proof=endpoint_proof)
-                    if fast_answer is not None:
-                        answer = fast_answer
-                    else:
-                        fast_provider_answer = _try_canonical_fast_provider_answer(
-                            question=request.question,
-                            trace_id=f"{task.task_id}:r{round_index}",
-                            intent_class=request.intent_class,
-                            evidence=selected,
-                            provider=provider,
-                        )
-                        if fast_provider_answer is not None:
-                            answer = fast_provider_answer
-                        else:
-                            answer, _closure = synthesize_and_verify(
-                                question=request.question,
-                                trace_id=f"{task.task_id}:r{round_index}",
-                                intent_class=request.intent_class,
-                                evidence=selected,
-                                provider_client=provider,
-                                requirements=requirements,
-                                endpoint_proof=endpoint_proof,
-                            )
-                    verification = dict(answer)
-                    if (
-                        production_authority is not None
-                        and verification.get("status") == "owner_only_cited_answer"
-                        and not citation_bindings_preserved(
-                            citations=verification.get("citations"),
-                            selected_evidence=selected,
-                            authority=production_authority,
-                        )
-                    ):
-                        answer = {}
-                        verification = {
-                            "status": "owner_only_safe_abstention",
-                            "safe_abstention": True,
-                            "citation_locator_valid": False,
-                            "material_claim_support_verified": False,
-                            "unsupported_accepted_claims": 0,
-                            "citations": [],
-                            "reason_codes": ("PRODUCTION_CITATION_BINDING_DRIFT",),
-                        }
-                except ProviderQuotaExhausted:
+                answer = build_claim_native_answer(
+                    question=request.question,
+                    evidence=selected,
+                    event_sink=request.event_sink,
+                )
+                verification = dict(answer)
+                if (
+                    production_authority is not None
+                    and verification.get("status") == "owner_only_cited_answer"
+                    and not citation_bindings_preserved(
+                        citations=verification.get("citations"),
+                        selected_evidence=selected,
+                        authority=production_authority,
+                    )
+                ):
                     answer = {}
                     verification = {
                         "status": "owner_only_safe_abstention",
@@ -804,22 +437,22 @@ def execute_isolated(
                         "material_claim_support_verified": False,
                         "unsupported_accepted_claims": 0,
                         "citations": [],
-                        "reason_codes": ("PROVIDER_BUDGET_EXHAUSTED",),
-                    }
-                except SemanticProviderUnavailable:
-                    answer = {}
-                    verification = {
-                        "status": "owner_only_safe_abstention",
-                        "safe_abstention": True,
-                        "citation_locator_valid": False,
-                        "material_claim_support_verified": False,
-                        "unsupported_accepted_claims": 0,
-                        "citations": [],
-                        "reason_codes": ("SEMANTIC_PROVIDER_UNAVAILABLE",),
+                        "answer_claims": [],
+                        "reason_codes": ("CITATION_BINDING_DRIFT",),
+                        "gap_taxonomy": ["CITATION_BINDING_DRIFT"],
                     }
             verifier_end_ns = time.perf_counter_ns()
             status = str(verification.get("status", "unknown"))
             citations = verification.get("citations", [])
+            claim_native_verified = (
+                verification.get("answer_source") == "m27_agent_native_claim_graph"
+                and status == "owner_only_cited_answer"
+                and bool(verification.get("material_claim_support_verified"))
+                and bool(verification.get("citation_locator_valid"))
+                and verification.get("unsupported_accepted_claims") == 0
+                and bool(citations)
+                and bool(selected)
+            )
             verified = (
                 status == "owner_only_cited_answer"
                 and bool(verification.get("material_claim_support_verified"))
@@ -827,7 +460,7 @@ def execute_isolated(
                 and verification.get("unsupported_accepted_claims") == 0
                 and bool(citations)
                 and bool(selected)
-                and _verification_citations_are_selected(verification, selected)
+                and (claim_native_verified or _verification_citations_are_selected(verification, selected))
             )
             budget_ok = (
                 provider.calls < provider.max_calls

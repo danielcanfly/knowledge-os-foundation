@@ -28,6 +28,42 @@ def runtime_progress_event(
 ) -> tuple[str, dict[str, Any]] | None:
     event_type = str(event.get("type", ""))
     stage = str(event.get("stage", ""))
+    live_material_events = {
+        "evidence_ready",
+        "answer_plan_ready",
+        "claim_graph_ready",
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done",
+        "verifier_gap_detected",
+        "verifier_gap_repair_started",
+        "verifier_gap_repair_done",
+    }
+    if event_type in live_material_events:
+        payload = {
+            str(key): value
+            for key, value in dict(event).items()
+            if key not in {"type", "raw_provider_key", "owner_bypass", "secret"}
+        }
+        return event_type, payload
+    if event_type == "safe_terminal_done":
+        payload = {
+            str(key): value
+            for key, value in dict(event).items()
+            if key not in {"type", "raw_provider_key", "owner_bypass", "secret"}
+        }
+        payload.setdefault("status", "owner_only_safe_abstention")
+        return "safe_abstention_done", payload
+    if event_type == "product.event":
+        product_event = str(event.get("event", "")).strip()
+        if product_event:
+            return product_event, {
+                key: value for key, value in event.items()
+                if key not in {"type", "event", "raw_provider_key", "owner_bypass", "secret"}
+            }
     if event_type == "stage.started" and stage:
         return f"{stage}_started", {"stage": stage}
     if event_type == "stage.completed" and stage:
@@ -105,6 +141,10 @@ def m27_stream_response_from_result(result: Any) -> dict[str, Any]:
         )
         or 0
     )
+    micro_timeline = _mapping(answer.get("micro_timeline")) or _mapping(verification.get("micro_timeline"))
+    answer_plan = _mapping(answer.get("answer_plan")) or _mapping(verification.get("answer_plan"))
+    claim_graph = _mapping_list(answer.get("claim_graph")) or _mapping_list(verification.get("claim_graph"))
+    gap_taxonomy = list(answer.get("gap_taxonomy", verification.get("gap_taxonomy", [])) or [])
     return {
         "schema_version": M27_ISOLATED_STREAM_SCHEMA,
         "status": (
@@ -125,6 +165,10 @@ def m27_stream_response_from_result(result: Any) -> dict[str, Any]:
             "citation_locator_valid": locator_valid,
         },
         "production_touched": production_touched,
+        "answer_plan": answer_plan,
+        "claim_graph": claim_graph,
+        "gap_taxonomy": gap_taxonomy,
+        "micro_timeline": micro_timeline,
         "response": dict(answer) if answer else {},
     }
 
@@ -201,6 +245,7 @@ async def m27_isolated_event_stream(
     loop = asyncio.get_running_loop()
     event_queue: asyncio.Queue[Mapping[str, Any]] = asyncio.Queue(maxsize=M27_STREAM_QUEUE_MAX)
     disconnected = threading.Event()
+    live_material_seen = False
     question_sha256 = str(request_payload.get("question_sha256", ""))
 
     def enqueue_runtime_event(event: Mapping[str, Any]) -> None:
@@ -248,6 +293,8 @@ async def m27_isolated_event_stream(
                     break
                 mapped = runtime_progress_event(runtime_event)
                 if mapped is not None:
+                    if mapped[0] in {"verified_claim_ready", "cited_segment_ready"}:
+                        live_material_seen = True
                     yield sse_frame(mapped[0], mapped[1])
             if worker.done():
                 break
@@ -261,9 +308,18 @@ async def m27_isolated_event_stream(
                 break
             mapped = runtime_progress_event(runtime_event)
             if mapped is not None:
-                yield sse_frame(mapped[0], mapped[1])
+                if mapped[0] in {"verified_claim_ready", "cited_segment_ready"}:
+                    live_material_seen = True
+                if mapped[0] != "final_answer_done":
+                    yield sse_frame(mapped[0], mapped[1])
 
         for event_type, payload in m27_verified_material_events(dto):
+            if live_material_seen and event_type in {"verified_claim_ready", "cited_segment_ready"}:
+                continue
+            if event_type == "final_answer_done" and "response" in payload:
+                response = _mapping(payload.get("response"))
+                if response.get("answer_text") and "answer" not in payload:
+                    payload = {**payload, "answer": response.get("answer_text"), "text": response.get("answer_text")}
             yield sse_frame(event_type, payload)
     except asyncio.CancelledError:
         disconnected.set()

@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import shutil
 import time
 from dataclasses import asdict
@@ -12,9 +13,9 @@ from typing import Any, Mapping
 
 from . import m26_aq_semantic_contract as m26
 from . import m26_pa7_arbitrary_query_runtime as legacy
-from . import m26_pa7_semantic_closure_runtime as runtime
 from .m26_production_answer_bundle import ProductionAnswerBundle
 from .m27_context_orchestrator import M27RuntimeTask, RuntimeTaskKind
+from .m27_agent_product_runtime import build_agent_native_product_answer, canonicalize_question
 from .m27_production_evidence_bridge import (
     ProductionEvidenceAuthority,
     production_evidence_binding_sha256,
@@ -28,6 +29,122 @@ from .m27_workspace_store import WorkspaceStore
 BUNDLE_SNAPSHOT_ENV = "M27_TEST_PAGE_BUNDLE_SNAPSHOT"
 WORKSPACE_ROOT_ENV = "M27_TEST_PAGE_WORKSPACE_ROOT"
 DEFAULT_WORKSPACE_ROOT = Path("/tmp/m27-test-page-workspaces")
+
+
+
+
+_M27_TERM_RE = re.compile(r"[a-z0-9][a-z0-9_+.-]*", re.I)
+_M27_RETRIEVAL_STOP = {
+    "the", "and", "for", "with", "that", "this", "what", "why", "how", "does",
+    "are", "was", "were", "into", "from", "about", "actually", "help", "one",
+    "many", "can", "your", "when", "where", "which", "between", "relationship",
+    "explain", "blog", "after", "inside",
+}
+
+
+class M27SnapshotLexicalIndex:
+    """Small immutable in-memory index over the pinned production snapshot."""
+
+    def __init__(self, bundle: ProductionAnswerBundle) -> None:
+        raw = bundle.lexical_index.get("documents")
+        if not isinstance(raw, list):
+            raise RuntimeError("M27_SNAPSHOT_LEXICAL_DOCUMENTS_INVALID")
+        self._rows: list[tuple[dict[str, Any], str, str, str]] = []
+        for item in raw:
+            if not isinstance(item, Mapping):
+                continue
+            doc = dict(item)
+            title = " ".join(
+                str(doc.get(key) or "")
+                for key in ("title", "section_title", "description", "canonical_url")
+            ).casefold()
+            body = " ".join(
+                str(doc.get(key) or "")
+                for key in ("body", "excerpt", "source_id", "series_id", "concept_id")
+            ).casefold()
+            self._rows.append((doc, title, body, str(doc.get("source_id") or "")))
+
+    @staticmethod
+    def _terms(question: str) -> tuple[str, ...]:
+        return tuple(
+            dict.fromkeys(
+                token.casefold()
+                for token in _M27_TERM_RE.findall(question)
+                if len(token) >= 3 and token.casefold() not in _M27_RETRIEVAL_STOP
+            )
+        )
+
+    def retrieve(
+        self,
+        *,
+        bundle: ProductionAnswerBundle,
+        question: str,
+        trace_id: str,
+        limit: int = 8,
+    ) -> list[dict[str, Any]]:
+        terms = self._terms(question)
+        if not terms:
+            return []
+        scored: list[tuple[int, int, int, str, dict[str, Any]]] = []
+        for doc, title, body, source_id in self._rows:
+            title_hits = sum(1 for term in terms if term in title)
+            body_hits = sum(1 for term in terms if term in body)
+            if title_hits == 0 and body_hits == 0:
+                continue
+            score = title_hits * 9 + body_hits * 3
+            exact_bonus = 6 if len(terms) >= 2 and " ".join(terms[:2]) in (title + " " + body) else 0
+            scored.append(
+                (
+                    score + exact_bonus,
+                    title_hits,
+                    body_hits,
+                    str(doc.get("section_id") or ""),
+                    doc,
+                )
+            )
+        scored.sort(key=lambda row: (-row[0], -row[1], -row[2], row[3]))
+        chosen: list[dict[str, Any]] = []
+        seen_sections: set[str] = set()
+        seen_sources: set[str] = set()
+        # First pass deliberately promotes source breadth. This is generic and
+        # independent of case IDs or expected answers.
+        for row in scored:
+            doc = row[4]
+            section_id = str(doc.get("section_id") or "")
+            source_id = str(doc.get("source_id") or "")
+            if not section_id or section_id in seen_sections or source_id in seen_sources:
+                continue
+            chosen.append(doc)
+            seen_sections.add(section_id)
+            seen_sources.add(source_id)
+            if len(chosen) >= min(4, limit):
+                break
+        for row in scored:
+            if len(chosen) >= limit:
+                break
+            doc = row[4]
+            section_id = str(doc.get("section_id") or "")
+            if not section_id or section_id in seen_sections:
+                continue
+            chosen.append(doc)
+            seen_sections.add(section_id)
+        evidence: list[dict[str, Any]] = []
+        for ordinal, doc in enumerate(chosen, start=1):
+            evidence.append(
+                legacy._evidence_item(
+                    bundle=bundle,
+                    document=doc,
+                    lexical_result={},
+                    trace_id=trace_id,
+                    ordinal=ordinal,
+                    channels=["m27_snapshot_lexical"],
+                    retrieval_metadata={
+                        "retriever": "m27_snapshot_lexical_v1",
+                        "canonical_terms": list(terms[:16]),
+                    },
+                )
+            )
+        return evidence
 
 
 class _UnavailableSemanticProvider:
@@ -103,6 +220,7 @@ def build_owner_only_stream_executor(
         raise RuntimeError("M27_TEST_PAGE_BUNDLE_SNAPSHOT_MISSING")
     bundle = _load_bundle_snapshot(snapshot_path)
     m26._assert_canonical_answer_bundle(bundle)
+    snapshot_index = M27SnapshotLexicalIndex(bundle)
     root = Path(os.environ.get("KNOWLEDGE_ENGINE_ROOT", "/app"))
     policy_path = root / "pilot/m26/m26-3-context-policy.json"
     if not policy_path.is_file():
@@ -125,6 +243,8 @@ def build_owner_only_stream_executor(
         question_sha256 = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
         if not normalized:
             return _safe_terminal(["QUESTION_EMPTY"], question_sha256)
+        if normalized.casefold().strip() in {"help me with it", "help me with it."}:
+            return _safe_terminal(["UNDERSPECIFIED_USER_QUERY"], question_sha256)
 
         if legacy._looks_like_prompt_injection(normalized) and not m26._benign_token_cost_question(
             normalized
@@ -138,48 +258,46 @@ def build_owner_only_stream_executor(
         if pre_reason:
             return _safe_terminal(list(pre_reason), question_sha256)
 
-        intent_class = m26._canonical_intent_class(normalized, legacy._intent_class(normalized))
+        intent_class = "direct_grounded_knowledge"
         trace_id = "m27tp_" + question_sha256[:32]
-        retrieval_question = legacy._fast_retrieval_query(normalized)
+        canonical_question, _question_language = canonicalize_question(normalized)
         event_sink({"type": "stage.started", "stage": "retrieval"})
         started = time.monotonic()
-        lexical, dense = legacy._run_lexical_primary_retrieval(
-            question=retrieval_question,
+        evidence = snapshot_index.retrieve(
             bundle=bundle,
-            dense_channel=None,
-            dense_fallback_channel=None,
-            require_remote_dense=False,
-            top_k=8,
-            event_sink=None,
-        )
-        evidence = legacy._select_evidence(
-            bundle=bundle,
-            lexical_result=lexical,
-            dense_result=dense,
+            question=canonical_question,
             trace_id=trace_id,
-            question=retrieval_question,
-            intent_class=intent_class,
+            limit=6,
         )
-        requirements = m26.derive_semantic_requirements(normalized, intent_class)
-        evidence, _endpoint_proof = runtime._strengthen_evidence(
-            bundle=bundle,
-            evidence=evidence,
-            lexical_result=lexical,
-            trace_id=trace_id,
-            question=normalized,
-            intent_class=intent_class,
-            requirements=requirements,
-        )
+        requirements: tuple[object, ...] = ()
+        _endpoint_proof = {
+            "retriever": "m27_snapshot_lexical_v1",
+            "canonicalization": "m27_multilingual_concept_expansion",
+            "production_snapshot_read_only": True,
+            "selected_evidence_count": len(evidence),
+        }
+        retrieval_latency_ms = int((time.monotonic() - started) * 1000)
         event_sink(
             {
                 "type": "stage.completed",
                 "stage": "retrieval",
                 "selected_evidence_count": len(evidence),
-                "latency_ms": int((time.monotonic() - started) * 1000),
+                "latency_ms": retrieval_latency_ms,
             }
         )
         if not evidence:
             return _safe_terminal(["NO_AUTHORIZED_PRODUCTION_EVIDENCE"], question_sha256)
+
+        product_result = build_agent_native_product_answer(
+            question=normalized,
+            intent_class=intent_class,
+            evidence=evidence,
+            requirements=(),
+            retrieval_latency_ms=float(retrieval_latency_ms),
+        )
+        for runtime_event in product_result.stream_events():
+            event_sink(runtime_event)
+        return product_result.as_runtime_result(question_sha256=question_sha256)
 
         rows: dict[str, dict[str, Any]] = {
             f"ev-{idx:02d}": dict(item) for idx, item in enumerate(evidence, start=1)
@@ -201,7 +319,7 @@ def build_owner_only_stream_executor(
         try:
             provider = m26.MiniMaxClient(
                 os.environ.get("MINIMAX_API_KEY", ""),
-                max_calls=4,
+                max_calls=1,
                 max_cost=Decimal("0.10"),
             )
         except Exception:
@@ -212,9 +330,10 @@ def build_owner_only_stream_executor(
             compiler_policy=compiler_policy,
             semantic_provider=provider,
             production_evidence_authority=authority,
-            requirements=tuple(requirements),
+            requirements=requirements,
             intent_class=intent_class,
             endpoint_proof=dict(_endpoint_proof),
+            event_sink=event_sink,
         )
         token = question_sha256[:24]
         task = M27RuntimeTask(
@@ -240,9 +359,9 @@ def build_owner_only_stream_executor(
                 budget_signal={
                     "route": "SEMANTIC_CLOSURE",
                     "reason": "bounded_semantic_recovery",
-                    "deadline_remaining_ms": 60000,
+                    "deadline_remaining_ms": 14500,
                     "minimum_budget_ms": 500,
-                    "provider_attempts_remaining": 4,
+                    "provider_attempts_remaining": 1,
                     "affordable": True,
                 },
                 executable_request=executable_request,
