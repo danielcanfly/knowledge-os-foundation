@@ -485,7 +485,7 @@
       ]
     }
   },
-  "final_head": "cf3ef730afdac327b72d361f051bcd9d4aca0aee",
+  "final_head": "bf76b990d42e06ae68035748d6952269e959719d",
   "final_state": "M27_DEEP_ROOT_CAUSE_DIAGNOSIS_READY",
   "forbidden_shortcuts_checked": {
     "admission_or_full523_rerun": false,
@@ -1043,21 +1043,21 @@
   "safety_proof": {
     "diagnostic_only_artifacts": true,
     "final_cleanup_probe": {
-      "port_18080": "FREE",
       "active_m27_diagnostic_containers": 0,
-      "production_8080": {
-        "status": "ok",
-        "build_sha": "7d4b2358464654bf3de7d9561ec89de841d279bd",
-        "entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query"
-      },
-      "test_backend_8081": {
-        "status": "ok",
-        "build_sha": "f746822503b7b27b2f5d4bb98ad406b15f558732",
-        "entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query"
-      },
       "nginx_conf_sha256": "48c6a4ec1e1fd28ccf968490f07e34a1d7f755793b2108a3ed8670b1ee2a0aa2",
       "nginx_matches_stage22": true,
-      "secret_scan_passed": true
+      "port_18080": "FREE",
+      "production_8080": {
+        "build_sha": "7d4b2358464654bf3de7d9561ec89de841d279bd",
+        "entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query",
+        "status": "ok"
+      },
+      "secret_scan_passed": true,
+      "test_backend_8081": {
+        "build_sha": "f746822503b7b27b2f5d4bb98ad406b15f558732",
+        "entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query",
+        "status": "ok"
+      }
     },
     "production_touched": false,
     "raw_answer_text_omitted_from_new_receipts": true,
