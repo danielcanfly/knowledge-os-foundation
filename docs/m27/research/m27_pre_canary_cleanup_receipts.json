@@ -1,0 +1,72 @@
+{
+  "schema_version": "m27-pre-canary-cleanup-27/v1",
+  "final_state": "M27_PRE_CANARY_CLEANUP_READY_FOR_ACTIVATION_SESSION",
+  "workspace": "/home/ubuntu/LLM_Wiki-m27-pre-canary-cleanup-27",
+  "branch": "m27/pre-canary-cleanup-27",
+  "base_head": "dd3275bbb9b2c65772005ca468387a9b76500eeb",
+  "final_head": "f1821a71c665b399686b9d988cec57dd1d0ff795",
+  "legacy_tail_status": "removed_unreachable_legacy_tail_and_dead_only_dependencies",
+  "m26_composer_delegation_absent": true,
+  "raw_compare_evidence_status": {
+    "raw_compare_recovered": false,
+    "provenance_repair_artifact": "docs/m27/research/m27_stage25_raw_compare_provenance_repair.json",
+    "fabricated": false,
+    "readiness_assessment": "usable_with_provenance_warning"
+  },
+  "telemetry_identity_hooks_status": {
+    "status": "implemented_not_activated",
+    "module": "src/knowledge_engine/m27_canary_telemetry.py",
+    "required_fields_persisted": [
+      "route_id",
+      "candidate_id",
+      "candidate_git_sha",
+      "candidate_runtime_identity",
+      "canary_mode",
+      "request_id",
+      "terminal_kind",
+      "first_material_latency_ms",
+      "final_latency_ms",
+      "product_gate_outcome",
+      "stop_condition_flags"
+    ]
+  },
+  "route_to_zero_doc_status": {
+    "status": "documented_and_read_only_dry_run_proved",
+    "path": "docs/m27/canary/M27_ROUTE_TO_ZERO_RUNBOOK.md",
+    "nginx_main_sha256": "48c6a4ec1e1fd28ccf968490f07e34a1d7f755793b2108a3ed8670b1ee2a0aa2",
+    "nginx_site_sha256": "1d1c4edfddca4da6c89a054a0ddf33179bbe3265e21666f2e8a49a1606045219"
+  },
+  "production_safety_status": {
+    "production_8080_health_ok": true,
+    "production_build_sha": "7d4b2358464654bf3de7d9561ec89de841d279bd",
+    "production_entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query",
+    "test_backend_8081_health_ok": true,
+    "port_18080_free": true,
+    "active_m27_canary_eval_containers": 0,
+    "production_datastore_write_path_introduced": false,
+    "secret_values_committed": false
+  },
+  "forbidden_actions": {
+    "canary_activation": false,
+    "production_deploy": false,
+    "release_pointer_mutation": false,
+    "public_nginx_or_route_change": false,
+    "production_m26_restart_or_rebuild": false,
+    "production_datastore_write": false,
+    "admission_full523_rerun": false,
+    "stage13_14": false,
+    "chunk002": false,
+    "owner_bypass_or_provider_secret_leak": false,
+    "m26_mature_answer_composer_connected": false
+  },
+  "validation": {
+    "compileall": "pass",
+    "focused_ast_source_smoke": "pass",
+    "telemetry_persistence_smoke": "pass",
+    "json_load_validation": "pass",
+    "git_diff_check": "pass",
+    "pytest": "unavailable_system_python",
+    "ruff": "unavailable",
+    "system_python_package_smoke_note": "knowledge_engine package import requires missing httpx dependency in system Python"
+  }
+}
