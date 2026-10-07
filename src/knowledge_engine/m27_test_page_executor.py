@@ -37,7 +37,10 @@ class SnapshotKnowledgeProvider:
 
     def search(self, request: object) -> KnowledgeSearchOutput:
         self.searches += 1
-        limit = int(getattr(request, "max_results", 8) or 8)
+        # These rows are already the bounded canonical M26 selected/strengthened
+        # evidence set. Do not silently truncate that authoritative set again.
+        requested_limit = getattr(request, "max_results", None)
+        limit = min(len(self._rows), int(requested_limit)) if isinstance(requested_limit, int) and requested_limit > 0 else len(self._rows)
         items = []
         for knowledge_id, row in list(self._rows.items())[:limit]:
             items.append(
@@ -174,7 +177,7 @@ def build_owner_only_stream_executor(
             return _safe_terminal(["NO_AUTHORIZED_PRODUCTION_EVIDENCE"], question_sha256)
 
         rows: dict[str, dict[str, Any]] = {
-            f"ev-{idx:02d}": dict(item) for idx, item in enumerate(evidence[:8], start=1)
+            f"ev-{idx:02d}": dict(item) for idx, item in enumerate(evidence, start=1)
         }
         bindings = {
             str(item["evidence_id"]): production_evidence_binding_sha256(item)
@@ -203,6 +206,7 @@ def build_owner_only_stream_executor(
             production_evidence_authority=authority,
             requirements=tuple(requirements),
             intent_class=intent_class,
+            endpoint_proof=dict(_endpoint_proof),
         )
         token = question_sha256[:24]
         task = M27RuntimeTask(

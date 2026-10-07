@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import time
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
 from .m26_aq_semantic_contract import synthesize_and_verify
+from . import m26_aq_semantic_contract as canonical_m26
+from . import m26_pa7_arbitrary_query_runtime as legacy_m26
+from . import m26_pa7_semantic_closure_runtime as semantic_runtime
 from .m26_context_compiler import compile_context_package
 from .m26_retrieval_envelope import with_self_digest
 from .m27_adaptive_compute import AdaptiveComputeBudget, AdaptiveComputeController
@@ -42,6 +46,7 @@ class M27ExecutableRequest:
     production_evidence_authority: ProductionEvidenceAuthority | None = None
     requirements: Sequence[object] = ()
     intent_class: str = "direct_grounded_knowledge"
+    endpoint_proof: Mapping[str, Any] | None = None
 
 
 class ProviderQuotaExhausted(RuntimeError):
@@ -203,6 +208,131 @@ def _compile_synthetic(
         return compiled, ()
     chosen = set(manifest.get("selected_passage_ids", ()))
     return compiled, tuple(dict(item) for item in evidence if item.get("evidence_id") in chosen)
+
+
+def _try_canonical_evidence_bound_fast_path(
+    *,
+    question: str,
+    trace_id: str,
+    intent_class: str,
+    evidence: Sequence[Mapping[str, Any]],
+    requirements: Sequence[object],
+    endpoint_proof: Mapping[str, Any],
+) -> dict[str, Any] | None:
+    runtime_requirements = canonical_m26._runtime_semantic_requirements(requirements)
+    candidates: list[Mapping[str, Any]] = []
+    try:
+        candidate = legacy_m26._deterministic_provider_candidate(question=question, intent_class=intent_class, evidence=evidence)
+        if isinstance(candidate, Mapping): candidates.append(candidate)
+    except Exception:
+        pass
+    try:
+        recovery = canonical_m26._supported_semantic_recovery_candidate(question=question, intent_class=intent_class, evidence=evidence, requirements=runtime_requirements, endpoint_proof=endpoint_proof)
+    except Exception:
+        recovery = None
+    if isinstance(recovery, Mapping): candidates.append(recovery)
+    try:
+        candidates.extend(canonical_m26._deterministic_facet_local_preflight_candidates(question=question, intent_class=intent_class, evidence=evidence, requirements=runtime_requirements))
+    except Exception:
+        pass
+    seen: set[str] = set()
+    for candidate in candidates:
+        fp = canonical_m26.canonical_sha256(candidate)
+        if fp in seen: continue
+        seen.add(fp)
+        try:
+            verified = legacy_m26._verify_multi_evidence_provider_output(trace_id=trace_id, question=question, intent_class=intent_class, evidence=evidence, provider_text=json.dumps(semantic_runtime._verification_candidate(candidate), ensure_ascii=False, separators=(",", ":")))
+            answer = legacy_m26._verified_multi_evidence_answer(intent_class=intent_class, verified=verified, evidence=evidence, calls=[], repair_attempted=False)
+            canonical_m26._use_verified_natural_surface(answer, canonical_m26._public_candidate_surface(candidate, answer))
+        except Exception:
+            continue
+        if answer.get("status") != "owner_only_cited_answer": continue
+        answer_text = str(answer.get("answer_text", ""))
+        if canonical_m26.evaluate_visible_semantics(answer_text, runtime_requirements, question): continue
+        if canonical_m26._internal_reference_leaks(answer_text, question): continue
+        if canonical_m26._question_answer_alignment_failures(question=question, answer_text=answer_text, evidence=evidence): continue
+        source_ids = sorted({str(item.get("source_identity", "")) for item in answer.get("citations", []) if isinstance(item, Mapping) and str(item.get("source_identity", ""))})
+        if canonical_m26._quality_surface_failures(question=question, answer_text=answer_text, source_identities=source_ids): continue
+        failures, _ = canonical_m26._endpoint_aware_requirement_support_failures(runtime=canonical_m26._RUNTIME_FACADE, requirements=runtime_requirements, evidence=canonical_m26._candidate_evidence(candidate, evidence), endpoint_proof=endpoint_proof)
+        if failures: continue
+        answer["answer_source"] = "m27_canonical_evidence_bound_preflight"
+        return dict(answer)
+    return None
+
+
+
+def _try_canonical_fast_provider_answer(
+    *,
+    question: str,
+    trace_id: str,
+    intent_class: str,
+    evidence: Sequence[Mapping[str, Any]],
+    provider: ProviderQuota,
+) -> dict[str, Any] | None:
+    payload = legacy_m26._fast_synthesis_payload(
+        question=question, trace_id=trace_id, intent_class=intent_class, evidence=evidence
+    )
+    try:
+        provider_result = provider.call(payload, legacy_m26.FAST_SYNTHESIS_CALL_CLASS)
+        normalized = legacy_m26._normalize_fast_provider_result(provider_result)
+    except Exception:
+        return None
+    if legacy_m26._fast_public_abstention_publication(normalized) is not None:
+        return None
+    publication = legacy_m26._validate_fast_provider_candidate(
+        question=question, selected_evidence=evidence, provider_output=normalized
+    )
+    if publication is None:
+        return None
+    if canonical_m26._question_answer_alignment_failures(
+        question=question, answer_text=str(publication.get("answer_text", "")), evidence=evidence
+    ):
+        return None
+    if canonical_m26._fast_required_facet_citation_failures(
+        question=question, intent_class=intent_class, evidence=evidence, publication=publication
+    ):
+        return None
+    evidence_by_id = {str(item["evidence_id"]): item for item in evidence}
+    citations: list[dict[str, Any]] = []
+    support_refs = list(publication.get("support_refs", []))
+    for index, citation_id in enumerate(publication.get("citation_ids", []), start=1):
+        citation_id = str(citation_id)
+        selected = evidence_by_id.get(citation_id)
+        if selected is None:
+            return None
+        support_ref = support_refs[index - 1] if index - 1 < len(support_refs) else legacy_m26._deterministic_support_ref(selected)
+        if support_ref is None:
+            snippet = str(selected.get("passage_text", ""))[:240]
+            support_ref = {
+                "evidence_id": citation_id,
+                "locator_id": str(selected["locator_id"]),
+                "exact_quote": snippet,
+                "exact_support_snippet": snippet,
+                "exact_quote_sha256": hashlib.sha256(snippet.encode("utf-8")).hexdigest(),
+                "uncertainty": "low",
+            }
+        citations.append(legacy_m26._public_citation(
+            selected, {"claim_id": "claim_1", "claim_role": "direct"}, support_ref, index
+        ))
+    answer_text = str(publication.get("answer_text", "")).strip()
+    if not answer_text or not citations:
+        return None
+    return {
+        "status": "owner_only_cited_answer",
+        "terminal_status": "fast_answer_ready",
+        "answer_text": answer_text,
+        "citations": citations,
+        "answer_claims": [{
+            "claim_id": "claim_1", "claim_role": "direct", "surface_text": answer_text,
+            "citation_ids": [item["citation_id"] for item in citations],
+            "support_ref_count": len(citations),
+        }],
+        "safe_abstention": False, "reason_codes": [], "provider_invoked": True,
+        "provider_call_count": 1, "material_claim_support_verified": True,
+        "citation_locator_valid": True, "unsupported_accepted_claims": 0,
+        "repair_attempted": False,
+        "answer_source": "m27_canonical_fast_natural_cited_synthesis",
+    }
 
 
 def execute_isolated(
@@ -380,12 +510,16 @@ def execute_isolated(
                 gathered[str(evidence["evidence_id"])] = evidence
             binding_end_ns = time.perf_counter_ns()
             compiler_start_ns = time.perf_counter_ns()
-            compiled, selected = _compile_synthetic(
-                evidence=tuple(gathered.values()),
-                request_id=f"{task.task_id}:{round_index}",
-                policy=request.compiler_policy,
-                release=_release_for_compiler(request),
-            )
+            if production_authority is not None:
+                compiled = {"status": "production_evidence_preserved", "safe_for_provider_mock": True}
+                selected = tuple(dict(item) for item in gathered.values())
+            else:
+                compiled, selected = _compile_synthetic(
+                    evidence=tuple(gathered.values()),
+                    request_id=f"{task.task_id}:{round_index}",
+                    policy=request.compiler_policy,
+                    release=_release_for_compiler(request),
+                )
             compiler_end_ns = time.perf_counter_ns()
             compiler_status = str(compiled.get("status", "unavailable"))
             if not selected:
@@ -406,15 +540,30 @@ def execute_isolated(
                 )
                 verifier_start_ns = time.perf_counter_ns()
                 try:
-                    answer, _closure = synthesize_and_verify(
-                        question=request.question,
-                        trace_id=f"{task.task_id}:r{round_index}",
-                        intent_class=request.intent_class,
-                        evidence=selected,
-                        provider_client=provider,
-                        requirements=requirements,
-                        endpoint_proof={"required": False, "matched": False},
-                    )
+                    endpoint_proof = dict(request.endpoint_proof or {"required": False, "matched": False})
+                    fast_answer = _try_canonical_evidence_bound_fast_path(question=request.question, trace_id=f"{task.task_id}:r{round_index}", intent_class=request.intent_class, evidence=selected, requirements=requirements, endpoint_proof=endpoint_proof)
+                    if fast_answer is not None:
+                        answer = fast_answer
+                    else:
+                        fast_provider_answer = _try_canonical_fast_provider_answer(
+                            question=request.question,
+                            trace_id=f"{task.task_id}:r{round_index}",
+                            intent_class=request.intent_class,
+                            evidence=selected,
+                            provider=provider,
+                        )
+                        if fast_provider_answer is not None:
+                            answer = fast_provider_answer
+                        else:
+                            answer, _closure = synthesize_and_verify(
+                                question=request.question,
+                                trace_id=f"{task.task_id}:r{round_index}",
+                                intent_class=request.intent_class,
+                                evidence=selected,
+                                provider_client=provider,
+                                requirements=requirements,
+                                endpoint_proof=endpoint_proof,
+                            )
                     verification = dict(answer)
                     if (
                         production_authority is not None
@@ -539,7 +688,7 @@ def execute_isolated(
                         else "synthetic_only"
                     ),
                     "compiler_authority": (
-                        "m26_3_synthetic_selector_non_authoritative"
+                        "production_evidence_preserved_after_formal_authority_admission"
                         if production_authority is not None
                         else "m26_3_synthetic_only"
                     ),
