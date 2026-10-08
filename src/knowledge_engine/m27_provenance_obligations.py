@@ -7,7 +7,19 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-RELEASE_ROOT = ROOT / "pilot/m24/canonical-release"
+
+def _release_root() -> Path:
+    candidates = [
+        ROOT / "pilot/m24/canonical-release",
+        Path("/app/pilot/m24/canonical-release"),
+        Path.cwd() / "pilot/m24/canonical-release",
+    ]
+    for candidate in candidates:
+        if (candidate / "manifest.json").exists() and (candidate / "artifacts/provenance.json").exists():
+            return candidate
+    return candidates[0]
+
+RELEASE_ROOT = _release_root()
 IDENTITY = re.compile(r'accepted claim set for ["\u201c]([^"\u201d]+)["\u201d].*?source ["\u201c]([^"\u201d]+)["\u201d]', re.I)
 
 def retrieve_provenance_identity(question: str):

@@ -1,0 +1,25 @@
+{
+  "decision": "M27_DIRECT100_TARGETED_GUARD_RERUN_PASS",
+  "metrics": {
+    "cases": 100,
+    "http_success": 100,
+    "answerable_cases": 87,
+    "answerable_cited_final": 87,
+    "expected_safe_cases": 13,
+    "expected_safe_correct": 13,
+    "missed_safe_terminal": 0,
+    "false_safe_terminal": 0,
+    "empty_nonterminal": 0,
+    "thin_cited_answer": 0,
+    "topic_contamination": 0,
+    "semantic_bad_publish": 0,
+    "obligation_satisfied": 100,
+    "p50_final_latency_ms": 3493.877,
+    "p95_final_latency_ms": 7735.191,
+    "p50_first_material_ms": 3492.613,
+    "p95_first_material_ms": 7734.305,
+    "first_material_count": 100,
+    "no_m26_mature_composer_delegation": true
+  },
+  "duration_s": 392.7240526676178
+}

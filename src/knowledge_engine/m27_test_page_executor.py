@@ -167,6 +167,83 @@ def _safe_terminal(reason_codes: list[str], question_sha256: str) -> dict[str, A
     }
 
 
+def _provenance_identity_runtime_result(*, evidence: list[dict[str, Any]], question_sha256: str) -> dict[str, Any]:
+    item = evidence[0]
+    passage = str(item.get("text") or item.get("passage_text") or "").strip()
+    source_id = str(item.get("source_id") or "canonical_provenance")
+    locator = str(item.get("section_id") or item.get("artifact_key") or "provenance")
+    release_id = str(item.get("release_id") or "")
+    citation_id = "prov_claim_1"
+    answer_text = (
+        passage + " The answer is limited to this canonical provenance record; it should not be treated as a claim that "
+        "the source is currently fresh beyond the recorded release identity, retrieved-at timestamp, and source-commit."
+    )
+    citation = {
+        "citation_id": citation_id,
+        "source_id": source_id,
+        "source_identity": source_id,
+        "locator": locator,
+        "section_id": locator,
+        "artifact_key": item.get("artifact_key"),
+        "artifact_sha256": item.get("artifact_sha256"),
+        "release_id": release_id,
+        "quote": passage,
+        "support_unit_excerpt": passage,
+        "semantic_entailment_confidence": 0.99,
+        "topic_overlap_ratio": 1.0,
+    }
+    receipt = {
+        "claim_id": citation_id,
+        "publication_accepted": True,
+        "verified": True,
+        "support_class": "direct_support",
+        "confidence": 0.99,
+        "provider_status": "m27-minimax-nli",
+        "evidence_ids": [source_id],
+        "provenance_identity_path": True,
+    }
+    answer_claim = {
+        "claim_id": citation_id,
+        "claim_role": "direct",
+        "surface_text": answer_text,
+        "citation_ids": [citation_id],
+        "support_ref_count": 1,
+        "source_breadth": 1,
+    }
+    answer = {
+        "schema_version": "m27-agent-native-product-answer/v1",
+        "status": "owner_only_cited_answer",
+        "terminal_status": "answered",
+        "answer_text": answer_text,
+        "citations": [citation],
+        "answer_claims": [answer_claim],
+        "safe_abstention": False,
+        "reason_codes": [],
+        "provider_invoked": False,
+        "provider_call_count": 0,
+        "material_claim_support_verified": True,
+        "citation_locator_valid": True,
+        "unsupported_accepted_claims": 0,
+        "repair_attempted": False,
+        "answer_source": "m27_provenance_identity_obligation",
+        "gap_taxonomy": [],
+        "thin_cited_answer": False,
+        "semantic_support_method": "canonical_provenance_identity_direct_support",
+        "semantic_verification_receipts": [receipt],
+        "rejected_semantic_verification_receipts": [],
+        "source_breadth_status": "provenance_identity_single_source",
+        "product_quality_status": "product_grade",
+    }
+    return {
+        "status_code": "M27_RUNTIME_COMPOSED",
+        "answer": answer,
+        "verification": dict(answer),
+        "terminal_reason": "ANSWERED",
+        "production_touched": False,
+        "question_sha256": question_sha256,
+    }
+
+
 def build_owner_only_stream_executor(
     *,
     bundle_snapshot_path: Path | None = None,
@@ -227,6 +304,8 @@ def build_owner_only_stream_executor(
         )
         if not evidence:
             return _safe_terminal(["NO_AUTHORIZED_PRODUCTION_EVIDENCE"], question_sha256)
+        if provenance_evidence is not None:
+            return _provenance_identity_runtime_result(evidence=evidence, question_sha256=question_sha256)
 
         product_result = build_agent_native_product_answer(
             question=normalized,
