@@ -14,6 +14,9 @@ This is an honest non-PASS. The partial M27-native code integrates a narrow Mini
 - Python compile and isolated network-disabled container package import passed.
 - Host Python lacks `pytest` and `httpx`; existing container lacks `pytest`. Existing tests were not fully executed.
 
+## Targeted offline regression
+Five synthetic unittest cases passed in a network-disabled, read-only-mounted candidate image. This covers a narrow subset of fail-closed pathways, not the complete mandatory Stage30G offline suite.
+
 ## Important incomplete conditions
 - Verify calibrated provider's exact production runtime prompt, timeout, schema retry and confidence receipt behavior end-to-end.
 - Implement genuine claim-to-multiple-passage cluster binding and rigorous claim extraction, rather than single-source quotes.

@@ -24,5 +24,12 @@
   "production_m26_touched": false,
   "test_backend_touched": false,
   "nginx_touched": false,
-  "public_route_used": false
+  "public_route_used": false,
+  "targeted_offline_regression": {
+    "runner": "docker run --rm --network none, python unittest",
+    "cases": 5,
+    "passed": 5,
+    "failed": 0,
+    "scope": "partial negative-path checks only"
+  }
 }
