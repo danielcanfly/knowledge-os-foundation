@@ -1,49 +1,205 @@
 {
-  "final_state": "M27_OWNER_ONLY_CANARY_ACTIVATION_BLOCKED",
-  "timestamp_utc": "2026-10-08T01:44:24.698060+00:00",
-  "stage27_git_sha": "603a647df49a9ce534d7344db2a91d7ceece52dd",
   "activated_by_owner": true,
+  "activation_end_utc": "2026-10-08T02:11:12.851481+00:00",
   "activation_session": "stage28_owner_only_canary_activation",
-  "route_id": null,
-  "candidate_id": null,
-  "candidate_git_sha": null,
-  "canary_mode": "owner_only",
-  "candidate_started": false,
-  "route_activated": false,
-  "canary_still_active": false,
-  "route_to_zero_performed": false,
-  "route_to_zero_unnecessary": true,
-  "blocker": "Owner identity predicate and non-owner isolation proof absent; no safe M27 route object installed",
-  "preflight": {
-    "worktree_clean_at_start": true,
-    "stage27_required_files_present": true,
-    "m26_8080_health_200": true,
-    "test_8081_health_200": true,
-    "port_18080_free": true,
-    "m27_canary_eval_containers_active": false,
-    "owner_bypass_mode_0600": true,
-    "provider_only_stage22_env_mode_0600": true,
-    "nginx_checksums_match_stage27": true,
-    "production_datastore_write_credentials_passed": false,
-    "owner_only_isolation_proven": false,
-    "route_to_zero_runbook_present": true
+  "activation_start_utc": "2026-10-08T02:09:54Z",
+  "canary_still_active": true,
+  "candidate_identity": {
+    "canary_mode": "owner_only",
+    "candidate_git_sha": "b72b2ec9ac95b4bff9c24177002522c9a07039e1",
+    "candidate_id": "2be5117a5b47",
+    "candidate_image": "knowledge-engine:m27-owner-canary-b72b2ec9",
+    "candidate_image_digest": "local manifest list sha256:d539e83926863409372bd4c643f3cf07320b07d80579fab9d06ef62d44c19fc1",
+    "candidate_runtime_identity": "m27-production-equivalent-runtime",
+    "route_id": "m27-owner-only-stage28"
+  },
+  "committed_evidence_available": true,
+  "final_state": "M27_OWNER_ONLY_CANARY_ACTIVATED",
+  "nginx_checksum_after": {
+    "main": "48c6a4ec1e1fd28ccf968490f07e34a1d7f755793b2108a3ed8670b1ee2a0aa2",
+    "site": "289f235410196a12fa366a3e1110c30bf3eb7362fc3aab9f49d1aeba94d40d9f"
   },
   "nginx_checksum_before": {
     "main": "48c6a4ec1e1fd28ccf968490f07e34a1d7f755793b2108a3ed8670b1ee2a0aa2",
     "site": "1d1c4edfddca4da6c89a054a0ddf33179bbe3265e21666f2e8a49a1606045219"
   },
-  "nginx_checksum_after": {
-    "main": "48c6a4ec1e1fd28ccf968490f07e34a1d7f755793b2108a3ed8670b1ee2a0aa2",
-    "site": "1d1c4edfddca4da6c89a054a0ddf33179bbe3265e21666f2e8a49a1606045219"
+  "preflight_proof": {
+    "no_prior_m27_canary_eval_container": true,
+    "no_production_datastore_write_credentials_passed": true,
+    "port_18080_initially_free": true,
+    "private_owner_env_mode_0600": true,
+    "production_8080_health_ok": true,
+    "provider_only_env_mode_0600": true,
+    "route_to_zero_runbook_present": true,
+    "stage27_files_present": true,
+    "test_backend_8081_health_ok": true
   },
-  "route_proof": "docs/m27/canary/M27_OWNER_ONLY_CANARY_ROUTE_PROOF.md",
-  "telemetry_sample_path": "docs/m27/canary/M27_OWNER_ONLY_CANARY_TELEMETRY_SAMPLE.jsonl",
-  "smoke_results": [],
-  "stop_condition_status": "NOT_EVALUATED_NO_ACTIVATION",
-  "production_safety_before_after": "Verified after: M26 8080 and test 8081 health HTTP 200, Nginx site/main SHA256 unchanged, no candidate started or route mutation",
-  "raw_compare_recovered": false,
+  "production_safety_before_after": {
+    "default_non_owner_answers_remain_m26": true,
+    "m26_8080_health_after": true,
+    "m26_8080_health_before": true,
+    "production_datastore_written": false,
+    "production_m26_restarted": false,
+    "release_pointer_mutated": false
+  },
   "raw_compare_fabricated": false,
-  "committed_evidence_available": true,
-  "warning_carried_forward": true,
-  "secret_redaction_proof": "No secret values read, printed, stored, or passed to any candidate."
+  "raw_compare_recovered": false,
+  "route_identity": {
+    "auth_sidecar": "127.0.0.1:18081",
+    "candidate_target": "127.0.0.1:18080/v1/answers/stream",
+    "non_owner_fallback": "127.0.0.1:8080",
+    "owner_route": "/v1/answers with auth_request owner predicate",
+    "site": "/etc/nginx/sites-enabled/llamaindex-demo"
+  },
+  "route_proof": {
+    "nginx_config_test_passed": true,
+    "non_owner_fallback_status": 200,
+    "non_owner_response_had_m27_schema": false,
+    "owner_auth_denied_status": 401,
+    "owner_auth_sidecar_ok_status": 204,
+    "owner_smoke_resolved_to": "m27_candidate",
+    "private_owner_material_forwarded_to_m27": false
+  },
+  "route_to_zero_performed": false,
+  "route_to_zero_readiness_proof": {
+    "backup_path": "/tmp/llamaindex-demo.pre-m27-owner-canary-20261008T020954Z",
+    "candidate_cleanup_command": "docker rm -f m27-owner-canary-28; kill auth sidecar pid from /tmp/m27_owner_auth_28.pid if present",
+    "restore_command": "sudo cp BACKUP_PATH /etc/nginx/sites-enabled/llamaindex-demo && sudo nginx -t && sudo systemctl reload nginx",
+    "verified_available": true
+  },
+  "secret_redaction_proof": {
+    "logs_request_headers_disabled_in_auth_sidecar": true,
+    "private_value_hits": 0,
+    "scanned_artifact_count": 6,
+    "stdout_secret_values_printed": false
+  },
+  "smoke_results": [
+    {
+      "canary_mode": "owner_only",
+      "candidate_git_sha": "b72b2ec9ac95b4bff9c24177002522c9a07039e1",
+      "candidate_id": "2be5117a5b47",
+      "candidate_runtime_identity": "m27-production-equivalent-runtime",
+      "events_tail": [
+        "answer_plan_ready",
+        "claim_graph_ready",
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done"
+      ],
+      "final_latency_ms": 507,
+      "first_material_latency_ms": 102,
+      "http_status": 200,
+      "label": "ordinary",
+      "product_gate_outcome": "owner_only_cited_answer",
+      "request_id": "req_d67b9c05ea7b4df88c08d8bc691573e2",
+      "resolved_to": "m27_candidate",
+      "route_id": "m27-owner-only-stage28",
+      "stop_condition_flags": [],
+      "terminal_kind": "answered"
+    },
+    {
+      "canary_mode": "owner_only",
+      "candidate_git_sha": "b72b2ec9ac95b4bff9c24177002522c9a07039e1",
+      "candidate_id": "2be5117a5b47",
+      "candidate_runtime_identity": "m27-production-equivalent-runtime",
+      "events_tail": [
+        "answer_plan_ready",
+        "claim_graph_ready",
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done"
+      ],
+      "final_latency_ms": 528,
+      "first_material_latency_ms": 292,
+      "http_status": 200,
+      "label": "browser_use_warning",
+      "product_gate_outcome": "owner_only_cited_answer",
+      "request_id": "req_265bda3e00254334a0fc29ccc4dc576e",
+      "resolved_to": "m27_candidate",
+      "route_id": "m27-owner-only-stage28",
+      "stop_condition_flags": [],
+      "terminal_kind": "answered"
+    },
+    {
+      "canary_mode": "owner_only",
+      "candidate_git_sha": "b72b2ec9ac95b4bff9c24177002522c9a07039e1",
+      "candidate_id": "2be5117a5b47",
+      "candidate_runtime_identity": "m27-production-equivalent-runtime",
+      "events_tail": [
+        "answer_plan_ready",
+        "claim_graph_ready",
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done"
+      ],
+      "final_latency_ms": 385,
+      "first_material_latency_ms": 64,
+      "http_status": 200,
+      "label": "multilingual",
+      "product_gate_outcome": "owner_only_cited_answer",
+      "request_id": "req_6118e9cb92114b9394064857cb580745",
+      "resolved_to": "m27_candidate",
+      "route_id": "m27-owner-only-stage28",
+      "stop_condition_flags": [],
+      "terminal_kind": "answered"
+    },
+    {
+      "canary_mode": "owner_only",
+      "candidate_git_sha": "b72b2ec9ac95b4bff9c24177002522c9a07039e1",
+      "candidate_id": "2be5117a5b47",
+      "candidate_runtime_identity": "m27-production-equivalent-runtime",
+      "events_tail": [
+        "request_started",
+        "safe_abstention_done"
+      ],
+      "final_latency_ms": 98,
+      "first_material_latency_ms": 97,
+      "http_status": 200,
+      "label": "safe_terminal",
+      "product_gate_outcome": "owner_only_safe_abstention",
+      "request_id": "req_16d564e23a134d3aa936b59a922fe3e4",
+      "resolved_to": "m27_candidate",
+      "route_id": "m27-owner-only-stage28",
+      "stop_condition_flags": [],
+      "terminal_kind": "safe_abstention"
+    },
+    {
+      "canary_mode": "owner_only",
+      "candidate_git_sha": "b72b2ec9ac95b4bff9c24177002522c9a07039e1",
+      "candidate_id": "2be5117a5b47",
+      "candidate_runtime_identity": "m27-production-equivalent-runtime",
+      "events_tail": [
+        "request_started",
+        "safe_abstention_done"
+      ],
+      "final_latency_ms": 43,
+      "first_material_latency_ms": 43,
+      "http_status": 200,
+      "label": "underspecified_safe",
+      "product_gate_outcome": "owner_only_safe_abstention",
+      "request_id": "req_3db4390225384fed847b6ed7beeb3fb1",
+      "resolved_to": "m27_candidate",
+      "route_id": "m27-owner-only-stage28",
+      "stop_condition_flags": [],
+      "terminal_kind": "safe_abstention"
+    }
+  ],
+  "stop_condition_status": {
+    "flags": [],
+    "p95_final_latency_ms": 528,
+    "smoke_count": 5,
+    "threshold_ms": 15000,
+    "triggered": false
+  },
+  "telemetry_sample_path": "docs/m27/canary/M27_OWNER_ONLY_CANARY_TELEMETRY_SAMPLE.jsonl",
+  "warning_carried_forward": true
 }
