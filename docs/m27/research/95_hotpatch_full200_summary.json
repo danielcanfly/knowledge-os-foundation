@@ -1,0 +1,54 @@
+{
+  "stage": "30N-full200",
+  "dataset": "pilot/m26/m26-pa-5-frozen-population.json",
+  "dataset_count": 200,
+  "decision": "M27_HOTPATCH_FULL200_FAIL_QUALITY",
+  "metrics": {
+    "cases": 200,
+    "http_success": 200,
+    "answerable_cases": 175,
+    "answerable_cited_final": 175,
+    "expected_safe_cases": 25,
+    "expected_safe_correct": 25,
+    "missed_safe_terminal": 0,
+    "false_safe_terminal": 0,
+    "empty_nonterminal": 0,
+    "thin_cited_answer": 0,
+    "topic_contamination": 2,
+    "semantic_bad_publish": 0,
+    "obligation_satisfied": 198,
+    "p50_final_latency_ms": 3440.433,
+    "p95_final_latency_ms": 6238.586,
+    "p50_first_material_ms": 3439.117,
+    "p95_first_material_ms": 6237.497,
+    "first_material_count": 200,
+    "no_m26_mature_composer_delegation": true
+  },
+  "gates": {
+    "success_rate": 1.0,
+    "success_gate": true,
+    "latency_gate": true,
+    "quality_gate": false,
+    "quality_score_proxy": 89.8,
+    "quality_score_proxy_boundary": "derived from product-quality harness flags; not independent semantic judge score",
+    "answerable_required_for_95pct": 167
+  },
+  "failure_count": 2,
+  "failure_cases": [
+    {
+      "case_id": "m26-pa5-direct-grounded-factual-08609186169943ff",
+      "failure_class": "topic_contamination",
+      "question": "What grounded factual point is stated in the accepted section \"Edited adoption\" of \"Harnessability\", and which section identity should be cited?",
+      "answer_excerpt": "### What a readiness contract should establish At minimum: - configuration has loaded and its version is traceable - the model provider or local runtime is available - tool schemas, handlers and policy are coherent - state, artefact and checkpoint stores can be read and written - required services a"
+    },
+    {
+      "case_id": "m26-pa5-direct-grounded-factual-76481614df52d40a",
+      "failure_class": "topic_contamination",
+      "question": "What grounded factual point is stated in the accepted section \"Source adoption\" of \"Harnessability\", and which section identity should be cited?",
+      "answer_excerpt": "## External knowledge should keep its own source identity External knowledge stores include: - documents - databases - wikis - policies - manuals - code repositories - catalogues - knowledge graphs - web pages They are usually managed by another system and have their own update and permission model."
+    }
+  ],
+  "start_timestamp": 1791471654.7038379,
+  "end_timestamp": 1791472348.1893895,
+  "full523_executed": false
+}
