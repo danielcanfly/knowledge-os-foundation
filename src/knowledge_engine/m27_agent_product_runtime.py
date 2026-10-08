@@ -331,28 +331,27 @@ def _human_topic(question: str) -> str:
     q = str(question or "").strip().rstrip("?。？")
     return q[:1].lower() + q[1:] if q else "this question"
 
-def _localized_answer(question: str, selected: Sequence[Mapping[str, Any]], quotes: Sequence[str], *, broad: bool) -> str:
-    lang = _language(question)
-    topic = _human_topic(question)
-    if lang == "zh":
-        lead = f"可以。針對「{question.rstrip('？?')}」，資料裡比較穩的答案是：它的核心不是單一功能，而是一組讓 AI 系統能在安全邊界內取得脈絡、執行工作、驗證結果並交付可引用答案的工程做法。"
-        middle = " ".join(f"第{idx}個依據指出：{quote}" for idx, quote in enumerate(quotes, 1))
-        close = "把這些證據合在一起看，產品級答案應該同時說清楚目的、運作方式、風險邊界與為什麼這對實際系統重要；超出引用能支持的細節則不應延伸。"
-        return f"{lead} {middle} {close}"
-    if lang == "ja":
-        lead = f"{question.rstrip('？?')} について、引用できる根拠から言える中心点は、AI インフラの中で単独の部品としてではなく、実行・分離・検証・運用をつなぐ仕組みとして働くということです。"
-        middle = " ".join(f"根拠{idx}: {quote}" for idx, quote in enumerate(quotes, 1))
-        close = "したがって、答えは役割、システム上の位置づけ、信頼性や安全性への影響をまとめる形にするのが妥当で、根拠のない追加説明は避けます。"
-        return f"{lead} {middle} {close}"
-    if broad:
-        lead = f"For {topic}, the strongest grounded answer is that it is a product-and-infrastructure concern rather than a loose implementation detail."
-        middle = " ".join(f"Evidence {idx} says: {quote}" for idx, quote in enumerate(quotes, 1))
-        close = "Together, these sources support a product-grade answer with four boundaries: what the concept does, where it sits in the system, why it matters for reliability or safety, and which claims should stay tied to the cited corpus instead of drifting into generic AI advice."
-    else:
-        lead = f"For {topic}, the cited corpus gives a direct answer."
-        middle = " ".join(f"Evidence {idx}: {quote}" for idx, quote in enumerate(quotes, 1))
-        close = "That is the supported answer; the runtime should not add uncited background beyond this evidence."
-    return f"{lead} {middle} {close}"
+def _claim_units(question, item):
+    anchors = _topic_tokens(question)
+    units = [u.strip() for u in re.split(r"(?<=[.!?。！？])\s+|\n+", _text(item)) if len(u.strip()) >= 35]
+    if not units and len(_text(item)) >= 35: units = [_text(item)]
+    out = []
+    for unit in units:
+        overlap = len(anchors & set(_M27_WORD_RE.findall(unit.casefold())))
+        ratio = overlap / max(1, len(anchors))
+        if overlap and ratio >= (0.34 if len(anchors)>=3 else 0.5):
+            out.append((unit[:450], ratio))
+    return sorted(out, key=lambda v: v[1], reverse=True)
+
+def _semantic_support(question, claim, item):
+    # Conservative extractive guarantee: no generated claim can outrun its quoted source.
+    source = re.sub(r"\s+", " ", _text(item)).casefold()
+    span = re.sub(r"\s+", " ", claim).casefold()
+    return bool(span and span in source and _claim_units(question, item) and
+                len(_topic_tokens(question) & set(_M27_WORD_RE.findall(span))) >= 1)
+
+def _localized_answer(question, selected, quotes, *, broad):
+    return "\n\n".join(quotes)
 
 def _citation(item: Mapping[str, Any], claim_id: str, index: int, quote: str) -> dict[str, Any]:
     evidence_id = _evidence_id(item, index)
@@ -418,36 +417,37 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
         events.append(_redacted_event(M27ProductEvent.SAFE_TERMINAL_DONE, start_ns, terminal_reason=terminal, gap_taxonomy=gaps))
         return M27ProductAnswerResult(False, {}, (), plan, tuple(dict.fromkeys(gaps)), tuple(repair_attempts), timeline, tuple(events), terminal, {"structured": True, "gap_taxonomy": list(dict.fromkeys(gaps)), "source_breadth_status": source_breadth_status})
     timeline.claim_graph_start_ms = _elapsed_ms(start_ns)
-    quotes: list[str] = []
-    citations: list[dict[str, Any]] = []
+    claims, citations, quotes = [], [], []
     for idx, item in enumerate(selected, 1):
-        quote = _quote(question, item)
-        if not quote:
-            gaps.append(M27VerifierGap.UNSUPPORTED_CLAIM_SPAN.value)
-            continue
+        units = _claim_units(question, item)
+        if not units: continue
+        quote, score = units[0]
+        if not _semantic_support(question, quote, item): continue
+        claim_id = f"claim_{len(claims)+1}"
+        citation = _citation(item, claim_id, idx, quote)
+        citation["semantic_support_score"] = round(score, 3)
+        citation["support_unit_excerpt"] = quote
+        citations.append(citation)
         quotes.append(quote)
-        citations.append(_citation(item, "claim_1", idx, quote))
-    if not citations:
-        gaps.append(M27VerifierGap.MISSING_CITATION_LOCATOR.value)
-    if citations and any(not _topic_supported(question, item) for item in selected):
-        gaps.append(M27VerifierGap.UNSUPPORTED_CLAIM_SPAN.value)
-    answer_text = _localized_answer(question, selected, quotes, broad=broad) if citations else ""
-    word_count = len(_M27_WORD_RE.findall(answer_text))
-    if broad and word_count < 85:
+        claims.append(M27ClaimNode(claim_id, quote, (_evidence_id(item,idx),),
+            (_locator_id(item),), (_source_identity(item),), 1,
+            "SUPPORTED", "EXTRACTIVE_VERIFIED", "evidence_bound", (citation,)))
+    if not claims: gaps.append(M27VerifierGap.UNSUPPORTED_CLAIM_SPAN.value)
+    answer_text = _localized_answer(question, selected, quotes, broad=broad)
+    if broad and (len(claims)<2 or len(_M27_WORD_RE.findall(answer_text))<55):
         gaps.append(M27VerifierGap.PRODUCT_THIN_SURFACE.value)
-    product_status = "product_grade" if not gaps else "gap_detected"
-    node = M27ClaimNode("claim_1", answer_text, tuple(str(c["evidence_id"]) for c in citations), tuple(str(c["locator_id"]) for c in citations), tuple(dict.fromkeys(str(c["source_identity"]) for c in citations)), len(set(str(c["source_identity"]) for c in citations)), "SUPPORTED" if citations and not gaps else "GAP", "VERIFIED" if citations and not gaps else "FAILED", product_status, tuple(citations))
     timeline.claim_graph_end_ms = _elapsed_ms(start_ns)
-    events.append(_redacted_event(M27ProductEvent.CLAIM_GRAPH_READY, start_ns, claim_count=1, source_breadth=node.source_breadth))
+    events.append(_redacted_event(M27ProductEvent.CLAIM_GRAPH_READY, start_ns, claim_count=len(claims)))
     timeline.first_claim_verification_start_ms = _elapsed_ms(start_ns)
-    events.append(_redacted_event(M27ProductEvent.CLAIM_VERIFICATION_STARTED, start_ns, claim_id="claim_1"))
+    for c in claims:
+        events.append(_redacted_event(M27ProductEvent.CLAIM_VERIFICATION_STARTED, start_ns, claim_id=c.claim_id))
     timeline.first_claim_verification_end_ms = _elapsed_ms(start_ns)
     if gaps:
         timeline.final_emitted_ms = _elapsed_ms(start_ns)
         unique_gaps = tuple(dict.fromkeys(gaps))
         events.append(_redacted_event(M27ProductEvent.VERIFIER_GAP_DETECTED, start_ns, gap_taxonomy=list(unique_gaps)))
         events.append(_redacted_event(M27ProductEvent.SAFE_TERMINAL_DONE, start_ns, terminal_reason=unique_gaps[0], gap_taxonomy=list(unique_gaps)))
-        return M27ProductAnswerResult(False, {}, (node,), plan, unique_gaps, tuple(repair_attempts), timeline, tuple(events), unique_gaps[0], {"structured": True, "gap_taxonomy": list(unique_gaps), "source_breadth_status": source_breadth_status})
+        return M27ProductAnswerResult(False, {}, tuple(claims), plan, unique_gaps, tuple(repair_attempts), timeline, tuple(events), unique_gaps[0], {"structured": True, "thin_cited_answer": M27VerifierGap.PRODUCT_THIN_SURFACE.value in unique_gaps, "gap_taxonomy": list(unique_gaps), "source_breadth_status": source_breadth_status})
     timeline.first_verified_claim_ready_ms = _elapsed_ms(start_ns)
     events.append(_redacted_event(M27ProductEvent.VERIFIED_CLAIM_READY, start_ns, claim_id="claim_1", text=answer_text, citations=citations))
     timeline.first_citation_bound_ms = _elapsed_ms(start_ns)
@@ -463,7 +463,7 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
         "terminal_status": "answered",
         "answer_text": answer_text,
         "citations": citations,
-        "answer_claims": [{"claim_id": "claim_1", "claim_role": "direct", "surface_text": answer_text, "citation_ids": [item["citation_id"] for item in citations], "support_ref_count": len(citations), "source_breadth": len(set(item["source_identity"] for item in citations))}],
+        "answer_claims": [{"claim_id": c.claim_id, "claim_role": "direct", "surface_text": c.claim_text, "citation_ids": [v["citation_id"] for v in c.citations], "support_ref_count": len(c.citations), "source_breadth": c.source_breadth} for c in claims],
         "safe_abstention": False,
         "reason_codes": [],
         "provider_invoked": False,
@@ -474,13 +474,15 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
         "repair_attempted": bool(repair_attempts),
         "answer_source": "m27_agent_native_claim_graph",
         "answer_plan": plan.as_dict(),
-        "claim_graph": [node.as_dict()],
+        "claim_graph": [c.as_dict() for c in claims],
         "gap_taxonomy": [],
+        "thin_cited_answer": False,
+        "semantic_support_method": "extractive_claim_unit",
         "source_breadth_status": source_breadth_status,
         "micro_timeline": timeline.as_dict(),
         "slo_compute_policy": M27SloComputePolicy().as_dict(),
     }
-    return M27ProductAnswerResult(True, answer, (node,), plan, (), tuple(repair_attempts), timeline, tuple(events), "VERIFIED_CITED_ANSWER")
+    return M27ProductAnswerResult(True, answer, tuple(claims), plan, (), tuple(repair_attempts), timeline, tuple(events), "VERIFIED_CITED_ANSWER")
 
 def strict_product_success(answer: Mapping[str, Any]) -> bool:
     if answer.get("status") != "owner_only_cited_answer":
@@ -490,6 +492,8 @@ def strict_product_success(answer: Mapping[str, Any]) -> bool:
     if len(_M27_WORD_RE.findall(text)) < 45:
         return False
     if not isinstance(citations, Sequence) or isinstance(citations, (str, bytes)) or not citations:
+        return False
+    if answer.get("thin_cited_answer") is True:
         return False
     if answer.get("material_claim_support_verified") is not True:
         return False

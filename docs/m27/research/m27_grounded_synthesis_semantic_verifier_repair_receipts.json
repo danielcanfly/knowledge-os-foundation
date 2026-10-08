@@ -1,0 +1,13 @@
+{
+  "stage": "30C",
+  "direct_20_ran": false,
+  "direct_100_ran": false,
+  "targeted_static_assertions": 7,
+  "targeted_static_status": "PASS",
+  "candidate_rebuilt": false,
+  "owner_route_touched": false,
+  "semantic_entailment_proven": false,
+  "product_ready": false,
+  "state": "M27_GROUNDED_SYNTHESIS_SEMANTIC_VERIFIER_REPAIR_FAIL_VERIFIER",
+  "limitation": "Conservative extractive substring alignment is not semantic entailment; no post-deploy candidate quality metrics"
+}
