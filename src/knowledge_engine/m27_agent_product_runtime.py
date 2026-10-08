@@ -519,9 +519,14 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
     except Exception:
         provider = None
     rejected_verification_receipts = []
-    target_verified_claims = 2
+    min_verified_claims = 2
+    max_verified_claims = 3
+    min_publish_words = 55 if broad else 45
     for idx, item in enumerate(selected, 1):
-        if len(claims) >= target_verified_claims:
+        current_words = len(_M27_WORD_RE.findall(" ".join(quotes)))
+        if len(claims) >= min_verified_claims and current_words >= min_publish_words:
+            break
+        if len(claims) >= max_verified_claims:
             break
         units = _claim_units(question, item)
         score = units[0][1] if units else 0.0
