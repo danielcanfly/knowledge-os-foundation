@@ -346,7 +346,23 @@ def _material_claim_excerpt(question: str, item: Mapping[str, Any], *, max_chars
             words = len(_M27_WORD_RE.findall(sentence))
             ranked.append((hits, min(words, 90), -idx, idx, sentence))
     if not ranked:
-        return ""
+        # Retrieval has already selected this passage as a candidate. If the
+        # question terms do not overlap cleanly, still expose a bounded
+        # extractive sentence window to the semantic provider instead of
+        # silently skipping verification. Provider rejection remains fail-closed.
+        selected = []
+        total_words = 0
+        total_chars = 0
+        for sentence in sentences:
+            extra = len(sentence) + (1 if selected else 0)
+            if selected and total_chars + extra > max_chars:
+                break
+            selected.append(sentence)
+            total_words += len(_M27_WORD_RE.findall(sentence))
+            total_chars += extra
+            if total_words >= 45 or len(selected) >= 3:
+                break
+        return " ".join(selected).strip()
     ranked.sort(reverse=True)
     selected = []
     total_words = 0
@@ -504,8 +520,7 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
         provider = None
     for idx, item in enumerate(selected, 1):
         units = _claim_units(question, item)
-        if not units: continue
-        _unit, score = units[0]
+        score = units[0][1] if units else 0.0
         quote = _material_claim_excerpt(question, item)
         if not quote:
             continue
@@ -530,7 +545,7 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
     if len(_M27_WORD_RE.findall(" ".join(quotes))) < 45:
         gaps.append(M27VerifierGap.PRODUCT_THIN_SURFACE.value)
     answer_text = _localized_answer(question, selected, quotes, broad=broad)
-    if broad and (len(claims)<2 or len(_M27_WORD_RE.findall(answer_text))<55):
+    if broad and len(_M27_WORD_RE.findall(answer_text)) < 55:
         gaps.append(M27VerifierGap.PRODUCT_THIN_SURFACE.value)
     timeline.claim_graph_end_ms = _elapsed_ms(start_ns)
     events.append(_redacted_event(M27ProductEvent.CLAIM_GRAPH_READY, start_ns, claim_count=len(claims)))
