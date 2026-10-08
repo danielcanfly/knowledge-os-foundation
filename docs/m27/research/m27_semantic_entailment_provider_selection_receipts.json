@@ -1,0 +1,62 @@
+{
+  "final_decision": "M27_SEMANTIC_ENTAILMENT_PROVIDER_SELECTION_FAIL_SCHEMA",
+  "calibration_count": 47,
+  "result_count": 47,
+  "provider": "MiniMax-M3 via existing generic client, narrow NLI only",
+  "by_category": {
+    "CLUSTER_SUPPORT": {
+      "count": 5,
+      "supported": 5,
+      "schema_valid": 5,
+      "support_rate": 1.0
+    },
+    "CONTRADICTED": {
+      "count": 6,
+      "supported": 0,
+      "schema_valid": 6,
+      "support_rate": 0.0
+    },
+    "CROSS_LANGUAGE_SUPPORT": {
+      "count": 5,
+      "supported": 5,
+      "schema_valid": 5,
+      "support_rate": 1.0
+    },
+    "DIRECT_SUPPORT": {
+      "count": 7,
+      "supported": 7,
+      "schema_valid": 7,
+      "support_rate": 1.0
+    },
+    "PARAPHRASE_SUPPORT": {
+      "count": 7,
+      "supported": 6,
+      "schema_valid": 6,
+      "support_rate": 0.8571
+    },
+    "THIN_CITED_NEGATIVE": {
+      "count": 5,
+      "supported": 0,
+      "schema_valid": 5,
+      "support_rate": 0.0
+    },
+    "TOPICAL_ONLY": {
+      "count": 6,
+      "supported": 0,
+      "schema_valid": 6,
+      "support_rate": 0.0
+    },
+    "UNSUPPORTED": {
+      "count": 6,
+      "supported": 0,
+      "schema_valid": 6,
+      "support_rate": 0.0
+    }
+  },
+  "false_positives": 0,
+  "schema_invalid": 1,
+  "provider_errors": 0,
+  "integrated": false,
+  "candidate_rebuilt": false,
+  "owner_only_route_certification": "pending"
+}

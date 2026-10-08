@@ -1,0 +1,48 @@
+case_id,claim,evidence_text,language,expected_support_class,expected_binary_supported,reason_gold,source_type,notes
+F001,The API uses TLS.,The API uses TLS.,en,DIRECT_SUPPORT,true,direct_support evidence relationship,synthetic_offline_calibration,
+F002,The service has three replicas.,The service has three replicas.,en,DIRECT_SUPPORT,true,direct_support evidence relationship,synthetic_offline_calibration,
+F003,Kubernetes schedules pods.,Kubernetes schedules pods.,en,DIRECT_SUPPORT,true,direct_support evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F004,x402 requires authorization.,x402 requires authorization.,en,DIRECT_SUPPORT,true,direct_support evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F005,The hotel includes breakfast.,The hotel includes breakfast.,en,DIRECT_SUPPORT,true,direct_support evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F006,The database uses PostgreSQL.,The database uses PostgreSQL.,en,DIRECT_SUPPORT,true,direct_support evidence relationship,synthetic_offline_calibration,
+F007,Four GPUs are available.,Four GPUs are available.,en,DIRECT_SUPPORT,true,direct_support evidence relationship,synthetic_offline_calibration,
+F008,The API encrypts data in transit.,TLS protects traffic between client and API.,en,PARAPHRASE_SUPPORT,true,paraphrase_support evidence relationship,synthetic_offline_calibration,
+F009,The app runs in three availability zones.,Three independent availability zones host the application.,en,PARAPHRASE_SUPPORT,true,paraphrase_support evidence relationship,synthetic_offline_calibration,
+F010,The service replaces failed instances.,"When an instance fails, the system starts a replacement.",en,PARAPHRASE_SUPPORT,true,paraphrase_support evidence relationship,synthetic_offline_calibration,
+F011,Authentication is required to see the dashboard.,Only signed-in users may view the dashboard.,en,PARAPHRASE_SUPPORT,true,paraphrase_support evidence relationship,synthetic_offline_calibration,
+F012,Payment must be authorized before processing.,Payments proceed only after authorization is granted.,en,PARAPHRASE_SUPPORT,true,paraphrase_support evidence relationship,synthetic_offline_calibration,
+F013,Cancellations are free until 24 hours before arrival.,Reservations may be canceled without fees up to one day prior to check-in.,en,PARAPHRASE_SUPPORT,true,paraphrase_support evidence relationship,synthetic_offline_calibration,
+F014,Guests are sent email confirmation.,A confirmation message is delivered to the guest email address after booking.,en,PARAPHRASE_SUPPORT,true,paraphrase_support evidence relationship,synthetic_offline_calibration,
+F015,Kubernetes guarantees zero downtime.,Kubernetes schedules pods across nodes.,en,TOPICAL_ONLY,false,topical_only evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F016,x402 guarantees hotel refunds.,x402 supports payment authorization.,en,TOPICAL_ONLY,false,topical_only evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F017,The hotel has an airport shuttle.,The hotel serves breakfast and provides Wi-Fi.,en,TOPICAL_ONLY,false,topical_only evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F018,The API has 99.999% availability.,The API is deployed on Kubernetes.,en,TOPICAL_ONLY,false,topical_only evidence relationship,synthetic_offline_calibration,
+F019,The database replicates globally.,The application uses PostgreSQL.,en,TOPICAL_ONLY,false,topical_only evidence relationship,synthetic_offline_calibration,
+F020,All API access is free.,Access to the API uses token-based authentication.,en,TOPICAL_ONLY,false,topical_only evidence relationship,synthetic_offline_calibration,
+F021,The system works offline.,The service supports web browsers.,en,UNSUPPORTED,false,unsupported evidence relationship,synthetic_offline_calibration,
+F022,The cluster is located in Singapore.,The cluster has three worker nodes.,en,UNSUPPORTED,false,unsupported evidence relationship,synthetic_offline_calibration,
+F023,The payment is made in Bitcoin.,The transaction requires x402 authorization.,en,UNSUPPORTED,false,unsupported evidence relationship,synthetic_offline_calibration,
+F024,The hotel has 200 rooms.,The hotel is beside a train station.,en,UNSUPPORTED,false,unsupported evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F025,Arabic translation is available.,English and Chinese are supported.,en,UNSUPPORTED,false,unsupported evidence relationship,synthetic_offline_calibration,
+F026,Kubernetes automatically refunds hotel bookings.,Kubernetes schedules containers; x402 handles payment authorization.,en,UNSUPPORTED,false,unsupported evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F027,Anonymous visitors can read reports.,Only authenticated visitors may read reports; anonymous access is prohibited.,en,CONTRADICTED,false,contradicted evidence relationship,synthetic_offline_calibration,
+F028,Hotel checkout is 2 PM.,The hotel's checkout is 11 AM.,en,CONTRADICTED,false,contradicted evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F029,Payment succeeds without authorization.,Transactions without authorization are rejected.,en,CONTRADICTED,false,contradicted evidence relationship,synthetic_offline_calibration,
+F030,The API accepts plaintext HTTP.,The API blocks plaintext HTTP and enforces HTTPS.,en,CONTRADICTED,false,contradicted evidence relationship,synthetic_offline_calibration,
+F031,Production has no Kubernetes dependency.,Kubernetes is required in the production architecture.,en,CONTRADICTED,false,contradicted evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F032,Records are retained for 90 days.,Records are deleted after 7 days.,en,CONTRADICTED,false,contradicted evidence relationship,synthetic_offline_calibration,
+F033,The system encrypts traffic with TLS.,系統使用 TLS 加密網路傳輸。,en-zh,CROSS_LANGUAGE_SUPPORT,false,cross_language_support evidence relationship,synthetic_offline_calibration,
+F034,Guests receive a confirmation email.,客人預訂完成後會收到確認電子郵件。,en-zh,CROSS_LANGUAGE_SUPPORT,false,cross_language_support evidence relationship,synthetic_offline_calibration,
+F035,Kubernetes has three nodes.,Kubernetes 叢集共有三個節點。,en-zh,CROSS_LANGUAGE_SUPPORT,false,cross_language_support evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F036,Payments require authorization.,付款必須取得授權。,en-zh,CROSS_LANGUAGE_SUPPORT,false,cross_language_support evidence relationship,synthetic_offline_calibration,
+F037,The hotel offers free breakfast.,飯店提供免費早餐。,en-zh,CROSS_LANGUAGE_SUPPORT,false,cross_language_support evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F038,Service A runs in Asia and uses TLS.,Service A is hosted in Asia. || All Service A connections use TLS.,en,CLUSTER_SUPPORT,true,cluster_support evidence relationship,synthetic_offline_calibration,
+F039,Hotel A provides breakfast and airport transportation.,Hotel A serves breakfast. || Hotel A operates an airport shuttle.,en,CLUSTER_SUPPORT,true,cluster_support evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F040,Payments use x402 and require authorization.,The payment protocol used is x402. || Each payment needs an authorization token.,en,CLUSTER_SUPPORT,true,cluster_support evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F041,Kubernetes deploys the API with three replicas.,The API is a Kubernetes deployment. || Replica count is set to three.,en,CLUSTER_SUPPORT,true,cluster_support evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F042,Guests can cancel within 24 hours and receive a full refund.,Cancellation is permitted within 24 hours of booking. || Cancellations during this period receive a full refund.,en,CLUSTER_SUPPORT,true,cluster_support evidence relationship,synthetic_offline_calibration,
+F043,Kubernetes prevents every outage.,Kubernetes is a container orchestration platform.,en,THIN_CITED_NEGATIVE,false,thin_cited_negative evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F044,The x402 hotel integration is production ready.,A blog discusses x402 and hotels.,en,THIN_CITED_NEGATIVE,false,thin_cited_negative evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F045,The hotel guarantees customer satisfaction.,The property offers several guest services.,en,THIN_CITED_NEGATIVE,false,thin_cited_negative evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
+F046,This API has perfect security.,The API supports TLS.,en,THIN_CITED_NEGATIVE,false,thin_cited_negative evidence relationship,synthetic_offline_calibration,
+F047,Every Kubernetes pod is always available.,Kubernetes schedules pods on nodes.,en,THIN_CITED_NEGATIVE,false,thin_cited_negative evidence relationship,synthetic_offline_calibration,Kubernetes/x402/hotel contamination check
