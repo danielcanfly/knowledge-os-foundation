@@ -518,7 +518,11 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
         provider = semantic_provider if semantic_provider is not None else _semantic_runtime_provider()
     except Exception:
         provider = None
+    rejected_verification_receipts = []
+    target_verified_claims = 3 if broad else 2
     for idx, item in enumerate(selected, 1):
+        if len(claims) >= target_verified_claims:
+            break
         units = _claim_units(question, item)
         score = units[0][1] if units else 0.0
         quote = _material_claim_excerpt(question, item)
@@ -529,9 +533,10 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
         bound = EvidencePassage(_source_identity(item), _locator_id(item), pid, _text(item), _language(question))
         claim = MaterialClaim(claim_id, quote, 0, len(quote), _language(question), (pid,))
         accepted, audit = verify_publication_claim(claim, (bound,), provider)
-        verification_receipts.append(audit)
         if not accepted:
+            rejected_verification_receipts.append(audit)
             continue
+        verification_receipts.append(audit)
         citation = _citation(item, claim_id, idx, quote)
         citation["semantic_entailment_confidence"] = audit["confidence"]
         citation["topic_overlap_ratio"] = round(score, 3)
@@ -565,7 +570,8 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
              "thin_cited_answer": M27VerifierGap.PRODUCT_THIN_SURFACE.value in unique_gaps,
              "gap_taxonomy": list(unique_gaps),
              "source_breadth_status": source_breadth_status,
-             "semantic_verification_receipts": verification_receipts},
+             "semantic_verification_receipts": verification_receipts,
+             "rejected_semantic_verification_receipts": rejected_verification_receipts},
         )
     timeline.first_verified_claim_ready_ms = _elapsed_ms(start_ns)
     events.append(_redacted_event(M27ProductEvent.VERIFIED_CLAIM_READY, start_ns, claim_id="claim_1", text=answer_text, citations=citations))
@@ -598,6 +604,7 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
         "thin_cited_answer": False,
         "semantic_support_method": "calibrated_narrow_nli_provider",
         "semantic_verification_receipts": verification_receipts,
+        "rejected_semantic_verification_receipts": rejected_verification_receipts,
         "source_breadth_status": source_breadth_status,
         "micro_timeline": timeline.as_dict(),
         "slo_compute_policy": M27SloComputePolicy().as_dict(),
