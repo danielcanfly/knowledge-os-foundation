@@ -1,0 +1,36 @@
+{
+  "stage": "29S",
+  "final_state": "M27_OWNER_ONLY_CANARY_OBSERVATION_BLOCKED_OPERATOR_RECEIPT_MISSING",
+  "receipt_path": "/home/ubuntu/m27_owner_canary_operator_observation_29s.jsonl",
+  "receipt_exists": false,
+  "privacy_boundary": {
+    "private_owner_auth_material_read": false,
+    "private_owner_auth_material_printed": false,
+    "private_owner_auth_material_serialized": false,
+    "authenticated_probe_attempted_by_chatgpt_tool_path": false
+  },
+  "canary_context": {
+    "stage_28_active_state": "M27_OWNER_ONLY_CANARY_ACTIVATED",
+    "stage_28_head": "97ceb0c62f828f1665d63f9cc06364ec1f2cd836",
+    "stage_29r_workspace": "/home/ubuntu/LLM_Wiki-m27-owner-only-canary-observation-29r",
+    "stage_29r_head_before_report": "eabc73b5133d7735d151b238e0a093d01501c3f9",
+    "candidate_container": "m27-owner-canary-28",
+    "candidate_loopback": "127.0.0.1:18080",
+    "owner_auth_sidecar": "127.0.0.1:18081",
+    "route_id": "m27-owner-only-stage28",
+    "canary_mode": "owner_only"
+  },
+  "validation": {
+    "jsonl_format_valid": "NOT_RUN_MISSING_RECEIPT",
+    "redaction_scan_passed": "NOT_RUN_MISSING_RECEIPT",
+    "required_identifiers_present": "NOT_RUN_MISSING_RECEIPT",
+    "seven_owner_smoke_categories_covered": "NOT_RUN_MISSING_RECEIPT",
+    "non_owner_fallback_remains_m26": "NOT_RUN_MISSING_RECEIPT",
+    "private_owner_auth_material_not_forwarded_to_candidate": "NOT_RUN_MISSING_RECEIPT",
+    "telemetry_records_present": "NOT_RUN_MISSING_RECEIPT",
+    "latency_p50_p95_computed": "NOT_RUN_MISSING_RECEIPT",
+    "stop_condition_flags_checked": "NOT_RUN_MISSING_RECEIPT"
+  },
+  "route_to_zero_recommended": false,
+  "reason": "The required sanitized operator receipt is missing. Per Stage 29S prompt, stop at blocked missing and preserve Stage 28 owner-only route state unless independent stop-condition evidence exists."
+}
