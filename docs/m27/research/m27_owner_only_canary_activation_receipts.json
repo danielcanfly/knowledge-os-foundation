@@ -1,0 +1,49 @@
+{
+  "final_state": "M27_OWNER_ONLY_CANARY_ACTIVATION_BLOCKED",
+  "timestamp_utc": "2026-10-08T01:44:24.698060+00:00",
+  "stage27_git_sha": "603a647df49a9ce534d7344db2a91d7ceece52dd",
+  "activated_by_owner": true,
+  "activation_session": "stage28_owner_only_canary_activation",
+  "route_id": null,
+  "candidate_id": null,
+  "candidate_git_sha": null,
+  "canary_mode": "owner_only",
+  "candidate_started": false,
+  "route_activated": false,
+  "canary_still_active": false,
+  "route_to_zero_performed": false,
+  "route_to_zero_unnecessary": true,
+  "blocker": "Owner identity predicate and non-owner isolation proof absent; no safe M27 route object installed",
+  "preflight": {
+    "worktree_clean_at_start": true,
+    "stage27_required_files_present": true,
+    "m26_8080_health_200": true,
+    "test_8081_health_200": true,
+    "port_18080_free": true,
+    "m27_canary_eval_containers_active": false,
+    "owner_bypass_mode_0600": true,
+    "provider_only_stage22_env_mode_0600": true,
+    "nginx_checksums_match_stage27": true,
+    "production_datastore_write_credentials_passed": false,
+    "owner_only_isolation_proven": false,
+    "route_to_zero_runbook_present": true
+  },
+  "nginx_checksum_before": {
+    "main": "48c6a4ec1e1fd28ccf968490f07e34a1d7f755793b2108a3ed8670b1ee2a0aa2",
+    "site": "1d1c4edfddca4da6c89a054a0ddf33179bbe3265e21666f2e8a49a1606045219"
+  },
+  "nginx_checksum_after": {
+    "main": "48c6a4ec1e1fd28ccf968490f07e34a1d7f755793b2108a3ed8670b1ee2a0aa2",
+    "site": "1d1c4edfddca4da6c89a054a0ddf33179bbe3265e21666f2e8a49a1606045219"
+  },
+  "route_proof": "docs/m27/canary/M27_OWNER_ONLY_CANARY_ROUTE_PROOF.md",
+  "telemetry_sample_path": "docs/m27/canary/M27_OWNER_ONLY_CANARY_TELEMETRY_SAMPLE.jsonl",
+  "smoke_results": [],
+  "stop_condition_status": "NOT_EVALUATED_NO_ACTIVATION",
+  "production_safety_before_after": "Verified after: M26 8080 and test 8081 health HTTP 200, Nginx site/main SHA256 unchanged, no candidate started or route mutation",
+  "raw_compare_recovered": false,
+  "raw_compare_fabricated": false,
+  "committed_evidence_available": true,
+  "warning_carried_forward": true,
+  "secret_redaction_proof": "No secret values read, printed, stored, or passed to any candidate."
+}
