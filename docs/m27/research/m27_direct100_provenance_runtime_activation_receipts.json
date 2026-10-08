@@ -1,0 +1,22 @@
+{
+  "final_decision": "M27_DIRECT100_PROVENANCE_RUNTIME_ACTIVATION_BLOCKED_BY_PROVIDER_CONFIG",
+  "base_workspace": "/home/ubuntu/LLM_Wiki-m27-direct100-provenance-30k",
+  "base_head": "0719e40cfb5d3a3c86b7709caef3da69d7fe25e4",
+  "active_image_before": "knowledge-engine:m27-direct100-targeted-guard-30j-2dc7990e",
+  "active_image_after": "knowledge-engine:m27-direct100-targeted-guard-30j-2dc7990e",
+  "target_image": "knowledge-engine:m27-direct100-provenance-30k",
+  "activation_method": "No verified secret-blind activation mechanism",
+  "activated": false,
+  "secret_bearing_material_touched_or_exposed": false,
+  "health_checks": {
+    "path": "/v1/health",
+    "port8080": 200,
+    "port8081": 200,
+    "port18080": 200
+  },
+  "targeted8": "NOT_RUN",
+  "regression9": "NOT_RUN",
+  "direct100": "NOT_RUN",
+  "rollback": "NOT_NEEDED",
+  "owner_only_route_certification": "PENDING"
+}
