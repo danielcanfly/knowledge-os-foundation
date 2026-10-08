@@ -1,0 +1,532 @@
+[
+  {
+    "case_id": "F001",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.99,
+      "reason": "The evidence explicitly states 'The API uses TLS', which directly matches the claim without any contradiction or added detail.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 3362
+  },
+  {
+    "case_id": "F002",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.99,
+      "reason": "The claim and evidence are identical in meaning: both state that the service has three replicas.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1536
+  },
+  {
+    "case_id": "F003",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.99,
+      "reason": "The evidence explicitly states the exact claim verbatim.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1226
+  },
+  {
+    "case_id": "F004",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.99,
+      "reason": "The evidence explicitly states the exact claim that x402 requires authorization.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1444
+  },
+  {
+    "case_id": "F005",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.99,
+      "reason": "The evidence p1 directly states that the hotel includes breakfast, which exactly matches the claim.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1473
+  },
+  {
+    "case_id": "F006",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.99,
+      "reason": "The evidence directly states 'The database uses PostgreSQL,' which is identical to the claim.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1342
+  },
+  {
+    "case_id": "F007",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.99,
+      "reason": "The claim 'Four GPUs are available.' is directly and explicitly stated in evidence p1 with identical wording.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1655
+  },
+  {
+    "case_id": "F008",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.97,
+      "reason": "The claim states the API encrypts data in transit. Evidence p1 states TLS protects traffic between client and API, which directly entails encryption of data in transit for the API.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1436
+  },
+  {
+    "case_id": "F009",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.95,
+      "reason": "Evidence explicitly states 'Three independent availability zones host the application,' which directly entails the claim that the app runs in three availability zones.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 2333
+  },
+  {
+    "case_id": "F010",
+    "verdict": {
+      "support_class": "PARAPHRASE_SUPPORT",
+      "confidence": 0.95,
+      "reason": "The evidence 'When an instance fails, the system starts a replacement' directly entails that the service replaces failed instances. The claim is a concise paraphrase of the evidence.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1889
+  },
+  {
+    "case_id": "F011",
+    "verdict": {
+      "support_class": "PARAPHRASE_SUPPORT",
+      "confidence": 0.99,
+      "reason": "The claim states authentication is required to see the dashboard. The evidence states only signed-in users may view the dashboard. 'Signed-in' is a direct paraphrase of 'authenticated' and 'view the dashboard' is equivalent to 'see the dashboard'. All elements match.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 2073
+  },
+  {
+    "case_id": "F012",
+    "verdict": {
+      "support_class": "PARAPHRASE_SUPPORT",
+      "confidence": 0.95,
+      "reason": "The evidence 'Payments proceed only after authorization is granted' is a direct paraphrase of the claim 'Payment must be authorized before processing.' Both assert that authorization is a prerequisite for payment processing.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 4978
+  },
+  {
+    "case_id": "F013",
+    "verdict": {
+      "support_class": "PARAPHRASE_SUPPORT",
+      "confidence": 0.95,
+      "reason": "The evidence states reservations may be canceled without fees up to one day prior to check-in, which paraphrases the claim that cancellations are free until 24 hours before arrival. The meaning is equivalent.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1907
+  },
+  {
+    "case_id": "F014",
+    "verdict": {
+      "support_class": "direct_support",
+      "confidence": 0.95,
+      "reason": "The evidence 'A confirmation message is delivered to the guest email address after booking' directly entails that guests are sent email confirmation. The claim is a faithful translation/equivalence.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 4435
+  },
+  {
+    "case_id": "F015",
+    "verdict": {
+      "support_class": "UNSUPPORTED",
+      "confidence": 0.95,
+      "reason": "The evidence only states that Kubernetes schedules pods across nodes. It does not mention anything about downtime guarantees. The claim about zero downtime is unsupported by the provided evidence.",
+      "evidence_references": []
+    },
+    "latency_ms": 1899
+  },
+  {
+    "case_id": "F016",
+    "verdict": {
+      "support_class": "UNSUPPORTED",
+      "confidence": 0.92,
+      "reason": "Evidence only states x402 supports payment authorization, which does not entail anything about guaranteeing hotel refunds. No mention of hotels, refunds, or guarantees is present.",
+      "evidence_references": []
+    },
+    "latency_ms": 1708
+  },
+  {
+    "case_id": "F017",
+    "verdict": {
+      "support_class": "UNSUPPORTED",
+      "confidence": 0.98,
+      "reason": "The evidence only mentions breakfast and Wi-Fi. There is no mention of an airport shuttle in the evidence, so the claim is not entailed.",
+      "evidence_references": []
+    },
+    "latency_ms": 9763
+  },
+  {
+    "case_id": "F018",
+    "verdict": {
+      "support_class": "UNSUPPORTED",
+      "confidence": 0.95,
+      "reason": "The evidence only states that the API is deployed on Kubernetes. It does not mention or entail any uptime or availability figure such as 99.999%. The availability claim is entirely unsupported by the provided evidence.",
+      "evidence_references": []
+    },
+    "latency_ms": 3634
+  },
+  {
+    "case_id": "F019",
+    "verdict": {
+      "support_class": "UNSUPPORTED",
+      "confidence": 0.95,
+      "reason": "The evidence only states the application uses PostgreSQL, which says nothing about global replication. Replication is not entailed.",
+      "evidence_references": []
+    },
+    "latency_ms": 5479
+  },
+  {
+    "case_id": "F020",
+    "verdict": {
+      "support_class": "UNSUPPORTED",
+      "confidence": 0.97,
+      "reason": "The evidence only mentions token-based authentication for API access; it says nothing about whether the API is free or paid.",
+      "evidence_references": []
+    },
+    "latency_ms": 2477
+  },
+  {
+    "case_id": "F021",
+    "verdict": {
+      "support_class": "UNSUPPORTED",
+      "confidence": 0.85,
+      "reason": "The evidence states the service supports web browsers, but nothing in the evidence addresses whether the system works offline. Support for web browsers does not entail offline functionality.",
+      "evidence_references": []
+    },
+    "latency_ms": 4428
+  },
+  {
+    "case_id": "F022",
+    "verdict": {
+      "support_class": "UNSUPPORTED",
+      "confidence": 0.95,
+      "reason": "The evidence only mentions the number of worker nodes in the cluster and provides no information about its location.",
+      "evidence_references": []
+    },
+    "latency_ms": 2530
+  },
+  {
+    "case_id": "F023",
+    "verdict": {
+      "support_class": "TOPICAL_ONLY",
+      "confidence": 0.9,
+      "reason": "The evidence only mentions x402 authorization for the transaction but does not specify any payment currency or mention Bitcoin. Claim goes beyond what the evidence supports.",
+      "evidence_references": []
+    },
+    "latency_ms": 2080
+  },
+  {
+    "case_id": "F024",
+    "verdict": {
+      "support_class": "UNSUPPORTED",
+      "confidence": 0.99,
+      "reason": "The claim states the hotel has 200 rooms, but the evidence only mentions the hotel's location beside a train station. No information about the number of rooms is provided.",
+      "evidence_references": []
+    },
+    "latency_ms": 1421
+  },
+  {
+    "case_id": "F025",
+    "verdict": {
+      "support_class": "UNSUPPORTED",
+      "confidence": 0.95,
+      "reason": "The evidence states only English and Chinese are supported. It does not mention Arabic, so the claim that Arabic translation is available is not entailed.",
+      "evidence_references": []
+    },
+    "latency_ms": 1417
+  },
+  {
+    "case_id": "F026",
+    "verdict": {
+      "support_class": "UNSUPPORTED",
+      "confidence": 0.95,
+      "reason": "The evidence states Kubernetes schedules containers and x402 handles payment authorization. There is no mention of hotel bookings or any refund functionality. The claim combines unrelated topics (Kubernetes, refunds, hotels) that are not supported by the evidence.",
+      "evidence_references": []
+    },
+    "latency_ms": 1739
+  },
+  {
+    "case_id": "F027",
+    "verdict": {
+      "support_class": "CONTRADICTED",
+      "confidence": 0.99,
+      "reason": "The claim states anonymous visitors can read reports, but the evidence explicitly states that only authenticated visitors may read reports and anonymous access is prohibited. This is a direct contradiction.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1965
+  },
+  {
+    "case_id": "F028",
+    "verdict": {
+      "support_class": "CONTRADICTED",
+      "confidence": 0.99,
+      "reason": "The claim states checkout is 2 PM, but the evidence explicitly states checkout is 11 AM. These times directly contradict each other.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1478
+  },
+  {
+    "case_id": "F029",
+    "verdict": {
+      "support_class": "CONTRADICTED",
+      "confidence": 0.97,
+      "reason": "The claim states payment succeeds without authorization, but p1 explicitly states transactions without authorization are rejected, directly contradicting the claim.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1062
+  },
+  {
+    "case_id": "F030",
+    "verdict": {
+      "support_class": "CONTRADICTED",
+      "confidence": 0.99,
+      "reason": "The evidence states the API blocks plaintext HTTP and enforces HTTPS, which directly contradicts the claim that the API accepts plaintext HTTP.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1890
+  },
+  {
+    "case_id": "F031",
+    "verdict": {
+      "support_class": "CONTRADICTED",
+      "confidence": 0.99,
+      "reason": "The evidence explicitly states Kubernetes is required in production, which directly contradicts the claim that production has no Kubernetes dependency.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 2096
+  },
+  {
+    "case_id": "F032",
+    "verdict": {
+      "support_class": "CONTRADICTED",
+      "confidence": 0.97,
+      "reason": "The claim states records are retained for 90 days, but the evidence states they are deleted after 7 days. These durations directly conflict.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 2242
+  },
+  {
+    "case_id": "F033",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.99,
+      "reason": "The Chinese evidence '系統使用 TLS 加密網路傳輸' directly translates to 'The system uses TLS to encrypt network transmissions', which is semantically equivalent to the claim 'The system encrypts traffic with TLS.'",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1931
+  },
+  {
+    "case_id": "F034",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.97,
+      "reason": "The Chinese evidence '客人預訂完成後會收到確認電子郵件' translates to 'Guests receive a confirmation email after completing a reservation,' which directly entails the claim that guests receive a confirmation email.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1611
+  },
+  {
+    "case_id": "F035",
+    "verdict": {
+      "support_class": "PARAPHRASE_SUPPORT",
+      "confidence": 0.99,
+      "reason": "The evidence 'Kubernetes 叢集共有三個節點' directly translates to 'The Kubernetes cluster has three nodes,' which entails the claim that Kubernetes has three nodes.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 2512
+  },
+  {
+    "case_id": "F036",
+    "verdict": {
+      "support_class": "PARAPHRASE_SUPPORT",
+      "confidence": 0.97,
+      "reason": "p1 in Traditional Chinese ('付款必須取得授權') is a direct translation of the English claim ('Payments require authorization'). Both convey that payments must obtain authorization.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1901
+  },
+  {
+    "case_id": "F037",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.99,
+      "reason": "The English claim 'The hotel offers free breakfast' is directly stated in the Chinese evidence '飯店提供免費早餐' (The hotel provides free breakfast). Both the subject (hotel/飯店), predicate (offers/provides/提供), and key adjective (free/免費) match exactly.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 2163
+  },
+  {
+    "case_id": "F038",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.99,
+      "reason": "Both elements of the claim are explicitly stated in the evidence. 'Service A is hosted in Asia' supports 'runs in Asia', and 'All Service A connections use TLS' directly supports 'uses TLS'.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 2546
+  },
+  {
+    "case_id": "F039",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.98,
+      "reason": "Both parts of the claim are explicitly stated in p1: 'serves breakfast' and 'operates an airport shuttle' directly entail the claim that Hotel A provides breakfast and airport transportation.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1809
+  },
+  {
+    "case_id": "F040",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.99,
+      "reason": "Evidence states the payment protocol is x402 and each payment needs an authorization token, which directly entails the claim that payments use x402 and require authorization.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 1374
+  },
+  {
+    "case_id": "F041",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.95,
+      "reason": "Both parts of the claim are explicitly stated in the evidence: the API is a Kubernetes deployment, and the replica count is set to three.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 2314
+  },
+  {
+    "case_id": "F042",
+    "verdict": {
+      "support_class": "DIRECT_SUPPORT",
+      "confidence": 0.95,
+      "reason": "Evidence p1 states cancellation within 24 hours of booking is permitted and that such cancellations receive a full refund. This directly entails the claim that guests can cancel within 24 hours and receive a full refund. Minor wording difference (booking vs. generic cancellation window) is negligible.",
+      "evidence_references": [
+        "p1"
+      ]
+    },
+    "latency_ms": 4487
+  },
+  {
+    "case_id": "F043",
+    "verdict": {
+      "support_class": "UNSUPPORTED",
+      "confidence": 0.95,
+      "reason": "The claim makes a broad generalization ('prevents every outage') about Kubernetes's capabilities. The evidence only states it is a container orchestration platform, which does not entail anything about outage prevention, much less universal prevention of every outage. Unsupported inference.",
+      "evidence_references": []
+    },
+    "latency_ms": 2124
+  },
+  {
+    "case_id": "F044",
+    "verdict": {
+      "support_class": "TOPICAL_ONLY",
+      "confidence": 0.95,
+      "reason": "Evidence only mentions a blog discussing x402 and hotels. It does not establish that the integration is production ready; no details about readiness, deployment status, or maturity are provided.",
+      "evidence_references": []
+    },
+    "latency_ms": 1610
+  },
+  {
+    "case_id": "F045",
+    "verdict": {
+      "support_class": "TOPICAL_ONLY",
+      "confidence": 0.85,
+      "reason": "The claim states a guarantee of customer satisfaction, while the evidence only mentions that the property offers several guest services. Offering services does not entail a satisfaction guarantee, which is a stronger, specific commitment. Mere topical overlap.",
+      "evidence_references": []
+    },
+    "latency_ms": 2079
+  },
+  {
+    "case_id": "F046",
+    "verdict": {
+      "support_class": "UNSUPPORTED",
+      "confidence": 0.95,
+      "reason": "Claim asserts 'perfect security' as an absolute property. The evidence only states the API supports TLS, which addresses transport encryption but does not establish 'perfect security.' Supporting TLS is far from implying immunity to all threats; authentication, authorization, input validation, etc., are unaddressed. The claim is a broad generalization unsupported by the evidence.",
+      "evidence_references": []
+    },
+    "latency_ms": 1810
+  },
+  {
+    "case_id": "F047",
+    "verdict": {
+      "support_class": "UNSUPPORTED",
+      "confidence": 0.97,
+      "reason": "Evidence only states that Kubernetes schedules pods on nodes. It does not mention anything about availability, let alone that every pod is always available. Scheduling pods is unrelated to continuous availability.",
+      "evidence_references": []
+    },
+    "latency_ms": 4444
+  }
+]
