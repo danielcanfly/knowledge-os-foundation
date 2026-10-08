@@ -1,0 +1,73 @@
+{
+  "stage": "30E",
+  "calibration_gate_pass": false,
+  "provider": "m27-native-literal-baseline/0.1.0-uncalibrated",
+  "results": [
+    {
+      "case_id": "direct_quote",
+      "expected_class": "direct_support",
+      "observed_class": "direct_support",
+      "passed": true,
+      "reason": "literal exact identity"
+    },
+    {
+      "case_id": "paraphrase",
+      "expected_class": "direct_support",
+      "observed_class": "unverified",
+      "passed": false,
+      "reason": "requires semantic paraphrase"
+    },
+    {
+      "case_id": "topical_only",
+      "expected_class": "topical_only",
+      "observed_class": "unverified",
+      "passed": true,
+      "reason": "same topic is not entailment"
+    },
+    {
+      "case_id": "unsupported",
+      "expected_class": "unsupported",
+      "observed_class": "unverified",
+      "passed": true,
+      "reason": "no offline support"
+    },
+    {
+      "case_id": "contradicted",
+      "expected_class": "contradicted",
+      "observed_class": "unverified",
+      "passed": true,
+      "reason": "direct contradiction"
+    },
+    {
+      "case_id": "cross_language",
+      "expected_class": "direct_support",
+      "observed_class": "unverified",
+      "passed": false,
+      "reason": "requires bilingual verification"
+    },
+    {
+      "case_id": "multi_passage_cluster",
+      "expected_class": "cluster_support",
+      "observed_class": "unverified",
+      "passed": false,
+      "reason": "requires multi-evidence inference"
+    },
+    {
+      "case_id": "kubernetes_x402_hotel",
+      "expected_class": "unsupported",
+      "observed_class": "unverified",
+      "passed": true,
+      "reason": "cross-topic contamination"
+    },
+    {
+      "case_id": "thin_cited_answer",
+      "expected_class": "unsupported",
+      "observed_class": "unverified",
+      "passed": true,
+      "reason": "thin answer must not count as product pass"
+    }
+  ],
+  "post_repair_direct_20_run": false,
+  "active_18080_rebuilt": false,
+  "reason": "positive paraphrase, cross-language and cluster cases unverified; not calibrated"
+}

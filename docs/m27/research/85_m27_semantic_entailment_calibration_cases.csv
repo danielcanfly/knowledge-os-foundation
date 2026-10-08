@@ -1,0 +1,10 @@
+case_id,claim,evidence,language,expected_class,rationale
+direct_quote,The API uses TLS.,The API uses TLS.,en,direct_support,literal exact identity
+paraphrase,The API encrypts traffic in transit.,Traffic between clients and the API is protected by TLS.,en,direct_support,requires semantic paraphrase
+topical_only,Kubernetes guarantees zero downtime.,Kubernetes schedules pods across nodes.,en,topical_only,same topic is not entailment
+unsupported,The service supports offline mode.,The service supports browser clients.,en,unsupported,no offline support
+contradicted,The service allows anonymous login.,The service requires authenticated users and does not allow anonymous login.,en,contradicted,direct contradiction
+cross_language,The system uses TLS.,系統使用 TLS 加密傳輸。,mixed,direct_support,requires bilingual verification
+multi_passage_cluster,Service A is deployed in Asia and uses TLS.,Service A is deployed in Asia. || All service A connections use TLS.,en,cluster_support,requires multi-evidence inference
+kubernetes_x402_hotel,Kubernetes supports x402 hotel payment checkout.,Kubernetes manages container orchestration. || x402 handles payment authorization for hotels.,en,unsupported,cross-topic contamination
+thin_cited_answer,Kubernetes is technology.,Kubernetes is a container orchestration platform.,en,unsupported,thin answer must not count as product pass
