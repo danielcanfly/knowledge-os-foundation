@@ -1,0 +1,28 @@
+{
+  "stage": "30G",
+  "decision": "M27_SEMANTIC_PUBLICATION_GATE_INTEGRATION_FAIL_VERIFIER",
+  "base_head": "1c4af5302a407ee4444ae95e17abd1e3d1d9d344",
+  "workspace": "/home/ubuntu/LLM_Wiki-m27-semantic-publication-gate-30g",
+  "branch": "m27/stage30g-semantic-publication-gate",
+  "candidate_before": "knowledge-engine:m27-owner-canary-29v",
+  "candidate_after": "knowledge-engine:m27-owner-canary-29v",
+  "health_v1_8080": 200,
+  "health_v1_8081": 200,
+  "health_v1_18080": 200,
+  "python_compile": true,
+  "offline_container_import": true,
+  "offline_integration_tests_pass": false,
+  "test_blockers": [
+    "pytest unavailable on host and current image",
+    "missing complete cluster publication and bound multi-claim audit",
+    "no complete deterministic offline suite executed"
+  ],
+  "candidate_rebuilt": false,
+  "direct20_ran": false,
+  "direct100_ran": false,
+  "owner_only_route_certification": "pending",
+  "production_m26_touched": false,
+  "test_backend_touched": false,
+  "nginx_touched": false,
+  "public_route_used": false
+}

@@ -8,6 +8,7 @@ from dataclasses import asdict, dataclass, field
 from enum import StrEnum
 from typing import Any
 
+
 M27_AGENT_PRODUCT_SCHEMA = "m27-agent-native-product-answer/v1"
 M27_PRODUCT_SLO_MS = 14500
 _M27_WORD_RE = re.compile(r"[a-z0-9][a-z0-9_'-]*", flags=re.I)
@@ -380,7 +381,46 @@ def _redacted_event(event: M27ProductEvent, start_ns: int, **payload: Any) -> di
     safe = {key: value for key, value in payload.items() if key not in {"raw_provider_key", "owner_bypass", "secret"}}
     return {"type": event.value, "event_ms": _elapsed_ms(start_ns), **safe}
 
-def build_agent_native_product_answer(*, question: str, intent_class: str, evidence: Sequence[Mapping[str, Any]], requirements: Sequence[object] = (), retrieval_latency_ms: float | None = None) -> M27ProductAnswerResult:
+def _semantic_runtime_provider():
+    """Separate narrow NLI judge; no M26 answer composer delegation."""
+    import os
+    from decimal import Decimal
+    from .m26_pa5_v8_live import MiniMaxClient
+    from .m27_native_judge_provider import M27NativeJudgeAdapter
+    key = os.environ.get("MINIMAX_API_KEY", "")
+    if not key:
+        return None
+    client = MiniMaxClient(key, max_calls=12, max_cost=Decimal("2"))
+    def invoke(claim, passages):
+        import json
+        system = ("You are a strict independent semantic NLI verifier, never an answer composer. "
+                  "Verify EVERY factual aspect of the claim from ONLY the cited passages. "
+                  "Do not mistake citation presence, literal overlap or shared topics for entailment. "
+                  "Reject contradictory, unrelated, thinly cited and cross-domain claims. "
+                  "Return ONLY JSON with exactly support_class, confidence, reason, evidence_references. "
+                  "support_class is DIRECT_SUPPORT, PARAPHRASE_SUPPORT, CLUSTER_SUPPORT, "
+                  "TOPICAL_ONLY, UNSUPPORTED, CONTRADICTED, or INSUFFICIENT_PROVIDER_CAPABILITY. "
+                  "confidence is numeric 0..1, reason nonempty <=500 chars. "
+                  "evidence_references must contain only genuinely supporting IDs, otherwise [].")
+        user = json.dumps({"claim": claim.text, "language": claim.language,
+                           "evidence": [{"id": x.passage_id, "text": x.text} for x in passages]}, ensure_ascii=False)
+        payload = {"model": "MiniMax-M3", "max_tokens": 400, "temperature": 0,
+                   "stream": False, "system": system,
+                   "messages": [{"role": "user", "content": user}]}
+        def call():
+            value = client.call(payload, "aq_claim_semantic_entailment")["text"].strip()
+            if value.startswith(chr(96)*3):
+                value = value.split("\n", 1)[-1].rsplit(chr(96)*3, 1)[0].strip()
+            return value
+        from .m27_native_judge_provider import parse_verdict
+        raw = call()
+        try:
+            return parse_verdict(raw, [x.passage_id for x in passages])
+        except (ValueError, TypeError, json.JSONDecodeError):
+            return parse_verdict(call(), [x.passage_id for x in passages])
+    return M27NativeJudgeAdapter(invoke)
+
+def build_agent_native_product_answer(*, question: str, intent_class: str, evidence: Sequence[Mapping[str, Any]], requirements: Sequence[object] = (), retrieval_latency_ms: float | None = None, semantic_provider=None) -> M27ProductAnswerResult:
     start_ns = time.perf_counter_ns()
     timeline = M27ProductTimeline(request_start_ms=0.0)
     events: list[dict[str, Any]] = []
@@ -418,12 +458,25 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
         return M27ProductAnswerResult(False, {}, (), plan, tuple(dict.fromkeys(gaps)), tuple(repair_attempts), timeline, tuple(events), terminal, {"structured": True, "gap_taxonomy": list(dict.fromkeys(gaps)), "source_breadth_status": source_breadth_status})
     timeline.claim_graph_start_ms = _elapsed_ms(start_ns)
     claims, citations, quotes = [], [], []
+    verification_receipts = []
+    from .m27_semantic_entailment import EvidencePassage, MaterialClaim, verify_material_claim
+    try:
+        provider = semantic_provider if semantic_provider is not None else _semantic_runtime_provider()
+    except Exception:
+        provider = None
     for idx, item in enumerate(selected, 1):
         units = _claim_units(question, item)
         if not units: continue
         quote, score = units[0]
-        if not _semantic_support(question, quote, item): continue
-        claim_id = f"claim_{len(claims)+1}"
+        claim_id = f"claim_{idx}"
+        pid = _evidence_id(item, idx)
+        bound = EvidencePassage(_source_identity(item), _locator_id(item), pid, _text(item), _language(question))
+        claim = MaterialClaim(claim_id, quote, 0, len(quote), _language(question), (pid,))
+        verdict = verify_material_claim(claim, (bound,), provider)
+        verification_receipts.append({"claim_id": claim_id, "evidence_ids": [pid],
+            "support_class": verdict.label.value, "provider_status": verdict.provider_id,
+            "verified": verdict.verified, "reason": verdict.reason[:120]})
+        if not verdict.verified: continue
         citation = _citation(item, claim_id, idx, quote)
         citation["semantic_support_score"] = round(score, 3)
         citation["support_unit_excerpt"] = quote
@@ -433,6 +486,8 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
             (_locator_id(item),), (_source_identity(item),), 1,
             "SUPPORTED", "EXTRACTIVE_VERIFIED", "evidence_bound", (citation,)))
     if not claims: gaps.append(M27VerifierGap.UNSUPPORTED_CLAIM_SPAN.value)
+    if len(_M27_WORD_RE.findall(" ".join(quotes))) < 45:
+        gaps.append(M27VerifierGap.PRODUCT_THIN_SURFACE.value)
     answer_text = _localized_answer(question, selected, quotes, broad=broad)
     if broad and (len(claims)<2 or len(_M27_WORD_RE.findall(answer_text))<55):
         gaps.append(M27VerifierGap.PRODUCT_THIN_SURFACE.value)
@@ -466,8 +521,8 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
         "answer_claims": [{"claim_id": c.claim_id, "claim_role": "direct", "surface_text": c.claim_text, "citation_ids": [v["citation_id"] for v in c.citations], "support_ref_count": len(c.citations), "source_breadth": c.source_breadth} for c in claims],
         "safe_abstention": False,
         "reason_codes": [],
-        "provider_invoked": False,
-        "provider_call_count": 0,
+        "provider_invoked": provider is not None,
+        "provider_call_count": len(verification_receipts),
         "material_claim_support_verified": True,
         "citation_locator_valid": True,
         "unsupported_accepted_claims": 0,
@@ -477,7 +532,8 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
         "claim_graph": [c.as_dict() for c in claims],
         "gap_taxonomy": [],
         "thin_cited_answer": False,
-        "semantic_support_method": "extractive_claim_unit",
+        "semantic_support_method": "calibrated_narrow_nli_provider",
+        "semantic_verification_receipts": verification_receipts,
         "source_breadth_status": source_breadth_status,
         "micro_timeline": timeline.as_dict(),
         "slo_compute_policy": M27SloComputePolicy().as_dict(),

@@ -1,0 +1,2 @@
+claim_id,evidence_ids,support_class,provider_status,confidence,fail_closed_reason
+NOT_RUN,,,,,offline_integration_gate_incomplete
