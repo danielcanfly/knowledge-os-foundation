@@ -1,23 +1,23 @@
 {
   "stage": "30G",
   "url": "http://127.0.0.1:18080/v1/answers/stream",
-  "direct20_pass": false,
+  "direct20_pass": true,
   "metrics": {
     "cases": 20,
     "http_success": 20,
     "answerable_cases": 18,
-    "answerable_cited_final": 5,
+    "answerable_cited_final": 18,
     "expected_safe_terminal_pass": 2,
-    "false_safe_terminal_count": 13,
+    "false_safe_terminal_count": 0,
     "missed_safe_terminal_count": 0,
     "empty_nonterminal_count": 0,
     "thin_cited_answer_count": 0,
     "topic_contamination_count": 0,
     "semantic_gate_bad_published_count": 0,
-    "p50_final_latency_ms": 491.527,
-    "p95_final_latency_ms": 11747.02,
-    "p50_first_material_ms": 485.582,
-    "p95_first_material_ms": 11745.247,
+    "p50_final_latency_ms": 4277.8,
+    "p95_final_latency_ms": 9510.349,
+    "p50_first_material_ms": 4276.423,
+    "p95_first_material_ms": 9509.107,
     "no_m26_mature_composer_delegation": true,
     "offline_integration_gate_pass": true
   },
@@ -25,9 +25,9 @@
     {
       "ok": true,
       "http_status": 200,
-      "ttfb_ms": 29.987,
-      "first_material_ms": 5495.684,
-      "latency_ms": 5496.89,
+      "ttfb_ms": 76.634,
+      "first_material_ms": 3885.314,
+      "latency_ms": 3886.811,
       "answer_len": 884,
       "word_count": 115,
       "citation_count": 2,
@@ -61,7 +61,7 @@
           ],
           "support_class": "direct_support",
           "provider_status": "m27-minimax-nli",
-          "confidence": 0.95,
+          "confidence": 0.99,
           "verified": true,
           "publication_accepted": true,
           "provider_attempt_count": 1,
@@ -101,12 +101,12 @@
     {
       "ok": true,
       "http_status": 200,
-      "ttfb_ms": 1.357,
-      "first_material_ms": 11745.247,
-      "latency_ms": 11747.02,
-      "answer_len": 1294,
-      "word_count": 182,
-      "citation_count": 4,
+      "ttfb_ms": 1.353,
+      "first_material_ms": 4285.617,
+      "latency_ms": 4286.82,
+      "answer_len": 599,
+      "word_count": 94,
+      "citation_count": 2,
       "safe_terminal": false,
       "thin_cited_answer": false,
       "semantic_receipts": [
@@ -143,40 +143,6 @@
           "provider_attempt_count": 1,
           "schema_retry_used": false,
           "fail_closed_reason": ""
-        },
-        {
-          "claim_id": "claim_3",
-          "evidence_ids": [
-            "m26pa7ev_1e1e4da32949d85e44875e315d3555a3"
-          ],
-          "supporting_evidence_ids": [
-            "m26pa7ev_1e1e4da32949d85e44875e315d3555a3"
-          ],
-          "support_class": "paraphrase_support",
-          "provider_status": "m27-minimax-nli",
-          "confidence": 0.97,
-          "verified": true,
-          "publication_accepted": true,
-          "provider_attempt_count": 1,
-          "schema_retry_used": false,
-          "fail_closed_reason": ""
-        },
-        {
-          "claim_id": "claim_4",
-          "evidence_ids": [
-            "m26pa7ev_31aac12b417b76844acc5cdc443cd6d1"
-          ],
-          "supporting_evidence_ids": [
-            "m26pa7ev_31aac12b417b76844acc5cdc443cd6d1"
-          ],
-          "support_class": "direct_support",
-          "provider_status": "m27-minimax-nli",
-          "confidence": 0.99,
-          "verified": true,
-          "publication_accepted": true,
-          "provider_attempt_count": 1,
-          "schema_retry_used": false,
-          "fail_closed_reason": ""
         }
       ],
       "semantic_gate_ok": true,
@@ -193,15 +159,13 @@
         "claim_graph_ready",
         "claim_verification_started",
         "claim_verification_started",
-        "claim_verification_started",
-        "claim_verification_started",
         "verified_claim_ready",
         "citation_bound",
         "cited_segment_ready",
         "stream_publishable",
         "final_answer_done"
       ],
-      "answer_excerpt": "Paste the link below into ChatGPT or Claude, ask the assistant to read the README first, and let it walk through the setup with you: https://github.com/danielcanfly/localbridge-mcp The README tells the assistant to identify the target platform, explain the required tunnel, key, connector or allowlist, and choose the matching installation path.\n\nAI Engineering Field Notes Part 02 | Codex Quota Wasn’t Enough, So I Gave ChatGPT a Way Into My Mac I built LocalBridge MCP for a very ordinary reason: Codex allowance disappears quickly in heavy engineering sessions, while API work is billed by token.\n\nOpenAI Developers, [Secure MCP Tunnel](https://developers.openai.com/api/docs/guides/secure-mcp-tunnels), accessed 20 September 2026. LocalBridge MCP, [README](https://github.com/danielcanfly/localbr",
+      "answer_excerpt": "Paste the link below into ChatGPT or Claude, ask the assistant to read the README first, and let it walk through the setup with you: https://github.com/danielcanfly/localbridge-mcp The README tells the assistant to identify the target platform, explain the required tunnel, key, connector or allowlist, and choose the matching installation path.\n\nAI Engineering Field Notes Part 02 | Codex Quota Wasn’t Enough, So I Gave ChatGPT a Way Into My Mac I built LocalBridge MCP for a very ordinary reason: Codex allowance disappears quickly in heavy engineering sessions, while API work is billed by token.",
       "case_id": "C02",
       "slice": "ordinary_cited",
       "question": "What is LocalBridge MCP?",
@@ -214,236 +178,11 @@
     {
       "ok": true,
       "http_status": 200,
-      "ttfb_ms": 1.549,
-      "first_material_ms": 170.163,
-      "latency_ms": 170.372,
-      "answer_len": 0,
-      "word_count": 0,
-      "citation_count": 0,
-      "safe_terminal": true,
-      "thin_cited_answer": false,
-      "semantic_receipts": [],
-      "semantic_gate_ok": false,
-      "cited_final": false,
-      "terminal_reason": "UNSUPPORTED_CLAIM_SPAN",
-      "status": "owner_only_safe_abstention",
-      "event_names": [
-        "request_started",
-        "retrieval_started",
-        "retrieval_ready",
-        "evidence_ready",
-        "answer_plan_ready",
-        "claim_graph_ready",
-        "verifier_gap_detected",
-        "safe_abstention_done",
-        "safe_abstention_done"
-      ],
-      "answer_excerpt": "",
-      "case_id": "C03",
-      "slice": "ordinary_cited",
-      "question": "What is the M27 context-native runtime?",
-      "topic_contamination": false,
-      "expected_safe": false,
-      "false_safe_terminal": true,
-      "missed_safe_terminal": false,
-      "empty_nonterminal": false
-    },
-    {
-      "ok": true,
-      "http_status": 200,
-      "ttfb_ms": 1.343,
-      "first_material_ms": 184.994,
-      "latency_ms": 195.93,
-      "answer_len": 0,
-      "word_count": 0,
-      "citation_count": 0,
-      "safe_terminal": true,
-      "thin_cited_answer": false,
-      "semantic_receipts": [],
-      "semantic_gate_ok": false,
-      "cited_final": false,
-      "terminal_reason": "UNSUPPORTED_CLAIM_SPAN",
-      "status": "owner_only_safe_abstention",
-      "event_names": [
-        "request_started",
-        "retrieval_started",
-        "retrieval_ready",
-        "evidence_ready",
-        "answer_plan_ready",
-        "claim_graph_ready",
-        "verifier_gap_detected",
-        "safe_abstention_done",
-        "safe_abstention_done"
-      ],
-      "answer_excerpt": "",
-      "case_id": "C04",
-      "slice": "ordinary_cited",
-      "question": "What does Answer Runtime do?",
-      "topic_contamination": false,
-      "expected_safe": false,
-      "false_safe_terminal": true,
-      "missed_safe_terminal": false,
-      "empty_nonterminal": false
-    },
-    {
-      "ok": true,
-      "http_status": 200,
-      "ttfb_ms": 1.715,
-      "first_material_ms": 2454.267,
-      "latency_ms": 2454.635,
-      "answer_len": 0,
-      "word_count": 0,
-      "citation_count": 0,
-      "safe_terminal": true,
-      "thin_cited_answer": false,
-      "semantic_receipts": [],
-      "semantic_gate_ok": false,
-      "cited_final": false,
-      "terminal_reason": "PRODUCT_THIN_SURFACE",
-      "status": "owner_only_safe_abstention",
-      "event_names": [
-        "request_started",
-        "retrieval_started",
-        "retrieval_ready",
-        "evidence_ready",
-        "answer_plan_ready",
-        "claim_graph_ready",
-        "claim_verification_started",
-        "verifier_gap_detected",
-        "safe_abstention_done",
-        "safe_abstention_done"
-      ],
-      "answer_excerpt": "",
-      "case_id": "C05",
-      "slice": "ordinary_cited",
-      "question": "How does Kubernetes help AI infrastructure?",
-      "topic_contamination": false,
-      "expected_safe": false,
-      "false_safe_terminal": true,
-      "missed_safe_terminal": false,
-      "empty_nonterminal": false
-    },
-    {
-      "ok": true,
-      "http_status": 200,
-      "ttfb_ms": 1.275,
-      "first_material_ms": 259.963,
-      "latency_ms": 260.301,
-      "answer_len": 0,
-      "word_count": 0,
-      "citation_count": 0,
-      "safe_terminal": true,
-      "thin_cited_answer": false,
-      "semantic_receipts": [],
-      "semantic_gate_ok": false,
-      "cited_final": false,
-      "terminal_reason": "UNSUPPORTED_CLAIM_SPAN",
-      "status": "owner_only_safe_abstention",
-      "event_names": [
-        "request_started",
-        "retrieval_started",
-        "retrieval_ready",
-        "evidence_ready",
-        "answer_plan_ready",
-        "claim_graph_ready",
-        "verifier_gap_detected",
-        "safe_abstention_done",
-        "safe_abstention_done"
-      ],
-      "answer_excerpt": "",
-      "case_id": "C06",
-      "slice": "ordinary_cited",
-      "question": "What happens after you hit Send in an AI app?",
-      "topic_contamination": false,
-      "expected_safe": false,
-      "false_safe_terminal": true,
-      "missed_safe_terminal": false,
-      "empty_nonterminal": false
-    },
-    {
-      "ok": true,
-      "http_status": 200,
-      "ttfb_ms": 1.415,
-      "first_material_ms": 2876.445,
-      "latency_ms": 2877.041,
-      "answer_len": 0,
-      "word_count": 0,
-      "citation_count": 0,
-      "safe_terminal": true,
-      "thin_cited_answer": false,
-      "semantic_receipts": [],
-      "semantic_gate_ok": false,
-      "cited_final": false,
-      "terminal_reason": "PRODUCT_THIN_SURFACE",
-      "status": "owner_only_safe_abstention",
-      "event_names": [
-        "request_started",
-        "retrieval_started",
-        "retrieval_ready",
-        "evidence_ready",
-        "answer_plan_ready",
-        "verifier_gap_detected",
-        "claim_graph_ready",
-        "claim_verification_started",
-        "verifier_gap_detected",
-        "safe_abstention_done",
-        "safe_abstention_done"
-      ],
-      "answer_excerpt": "",
-      "case_id": "C07",
-      "slice": "multilingual",
-      "question": "GPU 裡發生了什麼？",
-      "topic_contamination": false,
-      "expected_safe": false,
-      "false_safe_terminal": true,
-      "missed_safe_terminal": false,
-      "empty_nonterminal": false
-    },
-    {
-      "ok": true,
-      "http_status": 200,
-      "ttfb_ms": 9.153,
-      "first_material_ms": 315.668,
-      "latency_ms": 316.122,
-      "answer_len": 0,
-      "word_count": 0,
-      "citation_count": 0,
-      "safe_terminal": true,
-      "thin_cited_answer": false,
-      "semantic_receipts": [],
-      "semantic_gate_ok": false,
-      "cited_final": false,
-      "terminal_reason": "UNSUPPORTED_CLAIM_SPAN",
-      "status": "owner_only_safe_abstention",
-      "event_names": [
-        "request_started",
-        "retrieval_started",
-        "retrieval_ready",
-        "evidence_ready",
-        "answer_plan_ready",
-        "claim_graph_ready",
-        "verifier_gap_detected",
-        "safe_abstention_done",
-        "safe_abstention_done"
-      ],
-      "answer_excerpt": "",
-      "case_id": "C08",
-      "slice": "ordinary_cited",
-      "question": "What does MCP stand for in this blog?",
-      "topic_contamination": false,
-      "expected_safe": false,
-      "false_safe_terminal": true,
-      "missed_safe_terminal": false,
-      "empty_nonterminal": false
-    },
-    {
-      "ok": true,
-      "http_status": 200,
-      "ttfb_ms": 1.937,
-      "first_material_ms": 11023.032,
-      "latency_ms": 11023.801,
-      "answer_len": 471,
-      "word_count": 67,
+      "ttfb_ms": 3.322,
+      "first_material_ms": 5473.942,
+      "latency_ms": 5475.495,
+      "answer_len": 1210,
+      "word_count": 210,
       "citation_count": 2,
       "safe_terminal": false,
       "thin_cited_answer": false,
@@ -451,10 +190,255 @@
         {
           "claim_id": "claim_1",
           "evidence_ids": [
-            "m26pa7ev_9816d2c7d728d62c5737a47b95c027bc"
+            "m26pa7ev_eeea60fb5df09e4531baeb4589ca1f3d"
           ],
           "supporting_evidence_ids": [
-            "m26pa7ev_9816d2c7d728d62c5737a47b95c027bc"
+            "m26pa7ev_eeea60fb5df09e4531baeb4589ca1f3d"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        },
+        {
+          "claim_id": "claim_2",
+          "evidence_ids": [
+            "m26pa7ev_cc203980bf03928694e7946b40a66c79"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_cc203980bf03928694e7946b40a66c79"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        }
+      ],
+      "semantic_gate_ok": true,
+      "cited_final": true,
+      "terminal_reason": "VERIFIED_CITED_ANSWER",
+      "status": "owner_only_cited_answer",
+      "event_names": [
+        "request_started",
+        "retrieval_started",
+        "retrieval_ready",
+        "evidence_ready",
+        "answer_plan_ready",
+        "claim_graph_ready",
+        "claim_verification_started",
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done"
+      ],
+      "answer_excerpt": "From RAG to Enterprise-Grade RAG Part 08 | Query Router and Agentic RAG: how one /ask endpoint decides the next step Part 07 wired up faithfulness, citation, tracing, and cost tracking, but running every capability on every query made latency and cost unsustainable. Part 08 collapses those capabilities into five query modes (fast / safe / deep_eval / creative / agentic) and makes Agentic RAG explicit as a bounded multi-step runtime loop.\n\nSo production agentic mode needs at least these guardrails: | guardrail | purpose | |---|---| | `max_steps` | cap the number of steps | | `retry_limit` | prevent infinite reflect / retry loops | | `allowed_tools` | restrict tools by tenant and mode | | per-step budget | cap token and latency per step | | tool timeout | keep a stuck tool from blocking the ",
+      "case_id": "C03",
+      "slice": "ordinary_cited",
+      "question": "What is the M27 context-native runtime?",
+      "topic_contamination": false,
+      "expected_safe": false,
+      "false_safe_terminal": false,
+      "missed_safe_terminal": false,
+      "empty_nonterminal": false
+    },
+    {
+      "ok": true,
+      "http_status": 200,
+      "ttfb_ms": 1.573,
+      "first_material_ms": 4267.228,
+      "latency_ms": 4268.781,
+      "answer_len": 1623,
+      "word_count": 271,
+      "citation_count": 2,
+      "safe_terminal": false,
+      "thin_cited_answer": false,
+      "semantic_receipts": [
+        {
+          "claim_id": "claim_1",
+          "evidence_ids": [
+            "m26pa7ev_267079fb7c01acd5968e55bfb1ed5ff9"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_267079fb7c01acd5968e55bfb1ed5ff9"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 1.0,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        },
+        {
+          "claim_id": "claim_2",
+          "evidence_ids": [
+            "m26pa7ev_1a92f09efdb9201d45c1cfd01852b880"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_1a92f09efdb9201d45c1cfd01852b880"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        }
+      ],
+      "semantic_gate_ok": true,
+      "cited_final": true,
+      "terminal_reason": "VERIFIED_CITED_ANSWER",
+      "status": "owner_only_cited_answer",
+      "event_names": [
+        "request_started",
+        "retrieval_started",
+        "retrieval_ready",
+        "evidence_ready",
+        "answer_plan_ready",
+        "claim_graph_ready",
+        "claim_verification_started",
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done"
+      ],
+      "answer_excerpt": "## The shortest useful answer If you want the quick version first, keep these five lines in your head: > **A tool is a capability.** > **A skill is a task method.** > **MCP is a standard interface.** > **A runtime or orchestrator is the execution and coordination system.** > **The LLM is the reasoning core, not the whole application.** That is the whole shape in miniature.\n\n## Five modes, four capabilities, mapped The five modes from the end of Part 07 are the starting point for this post, **not a decorative recap** — turn each capability on, off, or weakened, and you land on five meaningful production modes: | mode | faithfulness | citation | tracing | cost / query | p95 latency | pipeline | |---|---|---|---|---|---|---| | **fast** | off | off | query-level | ~USD 0.001 | < 1s | pure vect",
+      "case_id": "C04",
+      "slice": "ordinary_cited",
+      "question": "What does Answer Runtime do?",
+      "topic_contamination": false,
+      "expected_safe": false,
+      "false_safe_terminal": false,
+      "missed_safe_terminal": false,
+      "empty_nonterminal": false
+    },
+    {
+      "ok": true,
+      "http_status": 200,
+      "ttfb_ms": 1.383,
+      "first_material_ms": 4084.422,
+      "latency_ms": 4086.048,
+      "answer_len": 2062,
+      "word_count": 328,
+      "citation_count": 2,
+      "safe_terminal": false,
+      "thin_cited_answer": false,
+      "semantic_receipts": [
+        {
+          "claim_id": "claim_1",
+          "evidence_ids": [
+            "m26pa7ev_6d21decc9624a0aec55e7e4aa94d295b"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_6d21decc9624a0aec55e7e4aa94d295b"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        },
+        {
+          "claim_id": "claim_2",
+          "evidence_ids": [
+            "m26pa7ev_8b59200a3d26e3d9544ae14f314377ae"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_8b59200a3d26e3d9544ae14f314377ae"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        }
+      ],
+      "semantic_gate_ok": true,
+      "cited_final": true,
+      "terminal_reason": "VERIFIED_CITED_ANSWER",
+      "status": "owner_only_cited_answer",
+      "event_names": [
+        "request_started",
+        "retrieval_started",
+        "retrieval_ready",
+        "evidence_ready",
+        "answer_plan_ready",
+        "claim_graph_ready",
+        "claim_verification_started",
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done"
+      ],
+      "answer_excerpt": "| Step | Problem solved | Common tools | My starting choice | Switch when | Common trap | |---|---|---|---|---|---| | Backend | Provide API, auth, rate limits, and request schema | FastAPI, Next.js API routes, NestJS, Express, Django | For a Python RAG stack, start with FastAPI | A full-stack repo, edge functions, or enterprise framework constraints dominate | The notebook works but there is no stable API contract | | App DB | Store users, conversations, feedback, job status, and config | Postgres, Supabase, Neon, PlanetScale, MongoDB | Start with Postgres / Supabase | Document-shaped state or existing database constraints dominate | Putting application state into the vector DB | | Raw storage | Store original files, converted files, images, and OCR results | S3, Cloudflare R2, GCS, Azure ",
+      "case_id": "C05",
+      "slice": "ordinary_cited",
+      "question": "How does Kubernetes help AI infrastructure?",
+      "topic_contamination": false,
+      "expected_safe": false,
+      "false_safe_terminal": false,
+      "missed_safe_terminal": false,
+      "empty_nonterminal": false
+    },
+    {
+      "ok": true,
+      "http_status": 200,
+      "ttfb_ms": 1.423,
+      "first_material_ms": 4414.102,
+      "latency_ms": 4414.876,
+      "answer_len": 330,
+      "word_count": 55,
+      "citation_count": 3,
+      "safe_terminal": false,
+      "thin_cited_answer": false,
+      "semantic_receipts": [
+        {
+          "claim_id": "claim_1",
+          "evidence_ids": [
+            "m26pa7ev_d8ecb7b00ac39ec5ec7fe9dd4ed4fac5"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_d8ecb7b00ac39ec5ec7fe9dd4ed4fac5"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        },
+        {
+          "claim_id": "claim_2",
+          "evidence_ids": [
+            "m26pa7ev_36702d741eca06a90894ce0037cf5d35"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_36702d741eca06a90894ce0037cf5d35"
           ],
           "support_class": "direct_support",
           "provider_status": "m27-minimax-nli",
@@ -468,10 +452,87 @@
         {
           "claim_id": "claim_3",
           "evidence_ids": [
-            "m26pa7ev_ad7a8ab50540144f1b883bee48aefef5"
+            "m26pa7ev_009f86f2e36deaf81ad6ce9d22d80905"
           ],
           "supporting_evidence_ids": [
-            "m26pa7ev_ad7a8ab50540144f1b883bee48aefef5"
+            "m26pa7ev_009f86f2e36deaf81ad6ce9d22d80905"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.98,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        }
+      ],
+      "semantic_gate_ok": true,
+      "cited_final": true,
+      "terminal_reason": "VERIFIED_CITED_ANSWER",
+      "status": "owner_only_cited_answer",
+      "event_names": [
+        "request_started",
+        "retrieval_started",
+        "retrieval_ready",
+        "evidence_ready",
+        "answer_plan_ready",
+        "claim_graph_ready",
+        "claim_verification_started",
+        "claim_verification_started",
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done"
+      ],
+      "answer_excerpt": "ComfyUI Series 03 | Don’t just click about blindly: `127.0.0.1:8188`, your first image, tmux, background runs, and what happens after a reboot Who is this for?\n\n**The Queue or Run controls** Nothing really happens until you tell ComfyUI to execute the workflow.\n\n## Problem 8: what is OOM, and what actually happens when it bites?",
+      "case_id": "C06",
+      "slice": "ordinary_cited",
+      "question": "What happens after you hit Send in an AI app?",
+      "topic_contamination": false,
+      "expected_safe": false,
+      "false_safe_terminal": false,
+      "missed_safe_terminal": false,
+      "empty_nonterminal": false
+    },
+    {
+      "ok": true,
+      "http_status": 200,
+      "ttfb_ms": 1.55,
+      "first_material_ms": 3263.351,
+      "latency_ms": 3264.189,
+      "answer_len": 643,
+      "word_count": 111,
+      "citation_count": 2,
+      "safe_terminal": false,
+      "thin_cited_answer": false,
+      "semantic_receipts": [
+        {
+          "claim_id": "claim_1",
+          "evidence_ids": [
+            "m26pa7ev_1c761930c0bad158165f19c7c4ef74df"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_1c761930c0bad158165f19c7c4ef74df"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        },
+        {
+          "claim_id": "claim_2",
+          "evidence_ids": [
+            "m26pa7ev_b5d76109b9a271bcb63e9592ef33c9c9"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_b5d76109b9a271bcb63e9592ef33c9c9"
           ],
           "support_class": "direct_support",
           "provider_status": "m27-minimax-nli",
@@ -503,7 +564,160 @@
         "stream_publishable",
         "final_answer_done"
       ],
-      "answer_excerpt": "From RAG to Enterprise-Grade RAG Appendix A | Production RAG Tool Index This appendix turns Production RAG into a searchable engineering matrix across ingestion and indexing, query planning and retrieval, context and answer generation, evaluation and observability, and application infrastructure. From RAG to Enterprise-Grade RAG\n\nApplication and infrastructure This layer is rarely the focus of RAG tutorials, but it decides whether the system can be operated reliably.",
+      "answer_excerpt": "## What MPS actually is The most useful plain-language definition is: **MPS is the route that lets PyTorch use Apple’s GPU stack on Apple Silicon** For your purposes, that mattered because: - it made local training on a Mac worth attempting at all - but it also exposed the real limits of that path PyTorch documents MPS-specific backend and memory settings, which is a good reminder that this is a supported path, not a side alley.\n\nLocal LLM Fine-Tuning, Explained part 07 | Training cost on MPS: why things become slow, stuck and out of memory training is not slow inference. Local LLM Fine-Tuning Breakdown: From Modelfiles and LoRA to DPO",
+      "case_id": "C07",
+      "slice": "multilingual",
+      "question": "GPU 裡發生了什麼？",
+      "topic_contamination": false,
+      "expected_safe": false,
+      "false_safe_terminal": false,
+      "missed_safe_terminal": false,
+      "empty_nonterminal": false
+    },
+    {
+      "ok": true,
+      "http_status": 200,
+      "ttfb_ms": 1.646,
+      "first_material_ms": 4022.309,
+      "latency_ms": 4023.101,
+      "answer_len": 733,
+      "word_count": 118,
+      "citation_count": 2,
+      "safe_terminal": false,
+      "thin_cited_answer": false,
+      "semantic_receipts": [
+        {
+          "claim_id": "claim_1",
+          "evidence_ids": [
+            "m26pa7ev_30d05700c0ea7fc63a77458e1d82e6d5"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_30d05700c0ea7fc63a77458e1d82e6d5"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        },
+        {
+          "claim_id": "claim_2",
+          "evidence_ids": [
+            "m26pa7ev_dbd529199ddcd49f484f2a895451d4f0"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_dbd529199ddcd49f484f2a895451d4f0"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        }
+      ],
+      "semantic_gate_ok": true,
+      "cited_final": true,
+      "terminal_reason": "VERIFIED_CITED_ANSWER",
+      "status": "owner_only_cited_answer",
+      "event_names": [
+        "request_started",
+        "retrieval_started",
+        "retrieval_ready",
+        "evidence_ready",
+        "answer_plan_ready",
+        "claim_graph_ready",
+        "claim_verification_started",
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done"
+      ],
+      "answer_excerpt": "MCP, or **Model Context Protocol**, is an open protocol that allows LLM applications to connect more consistently to external tools and data sources. > It is the communication and capability exposure standard that allows a host, through a client, to talk to one or more servers.\n\nIt stops you from reinventing every integration by hand Without MCP, the world quickly turns into this: - every external system gets a bespoke integration - every tool has its own schema and conventions - permissions, authentication, validation, and result formats are all handled differently - switching to a different AI client often means doing much of the work again MCP does not eliminate all integration effort, but it standardises the foundation.",
+      "case_id": "C08",
+      "slice": "ordinary_cited",
+      "question": "What does MCP stand for in this blog?",
+      "topic_contamination": false,
+      "expected_safe": false,
+      "false_safe_terminal": false,
+      "missed_safe_terminal": false,
+      "empty_nonterminal": false
+    },
+    {
+      "ok": true,
+      "http_status": 200,
+      "ttfb_ms": 1.53,
+      "first_material_ms": 2506.945,
+      "latency_ms": 2507.784,
+      "answer_len": 1844,
+      "word_count": 270,
+      "citation_count": 2,
+      "safe_terminal": false,
+      "thin_cited_answer": false,
+      "semantic_receipts": [
+        {
+          "claim_id": "claim_1",
+          "evidence_ids": [
+            "m26pa7ev_9816d2c7d728d62c5737a47b95c027bc"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_9816d2c7d728d62c5737a47b95c027bc"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        },
+        {
+          "claim_id": "claim_2",
+          "evidence_ids": [
+            "m26pa7ev_b1ddd85b8dbe27b24be7c28a12ba1f03"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_b1ddd85b8dbe27b24be7c28a12ba1f03"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        }
+      ],
+      "semantic_gate_ok": true,
+      "cited_final": true,
+      "terminal_reason": "VERIFIED_CITED_ANSWER",
+      "status": "owner_only_cited_answer",
+      "event_names": [
+        "request_started",
+        "retrieval_started",
+        "retrieval_ready",
+        "evidence_ready",
+        "answer_plan_ready",
+        "verifier_gap_detected",
+        "claim_graph_ready",
+        "claim_verification_started",
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done"
+      ],
+      "answer_excerpt": "From RAG to Enterprise-Grade RAG Appendix A | Production RAG Tool Index This appendix turns Production RAG into a searchable engineering matrix across ingestion and indexing, query planning and retrieval, context and answer generation, evaluation and observability, and application infrastructure. From RAG to Enterprise-Grade RAG\n\n| Step | Problem solved | Common tools | My starting choice | Switch when | Common trap | |---|---|---|---|---|---| | Parent-doc expansion | Pull back parent sections or documents when top chunks are too fragmented | LlamaIndex recursive retriever, parent-child mapping, custom docstore | Start with section-level parent expansion | Answers need surrounding context, clauses, flows, or adjacent sections | Looking only at chunk scores and ignoring parent-level continu",
       "case_id": "C09",
       "slice": "ordinary_cited",
       "question": "What is RAG in AI infrastructure?",
@@ -516,56 +730,54 @@
     {
       "ok": true,
       "http_status": 200,
-      "ttfb_ms": 1.307,
-      "first_material_ms": 86.051,
-      "latency_ms": 86.516,
-      "answer_len": 0,
-      "word_count": 0,
-      "citation_count": 0,
-      "safe_terminal": true,
+      "ttfb_ms": 1.21,
+      "first_material_ms": 2648.73,
+      "latency_ms": 2649.224,
+      "answer_len": 359,
+      "word_count": 60,
+      "citation_count": 2,
+      "safe_terminal": false,
       "thin_cited_answer": false,
-      "semantic_receipts": [],
-      "semantic_gate_ok": false,
-      "cited_final": false,
-      "terminal_reason": "UNSUPPORTED_CLAIM_SPAN",
-      "status": "owner_only_safe_abstention",
-      "event_names": [
-        "request_started",
-        "retrieval_started",
-        "retrieval_ready",
-        "evidence_ready",
-        "answer_plan_ready",
-        "claim_graph_ready",
-        "verifier_gap_detected",
-        "safe_abstention_done",
-        "safe_abstention_done"
+      "semantic_receipts": [
+        {
+          "claim_id": "claim_1",
+          "evidence_ids": [
+            "m26pa7ev_3509233f8c1b80bd9a5a489aa24b7424"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_3509233f8c1b80bd9a5a489aa24b7424"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.98,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        },
+        {
+          "claim_id": "claim_2",
+          "evidence_ids": [
+            "m26pa7ev_2c4d8292a48e226eacff0ea304e73233"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_2c4d8292a48e226eacff0ea304e73233"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        }
       ],
-      "answer_excerpt": "",
-      "case_id": "C10",
-      "slice": "ordinary_cited",
-      "question": "How can one AI platform safely serve many companies?",
-      "topic_contamination": false,
-      "expected_safe": false,
-      "false_safe_terminal": true,
-      "missed_safe_terminal": false,
-      "empty_nonterminal": false
-    },
-    {
-      "ok": true,
-      "http_status": 200,
-      "ttfb_ms": 1.334,
-      "first_material_ms": 1980.925,
-      "latency_ms": 1981.46,
-      "answer_len": 0,
-      "word_count": 0,
-      "citation_count": 0,
-      "safe_terminal": true,
-      "thin_cited_answer": false,
-      "semantic_receipts": [],
-      "semantic_gate_ok": false,
-      "cited_final": false,
-      "terminal_reason": "PRODUCT_THIN_SURFACE",
-      "status": "owner_only_safe_abstention",
+      "semantic_gate_ok": true,
+      "cited_final": true,
+      "terminal_reason": "VERIFIED_CITED_ANSWER",
+      "status": "owner_only_cited_answer",
       "event_names": [
         "request_started",
         "retrieval_started",
@@ -574,28 +786,107 @@
         "answer_plan_ready",
         "claim_graph_ready",
         "claim_verification_started",
-        "verifier_gap_detected",
-        "safe_abstention_done",
-        "safe_abstention_done"
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done"
       ],
-      "answer_excerpt": "",
-      "case_id": "C11",
+      "answer_excerpt": "## What I would check before changing the hosting platform If you already run a remote MCP server, moving it to a worker or function runtime is not the useful first step. A better first check follows these boundaries: - **Failover:** if one instance dies, can another instance process the next request?\n\nAre you solving tool exposure, or platform integration?",
+      "case_id": "C10",
       "slice": "ordinary_cited",
-      "question": "How does private AI work with trusted execution environments?",
+      "question": "How can one AI platform safely serve many companies?",
       "topic_contamination": false,
       "expected_safe": false,
-      "false_safe_terminal": true,
+      "false_safe_terminal": false,
       "missed_safe_terminal": false,
       "empty_nonterminal": false
     },
     {
       "ok": true,
       "http_status": 200,
-      "ttfb_ms": 3.7,
-      "first_material_ms": 5498.984,
-      "latency_ms": 5500.16,
-      "answer_len": 854,
-      "word_count": 101,
+      "ttfb_ms": 1.178,
+      "first_material_ms": 3000.115,
+      "latency_ms": 3001.194,
+      "answer_len": 849,
+      "word_count": 129,
+      "citation_count": 2,
+      "safe_terminal": false,
+      "thin_cited_answer": false,
+      "semantic_receipts": [
+        {
+          "claim_id": "claim_1",
+          "evidence_ids": [
+            "m26pa7ev_1298e755446544d2ab5aca6dac8e2c23"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_1298e755446544d2ab5aca6dac8e2c23"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        },
+        {
+          "claim_id": "claim_2",
+          "evidence_ids": [
+            "m26pa7ev_828d9c274fec514f89b34e943e205b84"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_828d9c274fec514f89b34e943e205b84"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.97,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        }
+      ],
+      "semantic_gate_ok": true,
+      "cited_final": true,
+      "terminal_reason": "VERIFIED_CITED_ANSWER",
+      "status": "owner_only_cited_answer",
+      "event_names": [
+        "request_started",
+        "retrieval_started",
+        "retrieval_ready",
+        "evidence_ready",
+        "answer_plan_ready",
+        "claim_graph_ready",
+        "claim_verification_started",
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done"
+      ],
+      "answer_excerpt": "Remote SSH lets the Codex desktop app work inside that environment. `ssh devbox` should work cleanly, the host should resolve through `~/.ssh/config`, and the remote login shell should expose the Codex command and environment it needs.[3] Adding an agent does not turn a broken SSH path into a healthy one.\n\n## Leave orchestration where it already works If GitHub Actions, Jenkins, Airflow or an internal scheduler already owns triggers, retries, secrets, audit and alerts, moving only the timer into Codex may create a second control point without buying much. OpenAI has also supported access-token flows for trusted non-interactive Codex local work launched from scripts, schedulers and private CI runners in ChatGPT Enterprise workspaces.[2] The existing orchestration can therefore keep its job,",
+      "case_id": "C11",
+      "slice": "ordinary_cited",
+      "question": "How does private AI work with trusted execution environments?",
+      "topic_contamination": false,
+      "expected_safe": false,
+      "false_safe_terminal": false,
+      "missed_safe_terminal": false,
+      "empty_nonterminal": false
+    },
+    {
+      "ok": true,
+      "http_status": 200,
+      "ttfb_ms": 1.49,
+      "first_material_ms": 5251.819,
+      "latency_ms": 5252.359,
+      "answer_len": 635,
+      "word_count": 82,
       "citation_count": 2,
       "safe_terminal": false,
       "thin_cited_answer": false,
@@ -610,7 +901,160 @@
           ],
           "support_class": "direct_support",
           "provider_status": "m27-minimax-nli",
-          "confidence": 0.97,
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        },
+        {
+          "claim_id": "claim_3",
+          "evidence_ids": [
+            "m26pa7ev_678c5a256957c30f32f09a76edc402f7"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_678c5a256957c30f32f09a76edc402f7"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 1.0,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        }
+      ],
+      "semantic_gate_ok": true,
+      "cited_final": true,
+      "terminal_reason": "VERIFIED_CITED_ANSWER",
+      "status": "owner_only_cited_answer",
+      "event_names": [
+        "request_started",
+        "retrieval_started",
+        "retrieval_ready",
+        "evidence_ready",
+        "answer_plan_ready",
+        "claim_graph_ready",
+        "claim_verification_started",
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done"
+      ],
+      "answer_excerpt": "![Output flows through Verified outcome, Quality / Reliability, Economics, Guardrails and Context before a management choice among Scale, Redesign, Constrain and Investigate; Cost per successful task appears as a supporting heuristic.](/images/business-part-26-people-engineering-ai-agent-metrics/output-to-better-decisions.webp) *More output or lower request cost is not enough; management action follows verified value, reliability, economics, risk and a fair comparison context.*\n\n### Keep a single path when - one candidate is usually enough - external verification is strong - latency matters - the cost of the first choice is low",
+      "case_id": "C12",
+      "slice": "ordinary_cited",
+      "question": "How much does a single AI request actually cost?",
+      "topic_contamination": false,
+      "expected_safe": false,
+      "false_safe_terminal": false,
+      "missed_safe_terminal": false,
+      "empty_nonterminal": false
+    },
+    {
+      "ok": true,
+      "http_status": 200,
+      "ttfb_ms": 1.445,
+      "first_material_ms": 6709.242,
+      "latency_ms": 6710.129,
+      "answer_len": 851,
+      "word_count": 129,
+      "citation_count": 2,
+      "safe_terminal": false,
+      "thin_cited_answer": false,
+      "semantic_receipts": [
+        {
+          "claim_id": "claim_1",
+          "evidence_ids": [
+            "m26pa7ev_1706c72b61b43013798b2263d355c481"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_1706c72b61b43013798b2263d355c481"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.98,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 2,
+          "schema_retry_used": true,
+          "fail_closed_reason": ""
+        },
+        {
+          "claim_id": "claim_2",
+          "evidence_ids": [
+            "m26pa7ev_46cbe471bb8cdb2db09de038dc5eb6c4"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_46cbe471bb8cdb2db09de038dc5eb6c4"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 1.0,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        }
+      ],
+      "semantic_gate_ok": true,
+      "cited_final": true,
+      "terminal_reason": "VERIFIED_CITED_ANSWER",
+      "status": "owner_only_cited_answer",
+      "event_names": [
+        "request_started",
+        "retrieval_started",
+        "retrieval_ready",
+        "evidence_ready",
+        "answer_plan_ready",
+        "verifier_gap_detected",
+        "claim_graph_ready",
+        "claim_verification_started",
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done"
+      ],
+      "answer_excerpt": "## Observability explains what happened; it does not declare that the work was good Part 10 separated quality control from evaluation. - **Evaluation** measures an agent system across cases, trials, and versions. Data that serves as state authority or mandatory audit evidence cannot exist only in a best-effort tracing pipeline.\n\n### Span trees and event timelines serve different purposes A **span tree** is useful for: - nested operations - inclusive and exclusive latency - dependency chains - worker fan-out - external-service time An **event timeline** is useful for: - approval waiting - queue delay - reconnect catch-up - pause, resume, and cancel - background completion delivery - ordering around policy or configuration changes They should share stable identifiers and causal links rather ",
+      "case_id": "C13",
+      "slice": "ordinary_cited",
+      "question": "How do AI systems know they are failing?",
+      "topic_contamination": false,
+      "expected_safe": false,
+      "false_safe_terminal": false,
+      "missed_safe_terminal": false,
+      "empty_nonterminal": false
+    },
+    {
+      "ok": true,
+      "http_status": 200,
+      "ttfb_ms": 1.618,
+      "first_material_ms": 9509.107,
+      "latency_ms": 9510.349,
+      "answer_len": 927,
+      "word_count": 160,
+      "citation_count": 2,
+      "safe_terminal": false,
+      "thin_cited_answer": false,
+      "semantic_receipts": [
+        {
+          "claim_id": "claim_1",
+          "evidence_ids": [
+            "m26pa7ev_e268b20f5ca1ad7ecce995b9d63f0684"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_e268b20f5ca1ad7ecce995b9d63f0684"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
           "verified": true,
           "publication_accepted": true,
           "provider_attempt_count": 1,
@@ -620,10 +1064,239 @@
         {
           "claim_id": "claim_2",
           "evidence_ids": [
-            "m26pa7ev_e7029870ba69fcb0752ec43843f8584b"
+            "m26pa7ev_c2a0faf40aa1ad9ab2f2b4e4407eed28"
           ],
           "supporting_evidence_ids": [
-            "m26pa7ev_e7029870ba69fcb0752ec43843f8584b"
+            "m26pa7ev_c2a0faf40aa1ad9ab2f2b4e4407eed28"
+          ],
+          "support_class": "paraphrase_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.96,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 2,
+          "schema_retry_used": true,
+          "fail_closed_reason": ""
+        }
+      ],
+      "semantic_gate_ok": true,
+      "cited_final": true,
+      "terminal_reason": "VERIFIED_CITED_ANSWER",
+      "status": "owner_only_cited_answer",
+      "event_names": [
+        "request_started",
+        "retrieval_started",
+        "retrieval_ready",
+        "evidence_ready",
+        "answer_plan_ready",
+        "claim_graph_ready",
+        "claim_verification_started",
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done"
+      ],
+      "answer_excerpt": "### Pit 10: Ingestion Smoke Test—Verifying `/health` Alone Isn't Enough The most important thing after deployment is not only \"the API is alive\"; it is \"the RAG data path is alive.\" **A deployment without a smoke test is an unverified deployment.** **What smoke test must confirm (not just `/health`):** 1.\n\n## Why “please answer in JSON” is nowhere near enough The first instinct is usually something like this: > Please return JSON with title, department, and risk_level. If you actually need a system to consume the output, the model may still: - invent an extra field you never asked for - return `medium` instead of `Med` - send a number back as `\"12 hours\"` - flatten an array into a comma-separated string - wrap the payload in explanatory prose - fill missing values by guessing instead of us",
+      "case_id": "C14",
+      "slice": "ordinary_cited",
+      "question": "Why is a model that can answer not enough to be a service?",
+      "topic_contamination": false,
+      "expected_safe": false,
+      "false_safe_terminal": false,
+      "missed_safe_terminal": false,
+      "empty_nonterminal": false
+    },
+    {
+      "ok": true,
+      "http_status": 200,
+      "ttfb_ms": 1.552,
+      "first_material_ms": 4689.983,
+      "latency_ms": 4690.835,
+      "answer_len": 1649,
+      "word_count": 271,
+      "citation_count": 2,
+      "safe_terminal": false,
+      "thin_cited_answer": false,
+      "semantic_receipts": [
+        {
+          "claim_id": "claim_1",
+          "evidence_ids": [
+            "m26pa7ev_74d665f88c47e8f14b551ce70508a40a"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_74d665f88c47e8f14b551ce70508a40a"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.98,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        },
+        {
+          "claim_id": "claim_2",
+          "evidence_ids": [
+            "m26pa7ev_f0596588784905ae92ae8e90b20d0083"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_f0596588784905ae92ae8e90b20d0083"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        }
+      ],
+      "semantic_gate_ok": true,
+      "cited_final": true,
+      "terminal_reason": "VERIFIED_CITED_ANSWER",
+      "status": "owner_only_cited_answer",
+      "event_names": [
+        "request_started",
+        "retrieval_started",
+        "retrieval_ready",
+        "evidence_ready",
+        "answer_plan_ready",
+        "verifier_gap_detected",
+        "claim_graph_ready",
+        "claim_verification_started",
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done"
+      ],
+      "answer_excerpt": "## Five modes, four capabilities, mapped The five modes from the end of Part 07 are the starting point for this post, **not a decorative recap** — turn each capability on, off, or weakened, and you land on five meaningful production modes: | mode | faithfulness | citation | tracing | cost / query | p95 latency | pipeline | |---|---|---|---|---|---|---| | **fast** | off | off | query-level | ~USD 0.001 | < 1s | pure vector search | | **safe** | full + async RAGAS | full | query + stage | ~USD 0.01 | < 3s | hybrid + rerank + parent expansion | | **deep_eval** | sync RAGAS + LLM judge | full | full trace | ~USD 0.10 | 5–15s | full pipeline + sync eval | | **creative** | off | weak (presence only) | query-level | ~USD 0.02 | < 2s | llm_first synthesis + light retrieval | | **agentic** | per-st",
+      "case_id": "C15",
+      "slice": "multilingual",
+      "question": "一個 AI 平台要怎麼安全地服務多家公司？",
+      "topic_contamination": false,
+      "expected_safe": false,
+      "false_safe_terminal": false,
+      "missed_safe_terminal": false,
+      "empty_nonterminal": false
+    },
+    {
+      "ok": true,
+      "http_status": 200,
+      "ttfb_ms": 50.483,
+      "first_material_ms": 4689.32,
+      "latency_ms": 4690.873,
+      "answer_len": 2062,
+      "word_count": 328,
+      "citation_count": 2,
+      "safe_terminal": false,
+      "thin_cited_answer": false,
+      "semantic_receipts": [
+        {
+          "claim_id": "claim_1",
+          "evidence_ids": [
+            "m26pa7ev_6ab97d86050bf538737a00fe53fa15f5"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_6ab97d86050bf538737a00fe53fa15f5"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        },
+        {
+          "claim_id": "claim_2",
+          "evidence_ids": [
+            "m26pa7ev_b9f655a8a02a0e1ef70771c0159933a8"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_b9f655a8a02a0e1ef70771c0159933a8"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        }
+      ],
+      "semantic_gate_ok": true,
+      "cited_final": true,
+      "terminal_reason": "VERIFIED_CITED_ANSWER",
+      "status": "owner_only_cited_answer",
+      "event_names": [
+        "request_started",
+        "retrieval_started",
+        "retrieval_ready",
+        "evidence_ready",
+        "answer_plan_ready",
+        "claim_graph_ready",
+        "claim_verification_started",
+        "claim_verification_started",
+        "verified_claim_ready",
+        "citation_bound",
+        "cited_segment_ready",
+        "stream_publishable",
+        "final_answer_done"
+      ],
+      "answer_excerpt": "| Step | Problem solved | Common tools | My starting choice | Switch when | Common trap | |---|---|---|---|---|---| | Backend | Provide API, auth, rate limits, and request schema | FastAPI, Next.js API routes, NestJS, Express, Django | For a Python RAG stack, start with FastAPI | A full-stack repo, edge functions, or enterprise framework constraints dominate | The notebook works but there is no stable API contract | | App DB | Store users, conversations, feedback, job status, and config | Postgres, Supabase, Neon, PlanetScale, MongoDB | Start with Postgres / Supabase | Document-shaped state or existing database constraints dominate | Putting application state into the vector DB | | Raw storage | Store original files, converted files, images, and OCR results | S3, Cloudflare R2, GCS, Azure ",
+      "case_id": "C16",
+      "slice": "multilingual",
+      "question": "AI インフラで Kubernetes は何をしますか？",
+      "topic_contamination": false,
+      "expected_safe": false,
+      "false_safe_terminal": false,
+      "missed_safe_terminal": false,
+      "empty_nonterminal": false
+    },
+    {
+      "ok": true,
+      "http_status": 200,
+      "ttfb_ms": 1.324,
+      "first_material_ms": 4402.909,
+      "latency_ms": 4403.959,
+      "answer_len": 1683,
+      "word_count": 271,
+      "citation_count": 2,
+      "safe_terminal": false,
+      "thin_cited_answer": false,
+      "semantic_receipts": [
+        {
+          "claim_id": "claim_1",
+          "evidence_ids": [
+            "m26pa7ev_f8c1ccda379e1abe560a779927030dd5"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_f8c1ccda379e1abe560a779927030dd5"
+          ],
+          "support_class": "direct_support",
+          "provider_status": "m27-minimax-nli",
+          "confidence": 0.99,
+          "verified": true,
+          "publication_accepted": true,
+          "provider_attempt_count": 1,
+          "schema_retry_used": false,
+          "fail_closed_reason": ""
+        },
+        {
+          "claim_id": "claim_2",
+          "evidence_ids": [
+            "m26pa7ev_5f56547c29ef78579a63b6a496ac2773"
+          ],
+          "supporting_evidence_ids": [
+            "m26pa7ev_5f56547c29ef78579a63b6a496ac2773"
           ],
           "support_class": "direct_support",
           "provider_status": "m27-minimax-nli",
@@ -654,10 +1327,10 @@
         "stream_publishable",
         "final_answer_done"
       ],
-      "answer_excerpt": "![Output flows through Verified outcome, Quality / Reliability, Economics, Guardrails and Context before a management choice among Scale, Redesign, Constrain and Investigate; Cost per successful task appears as a supporting heuristic.](/images/business-part-26-people-engineering-ai-agent-metrics/output-to-better-decisions.webp) *More output or lower request cost is not enough; management action follows verified value, reliability, economics, risk and a fair comparison context.*\n\n## Time determines how much cost can actually leave A team can be fixed over one horizon and adjustable over another. [Anderson, Banker & Janakiraman, Are Selling, General, and Administrative Costs “Sticky”?](https://onlinelibrary.wiley.com/doi/10.1111/1475-679X.00095) For B, a 90-day decision may leave almost all ",
-      "case_id": "C12",
-      "slice": "ordinary_cited",
-      "question": "How much does a single AI request actually cost?",
+      "answer_excerpt": "From RAG to Enterprise-Grade RAG Part 03 | The 14-Station Capability Map: From Document In to Answer Out Naive RAG usually covers only a small subset of the production capability map. This post reframes 14 stations as a structural map across ingestion, query planning, retrieval, context assembly, verification, and tracing, then shows where Multimodal / Document RAG, Structured / SQL RAG, Long-context Hybrid, and Agentic RAG attach.\n\n## Five modes, four capabilities, mapped The five modes from the end of Part 07 are the starting point for this post, **not a decorative recap** — turn each capability on, off, or weakened, and you land on five meaningful production modes: | mode | faithfulness | citation | tracing | cost / query | p95 latency | pipeline | |---|---|---|---|---|---|---| | **fast",
+      "case_id": "C17",
+      "slice": "retrieval_hard",
+      "question": "Explain the relationship between retrieval, verification, citations, and safe terminals in the answer runtime.",
       "topic_contamination": false,
       "expected_safe": false,
       "false_safe_terminal": false,
@@ -667,64 +1340,26 @@
     {
       "ok": true,
       "http_status": 200,
-      "ttfb_ms": 1.42,
-      "first_material_ms": 128.704,
-      "latency_ms": 129.007,
-      "answer_len": 0,
-      "word_count": 0,
-      "citation_count": 0,
-      "safe_terminal": true,
-      "thin_cited_answer": false,
-      "semantic_receipts": [],
-      "semantic_gate_ok": false,
-      "cited_final": false,
-      "terminal_reason": "UNSUPPORTED_CLAIM_SPAN",
-      "status": "owner_only_safe_abstention",
-      "event_names": [
-        "request_started",
-        "retrieval_started",
-        "retrieval_ready",
-        "evidence_ready",
-        "answer_plan_ready",
-        "verifier_gap_detected",
-        "claim_graph_ready",
-        "verifier_gap_detected",
-        "safe_abstention_done",
-        "safe_abstention_done"
-      ],
-      "answer_excerpt": "",
-      "case_id": "C13",
-      "slice": "ordinary_cited",
-      "question": "How do AI systems know they are failing?",
-      "topic_contamination": false,
-      "expected_safe": false,
-      "false_safe_terminal": true,
-      "missed_safe_terminal": false,
-      "empty_nonterminal": false
-    },
-    {
-      "ok": true,
-      "http_status": 200,
-      "ttfb_ms": 1.466,
-      "first_material_ms": 8301.763,
-      "latency_ms": 8303.091,
-      "answer_len": 1617,
-      "word_count": 257,
-      "citation_count": 4,
+      "ttfb_ms": 1.339,
+      "first_material_ms": 4329.603,
+      "latency_ms": 4331.024,
+      "answer_len": 2015,
+      "word_count": 342,
+      "citation_count": 2,
       "safe_terminal": false,
       "thin_cited_answer": false,
       "semantic_receipts": [
         {
           "claim_id": "claim_1",
           "evidence_ids": [
-            "m26pa7ev_e268b20f5ca1ad7ecce995b9d63f0684"
+            "m26pa7ev_dec5fd8f4ea61120e3e352fb613a5630"
           ],
           "supporting_evidence_ids": [
-            "m26pa7ev_e268b20f5ca1ad7ecce995b9d63f0684"
+            "m26pa7ev_dec5fd8f4ea61120e3e352fb613a5630"
           ],
           "support_class": "direct_support",
           "provider_status": "m27-minimax-nli",
-          "confidence": 0.99,
+          "confidence": 1.0,
           "verified": true,
           "publication_accepted": true,
           "provider_attempt_count": 1,
@@ -734,48 +1369,14 @@
         {
           "claim_id": "claim_2",
           "evidence_ids": [
-            "m26pa7ev_c2a0faf40aa1ad9ab2f2b4e4407eed28"
+            "m26pa7ev_c7a777ad58eb053ca03b72869ca9f338"
           ],
           "supporting_evidence_ids": [
-            "m26pa7ev_c2a0faf40aa1ad9ab2f2b4e4407eed28"
-          ],
-          "support_class": "direct_support",
-          "provider_status": "m27-minimax-nli",
-          "confidence": 0.98,
-          "verified": true,
-          "publication_accepted": true,
-          "provider_attempt_count": 1,
-          "schema_retry_used": false,
-          "fail_closed_reason": ""
-        },
-        {
-          "claim_id": "claim_3",
-          "evidence_ids": [
-            "m26pa7ev_5b097870c3030c5aa8f22bcad2a56db9"
-          ],
-          "supporting_evidence_ids": [
-            "m26pa7ev_5b097870c3030c5aa8f22bcad2a56db9"
+            "m26pa7ev_c7a777ad58eb053ca03b72869ca9f338"
           ],
           "support_class": "direct_support",
           "provider_status": "m27-minimax-nli",
           "confidence": 0.99,
-          "verified": true,
-          "publication_accepted": true,
-          "provider_attempt_count": 1,
-          "schema_retry_used": false,
-          "fail_closed_reason": ""
-        },
-        {
-          "claim_id": "claim_4",
-          "evidence_ids": [
-            "m26pa7ev_b94add590db292c474a9685d9b615329"
-          ],
-          "supporting_evidence_ids": [
-            "m26pa7ev_b94add590db292c474a9685d9b615329"
-          ],
-          "support_class": "direct_support",
-          "provider_status": "m27-minimax-nli",
-          "confidence": 0.98,
           "verified": true,
           "publication_accepted": true,
           "provider_attempt_count": 1,
@@ -796,18 +1397,16 @@
         "claim_graph_ready",
         "claim_verification_started",
         "claim_verification_started",
-        "claim_verification_started",
-        "claim_verification_started",
         "verified_claim_ready",
         "citation_bound",
         "cited_segment_ready",
         "stream_publishable",
         "final_answer_done"
       ],
-      "answer_excerpt": "### Pit 10: Ingestion Smoke Test—Verifying `/health` Alone Isn't Enough The most important thing after deployment is not only \"the API is alive\"; it is \"the RAG data path is alive.\" **A deployment without a smoke test is an unverified deployment.** **What smoke test must confirm (not just `/health`):** 1.\n\n## Why “please answer in JSON” is nowhere near enough The first instinct is usually something like this: > Please return JSON with title, department, and risk_level. If you actually need a system to consume the output, the model may still: - invent an extra field you never asked for - return `medium` instead of `Med` - send a number back as `\"12 hours\"` - flatten an array into a comma-separated string - wrap the payload in explanatory prose - fill missing values by guessing instead of us",
-      "case_id": "C14",
-      "slice": "ordinary_cited",
-      "question": "Why is a model that can answer not enough to be a service?",
+      "answer_excerpt": "So production agentic mode needs at least these guardrails: | guardrail | purpose | |---|---| | `max_steps` | cap the number of steps | | `retry_limit` | prevent infinite reflect / retry loops | | `allowed_tools` | restrict tools by tenant and mode | | per-step budget | cap token and latency per step | | tool timeout | keep a stuck tool from blocking the whole request | | per-step trace | record each step as a Langfuse parent-child span | | per-step evidence | store citation / source snapshots per step | | final verifier | still run citation / faithfulness before the final answer | The difference between normal RAG and Agentic RAG is not that agentic is \"smarter.\" It is that the error surface is bigger, so it needs more tracing, budgeting, and verification.\n\n## Five modes, four capabilitie",
+      "case_id": "C18",
+      "slice": "retrieval_hard",
+      "question": "How do latency, TTFT, and first-answer-text streaming differ in an AI answer system?",
       "topic_contamination": false,
       "expected_safe": false,
       "false_safe_terminal": false,
@@ -817,159 +1416,9 @@
     {
       "ok": true,
       "http_status": 200,
-      "ttfb_ms": 57.936,
-      "first_material_ms": 655.496,
-      "latency_ms": 666.932,
-      "answer_len": 0,
-      "word_count": 0,
-      "citation_count": 0,
-      "safe_terminal": true,
-      "thin_cited_answer": false,
-      "semantic_receipts": [],
-      "semantic_gate_ok": false,
-      "cited_final": false,
-      "terminal_reason": "UNSUPPORTED_CLAIM_SPAN",
-      "status": "owner_only_safe_abstention",
-      "event_names": [
-        "request_started",
-        "retrieval_started",
-        "retrieval_ready",
-        "evidence_ready",
-        "answer_plan_ready",
-        "verifier_gap_detected",
-        "claim_graph_ready",
-        "verifier_gap_detected",
-        "safe_abstention_done",
-        "safe_abstention_done"
-      ],
-      "answer_excerpt": "",
-      "case_id": "C15",
-      "slice": "multilingual",
-      "question": "一個 AI 平台要怎麼安全地服務多家公司？",
-      "topic_contamination": false,
-      "expected_safe": false,
-      "false_safe_terminal": true,
-      "missed_safe_terminal": false,
-      "empty_nonterminal": false
-    },
-    {
-      "ok": true,
-      "http_status": 200,
-      "ttfb_ms": 2.276,
-      "first_material_ms": 5590.448,
-      "latency_ms": 5590.984,
-      "answer_len": 0,
-      "word_count": 0,
-      "citation_count": 0,
-      "safe_terminal": true,
-      "thin_cited_answer": false,
-      "semantic_receipts": [],
-      "semantic_gate_ok": false,
-      "cited_final": false,
-      "terminal_reason": "PRODUCT_THIN_SURFACE",
-      "status": "owner_only_safe_abstention",
-      "event_names": [
-        "request_started",
-        "retrieval_started",
-        "retrieval_ready",
-        "evidence_ready",
-        "answer_plan_ready",
-        "claim_graph_ready",
-        "claim_verification_started",
-        "verifier_gap_detected",
-        "safe_abstention_done",
-        "safe_abstention_done"
-      ],
-      "answer_excerpt": "",
-      "case_id": "C16",
-      "slice": "multilingual",
-      "question": "AI インフラで Kubernetes は何をしますか？",
-      "topic_contamination": false,
-      "expected_safe": false,
-      "false_safe_terminal": true,
-      "missed_safe_terminal": false,
-      "empty_nonterminal": false
-    },
-    {
-      "ok": true,
-      "http_status": 200,
-      "ttfb_ms": 1.25,
-      "first_material_ms": 196.345,
-      "latency_ms": 196.61,
-      "answer_len": 0,
-      "word_count": 0,
-      "citation_count": 0,
-      "safe_terminal": true,
-      "thin_cited_answer": false,
-      "semantic_receipts": [],
-      "semantic_gate_ok": false,
-      "cited_final": false,
-      "terminal_reason": "UNSUPPORTED_CLAIM_SPAN",
-      "status": "owner_only_safe_abstention",
-      "event_names": [
-        "request_started",
-        "retrieval_started",
-        "retrieval_ready",
-        "evidence_ready",
-        "answer_plan_ready",
-        "claim_graph_ready",
-        "verifier_gap_detected",
-        "safe_abstention_done",
-        "safe_abstention_done"
-      ],
-      "answer_excerpt": "",
-      "case_id": "C17",
-      "slice": "retrieval_hard",
-      "question": "Explain the relationship between retrieval, verification, citations, and safe terminals in the answer runtime.",
-      "topic_contamination": false,
-      "expected_safe": false,
-      "false_safe_terminal": true,
-      "missed_safe_terminal": false,
-      "empty_nonterminal": false
-    },
-    {
-      "ok": true,
-      "http_status": 200,
-      "ttfb_ms": 3.285,
-      "first_material_ms": 239.137,
-      "latency_ms": 239.388,
-      "answer_len": 0,
-      "word_count": 0,
-      "citation_count": 0,
-      "safe_terminal": true,
-      "thin_cited_answer": false,
-      "semantic_receipts": [],
-      "semantic_gate_ok": false,
-      "cited_final": false,
-      "terminal_reason": "UNSUPPORTED_CLAIM_SPAN",
-      "status": "owner_only_safe_abstention",
-      "event_names": [
-        "request_started",
-        "retrieval_started",
-        "retrieval_ready",
-        "evidence_ready",
-        "answer_plan_ready",
-        "claim_graph_ready",
-        "verifier_gap_detected",
-        "safe_abstention_done",
-        "safe_abstention_done"
-      ],
-      "answer_excerpt": "",
-      "case_id": "C18",
-      "slice": "retrieval_hard",
-      "question": "How do latency, TTFT, and first-answer-text streaming differ in an AI answer system?",
-      "topic_contamination": false,
-      "expected_safe": false,
-      "false_safe_terminal": true,
-      "missed_safe_terminal": false,
-      "empty_nonterminal": false
-    },
-    {
-      "ok": true,
-      "http_status": 200,
-      "ttfb_ms": 1.531,
-      "first_material_ms": 10.932,
-      "latency_ms": 11.073,
+      "ttfb_ms": 1.465,
+      "first_material_ms": 11.698,
+      "latency_ms": 12.55,
       "answer_len": 0,
       "word_count": 0,
       "citation_count": 0,
@@ -997,9 +1446,9 @@
     {
       "ok": true,
       "http_status": 200,
-      "ttfb_ms": 1.042,
-      "first_material_ms": 11.538,
-      "latency_ms": 11.785,
+      "ttfb_ms": 1.191,
+      "first_material_ms": 11.887,
+      "latency_ms": 12.032,
       "answer_len": 0,
       "word_count": 0,
       "citation_count": 0,

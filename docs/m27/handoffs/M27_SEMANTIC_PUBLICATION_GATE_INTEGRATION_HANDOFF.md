@@ -1,24 +1,26 @@
-# M27 Stage 30G Semantic Publication Gate Integration Handoff
+# M27 Semantic Publication Gate Integration Handoff
 
-Final decision: M27_SEMANTIC_PUBLICATION_GATE_INTEGRATION_FAIL_RETRIEVAL
+Final decision: `M27_SEMANTIC_PUBLICATION_GATE_INTEGRATION_PASS`
 
-Workspace: /home/ubuntu/LLM_Wiki-m27-semantic-publication-gate-30g
-Branch: m27/stage30g-semantic-publication-gate
-Base: 1c4af5302a407ee4444ae95e17abd1e3d1d9d344
-Implementation HEAD used by active candidate: 1511d934b9d43b5633063bbe6a19c105376d14b4
+Owner-only route certification remains pending and must not be inferred from this result.
 
-## State to preserve
-- Offline semantic publication integration: PASS 20/20.
-- Active isolated 18080 image: knowledge-engine:m27-semantic-publication-gate-30g-1511d934, healthy.
-- Rollback retained: m27-owner-canary-28-pre30g / knowledge-engine:m27-owner-canary-29v.
-- Direct20 final: FAIL, 5/18 answerable cited final.
-- p95 final: 11747.02 ms.
-- p95 first material: 11745.247 ms.
-- semantic bad-publish: 0.
-- topic contamination: 0.
-- 100-case and full523: NOT RUN.
+## Current state
+- Stage 30G isolated direct candidate is active on `127.0.0.1:18080`.
+- Active candidate image: `knowledge-engine:m27-semantic-publication-gate-30g-67ca9928`
+- Active HEAD: `67ca9928b54feb7cd81083313f845c264c565b37`
+- Offline integration gate: `20/20 PASS`
+- Direct20: PASS
+  - HTTP: `20/20`
+  - Answerable cited final: `18/18`
+  - Expected safe terminals: `2/2`
+  - p95 final latency: `9510.349 ms`
+  - p95 first-material latency: `9509.107 ms`
 
-## Next repair boundary
-Do not weaken the semantic publication verifier. The remaining blocker is evidence retrieval/corpus coverage. Repair should introduce a governed, generic, versioned evidence source or production corpus update that can supply authoritative material for missing domains, then rerun the same direct20 without case-specific routing or hard-coded answers.
+## Do next
+- Do not infer owner-only route certification from this result.
+- Do not mutate release pointers from this handoff alone.
+- A later authorized stage may decide whether to run a broader direct100 harness if one is explicitly provided or created under a new prompt.
+- full523 remains out of scope unless explicitly authorized by a later prompt.
 
-Do not use historical eval answers/receipts as evidence. Do not infer owner-only route certification.
+## Safety preserved
+No public owner-gated route, no protected owner material, no Nginx reload, no production M26 restart/rebuild, no test backend restart/rebuild, no release pointer mutation, and no public canary were performed.
