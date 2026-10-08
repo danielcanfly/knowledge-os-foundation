@@ -1,0 +1,1 @@
+{"case_id": "stage29u_validation", "candidate_id": "m27-owner-canary-28", "owner_route_verified": false, "non_owner_fallback_verified": false, "credential_forwarded_to_candidate": null, "product_gate_outcome": "unverified", "stop_condition_flags": ["route_attribution_unverified", "candidate_runtime_attestation_not_deployed", "product_gate_unverified"]}

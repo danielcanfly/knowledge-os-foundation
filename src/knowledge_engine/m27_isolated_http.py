@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import socket
+import uuid
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import StreamingResponse
@@ -11,6 +12,7 @@ from .m27_isolated_streaming import (
     M27_ISOLATED_STREAM_PATH,
     M27_ISOLATED_STREAM_SCHEMA,
     m27_isolated_event_stream,
+    sse_frame,
 )
 from .m27_production_evidence_bridge import PRODUCTION_EVIDENCE_AUTHORITY_SCHEMA
 from .m27_runtime_execution import M27ExecutableRequest
@@ -76,14 +78,24 @@ def create_app(*, stream_executor=None) -> FastAPI:
                     "production_touched": False,
                 },
             )
-        return StreamingResponse(
-            m27_isolated_event_stream(
-                request=request,
-                request_payload=payload,
-                run_execution=executor,
-            ),
-            media_type="text/event-stream",
-        )
+        route_id = request.headers.get("x-m27-canary-route-id", "")
+        canary_mode = request.headers.get("x-m27-canary-mode", "")
+        is_canary = route_id == "m27-owner-only-stage28" and canary_mode == "owner_only"
+        async def attested_stream():
+            if is_canary:
+                yield sse_frame("m27_canary_attested", {
+                    "route_id": route_id,
+                    "candidate_id": "m27-owner-canary-28",
+                    "candidate_git_sha": os.environ.get("M27_BUILD_SHA", ""),
+                    "canary_mode": canary_mode,
+                    "request_id": uuid.uuid4().hex,
+                    "credential_header_seen_by_candidate": "x-m27-owner-canary-auth" in request.headers,
+                })
+            async for chunk in m27_isolated_event_stream(
+                request=request, request_payload=payload, run_execution=executor,
+            ):
+                yield chunk
+        return StreamingResponse(attested_stream(), media_type="text/event-stream")
 
     return candidate
 

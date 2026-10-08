@@ -1,0 +1,31 @@
+{
+  "stage": "29U",
+  "final_state": "M27_OWNER_CANARY_ROUTE_ATTRIBUTION_BLOCKED_BY_RUNTIME",
+  "source_head": "a7918fe71ce6f47fb5d99f516e96d11c8d39a089",
+  "active_candidate_id": "m27-owner-canary-28",
+  "expected_candidate_sha": "97ceb0c62f828f1665d63f9cc06364ec1f2cd836",
+  "candidate_docker_health": "healthy",
+  "health": {
+    "production_8080": 200,
+    "test_8081": 200,
+    "candidate_18080": 200,
+    "sidecar_unauthenticated_18081": 401
+  },
+  "nginx_owner_route_configured": true,
+  "nginx_credential_header_strip_configured": true,
+  "candidate_attestation_implemented_in_isolated_source": true,
+  "candidate_attestation_deployed": false,
+  "owner_request_verified_m27": false,
+  "non_owner_fallback_verified_m26": false,
+  "runtime_credential_non_forwarding_verified": false,
+  "seven_smoke_categories_verified": false,
+  "verified_owner_p95_ms": null,
+  "product_gate_outcome": "unverified",
+  "stop_condition_flags": [
+    "route_attribution_unverified",
+    "candidate_runtime_attestation_not_deployed",
+    "product_gate_unverified"
+  ],
+  "route_to_zero_executed": false,
+  "production_mutated": false
+}
