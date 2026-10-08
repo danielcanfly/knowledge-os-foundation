@@ -11,7 +11,9 @@ from typing import Any, Mapping
 from . import m26_aq_semantic_contract as m26
 from . import m26_pa7_arbitrary_query_runtime as legacy
 from .m26_production_answer_bundle import ProductionAnswerBundle
-from .m27_agent_product_runtime import build_agent_native_product_answer, canonicalize_question
+from .m27_agent_product_runtime import (
+    build_agent_native_product_answer, canonicalize_question, canonicalize_question_for_retrieval,
+)
 
 BUNDLE_SNAPSHOT_ENV = "M27_TEST_PAGE_BUNDLE_SNAPSHOT"
 WORKSPACE_ROOT_ENV = "M27_TEST_PAGE_WORKSPACE_ROOT"
@@ -69,47 +71,48 @@ class M27SnapshotLexicalIndex:
         trace_id: str,
         limit: int = 8,
     ) -> list[dict[str, Any]]:
-        terms = self._terms(question)
-        if not terms:
+        direct_terms = self._terms(question)
+        canonical = canonicalize_question_for_retrieval(question)
+        canonical_terms = self._terms(canonical)
+        expansion_terms = tuple(term for term in canonical_terms if term not in set(direct_terms))
+        if not direct_terms and not expansion_terms:
             return []
-        scored: list[tuple[int, int, int, str, dict[str, Any]]] = []
+        scored: list[tuple[int, int, int, int, int, str, dict[str, Any]]] = []
         for doc, title, body, source_id in self._rows:
-            title_hits = sum(1 for term in terms if term in title)
-            body_hits = sum(1 for term in terms if term in body)
-            if title_hits == 0 and body_hits == 0:
+            direct_title = sum(1 for term in direct_terms if term in title)
+            direct_body = sum(1 for term in direct_terms if term in body)
+            expansion_title = sum(1 for term in expansion_terms if term in title)
+            expansion_body = sum(1 for term in expansion_terms if term in body)
+            if direct_title == direct_body == expansion_title == expansion_body == 0:
                 continue
-            score = title_hits * 9 + body_hits * 3
-            exact_bonus = 6 if len(terms) >= 2 and " ".join(terms[:2]) in (title + " " + body) else 0
-            scored.append(
-                (
-                    score + exact_bonus,
-                    title_hits,
-                    body_hits,
-                    str(doc.get("section_id") or ""),
-                    doc,
-                )
+            # Original user terms dominate. Canonical expansion is recall-only
+            # and can never by itself establish publication support.
+            score = (
+                direct_title * 12 + direct_body * 5
+                + expansion_title * 4 + expansion_body
             )
-        scored.sort(key=lambda row: (-row[0], -row[1], -row[2], row[3]))
+            exact_bonus = 8 if (
+                len(direct_terms) >= 2
+                and " ".join(direct_terms[:2]) in (title + " " + body)
+            ) else 0
+            scored.append((
+                score + exact_bonus,
+                direct_title,
+                direct_body,
+                expansion_title,
+                expansion_body,
+                str(doc.get("section_id") or ""),
+                doc,
+            ))
+        scored.sort(key=lambda row: (-row[0], -row[1], -row[2], -row[3], -row[4], row[5]))
         chosen: list[dict[str, Any]] = []
         seen_sections: set[str] = set()
-        seen_sources: set[str] = set()
-        # First pass deliberately promotes source breadth. This is generic and
-        # independent of case IDs or expected answers.
-        for row in scored:
-            doc = row[4]
-            section_id = str(doc.get("section_id") or "")
-            source_id = str(doc.get("source_id") or "")
-            if not section_id or section_id in seen_sections or source_id in seen_sources:
-                continue
-            chosen.append(doc)
-            seen_sections.add(section_id)
-            seen_sources.add(source_id)
-            if len(chosen) >= min(4, limit):
-                break
+        # Relevance wins over source diversity. Publication safety is enforced
+        # later by claim/evidence semantic verification.
         for row in scored:
             if len(chosen) >= limit:
                 break
-            doc = row[4]
+            doc = row[6]
             section_id = str(doc.get("section_id") or "")
             if not section_id or section_id in seen_sections:
                 continue
@@ -127,7 +130,7 @@ class M27SnapshotLexicalIndex:
                     channels=["m27_snapshot_lexical"],
                     retrieval_metadata={
                         "retriever": "m27_snapshot_lexical_v1",
-                        "canonical_terms": list(terms[:16]),
+                        "canonical_terms": list(canonical_terms[:16]),
                     },
                 )
             )
@@ -207,7 +210,7 @@ def build_owner_only_stream_executor(
         started = time.monotonic()
         evidence = snapshot_index.retrieve(
             bundle=bundle,
-            question=canonical_question,
+            question=normalized,
             trace_id=trace_id,
             limit=6,
         )

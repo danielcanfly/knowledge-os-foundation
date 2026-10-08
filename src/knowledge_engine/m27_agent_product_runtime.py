@@ -207,8 +207,10 @@ def canonicalize_question_for_retrieval(question: str) -> str:
     for triggers, expansion in rules:
         if any(trigger.casefold() in haystack for trigger in triggers):
             expansions.append(expansion)
-    if _language(q) in {"zh", "ja"}:
-        expansions.append("English corpus canonical concepts AI infrastructure Kubernetes GPU RAG MCP multi tenant")
+    if _language(q) in {"zh", "ja"} and not expansions:
+        # Generic English fallback is only for queries without a domain-specific
+        # canonical expansion. Otherwise it pollutes ranking with unrelated AI terms.
+        expansions.append("English corpus canonical concepts")
     if not expansions:
         return q
     return (q + " " + " ".join(dict.fromkeys(expansions))).strip()
@@ -249,24 +251,26 @@ def _topic_tokens(question: str) -> set[str]:
     return terms
 
 def _topic_supported(question: str, item: Mapping[str, Any]) -> bool:
-    terms = _topic_tokens(question)
-    if not terms:
-        # No semantically testable anchor. Do not manufacture a citation pass.
+    raw_terms = _topic_tokens(question)
+    focus_terms = _focus_terms(question)
+    if not raw_terms and not focus_terms:
         return False
     blob = " ".join(str(item.get(k) or "") for k in (
-        "title","concept_id","section_id","passage_text","text")).casefold()
-    tokens=set(_M27_WORD_RE.findall(blob))
-    return bool(terms & tokens)
+        "title", "concept_id", "section_id", "passage_text", "text")).casefold()
+    # Canonical focus terms are candidate-admission signals only. They never
+    # count as semantic entailment; the calibrated provider remains mandatory.
+    return any(term and term in blob for term in (raw_terms | focus_terms))
 
 def _score_evidence(question: str, item: Mapping[str, Any]) -> tuple[int, int, int, int]:
-    # Exact whole-token overlap dominates. No generic AI-ecosystem bonus.
-    terms = _topic_tokens(question)
+    raw_terms = _topic_tokens(question)
+    focus_terms = _focus_terms(question)
     blob = " ".join(str(item.get(k) or "") for k in (
-        "title","concept_id","section_id","passage_text","text")).casefold()
-    tokens=set(_M27_WORD_RE.findall(blob))
-    term_hits = len(terms & tokens)
+        "title", "concept_id", "section_id", "passage_text", "text")).casefold()
+    raw_hits = sum(1 for term in raw_terms if term and term in blob)
+    focus_hits = sum(1 for term in focus_terms if term and term in blob)
     locator_bonus = int(bool(_locator_id(item)))
-    return term_hits, locator_bonus, min(len(_text(item)),3000), 0
+    # User terms dominate; canonical expansion is only a recall/ranking aid.
+    return raw_hits * 4 + focus_hits, raw_hits, focus_hits, locator_bonus
 
 def _is_broad_homepage_question(question: str) -> bool:
     q = canonicalize_question_for_retrieval(question).casefold()
@@ -279,26 +283,18 @@ def _is_broad_homepage_question(question: str) -> bool:
 def _select_evidence(question: str, evidence: Sequence[Mapping[str, Any]], *, broad: bool) -> tuple[Mapping[str, Any], ...]:
     usable = [item for item in evidence if _text(item) and _locator_id(item) and _topic_supported(question,item)]
     ranked = sorted(usable, key=lambda item: _score_evidence(question, item), reverse=True)
-    selected: list[Mapping[str, Any]] = []
-    seen_sources: set[str] = set()
     target = 4 if broad else 2
+    selected: list[Mapping[str, Any]] = []
+    used_ids: set[tuple[str, str]] = set()
     for item in ranked:
-        source = _source_identity(item)
-        if source in seen_sources and len(seen_sources) < target:
+        identity = (_source_identity(item), _locator_id(item))
+        if identity in used_ids:
             continue
         selected.append(item)
-        seen_sources.add(source)
+        used_ids.add(identity)
         if len(selected) >= target:
             break
-    if len(selected) < target:
-        used_ids = {(_source_identity(item), _locator_id(item)) for item in selected}
-        for item in ranked:
-            if (_source_identity(item), _locator_id(item)) in used_ids:
-                continue
-            selected.append(item)
-            if len(selected) >= target:
-                break
-    return tuple(selected[:target])
+    return tuple(selected)
 
 def _quote(question: str, item: Mapping[str, Any], *, max_chars: int = 360) -> str:
     text = re.sub(r"\s+", " ", _text(item)).strip()
@@ -478,15 +474,22 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
     repair_attempts: list[dict[str, Any]] = []
     if not selected:
         gaps.append(M27VerifierGap.TRUE_NO_EVIDENCE.value)
-    if len(sources) < required_breadth:
-        gaps.append(M27VerifierGap.INSUFFICIENT_SOURCE_BREADTH.value)
-        events.append(_redacted_event(M27ProductEvent.VERIFIER_GAP_DETECTED, start_ns, gap=M27VerifierGap.INSUFFICIENT_SOURCE_BREADTH.value))
-        events.append(_redacted_event(M27ProductEvent.VERIFIER_GAP_REPAIR_STARTED, start_ns, strategy="deterministic_same_corpus_breadth_fill"))
-        repair_attempts.append({"gap": M27VerifierGap.INSUFFICIENT_SOURCE_BREADTH.value, "strategy": "deterministic_same_corpus_breadth_fill", "provider_retry_used": False})
-        events.append(_redacted_event(M27ProductEvent.VERIFIER_GAP_REPAIR_DONE, start_ns, repaired=not broad and bool(selected)))
+    if len(sources) < required_breadth and selected:
+        # Breadth is a product-quality diagnostic, not semantic proof. A single
+        # strong source may still answer a factual query if every material claim
+        # passes the calibrated entailment gate and the answer is not thin.
+        events.append(_redacted_event(
+            M27ProductEvent.VERIFIER_GAP_DETECTED, start_ns,
+            gap=M27VerifierGap.INSUFFICIENT_SOURCE_BREADTH.value,
+        ))
+        repair_attempts.append({
+            "gap": M27VerifierGap.INSUFFICIENT_SOURCE_BREADTH.value,
+            "strategy": "semantic_verification_over_available_bound_evidence",
+            "provider_retry_used": False,
+        })
     timeline.answer_planning_end_ms = _elapsed_ms(start_ns)
-    if gaps and (broad or not selected):
-        terminal = M27VerifierGap.TRUE_NO_EVIDENCE.value if not selected else M27VerifierGap.INSUFFICIENT_SOURCE_BREADTH.value
+    if not selected:
+        terminal = M27VerifierGap.TRUE_NO_EVIDENCE.value
         timeline.final_emitted_ms = _elapsed_ms(start_ns)
         events.append(_redacted_event(M27ProductEvent.SAFE_TERMINAL_DONE, start_ns, terminal_reason=terminal, gap_taxonomy=gaps))
         return M27ProductAnswerResult(False, {}, (), plan, tuple(dict.fromkeys(gaps)), tuple(repair_attempts), timeline, tuple(events), terminal, {"structured": True, "gap_taxonomy": list(dict.fromkeys(gaps)), "source_breadth_status": source_breadth_status})

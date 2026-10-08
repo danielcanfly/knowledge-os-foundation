@@ -15,5 +15,5 @@ O13,direct,p1,p1,direct_support,m27-minimax-nli,0.96,True,True,2,True,
 O14,direct,p1,,insufficient_evidence,m27-minimax-nli,0.0,False,False,1,False,provider_unavailable
 O15,direct,p1,,insufficient_evidence,m27-minimax-nli,0.0,False,False,2,True,schema_invalid_after_retry
 O16,contam,contam,,unsupported,offline-semantic-provider,0.97,False,False,1,False,offline-verdict
-O18,claim_1,e1,e1,direct_support,offline-semantic-provider,0.97,True,True,1,False,
-O18,claim_2,e2,e2,direct_support,offline-semantic-provider,0.97,True,True,1,False,
+O18,claim_1,e2,e2,direct_support,offline-semantic-provider,0.97,True,True,1,False,
+O18,claim_2,e1,e1,direct_support,offline-semantic-provider,0.97,True,True,1,False,
