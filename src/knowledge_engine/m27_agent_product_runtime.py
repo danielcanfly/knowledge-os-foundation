@@ -519,7 +519,7 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
     except Exception:
         provider = None
     rejected_verification_receipts = []
-    target_verified_claims = 3 if broad else 2
+    target_verified_claims = 2
     for idx, item in enumerate(selected, 1):
         if len(claims) >= target_verified_claims:
             break
