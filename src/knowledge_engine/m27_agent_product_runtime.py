@@ -261,6 +261,27 @@ def _topic_supported(question: str, item: Mapping[str, Any]) -> bool:
     # count as semantic entailment; the calibrated provider remains mandatory.
     return any(term and term in blob for term in (raw_terms | focus_terms))
 
+def _question_obligation_gap(question: str, text: str) -> str | None:
+    """Fail closed when the cited surface does not answer explicit factual obligations.
+
+    This is a query-class constraint rather than a case-ID or dataset-label rule.
+    Entailment of a source excerpt alone is not proof it answers the question.
+    """
+    q = question.casefold()
+    a = text.casefold()
+    if "exact" in q and "production traffic volume" in q:
+        if not re.search(r"\b(?:[0-9][0-9,.]*|zero)\s*(?:requests?|visits?|sessions?|queries|calls|users|events|rps|qps)\b", a):
+            return "MISSING_EXACT_PRODUCTION_TRAFFIC_MEASURE"
+        release_ids = re.findall(r"\b20\d{6}t\d{6}z-[a-f0-9]{8,}\b", q)
+        if release_ids and not any(x in a for x in release_ids):
+            return "MISSING_RELEASE_ANCHOR"
+    if ("retrieved-at" in q and "source-commit" in q and "release" in q):
+        keys = ("retrieved-at", "source-commit", "release")
+        if not all(k in a for k in keys):
+            return "MISSING_PROVENANCE_IDENTITY_DIMENSIONS"
+    return None
+
+
 def _score_evidence(question: str, item: Mapping[str, Any]) -> tuple[int, int, int, int]:
     raw_terms = _topic_tokens(question)
     focus_terms = _focus_terms(question)
@@ -555,6 +576,10 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
     if len(_M27_WORD_RE.findall(" ".join(quotes))) < 45:
         gaps.append(M27VerifierGap.PRODUCT_THIN_SURFACE.value)
     answer_text = _localized_answer(question, selected, quotes, broad=broad)
+    obligation_gap = _question_obligation_gap(question, answer_text)
+    if obligation_gap:
+        gaps.append(M27VerifierGap.UNSUPPORTED_CLAIM_SPAN.value)
+        repair_attempts.append({"gap": obligation_gap, "strategy": "fail_closed_question_obligation_guard"})
     if broad and len(_M27_WORD_RE.findall(answer_text)) < 55:
         gaps.append(M27VerifierGap.PRODUCT_THIN_SURFACE.value)
     timeline.claim_graph_end_ms = _elapsed_ms(start_ns)
