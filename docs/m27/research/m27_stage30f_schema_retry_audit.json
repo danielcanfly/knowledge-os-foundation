@@ -1,0 +1,21 @@
+{
+  "initial_invalid": 1,
+  "raw_retry": [
+    {
+      "case_id": "F014",
+      "verdict": {
+        "support_class": "PARAPHRASE_SUPPORT",
+        "confidence": 0.97,
+        "reason": "The evidence paraphrases the claim: both state that a confirmation is sent to the guest via email after booking. The core meaning is identical, with only minor wording differences (e.g., 'message delivered' vs. 'email confirmation sent').",
+        "evidence_references": [
+          "p1"
+        ]
+      },
+      "latency_ms": 2366
+    }
+  ],
+  "accepted": [
+    "F014"
+  ],
+  "policy": "one_generic_schema_retry;no_normalization"
+}

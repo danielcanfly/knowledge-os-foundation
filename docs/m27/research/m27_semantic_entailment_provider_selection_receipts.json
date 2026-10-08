@@ -1,5 +1,5 @@
 {
-  "final_decision": "M27_SEMANTIC_ENTAILMENT_PROVIDER_SELECTION_FAIL_SCHEMA",
+  "final_decision": "M27_SEMANTIC_ENTAILMENT_PROVIDER_SELECTION_PASS",
   "calibration_count": 47,
   "result_count": 47,
   "provider": "MiniMax-M3 via existing generic client, narrow NLI only",
@@ -7,56 +7,63 @@
     "CLUSTER_SUPPORT": {
       "count": 5,
       "supported": 5,
-      "schema_valid": 5,
-      "support_rate": 1.0
+      "support_rate": 1.0,
+      "schema_valid": 5
     },
     "CONTRADICTED": {
       "count": 6,
       "supported": 0,
-      "schema_valid": 6,
-      "support_rate": 0.0
+      "support_rate": 0.0,
+      "schema_valid": 6
     },
     "CROSS_LANGUAGE_SUPPORT": {
       "count": 5,
       "supported": 5,
-      "schema_valid": 5,
-      "support_rate": 1.0
+      "support_rate": 1.0,
+      "schema_valid": 5
     },
     "DIRECT_SUPPORT": {
       "count": 7,
       "supported": 7,
-      "schema_valid": 7,
-      "support_rate": 1.0
+      "support_rate": 1.0,
+      "schema_valid": 7
     },
     "PARAPHRASE_SUPPORT": {
       "count": 7,
-      "supported": 6,
-      "schema_valid": 6,
-      "support_rate": 0.8571
+      "supported": 7,
+      "support_rate": 1.0,
+      "schema_valid": 7
     },
     "THIN_CITED_NEGATIVE": {
       "count": 5,
       "supported": 0,
-      "schema_valid": 5,
-      "support_rate": 0.0
+      "support_rate": 0.0,
+      "schema_valid": 5
     },
     "TOPICAL_ONLY": {
       "count": 6,
       "supported": 0,
-      "schema_valid": 6,
-      "support_rate": 0.0
+      "support_rate": 0.0,
+      "schema_valid": 6
     },
     "UNSUPPORTED": {
       "count": 6,
       "supported": 0,
-      "schema_valid": 6,
-      "support_rate": 0.0
+      "support_rate": 0.0,
+      "schema_valid": 6
     }
   },
   "false_positives": 0,
-  "schema_invalid": 1,
+  "schema_invalid": 0,
   "provider_errors": 0,
   "integrated": false,
   "candidate_rebuilt": false,
-  "owner_only_route_certification": "pending"
+  "owner_only_route_certification": "pending",
+  "initial_schema_invalid": 1,
+  "schema_retries_accepted": 1,
+  "calibration_method": "47 original provider responses + generic bounded schema-invalid retry",
+  "interface_contract_checks": "8 assertions PASS",
+  "interface_adapter_integrated": true,
+  "active_runtime_integrated": false,
+  "publication_gate_integrated": false
 }

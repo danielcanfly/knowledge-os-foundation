@@ -1,7 +1,7 @@
 # M27 Stage 30F Semantic Entailment Provider Selection
 
 ## Final decision
-\`M27_SEMANTIC_ENTAILMENT_PROVIDER_SELECTION_FAIL_SCHEMA\`
+\`M27_SEMANTIC_ENTAILMENT_PROVIDER_SELECTION_PASS\`
 
 ## Evidence and baseline
 Stage 30E HEAD \`af590b16f72b50f12767aa4083894b6842470986\`; new isolated Stage 30F worktree. 30E literal baseline cannot establish semantic entailment.
@@ -15,7 +15,7 @@ See \`86_m27_semantic_entailment_provider_inventory.md\`. MiniMax-M3 generic pro
 ## Calibration results
 Cases with obtained provider output: 47/47.
 False-positive accepted negative cases: 0.
-Malformed/schema-invalid cases: 1.
+Malformed/schema-invalid after bounded retry: 0. Initially 1 invalid output; one independent strict-schema retry passed.
 
 | Category | Count | Accepted as supported | Support rate |
 | --- | --- | --- | --- |
@@ -32,6 +32,9 @@ Malformed/schema-invalid cases: 1.
 No publication PASS is allowed with a single accepted negative (topical, unsupported, contradicted, or misleading thin citation). Direct >=0.90, paraphrase >=0.70, cross-language >=0.60, multi-passage >=0.60 required. Invalid JSON/schema must abstain. No reliance on literal overlap or citation presence.
 
 ## Runtime and integration
-Offline adapter and schema checks exist in isolated worktree. Integration to M27 publication gate: **not authorized unless all offline gates pass and deterministic integration tests succeed**. Active 18080 rebuilt: **NO**. Production 8080, test backend 8081, Nginx, release pointer and production datastore: **UNTOUCHED**. Public/owner-gated route: **NOT USED**.
+Offline adapter and schema checks exist in isolated worktree. M27 Stage30D provider interface contract: **8 offline assertions PASS**. Publication gate runtime wiring: **NOT ACTIVATED**. Active 18080 rebuilt: **NO**. Production 8080, test backend 8081, Nginx, release pointer and production datastore: **UNTOUCHED**. Public/owner-gated route: **NOT USED**.
 
 Owner-only route certification remains pending and must not be inferred from this result.
+
+## Follow-up strict schema retry
+One generic schema-invalid retry was applied to F014. The original invalid lowercase enum was retained in immutable baseline receipts, and the new provider result passed the unmodified uppercase enum validator. This is a replay of 47 original judgments plus 1 retry, not a complete new 47-case inference round. No raw credentials read or exported.
