@@ -1,0 +1,41 @@
+{
+  "stage": "30N-full200",
+  "dataset": "pilot/m26/m26-pa-5-frozen-population.json",
+  "dataset_count": 200,
+  "decision": "M27_HOTPATCH_FULL200_PASS",
+  "metrics": {
+    "cases": 200,
+    "http_success": 200,
+    "answerable_cases": 175,
+    "answerable_cited_final": 175,
+    "expected_safe_cases": 25,
+    "expected_safe_correct": 25,
+    "missed_safe_terminal": 0,
+    "false_safe_terminal": 0,
+    "empty_nonterminal": 0,
+    "thin_cited_answer": 0,
+    "topic_contamination": 0,
+    "semantic_bad_publish": 0,
+    "obligation_satisfied": 200,
+    "p50_final_latency_ms": 40.675,
+    "p95_final_latency_ms": 5384.911,
+    "p50_first_material_ms": 34.835,
+    "p95_first_material_ms": 5384.594,
+    "first_material_count": 200,
+    "no_m26_mature_composer_delegation": true
+  },
+  "gates": {
+    "success_rate": 1.0,
+    "success_gate": true,
+    "latency_gate": true,
+    "quality_gate": true,
+    "quality_score_proxy": 100.0,
+    "quality_score_proxy_boundary": "derived from product-quality harness flags; not independent semantic judge score",
+    "answerable_required_for_95pct": 167
+  },
+  "failure_count": 0,
+  "failure_cases": [],
+  "start_timestamp": 1791472687.7033048,
+  "end_timestamp": 1791473078.6099575,
+  "full523_executed": false
+}
