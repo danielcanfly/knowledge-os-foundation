@@ -1,0 +1,41 @@
+{
+  "state": "M27_DIRECT_CANDIDATE_PRODUCT_QUALITY_REPAIR_FAIL_SYNTHESIS",
+  "stage": "30B",
+  "baseline_stage30a": {
+    "http_success": "20/20",
+    "answerable_cited": "18/18",
+    "p95_final_ms": 5784.062,
+    "suspected_thin": 13
+  },
+  "patched_code_status": "isolated worktree only; not rebuilt or deployed",
+  "tests": {
+    "targeted_static": "PASS: 5 assertions",
+    "compile": "PASS",
+    "pytest": "BLOCKED: pytest missing; package import missing httpx",
+    "static_m26_composer_guard": "PASS for edited native module",
+    "health": {
+      "8080": 200,
+      "8081": 200,
+      "18080": 200
+    }
+  },
+  "direct_20_rerun": {
+    "executed": false,
+    "reason": "isolated runtime not rebuilt, semantic quality guard and native synthesis unfinished; rerun would test unmodified 29v image"
+  },
+  "direct_100_rerun": {
+    "executed": false,
+    "reason": "20-case gate not passed"
+  },
+  "direct_523_rerun": {
+    "executed": false,
+    "reason": "20-case gate not passed"
+  },
+  "quality_gate": {
+    "thin": null,
+    "topic_contamination": null,
+    "owner_rubric_min": null,
+    "status": "NOT_PROVEN"
+  },
+  "owner_route_certification": "pending"
+}

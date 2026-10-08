@@ -234,14 +234,38 @@ def _locator_id(item: Mapping[str, Any]) -> str:
 def _text(item: Mapping[str, Any]) -> str:
     return str(item.get("passage_text") or item.get("text") or "").strip()
 
+def _topic_tokens(question: str) -> set[str]:
+    # Preserve query specificity: expansion tokens are not proof of semantic support.
+    base = str(question or "").casefold()
+    stop = {"what","does","this","that","have","with","from","where","when","which",
+            "into","about","after","before","there","their","your","could","would",
+            "should","explain","actually","help","helps","many","single","what's",
+            "infrastructure","system","systems","platform","service","services","agent",
+            "agents","model","models","answer","runtime","product","work","working",
+            "the","why","how","can","and","for","are","you","use","using"}
+    terms = {t for t in _M27_WORD_RE.findall(base) if len(t)>=3 and t not in stop}
+    # Cross-lingual technical names survive unchanged.
+    return terms
+
+def _topic_supported(question: str, item: Mapping[str, Any]) -> bool:
+    terms = _topic_tokens(question)
+    if not terms:
+        # No semantically testable anchor. Do not manufacture a citation pass.
+        return False
+    blob = " ".join(str(item.get(k) or "") for k in (
+        "title","concept_id","section_id","passage_text","text")).casefold()
+    tokens=set(_M27_WORD_RE.findall(blob))
+    return bool(terms & tokens)
+
 def _score_evidence(question: str, item: Mapping[str, Any]) -> tuple[int, int, int, int]:
-    terms = _focus_terms(question)
-    blob = " ".join(str(item.get(key) or "") for key in ("source_identity", "source_id", "section_id", "concept_id", "title", "passage_text")).casefold()
-    term_hits = sum(1 for term in terms if term in blob)
-    canon_hits = sum(1 for term in ("ai", "infrastructure", "runtime", "kubernetes", "gpu", "rag", "mcp", "browser", "localbridge", "tenant", "private", "latency", "streaming", "observability", "cost", "service") if term in blob)
-    text_len = len(_text(item))
-    locator_bonus = 1 if _locator_id(item) else 0
-    return term_hits, canon_hits, locator_bonus, min(text_len, 3000)
+    # Exact whole-token overlap dominates. No generic AI-ecosystem bonus.
+    terms = _topic_tokens(question)
+    blob = " ".join(str(item.get(k) or "") for k in (
+        "title","concept_id","section_id","passage_text","text")).casefold()
+    tokens=set(_M27_WORD_RE.findall(blob))
+    term_hits = len(terms & tokens)
+    locator_bonus = int(bool(_locator_id(item)))
+    return term_hits, locator_bonus, min(len(_text(item)),3000), 0
 
 def _is_broad_homepage_question(question: str) -> bool:
     q = canonicalize_question_for_retrieval(question).casefold()
@@ -252,7 +276,7 @@ def _is_broad_homepage_question(question: str) -> bool:
     return any(marker in q for marker in broad_markers) or bool(_CJK_RE.search(question))
 
 def _select_evidence(question: str, evidence: Sequence[Mapping[str, Any]], *, broad: bool) -> tuple[Mapping[str, Any], ...]:
-    usable = [item for item in evidence if _text(item) and _locator_id(item)]
+    usable = [item for item in evidence if _text(item) and _locator_id(item) and _topic_supported(question,item)]
     ranked = sorted(usable, key=lambda item: _score_evidence(question, item), reverse=True)
     selected: list[Mapping[str, Any]] = []
     seen_sources: set[str] = set()
@@ -266,9 +290,9 @@ def _select_evidence(question: str, evidence: Sequence[Mapping[str, Any]], *, br
         if len(selected) >= target:
             break
     if len(selected) < target:
-        used_ids = {_evidence_id(item, idx) for idx, item in enumerate(selected, 1)}
+        used_ids = {(_source_identity(item), _locator_id(item)) for item in selected}
         for item in ranked:
-            if _evidence_id(item, 0) in used_ids:
+            if (_source_identity(item), _locator_id(item)) in used_ids:
                 continue
             selected.append(item)
             if len(selected) >= target:
@@ -405,6 +429,8 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
         citations.append(_citation(item, "claim_1", idx, quote))
     if not citations:
         gaps.append(M27VerifierGap.MISSING_CITATION_LOCATOR.value)
+    if citations and any(not _topic_supported(question, item) for item in selected):
+        gaps.append(M27VerifierGap.UNSUPPORTED_CLAIM_SPAN.value)
     answer_text = _localized_answer(question, selected, quotes, broad=broad) if citations else ""
     word_count = len(_M27_WORD_RE.findall(answer_text))
     if broad and word_count < 85:
