@@ -328,6 +328,45 @@ def _quote(question: str, item: Mapping[str, Any], *, max_chars: int = 360) -> s
         window = window.rsplit(" ", 1)[0].strip()
     return window if window else chosen[:max_chars].strip()
 
+def _material_claim_excerpt(question: str, item: Mapping[str, Any], *, max_chars: int = 620) -> str:
+    """Build a richer extractive claim surface from one evidence passage.
+
+    Only source sentences related to the retrieval focus are included. The
+    provider still has to semantically verify the complete resulting claim.
+    """
+    text = re.sub(r"\s+", " ", _text(item)).strip()
+    if not text:
+        return ""
+    sentences = [x.strip() for x in re.split(r"(?<=[.!?。！？])\s+|\n+", text) if x.strip()]
+    if not sentences:
+        return text[:max_chars].strip()
+    raw_terms = _focus_terms(question) | _topic_tokens(question)
+    stems = {t[:-1] if t.endswith("s") and len(t) > 4 else t for t in raw_terms}
+    ranked = []
+    for idx, sentence in enumerate(sentences):
+        lower = sentence.casefold()
+        hits = sum(1 for term in stems if term and term in lower)
+        if hits:
+            words = len(_M27_WORD_RE.findall(sentence))
+            ranked.append((hits, min(words, 90), -idx, idx, sentence))
+    if not ranked:
+        return ""
+    ranked.sort(reverse=True)
+    selected = []
+    total_words = 0
+    total_chars = 0
+    for _hits, _length, _negidx, idx, sentence in ranked:
+        extra = len(sentence) + (1 if selected else 0)
+        if selected and total_chars + extra > max_chars:
+            continue
+        selected.append((idx, sentence))
+        total_words += len(_M27_WORD_RE.findall(sentence))
+        total_chars += extra
+        if total_words >= 42 or len(selected) >= 3:
+            break
+    return " ".join(sentence for _, sentence in sorted(selected)).strip()
+
+
 def _human_topic(question: str) -> str:
     q = str(question or "").strip().rstrip("?。？")
     return q[:1].lower() + q[1:] if q else "this question"
@@ -412,12 +451,7 @@ def _semantic_runtime_provider():
             if value.startswith(chr(96)*3):
                 value = value.split("\n", 1)[-1].rsplit(chr(96)*3, 1)[0].strip()
             return value
-        from .m27_native_judge_provider import parse_verdict
-        raw = call()
-        try:
-            return parse_verdict(raw, [x.passage_id for x in passages])
-        except (ValueError, TypeError, json.JSONDecodeError):
-            return parse_verdict(call(), [x.passage_id for x in passages])
+        return call()
     return M27NativeJudgeAdapter(invoke)
 
 def build_agent_native_product_answer(*, question: str, intent_class: str, evidence: Sequence[Mapping[str, Any]], requirements: Sequence[object] = (), retrieval_latency_ms: float | None = None, semantic_provider=None) -> M27ProductAnswerResult:
@@ -459,7 +493,8 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
     timeline.claim_graph_start_ms = _elapsed_ms(start_ns)
     claims, citations, quotes = [], [], []
     verification_receipts = []
-    from .m27_semantic_entailment import EvidencePassage, MaterialClaim, verify_material_claim
+    from .m27_semantic_entailment import EvidencePassage, MaterialClaim
+    from .m27_semantic_publication_gate import verify_publication_claim
     try:
         provider = semantic_provider if semantic_provider is not None else _semantic_runtime_provider()
     except Exception:
@@ -467,24 +502,27 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
     for idx, item in enumerate(selected, 1):
         units = _claim_units(question, item)
         if not units: continue
-        quote, score = units[0]
+        _unit, score = units[0]
+        quote = _material_claim_excerpt(question, item)
+        if not quote:
+            continue
         claim_id = f"claim_{idx}"
         pid = _evidence_id(item, idx)
         bound = EvidencePassage(_source_identity(item), _locator_id(item), pid, _text(item), _language(question))
         claim = MaterialClaim(claim_id, quote, 0, len(quote), _language(question), (pid,))
-        verdict = verify_material_claim(claim, (bound,), provider)
-        verification_receipts.append({"claim_id": claim_id, "evidence_ids": [pid],
-            "support_class": verdict.label.value, "provider_status": verdict.provider_id,
-            "verified": verdict.verified, "reason": verdict.reason[:120]})
-        if not verdict.verified: continue
+        accepted, audit = verify_publication_claim(claim, (bound,), provider)
+        verification_receipts.append(audit)
+        if not accepted:
+            continue
         citation = _citation(item, claim_id, idx, quote)
-        citation["semantic_support_score"] = round(score, 3)
+        citation["semantic_entailment_confidence"] = audit["confidence"]
+        citation["topic_overlap_ratio"] = round(score, 3)
         citation["support_unit_excerpt"] = quote
         citations.append(citation)
         quotes.append(quote)
         claims.append(M27ClaimNode(claim_id, quote, (_evidence_id(item,idx),),
             (_locator_id(item),), (_source_identity(item),), 1,
-            "SUPPORTED", "EXTRACTIVE_VERIFIED", "evidence_bound", (citation,)))
+            "SUPPORTED", "SEMANTIC_VERIFIED", "evidence_bound", (citation,)))
     if not claims: gaps.append(M27VerifierGap.UNSUPPORTED_CLAIM_SPAN.value)
     if len(_M27_WORD_RE.findall(" ".join(quotes))) < 45:
         gaps.append(M27VerifierGap.PRODUCT_THIN_SURFACE.value)
@@ -502,7 +540,15 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
         unique_gaps = tuple(dict.fromkeys(gaps))
         events.append(_redacted_event(M27ProductEvent.VERIFIER_GAP_DETECTED, start_ns, gap_taxonomy=list(unique_gaps)))
         events.append(_redacted_event(M27ProductEvent.SAFE_TERMINAL_DONE, start_ns, terminal_reason=unique_gaps[0], gap_taxonomy=list(unique_gaps)))
-        return M27ProductAnswerResult(False, {}, tuple(claims), plan, unique_gaps, tuple(repair_attempts), timeline, tuple(events), unique_gaps[0], {"structured": True, "thin_cited_answer": M27VerifierGap.PRODUCT_THIN_SURFACE.value in unique_gaps, "gap_taxonomy": list(unique_gaps), "source_breadth_status": source_breadth_status})
+        return M27ProductAnswerResult(
+            False, {}, tuple(claims), plan, unique_gaps, tuple(repair_attempts),
+            timeline, tuple(events), unique_gaps[0],
+            {"structured": True,
+             "thin_cited_answer": M27VerifierGap.PRODUCT_THIN_SURFACE.value in unique_gaps,
+             "gap_taxonomy": list(unique_gaps),
+             "source_breadth_status": source_breadth_status,
+             "semantic_verification_receipts": verification_receipts},
+        )
     timeline.first_verified_claim_ready_ms = _elapsed_ms(start_ns)
     events.append(_redacted_event(M27ProductEvent.VERIFIED_CLAIM_READY, start_ns, claim_id="claim_1", text=answer_text, citations=citations))
     timeline.first_citation_bound_ms = _elapsed_ms(start_ns)
@@ -522,7 +568,7 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
         "safe_abstention": False,
         "reason_codes": [],
         "provider_invoked": provider is not None,
-        "provider_call_count": len(verification_receipts),
+        "provider_call_count": sum(int(x.get("provider_attempt_count") or 0) for x in verification_receipts),
         "material_claim_support_verified": True,
         "citation_locator_valid": True,
         "unsupported_accepted_claims": 0,

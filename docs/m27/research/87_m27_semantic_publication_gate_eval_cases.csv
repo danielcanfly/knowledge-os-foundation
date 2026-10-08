@@ -1,15 +1,21 @@
-case,result
-direct_support,not_verified_by_complete_integration
-paraphrase,not_verified_by_complete_integration
-cross_language,not_verified_by_complete_integration
-multi_passage_cluster,not_implemented
-topical_only,fail_closed_design
-unsupported,fail_closed_design
-contradicted,fail_closed_design
-citation_only,fail_closed_design
-thin_cited,threshold_added_unverified
-kubernetes_x402_hotel,full_contamination_suite_not_run
-provider_missing,fail_closed_design
-provider_unavailable,fail_closed_design
-schema_retry,one_retry_implemented_unverified
-m26_composer,not_invoked_by_adapter
+case_id,category,passed,detail
+O01,direct_support,True,direct semantic support accepted
+O02,paraphrase_support,True,provider-verified semantic paraphrase accepted
+O03,cross_language_support,True,cross-language accepted only by semantic provider
+O04,cluster_support,True,verified two-passage cluster accepted
+O05,cluster_support,True,single-reference cluster rejected
+O06,topical_only,True,topical-only evidence rejected
+O07,unsupported,True,unsupported factual extension rejected
+O08,contradicted,True,contradicted claim rejected
+O09,citation_without_support,True,citation existence is not semantic support
+O10,low_confidence,True,interface provider can be pre-calibrated; adapter threshold tested separately
+O11,low_confidence_adapter,True,adapter threshold rejects low confidence
+O12,schema_invalid_after_retry,True,invalid enum remains invalid after one retry
+O13,schema_retry,True,one fresh schema retry accepted
+O14,provider_unavailable,True,provider unavailable fails closed without schema retry
+O15,invalid_evidence_reference,True,hallucinated evidence id rejected after bounded retry
+O16,topic_contamination,True,Kubernetes/x402/hotel contamination rejected
+O17,thin_cited_answer,True,thin cited surface rejected
+O18,runtime_publication_path,True,publication requires semantic provider verdicts
+O19,no_m26_composer_delegation,True,M27 runtime contains no forbidden mature composer delegation
+O20,sanitized_receipts,True,verification receipts contain no raw secret or protected owner material
