@@ -1,0 +1,10 @@
+case_id,execution_status,reason
+m26-pa5-abstention-no-answer-165067e23aa816df,NOT_RUN,BLOCKED_BY_TOOL_SAFETY
+m26-pa5-abstention-no-answer-30b8997616d733a7,NOT_RUN,BLOCKED_BY_TOOL_SAFETY
+m26-pa5-abstention-no-answer-51b66539825ce080,NOT_RUN,BLOCKED_BY_TOOL_SAFETY
+m26-pa5-abstention-no-answer-87c2a2775d021bf3,NOT_RUN,BLOCKED_BY_TOOL_SAFETY
+m26-pa5-abstention-no-answer-a5ec65ccd016c1be,NOT_RUN,BLOCKED_BY_TOOL_SAFETY
+m26-pa5-abstention-no-answer-bae61c9a173e6f27,NOT_RUN,BLOCKED_BY_TOOL_SAFETY
+m26-pa5-abstention-no-answer-dbe23b5b81234e0c,NOT_RUN,BLOCKED_BY_TOOL_SAFETY
+m26-pa5-abstention-no-answer-ffc73138bdde46aa,NOT_RUN,BLOCKED_BY_TOOL_SAFETY
+m26-pa5-conflict-and-temporal-freshness-5409acee28e5785d,NOT_RUN,BLOCKED_BY_TOOL_SAFETY

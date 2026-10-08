@@ -1,0 +1,21 @@
+{
+  "stage": "30K",
+  "final_decision": "M27_DIRECT100_PROVENANCE_OBLIGATION_REPAIR_BLOCKED_BY_TOOL_SAFETY",
+  "source_verified": true,
+  "diagnosis_case_count": 8,
+  "retrieved_at_available": 8,
+  "source_commit_available": 8,
+  "release_identity_available": 8,
+  "offline_compile": "PASS",
+  "offline_diff_check": "PASS",
+  "deterministic_tests": "PASS",
+  "image_build": "PASS",
+  "built_image": "knowledge-engine:m27-direct100-provenance-30k",
+  "active_image_unchanged": "knowledge-engine:m27-direct100-targeted-guard-30j-2dc7990e",
+  "tool_safety_blocked": true,
+  "targeted8": "NOT_RUN",
+  "regression9": "NOT_RUN",
+  "direct100": "NOT_RUN",
+  "full523": "NOT_RUN",
+  "owner_only_certification": "PENDING"
+}

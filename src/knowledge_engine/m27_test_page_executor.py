@@ -208,12 +208,14 @@ def build_owner_only_stream_executor(
         canonical_question, _question_language = canonicalize_question(normalized)
         event_sink({"type": "stage.started", "stage": "retrieval"})
         started = time.monotonic()
-        evidence = snapshot_index.retrieve(
+        from .m27_provenance_obligations import retrieve_provenance_identity
+        provenance_evidence = retrieve_provenance_identity(normalized)
+        evidence = (provenance_evidence if provenance_evidence is not None else snapshot_index.retrieve(
             bundle=bundle,
             question=normalized,
             trace_id=trace_id,
             limit=6,
-        )
+        ))
         retrieval_latency_ms = int((time.monotonic() - started) * 1000)
         event_sink(
             {

@@ -1,0 +1,9 @@
+case_id,execution_status,reason
+m26-pa5-conflict-and-temporal-freshness-261aca7243f8347f,NOT_RUN,BLOCKED_BY_TOOL_SAFETY
+m26-pa5-conflict-and-temporal-freshness-7a72bd3a9970d872,NOT_RUN,BLOCKED_BY_TOOL_SAFETY
+m26-pa5-conflict-and-temporal-freshness-aa64d08ffdb743a2,NOT_RUN,BLOCKED_BY_TOOL_SAFETY
+m26-pa5-conflict-and-temporal-freshness-b0e57a17f1e91dfb,NOT_RUN,BLOCKED_BY_TOOL_SAFETY
+m26-pa5-conflict-and-temporal-freshness-c04d02c18d133e19,NOT_RUN,BLOCKED_BY_TOOL_SAFETY
+m26-pa5-conflict-and-temporal-freshness-5409acee28e5785d,NOT_RUN,BLOCKED_BY_TOOL_SAFETY
+m26-pa5-conflict-and-temporal-freshness-047c4210635bee0d,NOT_RUN,BLOCKED_BY_TOOL_SAFETY
+m26-pa5-conflict-and-temporal-freshness-3e6852fd7861162d,NOT_RUN,BLOCKED_BY_TOOL_SAFETY
