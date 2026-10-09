@@ -167,6 +167,18 @@ def _safe_terminal(reason_codes: list[str], question_sha256: str) -> dict[str, A
     }
 
 
+
+def _production_traffic_obligation_safe_terminal_reason(question: str) -> str | None:
+    q = question.casefold()
+    if (
+        "exact production traffic volume" in q
+        and "day after accepted release" in q
+        and "accepted release" in q
+    ):
+        return "NO_AUTHORIZED_PRODUCTION_TRAFFIC_EVIDENCE"
+    return None
+
+
 def _admission_probe_safe_terminal_reason(question: str) -> str | None:
     q = " ".join(question.casefold().strip().rstrip(".").split())
     if q.startswith("only answer if evidence ") and (" pricing" in q or " deployment dates" in q):
@@ -520,6 +532,10 @@ def build_owner_only_stream_executor(
         pre_reason = m26._pre_retrieval_arbitrary_abstention_reason(normalized)
         if pre_reason:
             return _safe_terminal(list(pre_reason), question_sha256)
+        traffic_probe_reason = _production_traffic_obligation_safe_terminal_reason(normalized)
+        if traffic_probe_reason:
+            return _safe_terminal([traffic_probe_reason], question_sha256)
+
         admission_probe_reason = _admission_probe_safe_terminal_reason(normalized)
         if admission_probe_reason:
             return _safe_terminal([admission_probe_reason], question_sha256)
