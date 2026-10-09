@@ -103,6 +103,13 @@ def test_duplicate_key_bool_unsafe_integer_and_timestamp_are_rejected() -> None:
     assert classify(expires_at="2026-10-10 00:00:00").reason == "TIMESTAMP_UNCERTAIN"
 
 
+def test_unsupported_record_type_is_a_named_v02_denial() -> None:
+    raw, expected = generate_case("V02")
+    result = classify_wire(raw)
+    assert expected == EXPECTED_DENY
+    assert (result.label, result.reason) == (EXPECTED_DENY, "UNSUPPORTED_RECORD_TYPE")
+
+
 def test_expected_original_raw_bytes_reject_reserialization() -> None:
     original = encode_envelope(base_envelope())
     config = replace(default_config(), expected_raw_sha256=hashlib.sha256(original).hexdigest())
@@ -230,5 +237,6 @@ def test_two_writer_and_remote_unknown_schedules_are_deterministic_and_inert() -
 def test_v01_to_v50_coverage_is_explicit_and_never_implied() -> None:
     assert tuple(VECTOR_COVERAGE) == tuple(f"V{index:02d}" for index in range(1, 51))
     assert set(VECTOR_COVERAGE.values()) == {"IMPLEMENTED", NOT_RUN}
+    assert VECTOR_COVERAGE["V03"] == NOT_RUN
     assert VECTOR_COVERAGE["V10"] == NOT_RUN
     assert VECTOR_COVERAGE["V50"] == "IMPLEMENTED"

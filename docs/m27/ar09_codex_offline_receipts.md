@@ -23,10 +23,10 @@ two-writer CAS and POSSIBLY_SENT/UNKNOWN schedules. All schedules report zero se
 
 ## AR01V V01–V50 coverage
 
-Implemented: V01, V02, V03, V06–V09, V11, V14, V16–V17, V20–V22,
+Implemented: V01–V02, V06–V09, V11, V14, V16–V17, V20–V22,
 V26–V27, V29–V33, V35, V39–V45, V48–V50.
 
-NOT_RUN: V04–V05, V10, V12–V13, V15, V18–V19, V23–V25, V28, V34,
+NOT_RUN: V03–V05, V10, V12–V13, V15, V18–V19, V23–V25, V28, V34,
 V36–V38, V46–V47. These IDs are explicitly retained as `NOT_RUN`; no coverage
 is inferred.
 

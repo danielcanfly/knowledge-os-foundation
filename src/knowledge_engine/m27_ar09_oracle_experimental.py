@@ -462,7 +462,9 @@ def generate_case(case_id: str, seed: int = 0) -> tuple[bytes, OracleLabel]:
         return raw, EXPECTED_DENY
     if case_id == "V06":
         return b'{"tenant_id":"a","tenant_id":"b"}', EXPECTED_DENY
-    if case_id == "V07":
+    if case_id == "V02":
+        value["record_type"] = "unknown_authority_record"
+    elif case_id == "V07":
         value["task_version"] = True
     elif case_id == "V08":
         value["attempt"] = SAFE_JSON_UINT_MAX + 1
@@ -509,7 +511,6 @@ IMPLEMENTED_VECTORS = frozenset(
     {
         "V01",
         "V02",
-        "V03",
         "V06",
         "V07",
         "V08",
