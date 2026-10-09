@@ -1,0 +1,69 @@
+{
+  "stage": "30O-mixed-full523-admission",
+  "decision": "M27_MIXED_FULL523_ADMISSION_RUNNER_PASS",
+  "dataset": "/home/ubuntu/LLM_Wiki-m27-admission-release-rerun/docs/m27/research/admission_ladder_receipts.json",
+  "counts": {
+    "verified_cited_answer": 237,
+    "safe_abstention": 52,
+    "rejected_before_provider": 52,
+    "budget_terminal": 26,
+    "m26_invariant": 26,
+    "governance_contract": 130
+  },
+  "admission_metrics": {
+    "verified_answer_expected_count": 237,
+    "verified_answer_cited_count": 237,
+    "cited_final_answer_rate": 1.0,
+    "safe_terminal_expected_count": 130,
+    "safe_terminal_correct_count": 130,
+    "safe_terminal_correctness": 1.0,
+    "safe_abstention_correctness": 1.0,
+    "drift_rejection_correctness": 1.0,
+    "budget_terminal_correctness": 1.0,
+    "unexpected_answer_on_safe_terminal_count": 0,
+    "safe_terminal_missing_leakage_signal_count": 0,
+    "feature_off_invariant": true,
+    "production_no_mutation": true,
+    "gate_pass": true
+  },
+  "governance_metrics": {
+    "governance_expected_count": 130,
+    "governance_pass_count": 130,
+    "governance_pass": true
+  },
+  "live_metrics": {
+    "live_executed_count": 341,
+    "live_http_success": 341,
+    "live_http_success_rate": 1.0,
+    "live_failure_count": 0,
+    "live_p95_latency_ms": 4933.967,
+    "live_p95_first_material_ms": 4932.788
+  },
+  "gates": {
+    "admission_gate_pass": true,
+    "governance_gate_pass": true,
+    "live_success_gate": true,
+    "live_latency_gate": true,
+    "quality_score_proxy": 100.0,
+    "quality_score_proxy_boundary": "derived from admission/product-quality contract flags; not independent LLM judge score",
+    "overall_pass": true
+  },
+  "failure_count": 0,
+  "failure_cases": [],
+  "boundaries": {
+    "production_touched": false,
+    "owner_route_used": false,
+    "target_endpoint": "http://127.0.0.1:18080/v1/answers/stream",
+    "live_expectations": [
+      "rejected_before_provider",
+      "safe_abstention",
+      "verified_cited_answer"
+    ],
+    "contract_replay_expectations": [
+      "budget_terminal",
+      "governance_contract",
+      "m26_invariant"
+    ],
+    "full523_live_answer_stream_all_cases": false
+  }
+}
