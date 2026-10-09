@@ -9,3 +9,5 @@ AR01D N01-N28: unit tests cover only structural/simulated predicates (including 
 The AR01 Master Addendum takes precedence: `unknown_effect` is nonterminal quarantine, zero budgets prohibit usage, authoritative external observations are required for success, and first substantive verified payload byte requires future transport receipts. The source-only base is not equivalent to the active 30P image.
 
 Examples: `PYTHONPATH=src python3 -m pytest -q tests/test_m27_contracts_v1.py`. No external dependency installed by this package. Schemas may evolve by separately reviewed versioned contracts.
+
+A3.7: strict frozen AR01D v1 ToolCapability and Checkpoint shape. Parsed capability never conveys authenticated permissions; authorize denies dispatch until trusted registry, identity, policy, lease and approval consumption are provided. Journal CAS, encryption, observation and stream chain validation remain open. Postterminal correction chronology is not universally illegal.
