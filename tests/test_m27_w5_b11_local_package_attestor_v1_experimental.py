@@ -11,6 +11,7 @@ from pathlib import Path
 import pytest
 
 from knowledge_engine.m27_w5_b11_local_package_attestor_v1_experimental import (
+    FROZEN_SOURCE_ROOT,
     HEAD,
     PROBES,
     SCHEMA,
@@ -28,7 +29,7 @@ from knowledge_engine.m27_w5_b11_local_package_attestor_v1_experimental import (
     zip_entry,
 )
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(FROZEN_SOURCE_ROOT)  # Frozen F11 source, never mutable B11 worker HEAD
 MANIFEST = Path(
     "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/"
     "07_MASTER_REBASE_20261010/05_EVIDENCE_INDEX/W5_F11_SOURCE_FREEZE_MANIFEST_20261010.json"
