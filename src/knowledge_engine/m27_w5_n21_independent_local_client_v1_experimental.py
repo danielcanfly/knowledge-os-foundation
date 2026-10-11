@@ -23,6 +23,9 @@ VERSION = "W5N21IndependentExternalLocalClientV1"
 PASS = "N21_EXTERNAL_LOCAL_CLIENT_FIXTURE_PASS"
 FAIL = "N21_EXTERNAL_LOCAL_CLIENT_NOT_VERIFIED"
 HOST = "127.0.0.1"
+# Bounded cold-start allowance for synthetic-only child import on a loaded Mac.
+CLIENT_PREWARM_DEADLINE_SECONDS = 24.0
+SERVER_BOOT_DEADLINE_SECONDS = 24.0
 IDENTITIES = ("request_id", "run_id", "trace_id", "tenant_id", "actor_id")
 FIELDS = set(IDENTITIES) | {
     "fixture", "sequence", "start", "end", "text", "sha256", "citation_ids",
@@ -264,7 +267,9 @@ def external_client(index: int, port: int, namespace: str) -> dict:
     }
 
 
-def read_client_ready(child: subprocess.Popen, timeout: float = 12.0) -> bytes:
+def read_client_ready(
+    child: subprocess.Popen, timeout: float = CLIENT_PREWARM_DEADLINE_SECONDS
+) -> bytes:
     """Prestart external client so server accept window begins only AFTER readiness."""
     deadline = time.monotonic() + timeout
     pending = bytearray()
@@ -300,6 +305,8 @@ def run_case(worktree: Path, index: int, mode: str, namespace: str) -> dict:
     received = {"status": "NOT_STARTED", "client_pid": None}
     failure = None
     wait_ms = None
+    client_ready_ms = None
+    server_ready_ms = None
     cleanup = {}
     stage = "admission"
     try:
@@ -313,7 +320,9 @@ def run_case(worktree: Path, index: int, mode: str, namespace: str) -> dict:
                     "client", "--index", str(index), "--namespace", namespace,
                 ], cwd=worktree, env=env, stdin=subprocess.PIPE,
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
+                client_started = time.monotonic()
                 preface = read_client_ready(client)
+                client_ready_ms = round((time.monotonic() - client_started) * 1000, 3)
                 stage = "server_boot"
                 server = subprocess.Popen([
                     i15.PYTHON, "-B", "-m",
@@ -322,7 +331,11 @@ def run_case(worktree: Path, index: int, mode: str, namespace: str) -> dict:
                     "--namespace", namespace,
                 ], cwd=worktree, env=env, stdin=subprocess.DEVNULL,
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
-                ready, tail = i15.read_server_ready(server)
+                server_started = time.monotonic()
+                ready, tail = i15.read_server_ready(
+                    server, timeout=SERVER_BOOT_DEADLINE_SECONDS,
+                )
+                server_ready_ms = round((time.monotonic() - server_started) * 1000, 3)
                 stage = "client_recv"
                 client.stdin.write((str(ready["port"]) + "\n").encode("ascii"))
                 client.stdin.flush()
@@ -360,7 +373,12 @@ def run_case(worktree: Path, index: int, mode: str, namespace: str) -> dict:
         "endpoint": f"127.0.0.1:{ready['port']}" if ready else None,
         "client": received, "server": server_receipt,
         "status": failure or received["status"], "stage": stage,
-        "admission_wait_ms": wait_ms, "cleanup": cleanup,
+        "admission_wait_ms": wait_ms,
+        "client_ready_ms": client_ready_ms,
+        "server_ready_ms": server_ready_ms,
+        "client_prewarm_deadline_s": CLIENT_PREWARM_DEADLINE_SECONDS,
+        "server_boot_deadline_s": SERVER_BOOT_DEADLINE_SECONDS,
+        "cleanup": cleanup,
     }
 
 
@@ -440,7 +458,7 @@ def suite(worktree: Path, scratch: Path, namespace: str) -> dict:
     }
 
 
-def main() -> None:
+def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("action", choices=("client", "probe"))
     parser.add_argument("--index", type=int, default=0)
@@ -457,12 +475,19 @@ def main() -> None:
             need(value.isdigit(), "PORT_HANDOFF_INVALID")
             port = int(value)
         print(json.dumps(external_client(args.index, port, args.namespace)))
+        return 0
     else:
         need(args.worktree is not None and args.scratch is not None, "PATH_REQUIRED")
         namespace = args.namespace or uuid.uuid4().hex[:16]
-        print(json.dumps(suite(args.worktree, args.scratch, namespace),
-                         sort_keys=True))
+        result = suite(args.worktree, args.scratch, namespace)
+        print(json.dumps(result, sort_keys=True))
+        # Actual 28-case receipt status is binding; a completed process is NOT
+        # proof that all intended positive socket clients succeeded.
+        return 0 if (result.get("status") == PASS
+                     and result.get("attempted") == 28
+                     and result.get("completed") == 12
+                     and result.get("rejected_or_failed") == 16) else 20
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

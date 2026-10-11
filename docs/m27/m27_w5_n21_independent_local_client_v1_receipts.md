@@ -37,3 +37,21 @@ REAL_APP_CLIENT_ACK_UNVERIFIED; REAL_PROVIDER_AND_RIGHTS_UNVERIFIED; ORIGINAL_52
 - The bounded client prewarm/PID-ready + private port-handoff correction was actually re-run: prewarm_retest N21_REAL_EXTERNAL_CLIENT_RECEIPT.json, SHA256 2e1daf8e3ae93e8ebbbd24fa672d1a3d0f2496aa0922bdfbb8cd6f1f4c89aeee, 28 attempted, 12 complete locally cited dynamic answers, 16 expected denials, fixture-only PASS, full-denominator p95 UNKNOWN.
 - A distinct 8-case concurrent negative OS-child check passed, using 73 parent-child process monitor samples and observed maximum 4 directly owned child processes. Concurrency receipt SHA256 43e4eceb0778fb5e95871f62fb5e6a8fa5dd83b0b7ca936ebba0a258146ccd76. Sampling cannot prove unseen process peaks. The monitor/driver are external-private scratch, not tracked test cases.
 - Narrow N21 pytest 104/104 passed, including 76 in-process fault mutations. Scoped Ruff passed. Original P16 and B13 prohibited evaluation paths were not executed. The formal worker report records all other requested raw file hashes and the final Git commit.
+
+## N22 isolated RDC repair (2026-10-12)
+
+This subsequent repair branch is descended from N21 commit
+`3c96b0c5716bef7078f6ffac5b4a07223395e461`.
+The original N21 worktree, original local receipts and canonical M16 remain unchanged.
+
+- Real external client is prestarted before the inherited fixture server starts.
+- Bounded subprocess Python cold-start/readiness deadlines are 24 seconds,
+  recorded as `client_ready_ms`/`server_ready_ms` and with declared caps.
+  Every failure remains an explicit attempted failure, without silent retries.
+- The 28-case probe CLI now returns **exit 20** if its JSON/receipt gate is
+  `NOT_VERIFIED` or counters do not equal 28/12/16, even if the process itself
+  finishes normally. Exact semantic status must also be inspected by callers.
+- Synthetic regression tests cover success, denied result, fabricated PASS with
+  wrong positive/fault counts, bounded deadlines and unchanged inherited server.
+- No licensed 523, Phase B, actual Provider, application ACK, production SLO
+  or signed release is admitted by this local repair.

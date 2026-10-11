@@ -122,3 +122,28 @@ def test_frame_after_terminal_is_not_accepted() -> None:
     receiver = parse_wire(spec, i15.local_events(spec))
     with pytest.raises(n21.Denied, match="BYTES_AFTER_TERMINAL"):
         receiver.feed(b"event: progress\n\n", 999999)
+
+@pytest.mark.parametrize("status,completed,faults,expected", [
+    (n21.PASS, 12, 16, 0),
+    (n21.FAIL, 10, 18, 20),
+    (n21.FAIL, 12, 16, 20),
+    (n21.PASS, 11, 17, 20),
+    (n21.PASS, 12, 15, 20),
+])
+def test_n22_probe_exit_code_follows_semantic_receipt(
+        monkeypatch, capsys, tmp_path, status, completed, faults, expected):
+    receipt = {"status": status, "attempted": 28, "completed": completed,
+               "rejected_or_failed": faults, "sha256": "0" * 64}
+    monkeypatch.setattr(n21, "suite", lambda *args: receipt)
+    monkeypatch.setattr("sys.argv", [
+        "n21", "probe", "--worktree", str(tmp_path),
+        "--scratch", str(tmp_path / "scratch"), "--namespace", "n22test",
+    ])
+    assert n21.main() == expected
+    assert json.loads(capsys.readouterr().out)["status"] == status
+
+
+def test_n22_boot_deadlines_bounded_and_original_server_unchanged():
+    assert 6.0 < n21.SERVER_BOOT_DEADLINE_SECONDS <= 24.0
+    assert 12.0 < n21.CLIENT_PREWARM_DEADLINE_SECONDS <= 24.0
+    assert i15.BOOT_DEADLINE_SECONDS == 6.0
