@@ -40,3 +40,24 @@ All staging reports and code must label the unresolved boundaries:
 - `NOT_PRODUCTION_OR_RELEASE`
 
 The module's local success marker `L21_EXPLORATORY_LOCAL_ENGINEERING_COMPLETE_OR_PARTIAL` is **not** `W5_FULL_COMPLETE`, `V17_PASS`, `REL01`, `REL02`, `W6`, or a production go decision. The authoring and execution report must quote actual commands, exit codes, and hashes; no test is assumed to pass merely because it exists.
+
+## L22 isolated RDC concurrency / cold-start repair (2026-10-12)
+
+This separate follow-up branch starts from committed L21
+`6fcc6790eaf7e8ae45731944aebdf01636f7fffb`.
+Its copy of the **synthetic-only I15 fixture server** has a bounded 20-second
+listener accept window, rather than the inherited 4-second timeout that could
+expire while a fresh Python client process was importing on a busy Mac.
+In L22 only, scoped L21 subprocess limits are boot 24s, client 24s, exit 16s.
+
+An explicit `M27_L22_SYNTHETIC_DELAY_CONNECT=5` opt-in test marker causes
+exactly five seconds of late client connect in L22's isolated fixture process.
+The real 127.0.0.1 subprocess regression must verify client `recv_calls>0`,
+byte-exact cited content, first verified substantive answer before terminal,
+distinct server/client PIDs and both owned child processes reaped.
+
+The old L21 and underlying I15 production-independent source are not
+mutated in their original worktrees. No implicit retry or silently dropped
+case is allowed; failures must remain visible. All external rights, official
+523, Phase B, authenticated real-app ACK, product p95, B13 positive,
+M16 canonical admission, W6/REL01/REL02 and Production remain blocked.

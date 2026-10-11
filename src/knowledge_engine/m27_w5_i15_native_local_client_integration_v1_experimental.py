@@ -367,7 +367,9 @@ def server(index: int, mode: str, namespace: str = "") -> None:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listener:
         listener.bind((HOST, 0))
         listener.listen(1)
-        listener.settimeout(4)
+        # L22 isolated synthetic server only: give a bounded cold client
+        # import enough time to connect after the READY line is emitted.
+        listener.settimeout(LOCAL_SERVER_ACCEPT_DEADLINE_SECONDS)
         print(json.dumps({
             "ready": True, "host": HOST, "port": listener.getsockname()[1],
             "server_pid": os.getpid(),
@@ -478,6 +480,10 @@ def client(index: int, port: int, namespace: str = "") -> dict:
     error = None
     try:
         require(0 < port < 65536, "INVALID_PORT")
+        # L22 opt-in fixture fault injection: exact five-second late connect.
+        # No delay is applied without the explicit synthetic test marker.
+        if os.environ.get("M27_L22_SYNTHETIC_DELAY_CONNECT") == "5":
+            time.sleep(5)
         connect_started_ns = now_ns()
         with socket.create_connection((HOST, port), timeout=3) as conn:
             connected_ns = now_ns()
@@ -536,6 +542,9 @@ def _child_env(worktree: Path) -> dict:
 PROCESS_CASE_SLOTS = 2
 PROCESS_CHILD_LIMIT = 2 * PROCESS_CASE_SLOTS
 BOOT_DEADLINE_SECONDS = 6.0
+# Larger than the cold Python child import under observed development-host load;
+# applies ONLY to this nonproduction L22 repair worktree.
+LOCAL_SERVER_ACCEPT_DEADLINE_SECONDS = 20.0
 CLIENT_DEADLINE_SECONDS = 8.0
 SERVER_EXIT_DEADLINE_SECONDS = 5.0
 BUDGET_WAIT_SECONDS = 30.0

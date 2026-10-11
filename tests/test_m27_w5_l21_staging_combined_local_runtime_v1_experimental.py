@@ -256,3 +256,32 @@ def test_real_bounded_mixed_concurrency_faults_never_count_as_completion(tmp_pat
     assert results["process_limit"] == 4
     assert results["official_p95"] is None
     assert all(v["synthetic_only"] for v in results["cases"])
+
+def test_l22_isolated_synthetic_accept_window_is_bounded():
+    assert i15.LOCAL_SERVER_ACCEPT_DEADLINE_SECONDS == 20.0
+    assert l21.LOCAL_BOOT_DEADLINE_SECONDS == 24.0
+    assert l21.LOCAL_CLIENT_DEADLINE_SECONDS == 24.0
+
+
+def test_l22_actual_delayed_external_client_receives_cited_answer(monkeypatch):
+    """5s late client must still receive a real 127.0.0.1 answer (old 4s failed)."""
+    worktree = Path(__file__).resolve().parents[1]
+    original_env = i15._child_env
+
+    def delayed_fixture_env(path):
+        env = original_env(path)
+        env["M27_L22_SYNTHETIC_DELAY_CONNECT"] = "5"
+        return env
+
+    monkeypatch.setattr(i15, "_child_env", delayed_fixture_env)
+    monkeypatch.setattr(i15, "BOOT_DEADLINE_SECONDS", 24.0)
+    monkeypatch.setattr(i15, "CLIENT_DEADLINE_SECONDS", 24.0)
+    monkeypatch.setattr(i15, "SERVER_EXIT_DEADLINE_SECONDS", 16.0)
+    result = i15.run_case(worktree, 0, "positive", "l22-delayed")
+    validated = l21.validate_case(result, 0, "positive", "l22-delayed")
+    assert result["status"] == "COMPLETE"
+    assert validated.outcome == "completed"
+    assert result["client"]["recv_calls"] > 0
+    assert result["client"]["first_data_ns"] < result["client"]["terminal_ns"]
+    assert result["diagnostics"]["cleanup"]["server"]["reaped"]
+    assert result["diagnostics"]["cleanup"]["client"]["reaped"]
