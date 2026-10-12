@@ -19,7 +19,7 @@ import sys
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal, Protocol
+from typing import Callable, Literal, Protocol
 
 from knowledge_engine.m27_ar02_durable_writer_v1_experimental import (
     DurableWriterV1,
@@ -298,6 +298,7 @@ class CodingActionRunnerV1:
         approval: ApprovalDecision, verifier: IndependentReviewPort,
         observer: InProcessFixtureObserver, now: int,
         timeout_seconds: int = 3,
+        before_local_send: Callable[[], object] | None = None,
     ) -> CodingReceiptV1:
         """Single physical launch per AR02 outbox claim. Unknown never retries."""
         if type(now) is not int or type(timeout_seconds) is not int:
@@ -392,6 +393,10 @@ class CodingActionRunnerV1:
                 ).encode()
                 _owned_file(work, "test_fixture.py", test_bytes)
                 argv = (sys.executable, "-I", "-B", "test_fixture.py")
+                # Last-moment local send fence; AR02 records UNKNOWN before this
+                # callback. A revoked lease must never start the subprocess.
+                if before_local_send is not None:
+                    before_local_send()
                 attempts = 1
                 try:
                     process = subprocess.run(

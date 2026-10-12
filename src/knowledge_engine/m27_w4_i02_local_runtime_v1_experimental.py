@@ -22,6 +22,9 @@ from knowledge_engine.m27_ar04_permit_sandbox_v1_experimental import (
     InProcessFixtureObserver,
 )
 from knowledge_engine.m27_ar06_governed_memory_experimental import ReadFixture
+from knowledge_engine.m27_m28_local_rights_memory_fence import (
+    LocalLease, LocalRightsMemoryFence, LifecycleDenied,
+)
 from knowledge_engine.m27_w3_ar06_durable_governance_v1_experimental import (
     DurableMemoryExclusion,
     MemoryTicket,
@@ -83,6 +86,7 @@ class TaskContract:
     source_acl_expires: int
     source_acl_current: bool = True
     fixture_only: bool = True
+    lifecycle_lease: LocalLease | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -126,7 +130,7 @@ class _RuntimeAuthority:
         self, sources: tuple[NativeSourceBytes, ...],
         tenant_id: str, actor_id: str, wall_ms: int,
     ) -> None:
-        self.runtime._fresh(self.contract, memory=self.memory, operation="cite")
+        self.runtime._fresh(self.contract, memory=self.memory, operation="read")
         if (tenant_id != self.contract.identity.tenant_id
                 or actor_id != self.contract.actor_id
                 or wall_ms >= self.contract.source_acl_expires * 1000):
@@ -158,7 +162,7 @@ class _RuntimeTransport:
         self.transport.enqueue(frame)
 
     def flush(self, sequence: int) -> None:
-        self.runtime._fresh(self.contract, memory=self.memory, operation="cite")
+        self.runtime._fresh(self.contract, memory=self.memory, operation="publish")
         self.transport.flush(sequence)
         self.flush_count += 1
 
@@ -172,10 +176,14 @@ class I02LocalRuntimeV1:
     ledger, so their own internal reservation must not be duplicated by AR07.
     """
 
-    def __init__(self, writer: DurableWriterV1) -> None:
+    def __init__(
+        self, writer: DurableWriterV1, *,
+        lifecycle: LocalRightsMemoryFence | None = None,
+    ) -> None:
         if not writer.fixture_approval_mode:
             raise I02Denied("LOCAL_FIXTURE_APPROVAL_MODE_REQUIRED")
         self.writer = writer
+        self.lifecycle = lifecycle
         self.compute = LocalComputeBudget(writer)
         self.research = ResearchRecoveryV1(writer)
         self._inflight: set[tuple[str, str]] = set()
@@ -229,7 +237,7 @@ class I02LocalRuntimeV1:
     def _fresh(
         self, contract: TaskContract, *,
         memory: tuple[DurableMemoryExclusion, MemoryTicket, ReadFixture] | None,
-        operation: Literal["read", "use", "cite", "checkpoint", "replay"] = "use",
+        operation: Literal["read", "use", "cite", "publish", "tool", "checkpoint", "replay"] = "use",
     ) -> Head:
         rec = self.writer.recover(contract.identity)
         head = rec["head"]
@@ -244,6 +252,20 @@ class I02LocalRuntimeV1:
             or contract.now >= contract.deadline
         ):
             raise I02Denied("REVOKED_STALE_AUTHORITY_LEASE_OR_TERMINAL")
+        if self.lifecycle is not None:
+            lease = contract.lifecycle_lease
+            if (lease is None or
+                    (lease.tenant_id, lease.run_id, lease.principal_id,
+                     lease.purpose, lease.source_revision,
+                     lease.consent_generation) !=
+                    (contract.identity.tenant_id, contract.identity.run_id,
+                     contract.actor_id, contract.purpose, contract.source_revision,
+                     contract.consent_generation)):
+                raise I02Denied("LOCAL_LIFECYCLE_SCOPE_OR_LEASE_MISSING")
+            try:
+                self.lifecycle.require(lease, operation)
+            except LifecycleDenied as exc:
+                raise I02Denied("LOCAL_LIFECYCLE_REVOKED_OR_STALE") from exc
         if memory is not None:
             ledger, ticket, auth = memory
             if (ledger.identity != contract.identity
@@ -256,7 +278,11 @@ class I02LocalRuntimeV1:
                     or auth.principal != contract.actor_id
                     or auth.purpose != contract.purpose):
                 raise I02Denied("MEMORY_PIN_OR_SCOPE_MISMATCH")
-            ledger.consume(ticket, auth, operation=operation)
+            ledger.consume(
+                ticket, auth,
+                operation=("cite" if operation == "publish" else
+                           "use" if operation == "tool" else operation),
+            )
         return head
 
     def _start(
@@ -435,10 +461,15 @@ class I02LocalRuntimeV1:
             raise I02Denied("CODING_CONTRACT_OR_PERMIT_MISMATCH")
         self._start(contract, memory)
         try:
-            self._fresh(contract, memory=memory, operation="use")
+            self._fresh(contract, memory=memory, operation="tool")
             result = runner.execute(
                 task, snapshot=snapshot, approval=approval,
                 verifier=verifier, observer=observer, now=contract.now,
+                before_local_send=(
+                    lambda: self._fresh(
+                        contract, memory=memory, operation="tool",
+                    )
+                ),
             )
             head = self.writer.read_head(contract.identity)
             if result.outcome == "LOCAL_VERIFIED_APPLIED_TEST_FIXTURE_ONLY":
