@@ -85,3 +85,24 @@ silently overwritten.
 
 This is **new engineering-only code** with independent M24-negative tests;
 G23's historical 271 scoped tests are not counted as new M24 coverage.
+
+## S26 independent SHA-1 diagnostic correction (2026-10-12)
+
+Git `rev-parse --show-object-format` controls the object-ID length: SHA-1
+repositories use 40 lowercase hex characters for commit/tree IDs and Git
+SHA-256 repositories use 64. The pinned I23 baseline here is SHA-1.
+`CandidateIdentity.git_object_format` defaults to `sha1` for compatibility,
+and a physical `inspect_candidate()` obtains the actual repository format.
+The independent **file SHA-256** digests and authority `source_sha256` still
+require exactly 64 lowercase hexadecimal characters. Malformed/forged Git
+identities, source pins/origins, non-direct-I23-child parents, and unsigned
+external authorities remain denied.
+
+S26 repairs only a false `WRONG_I23_TREE_OR_HEAD` diagnostic for a real
+40-hex original M24 commit, not the release decision. The direct-I23-child
+M24 preflight is intentionally NOT an admission claim for the newer
+five-lane G25R/S26 descendant tree. Run a separate signed admission protocol
+for that integrated tree if ever authorized; do not loosen the parent rule.
+The S26 CLI regression uses the physical original direct-child M24 worktree
+for its synthetic loopback client and asserts `NOT_ADMITTED`, every external
+gate missing, receipt mode 0600, and no false SHA-length finding.

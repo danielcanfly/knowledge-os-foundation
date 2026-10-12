@@ -59,7 +59,13 @@ GATES = (
     "provider_authenticated_usage", "signed_oci_and_rollback",
     "owner_canonical_m16_release",
 )
-SHA = re.compile(r"^[a-f0-9]{64}$")
+# Git object IDs follow the repository object format; file digests are SHA-256.
+# This I23-base source is pinned to a SHA-1 repository, not an arbitrary OID.
+FILE_SHA256 = re.compile(r"^[a-f0-9]{64}$")
+GIT_OBJECT_IDS = {
+    "sha1": re.compile(r"^[a-f0-9]{40}$"),
+    "sha256": re.compile(r"^[a-f0-9]{64}$"),
+}
 SAFE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{1,95}$")
 # No externally provided keys or trusted grants are provisioned in M24.
 RELEASE_ADMISSION_ENABLED = False
@@ -75,6 +81,7 @@ class CandidateIdentity:
     source_origins: tuple[tuple[str, str, str], ...]
     clean_or_owned_only: bool
     local_wire_imported: bool
+    git_object_format: str = "sha1"
 
 
 @dataclass(frozen=True, slots=True)
@@ -149,8 +156,16 @@ def inspect_candidate(worktree: Path) -> CandidateIdentity:
     root = worktree.resolve(strict=True)
     if not (root / ".git").exists():
         raise ValueError("NOT_A_GIT_WORKTREE")
+    object_format = _git(root, "rev-parse", "--show-object-format")
+    expected_oid = GIT_OBJECT_IDS.get(object_format)
+    if expected_oid is None:
+        raise ValueError("UNSUPPORTED_GIT_OBJECT_FORMAT")
     head, tree = _git(root, "rev-parse", "HEAD", "HEAD^{tree}").splitlines()
+    if not expected_oid.fullmatch(head) or not expected_oid.fullmatch(tree):
+        raise ValueError("INVALID_GIT_OBJECT_ID")
     base_tree = _git(root, "rev-parse", BASE_COMMIT + "^{tree}")
+    if not expected_oid.fullmatch(BASE_COMMIT) or not expected_oid.fullmatch(base_tree):
+        raise ValueError("BASELINE_GIT_OBJECT_FORMAT_MISMATCH")
     if base_tree != BASE_TREE:
         raise ValueError("WRONG_I23_TREE")
     if head != BASE_COMMIT and _git(root, "rev-parse", "HEAD^") != BASE_COMMIT:
@@ -179,6 +194,7 @@ def inspect_candidate(worktree: Path) -> CandidateIdentity:
         head=head, baseline_commit=BASE_COMMIT, baseline_tree=base_tree,
         candidate_tree=tree, file_sha256=pins, source_origins=ORIGINS,
         clean_or_owned_only=True, local_wire_imported=True,
+        git_object_format=object_format,
     )
 
 
@@ -229,10 +245,15 @@ def assess(
     if not verified:
         reasons.append("CANDIDATE_IDENTITY_NOT_VERIFIED")
     else:
+        expected_oid = GIT_OBJECT_IDS.get(identity.git_object_format)
         if (identity.baseline_commit != BASE_COMMIT or
                 identity.baseline_tree != BASE_TREE or
-                identity.head not in {BASE_COMMIT} and
-                not SHA.fullmatch(identity.head)):
+                expected_oid is None or
+                not expected_oid.fullmatch(identity.baseline_commit) or
+                not expected_oid.fullmatch(identity.baseline_tree) or
+                not expected_oid.fullmatch(identity.head) or
+                not expected_oid.fullmatch(identity.candidate_tree) or
+                (identity.head == BASE_COMMIT and identity.candidate_tree != BASE_TREE)):
             reasons.append("WRONG_I23_TREE_OR_HEAD")
         if identity.source_origins != ORIGINS:
             reasons.append("SOURCE_ORIGIN_CHAIN_MISMATCH")
@@ -256,7 +277,7 @@ def assess(
             claim.status != "APPROVED"
             or not all(SAFE_ID.fullmatch(x) for x in (claim.issuer, claim.witness_id, claim.nonce))
             or not claim.signed_claim
-            or not SHA.fullmatch(claim.source_sha256)
+            or not FILE_SHA256.fullmatch(claim.source_sha256)
             or identity is None or claim.candidate_commit != identity.head
             or claim.nonce in seen_nonces or claim.witness_id in seen_witnesses
         )

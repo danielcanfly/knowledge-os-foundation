@@ -315,3 +315,121 @@ def test_scoped_client_wire_stub_never_auto_admits():
         preflight = m.local_protocol_preflight(ROOT, "m24-test-01")
     assert preflight["status"] == "COMPLETE"
     reason(decision(wire=preflight), "M24_RELEASE_ADMISSION_DISABLED")
+
+
+# S26: Git OIDs and SHA-256 file digests are separate, fail-closed contracts.
+
+def test_s26_real_sha1_git_head_not_false_rejected():
+    import subprocess
+
+    original = ROOT.parent / "W5_M24_ADMISSION_BRIDGE"
+    if not original.is_dir():
+        pytest.skip("original direct-I23-child M24 worktree unavailable")
+    actual_head = subprocess.check_output(
+        ["git", "-C", str(original), "rev-parse", "HEAD"], text=True,
+    ).strip()
+    assert actual_head == "144bf8c2fd65edd2b001e46376c2512c203560cf"
+    assert subprocess.check_output(
+        ["git", "-C", str(original), "rev-parse", "--show-object-format"], text=True,
+    ).strip() == "sha1"
+    ident = m.inspect_candidate(original)
+    assert ident.head == actual_head and len(ident.head) == 40
+    assert ident.git_object_format == "sha1"
+    d = decision(identity=ident)
+    assert "WRONG_I23_TREE_OR_HEAD" not in d.reasons
+    assert d.decision == "NOT_ADMITTED"
+    assert "M24_RELEASE_ADMISSION_DISABLED" in d.reasons
+    assert all(d.gate_states[g] == "MISSING_UNVERIFIED" for g in m.GATES)
+
+
+@pytest.mark.parametrize("head", [
+    "a" * 39, "a" * 41, "a" * 63, "a" * 64, "a" * 65,
+    "z" * 40, "A" * 40, "0" * 39 + "g",
+])
+def test_s26_git_head_malformed_or_wrong_format_denied(head):
+    reason(decision(identity=candidate(head=head)), "WRONG_I23_TREE_OR_HEAD")
+
+
+@pytest.mark.parametrize("tree", ["a" * 39, "a" * 41, "z" * 40])
+def test_s26_malformed_candidate_tree_denied(tree):
+    reason(decision(identity=candidate(candidate_tree=tree)), "WRONG_I23_TREE_OR_HEAD")
+
+
+def test_s26_i23_baseline_head_requires_exact_baseline_tree():
+    reason(decision(identity=candidate(candidate_tree="c" * 40)),
+           "WRONG_I23_TREE_OR_HEAD")
+
+
+def test_s26_wrong_parent_still_rejected_by_real_git_inspector():
+    # S26 is a real descendant of G25R, not an I23 child. This existing
+    # direct-child M24 preflight must NOT silently treat it as one.
+    with pytest.raises(ValueError, match="WRONG_CANDIDATE_PARENT"):
+        m.inspect_candidate(ROOT)
+
+
+@pytest.mark.parametrize("digest", ["a" * 39, "a" * 40, "a" * 63,
+                                           "a" * 65, "z" * 64])
+def test_s26_file_sha256_pin_still_exact_64_hex(digest):
+    assert not m.FILE_SHA256.fullmatch(digest)
+    key = next(iter(m.FILE_PINS))
+    d = decision(identity=candidate(file_sha256={**m.FILE_PINS, key: digest}))
+    reason(d, "SOURCE_SHA_PIN_MISMATCH")
+
+
+def test_s26_wrong_git_format_and_forged_source_remain_denied():
+    wrong_format = candidate(head="a" * 64, git_object_format="sha256")
+    reason(decision(identity=wrong_format), "WRONG_I23_TREE_OR_HEAD")
+    forged = candidate(head="a" * 40, source_origins=(),
+                       file_sha256={**m.FILE_PINS, next(iter(m.FILE_PINS)): "z" * 64})
+    d = decision(identity=forged)
+    reason(d, "SOURCE_ORIGIN_CHAIN_MISMATCH")
+    reason(d, "SOURCE_SHA_PIN_MISMATCH")
+    assert "WRONG_I23_TREE_OR_HEAD" not in d.reasons
+    assert d.decision == "NOT_ADMITTED"
+
+
+def test_s26_actual_cli_valid_git_sha1_still_not_admitted(tmp_path):
+    import subprocess
+    import sys
+
+    original = ROOT.parent / "W5_M24_ADMISSION_BRIDGE"
+    if not original.is_dir():
+        pytest.skip("original direct-I23-child M24 worktree unavailable")
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(ROOT / "src")
+    command = [
+        sys.executable, "-B", "-m",
+        "knowledge_engine.m27_w5_m24_m16_admission_boundary_v1_experimental",
+        "--worktree", str(original), "--scratch", str(tmp_path / "cli-receipt"),
+        "--namespace", "s26-sha-contract",
+    ]
+    run = subprocess.run(command, cwd=ROOT, env=env, capture_output=True,
+                         text=True, timeout=65, check=False)
+    assert run.returncode == 0, run.stderr + run.stdout[-1000:]
+    result = json.loads(run.stdout)
+    assert len(result["candidate_head"]) == 40
+    assert "WRONG_I23_TREE_OR_HEAD" not in result["reasons"]
+    assert result["decision"] == "NOT_ADMITTED"
+    assert result["local_wire"]["status"] == "COMPLETE"
+    assert len([r for r in result["reasons"] if r.startswith("AUTHORITY_MISSING:")]) == len(m.GATES)
+    receipt = tmp_path / "cli-receipt" / "M24_ADMISSION_DECISION.json"
+    assert json.loads(receipt.read_text()) == result
+    assert receipt.stat().st_mode & 0o777 == 0o600
+
+
+def test_s26_actual_cli_wrong_parent_exit20_and_no_admission(tmp_path):
+    import subprocess
+    import sys
+
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(ROOT / "src")
+    run = subprocess.run([
+        sys.executable, "-B", "-m",
+        "knowledge_engine.m27_w5_m24_m16_admission_boundary_v1_experimental",
+        "--worktree", str(ROOT), "--scratch", str(tmp_path / "deny"),
+    ], cwd=ROOT, env=env, capture_output=True, text=True, timeout=25, check=False)
+    assert run.returncode == 20, run.stderr
+    output = json.loads(run.stdout)
+    assert output["decision"] == "NOT_ADMITTED"
+    assert "CANDIDATE_IDENTITY_NOT_VERIFIED" in output["reasons"]
+    assert "WRONG_CANDIDATE_PARENT" in output["local_wire"]["reason"]
