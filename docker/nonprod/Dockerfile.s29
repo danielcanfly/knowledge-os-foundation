@@ -1,0 +1,40 @@
+# S29 isolated offline reproducible package build, no external signer or CI.
+FROM python@sha256:d29f48a31a8b408ed19272ca1e7b10ebae13b240a27e862d3d4217c528e2e0c3
+ARG S29_GIT_HEAD
+ARG S29_GIT_TREE
+LABEL org.opencontainers.image.title="S29 V28-derived offline hash-locked nonprod" \
+      org.opencontainers.image.revision="${S29_GIT_HEAD}" \
+      org.opencontainers.image.source_tree="${S29_GIT_TREE}" \
+      io.knowledge_engine.environment="isolated-local-nonproduction" \
+      io.knowledge_engine.signed="false" \
+      io.knowledge_engine.s29.wheel_lock="linux-arm64-cp311-content-hashes"
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_INDEX=1 \
+    APP_ENV=test \
+    AUTH_MODE=disabled \
+    OBJECT_STORE_BACKEND=filesystem \
+    FILESYSTEM_STORE_ROOT=/var/lib/knowledge-engine/store \
+    CACHE_DIR=/var/lib/knowledge-engine/cache \
+    KNOWLEDGE_CHANNEL=s29-local-nonprod
+RUN useradd --create-home --uid 10001 knowledge
+WORKDIR /app
+COPY docker/nonprod/requirements-s29-linux-arm64.lock.txt ./runtime.lock.txt
+COPY docker/nonprod/build-backend-s29-linux-arm64.lock.txt ./backend.lock.txt
+COPY scripts/s29_verify_locked_wheels.py ./verify_wheels.py
+COPY wheelhouse ./wheelhouse
+RUN python verify_wheels.py --wheelhouse ./wheelhouse \
+      --lock ./runtime.lock.txt --lock ./backend.lock.txt \
+    && python -m pip install --disable-pip-version-check --no-index --no-deps \
+         --require-hashes --find-links ./wheelhouse -r ./runtime.lock.txt \
+    && python -m pip check \
+    && python -m pip freeze > /app/s29-offline-installed-pip-freeze.txt \
+    && rm -rf ./wheelhouse
+COPY pilot ./pilot
+RUN mkdir -p /var/lib/knowledge-engine/cache \
+    && chown -R knowledge:knowledge /var/lib/knowledge-engine /app
+USER knowledge
+EXPOSE 8080
+HEALTHCHECK --interval=5s --timeout=5s --start-period=5s --retries=2 \
+ CMD python -m knowledge_engine.p28r_local_healthcheck
+CMD ["uvicorn", "knowledge_engine.m26_production_api:app", "--host", "0.0.0.0", "--port", "8080"]

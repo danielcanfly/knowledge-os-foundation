@@ -10,14 +10,16 @@ import hashlib
 import os
 import re
 import sqlite3
+from collections.abc import Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterator
 
 _ID = re.compile(r"[A-Za-z0-9_-]{1,64}\Z")
 _KINDS = frozenset({"source", "cache", "citation", "trace", "memory", "checkpoint", "backup"})
-_OPS = frozenset({"read", "cite", "publish", "tool", "checkpoint", "replay", "write", "query", "use"})
+_OPS = frozenset(
+    {"read", "cite", "publish", "tool", "checkpoint", "replay", "write", "query", "use"}
+)
 _FIXTURE = "M28_LOCAL_ONLY_NO_EXTERNAL_AUTHORITY"
 
 
@@ -162,7 +164,9 @@ class LocalRightsMemoryFence:
                 raise LifecycleDenied("DUPLICATE_DERIVED_RECORD")
             path = self._file(lease, item)
             digest = hashlib.sha256(payload).hexdigest()
-            fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY | getattr(os, "O_NOFOLLOW", 0), 0o600)
+            fd = os.open(
+                path, os.O_CREAT | os.O_EXCL | os.O_WRONLY | getattr(os, "O_NOFOLLOW", 0), 0o600
+            )
             try:
                 with os.fdopen(fd, "wb") as stream:
                     stream.write(payload)
@@ -207,10 +211,12 @@ class LocalRightsMemoryFence:
     def publish_queued(self, lease: LocalLease, item: str) -> bytes:
         with self._txn() as db:
             payload = self._get(db, lease, item, "citation", "publish")
-            db.execute("UPDATE m28_blob SET state='PUBLISHED_LOCAL' WHERE tenant=? AND run=? AND item=?",
+            db.execute(
+                "UPDATE m28_blob SET state='PUBLISHED_LOCAL' WHERE tenant=? AND run=? AND item=?",
                        (lease.tenant_id, lease.run_id, item))
             db.execute("INSERT INTO m28_event(tenant,run,kind,generation) VALUES(?,?,?,?)",
-                       (lease.tenant_id, lease.run_id, "LOCAL_CITATION_PUBLICATION", lease.policy_generation))
+                       (lease.tenant_id, lease.run_id, "LOCAL_CITATION_PUBLICATION",
+                        lease.policy_generation))
             return payload
 
     def issue_tool_permit(self, lease: LocalLease, permit: str) -> None:
@@ -220,7 +226,8 @@ class LocalRightsMemoryFence:
             self._require(db, lease, "tool")
             try:
                 db.execute("INSERT INTO m28_permit VALUES(?,?,?,?,?)",
-                           (lease.tenant_id, lease.run_id, permit, lease.policy_generation, "ISSUED"))
+                           (lease.tenant_id, lease.run_id, permit,
+                            lease.policy_generation, "ISSUED"))
             except sqlite3.IntegrityError as exc:
                 raise LifecycleDenied("DUPLICATE_TOOL_PERMIT") from exc
 
@@ -247,12 +254,14 @@ class LocalRightsMemoryFence:
             self._require(db, lease, "use")
             db.execute("UPDATE m28_scope SET status='TOMBSTONED',policy=policy+1 "
                        "WHERE tenant=? AND run=?", (lease.tenant_id, lease.run_id))
-            db.execute("UPDATE m28_blob SET state='DENIED_AFTER_REVOCATION' WHERE tenant=? AND run=?",
+            db.execute(
+                "UPDATE m28_blob SET state='DENIED_AFTER_REVOCATION' WHERE tenant=? AND run=?",
                        (lease.tenant_id, lease.run_id))
             db.execute("UPDATE m28_permit SET state='REVOKED' WHERE tenant=? AND run=?",
                        (lease.tenant_id, lease.run_id))
             db.execute("INSERT INTO m28_event(tenant,run,kind,generation) VALUES(?,?,?,?)",
-                       (lease.tenant_id, lease.run_id, "LOCAL_TOMBSTONE_" + reason, lease.policy_generation + 1))
+                       (lease.tenant_id, lease.run_id, "LOCAL_TOMBSTONE_" + reason,
+                        lease.policy_generation + 1))
         return self.recover_local_cleanup(lease)
 
     def recover_local_cleanup(self, lease: LocalLease) -> dict:
