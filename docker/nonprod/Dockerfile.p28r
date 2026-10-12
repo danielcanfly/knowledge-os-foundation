@@ -1,0 +1,33 @@
+# P28R local-only diagnostic build; no CI, push, external provider, or production use.
+FROM python@sha256:d29f48a31a8b408ed19272ca1e7b10ebae13b240a27e862d3d4217c528e2e0c3
+LABEL org.opencontainers.image.title="P28R T27 nonprod local runtime" \
+      org.opencontainers.image.revision="8604752934fb43a3441055d33c01940028cc5938" \
+      org.opencontainers.image.source_tree="123578f9e1059d1b554fc3fdc011bdc171033afd" \
+      io.knowledge_engine.environment="isolated-local-nonproduction" \
+      io.knowledge_engine.signed="false" \
+      io.knowledge_engine.p28r.scope="local-unsigned-only"
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    APP_ENV=test \
+    AUTH_MODE=disabled \
+    OBJECT_STORE_BACKEND=filesystem \
+    FILESYSTEM_STORE_ROOT=/var/lib/knowledge-engine/store \
+    CACHE_DIR=/var/lib/knowledge-engine/cache \
+    KNOWLEDGE_CHANNEL=p28-nonprod
+RUN useradd --create-home --uid 10001 knowledge
+WORKDIR /app
+COPY pyproject.toml README.md constraints-p28.txt ./
+COPY src ./src
+COPY pilot ./pilot
+# Version constraints from T27 local test venv, no claim of wheel-hash hermeticity.
+RUN python -m pip install --disable-pip-version-check --no-cache-dir -c constraints-p28.txt . \
+    && python -m pip check \
+    && python -m pip freeze > /app/p28-installed-runtime-pip-freeze.txt
+RUN mkdir -p /var/lib/knowledge-engine/cache \
+    && chown -R knowledge:knowledge /var/lib/knowledge-engine /app
+USER knowledge
+EXPOSE 8080
+HEALTHCHECK --interval=5s --timeout=5s --start-period=5s --retries=2 \
+ CMD python -m knowledge_engine.p28r_local_healthcheck
+CMD ["uvicorn", "knowledge_engine.m26_production_api:app", "--host", "0.0.0.0", "--port", "8080"]
