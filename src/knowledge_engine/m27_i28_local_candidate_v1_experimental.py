@@ -536,6 +536,21 @@ def run(scratch: Path) -> dict:
     result["attempts"].append(
         {"kind": "CODING_FIXED_FIXTURE", "status": outcome.status, "exit": receipt.exit_code}
     )
+    # Opt-in ACT-LOCAL executes inside this same I28 entrypoint, with original
+    # I02 admission, M28 and AR02 journal, plus independent localhost SQLite.
+    if os.environ.get("R29_SYNTHETIC_LOCAL_ONLY") == "1":
+        from knowledge_engine.m27_r29_action_cases_experimental import run_cases
+
+        action_result = run_cases(scratch, runtime_for)
+        result["r29_local_action"] = action_result
+        for action_case in action_result["records"]:
+            result["attempts"].append({
+                "kind": "ACT-LOCAL_" + action_case["name"],
+                "status": action_case["status"],
+                "local_posts": action_case["independent_sqlite"]["posts"],
+                "local_effects": action_case["independent_sqlite"]["effects"],
+            })
+
     # Negative admission is exercised on the same real AR02/M28 code path:
     # no unauthorized tenant, revoked source, or non-fixture write can enter.
     guarded_runtime, guarded_contract, _, guarded_lease = runtime_for(

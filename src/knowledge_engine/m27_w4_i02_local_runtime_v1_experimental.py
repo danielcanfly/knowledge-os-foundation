@@ -17,13 +17,27 @@ from knowledge_engine.m27_ar02_durable_writer_v1_experimental import (
     RunIdentity,
 )
 from knowledge_engine.m27_ar04_permit_sandbox_v1_experimental import (
+    ActionRequest,
     ApprovalDecision,
     AuthoritySnapshot,
+    CapabilityRule,
     InProcessFixtureObserver,
+    PermitSandboxV1,
+    Registry,
 )
 from knowledge_engine.m27_ar06_governed_memory_experimental import ReadFixture
 from knowledge_engine.m27_m28_local_rights_memory_fence import (
-    LocalLease, LocalRightsMemoryFence, LifecycleDenied,
+    LifecycleDenied,
+    LocalLease,
+    LocalRightsMemoryFence,
+)
+from knowledge_engine.m27_r29_local_action_v1_experimental import (
+    R29Action,
+    R29LocalActionVerifier,
+    R29LocalFixtureAdapter,
+)
+from knowledge_engine.m27_r29_local_action_v1_experimental import (
+    sha as action_sha,
 )
 from knowledge_engine.m27_w3_ar06_durable_governance_v1_experimental import (
     DurableMemoryExclusion,
@@ -40,6 +54,7 @@ from knowledge_engine.m27_w3_ar08_coding_action_v1_experimental import (
     CodingReceiptV1,
     CodingTaskV1,
     IndependentReviewPort,
+    _ClaimPort,
 )
 from knowledge_engine.m27_w3_ar08_qa_stream_v1_experimental import (
     ClockPort,
@@ -73,7 +88,7 @@ class TaskContract:
     actor_id: str
     delegated_by: str | None
     task_contract_id: str
-    workload: Literal["QA-I", "RES-L", "CODE-L"]
+    workload: Literal["QA-I", "RES-L", "CODE-L", "ACT-LOCAL"]
     source_revision: str
     source_sha256: str
     consent_generation: int
@@ -219,7 +234,7 @@ class I02LocalRuntimeV1:
             or type(contract.exclusion_generation) is not int
             or contract.consent_generation < 0 or contract.exclusion_generation < 0
             or type(contract.lease_epoch) is not int or contract.lease_epoch < 1
-            or contract.workload not in {"QA-I", "RES-L", "CODE-L"}
+            or contract.workload not in {"QA-I", "RES-L", "CODE-L", "ACT-LOCAL"}
         ):
             raise I02Denied("INVALID_TASK_ADMISSION")
         rec = self.writer.recover(identity)
@@ -237,7 +252,9 @@ class I02LocalRuntimeV1:
     def _fresh(
         self, contract: TaskContract, *,
         memory: tuple[DurableMemoryExclusion, MemoryTicket, ReadFixture] | None,
-        operation: Literal["read", "use", "cite", "publish", "tool", "checkpoint", "replay"] = "use",
+        operation: Literal[
+            "read", "use", "cite", "publish", "tool", "checkpoint", "replay"
+        ] = "use",
     ) -> Head:
         rec = self.writer.recover(contract.identity)
         head = rec["head"]
@@ -433,6 +450,195 @@ class I02LocalRuntimeV1:
                 ),
                 payload, resume,
             )
+        finally:
+            self._end(contract)
+
+
+    def action_local(
+        self, contract: TaskContract, action: R29Action, *,
+        adapter: R29LocalFixtureAdapter,
+        verifier: R29LocalActionVerifier,
+        memory: tuple[DurableMemoryExclusion, MemoryTicket, ReadFixture] | None = None,
+        after_enqueue: object = None,
+        before_send: object = None,
+        after_send: object = None,
+    ) -> tuple[LocalOutcome, dict]:
+        """R29 ACT-LOCAL: admitted I02 TaskContract with AR02/04/05 and M28.
+
+        Only an injected, explicitly enabled, fixed 127.0.0.1 OS SQLite
+        fixture service. Never calls AR04 real external dispatch. T3 UNKNOWN
+        is written before one physical POST; uncertain responses are observed,
+        never resent. Hooks exist exclusively for negative local OS faults.
+        """
+        if (
+            contract.workload != "ACT-LOCAL" or not contract.fixture_only
+            or type(adapter) is not R29LocalFixtureAdapter
+            or type(verifier) is not R29LocalActionVerifier
+            or (action.tenant_id, action.run_id, action.actor_id,
+                action.source_revision) != (
+                    contract.identity.tenant_id, contract.identity.run_id,
+                    contract.actor_id, contract.source_revision)
+            or action.mode not in {"normal", "lost_ack", "observer_unknown"}
+            or not action.idempotency_key.isidentifier()
+            or not action.effect_id.isidentifier()
+            or verifier.verifier_id == contract.actor_id
+            or contract.exclusion_generation != 0
+        ):
+            raise I02Denied("ACT_LOCAL_SCOPE_OR_FEATURE_DENIED")
+        self._start(contract, memory)
+        ident = contract.identity
+        rule = CapabilityRule(
+            "fixture.action", "1", "apply", "/fixture/",
+            "r29-local-http-sqlite", 1,
+        )
+        registry = Registry(
+            "fixture-policy", frozenset({"fixture-approver"}),
+            frozenset({"fixture-observer"}), "local-ar02-writer",
+            frozenset({"r29-local-http-sqlite"}), (rule,),
+        )
+        receipt = {}
+        try:
+            self._fresh(contract, memory=memory, operation="tool")
+            request = ActionRequest(
+                request_id="req-" + ident.run_id, run_id=ident.run_id,
+                tenant_id=ident.tenant_id, actor_id=contract.actor_id,
+                delegated_by=contract.delegated_by,
+                capability_id=rule.capability_id, capability_version="1",
+                operation="apply",
+                resource_id=f"/fixture/{ident.tenant_id}/{ident.run_id}",
+                recipient_id="fixture-os-sqlite-only",
+                arguments_digest=action_sha([
+                    action.effect_id, action.idempotency_key, action.source_revision,
+                ]),
+                idempotency_key=action.idempotency_key,
+                intent_version="R29-ACT-LOCAL-FIXTURE-v1",
+                lease_epoch=contract.lease_epoch,
+            )
+            snapshot = AuthoritySnapshot(
+                ident.run_id, ident.tenant_id, contract.actor_id,
+                contract.delegated_by, "r29-local-worker",
+                contract.lease_epoch, contract.deadline, contract.source_acl_expires,
+                contract.consent_generation, contract.exclusion_generation,
+                contract.journal_head.digest, 1, registry.policy_issuer,
+            )
+            sandbox = PermitSandboxV1(registry, None)
+            sandbox.request(request, snapshot, now=contract.now)
+            decision = ApprovalDecision(
+                "approval-" + ident.run_id, "fixture-approver", True,
+                request.digest(), request.intent_version, ident.run_id,
+                ident.tenant_id, contract.lease_epoch,
+                contract.consent_generation, contract.exclusion_generation,
+                contract.source_acl_expires,
+            )
+            permit = sandbox.issue_permit(
+                request.request_id, decision, snapshot,
+                now=contract.now, quoted_cost=1,
+            )
+            self._fresh(contract, memory=memory, operation="tool")
+            reserve_id = "reserve-" + ident.run_id
+            intent_id = "intent-" + ident.run_id
+            claim_id = "claim-" + ident.run_id
+            head = self.writer.reserve(
+                ident, contract.journal_head, reserve_id=reserve_id, amount=1,
+            )
+            head = self.writer.provision_fixture_approval(
+                ident, head, approval_id=decision.approval_id,
+                intent_digest=request.digest(), expires_at=decision.expires_at,
+            )
+            # This final fence runs before durable outbox/intention commit.
+            self._fresh(contract, memory=memory, operation="tool")
+            head = self.writer.commit_intent_and_claim(
+                ident, head, intent_id=intent_id, intent_digest=request.digest(),
+                approval_id=decision.approval_id, claim_id=claim_id,
+                reserve_id=reserve_id,
+                idempotency_key=ident.tenant_id + "-" + ident.run_id + "-" +
+                action.idempotency_key, now=contract.now,
+            )
+            if callable(after_enqueue):
+                after_enqueue()
+            self._fresh(contract, memory=memory, operation="tool")
+            head, token = self.writer.claim_outbox(ident, head, claim_id=claim_id)
+            sandbox._writer = _ClaimPort(token, claim_id, registry.writer_issuer)
+            claim = sandbox.freeze_claim(
+                permit, snapshot, claim_id=claim_id,
+                sender_id=snapshot.worker_id, physical_attempt=1,
+                now=contract.now,
+            )
+            if not claim.writer_receipt.durable_verified:
+                raise I02Denied("ACT_LOCAL_DURABLE_ACK_MISSING")
+            # Unknown before physical send. No implicit/automatic retries.
+            head = self.writer.mark_possible_send(
+                ident, head, claim_id=claim_id, local_ack_token=token,
+            )
+            if callable(before_send):
+                before_send()
+            self._fresh(contract, memory=memory, operation="tool")
+            receipt["sent_attempted"] = True
+            try:
+                adapter.send_once(action, claim_id, request.digest())
+            except (OSError, ValueError):
+                receipt["ack_lost_or_unavailable"] = True
+            if callable(after_send):
+                after_send()
+            # Separate service, separate SQLite evidence. Never infer APPLIED
+            # from a successful POST acknowledgement alone.
+            try:
+                observed = adapter.observe(action, claim_id, request.digest())
+                verified_hash = verifier.verify(
+                    observed, action=action, claim=claim_id,
+                    intent=request.digest(),
+                )
+            except (OSError, ValueError):
+                observed = None
+                verified_hash = None
+            if observed is None or verified_hash is None:
+                receipt.update(
+                    observer="UNKNOWN", effect="UNKNOWN_EFFECT",
+                    claim=claim_id, intent_sha256=request.digest(),
+                )
+                return LocalOutcome(
+                    contract.workload, ident.run_id,
+                    "UNKNOWN_EFFECT_NO_AUTORETRY", self.writer.read_head(ident),
+                ), receipt
+            self._fresh(contract, memory=memory, operation="tool")
+            head = self.writer.record_observer_reconciliation(
+                ident, self.writer.read_head(ident), intent_id=intent_id,
+                original_t1_digest=request.digest(), observer_id="fixture-observer",
+                evidence_ref="r29-" + ident.run_id,
+                evidence_sha256=verified_hash,
+                outcome=("CONFIRMED_APPLIED" if observed["effect"] == "applied"
+                         else "CONFIRMED_NOT_APPLIED"),
+                source_revision=contract.source_revision,
+                consent_generation=contract.consent_generation,
+                exclusion_generation=contract.exclusion_generation,
+                expires_at=contract.deadline, now=contract.now,
+            )
+            head = self.writer.charge(
+                ident, head, reserve_id=reserve_id,
+                charge_id="charge-" + ident.run_id, amount=1,
+            )
+            status = ("LOCAL_VERIFIED_APPLIED" if observed["effect"] == "applied"
+                      else "LOCAL_VERIFIED_NOT_APPLIED")
+            message = self.writer.verification_message(
+                ident, head, evidence_ref="r29-" + ident.run_id,
+                verification_ref="ar05-r29-" + ident.run_id, status=status,
+            )
+            head = self.writer.commit_terminal(
+                ident, head, evidence_ref="r29-" + ident.run_id,
+                verification_ref="ar05-r29-" + ident.run_id,
+                verifier_id=verifier.verifier_id,
+                signature_hex=verifier.sign_local_terminal(message),
+                status=status, now=contract.now,
+            )
+            receipt.update(
+                observer=observed, effect=observed["effect"], claim=claim_id,
+                intent_sha256=request.digest(), ar05_sha256=verified_hash,
+            )
+            return LocalOutcome(
+                contract.workload, ident.run_id,
+                status + "_FIXTURE_ONLY", head,
+                artifact_sha256=verified_hash,
+            ), receipt
         finally:
             self._end(contract)
 
