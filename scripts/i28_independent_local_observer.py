@@ -99,6 +99,8 @@ def inspect(run: Path, fault: Path) -> dict:
         ),
         "ar10_never_self_promotes": (
             result["ar10"]["candidate_only"]
+            and result["ar10"]["state"] == "DRAFT"
+            and result["ar10"]["reason"] == "OK"
             and not result["ar10"]["auto_promoted"]
             and result["ar10"]["release_writes"] == 0
             and result["ar10"]["tool_effects"] == 0

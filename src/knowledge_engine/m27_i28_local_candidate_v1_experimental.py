@@ -672,7 +672,7 @@ def run(scratch: Path) -> dict:
         version_tag="candidate.v1",
         rollback_ref="baseline.fixture.1",
         reviewer_id="fixture.reviewer",
-        proposed_effect="bounded_local_research_rank_only",
+        proposed_effect="routing_rank_delta_only",
     )
     rights = RightsSnapshot(
         "tenantA",
@@ -727,6 +727,8 @@ def run(scratch: Path) -> dict:
         and result["revocation"]["child_exit"] == 0
         and not result["revocation"]["child"]["admitted_after_revoke"]
         and not result["revocation"]["child"]["publish_after_revoke"]
+        and result["ar10"]["state"] == "DRAFT"
+        and result["ar10"]["reason"] == "OK"
         and result["ar10"]["release_writes"] == 0
     )
     result["integrated_local_acceptance"] = bool(good)
