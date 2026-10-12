@@ -1,5 +1,9 @@
 from __future__ import annotations
-import csv, json, os, sys
+
+import csv
+import json
+import os
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -8,7 +12,10 @@ sys.path.insert(0, str(ROOT / "src"))
 from knowledge_engine.m27_agent_product_runtime import build_agent_native_product_answer
 from knowledge_engine.m27_native_judge_provider import M27NativeJudgeAdapter
 from knowledge_engine.m27_semantic_entailment import (
-    EntailmentVerdict, EvidencePassage, MaterialClaim, SupportLabel,
+    EntailmentVerdict,
+    EvidencePassage,
+    MaterialClaim,
+    SupportLabel,
 )
 from knowledge_engine.m27_semantic_publication_gate import verify_publication_claim
 

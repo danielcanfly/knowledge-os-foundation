@@ -1,6 +1,8 @@
+import ast
+import re
 import unittest
-import ast, re
 from pathlib import Path
+
 source = Path(__file__).resolve().parents[1] / "src/knowledge_engine/m27_agent_product_runtime.py"
 tree = ast.parse(source.read_text())
 fn = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "_question_obligation_gap")

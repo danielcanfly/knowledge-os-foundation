@@ -12,13 +12,18 @@ from pathlib import Path
 import pytest
 
 from knowledge_engine.m27_m28_local_rights_memory_fence import (
-    LifecycleDenied, LocalLease, LocalRightsMemoryFence,
+    LifecycleDenied,
+    LocalLease,
+    LocalRightsMemoryFence,
 )
 from knowledge_engine.m27_w4_i02_local_runtime_v1_experimental import (
-    I02Denied, I02LocalRuntimeV1,
+    I02Denied,
+    I02LocalRuntimeV1,
 )
 from test_m27_w4_i02_local_runtime_v1_experimental import (
-    make, qa_bundle, coding_bundle,
+    coding_bundle,
+    make,
+    qa_bundle,
 )
 
 PAYLOAD = b"PRIVATE_TENANT_A_SENTINEL_NEVER_ECHOED"

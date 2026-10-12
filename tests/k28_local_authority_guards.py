@@ -4,13 +4,23 @@ import json
 import sqlite3
 import sys
 from dataclasses import replace
+from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
-from importlib.util import spec_from_file_location, module_from_spec
 
 from k28_real_os_fault_harness import (
-    KEY, VERIFIER, IDENTITY, INTENT, IDEMPOTENCY, EXPIRY,
-    writer, initialize, intent, arm, emit,
-    FenceError, http_json
+    EXPIRY,
+    IDEMPOTENCY,
+    IDENTITY,
+    INTENT,
+    KEY,
+    VERIFIER,
+    FenceError,
+    arm,
+    emit,
+    http_json,
+    initialize,
+    intent,
+    writer,
 )
 
 

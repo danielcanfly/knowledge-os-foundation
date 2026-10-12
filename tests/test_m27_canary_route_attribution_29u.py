@@ -1,6 +1,9 @@
 import json
+
 from fastapi.testclient import TestClient
+
 from knowledge_engine.m27_isolated_http import create_app
+
 
 def test_attestation_scoped_and_safe(monkeypatch):
     monkeypatch.setenv("M27_BUILD_SHA", "test-sha")

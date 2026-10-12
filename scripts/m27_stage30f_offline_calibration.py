@@ -1,5 +1,11 @@
+import collections
+import csv
+import json
+import subprocess
+import sys
+import time
 from pathlib import Path
-import csv,subprocess,json,collections,sys,time
+
 w=Path("/home/ubuntu/LLM_Wiki-m27-semantic-entailment-30f")
 path=w/"docs/m27/research/86_m27_semantic_entailment_calibration_cases.csv"
 cases=list(csv.DictReader(path.open()))
@@ -32,9 +38,10 @@ for line in out.splitlines():
  try: outrows.append(json.loads(line))
  except: pass
 (w/"docs/m27/research/m27_stage30f_raw_judge_outputs.json").write_text(json.dumps(outrows,ensure_ascii=False,indent=2))
-from importlib.util import spec_from_file_location,module_from_spec
 # importing adapter without installed repo path; use source-based schema checks in isolated PYTHONPATH
 import os
+from importlib.util import module_from_spec, spec_from_file_location
+
 sys.path.insert(0,str(w/"src"))
 def parse_verdict(raw,allowed):
  if isinstance(raw,str): raw=json.loads(raw)

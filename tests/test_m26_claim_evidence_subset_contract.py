@@ -6,8 +6,8 @@ from typing import Any
 
 import pytest
 
-from knowledge_engine import m26_pa7_semantic_closure_runtime as runtime
 from knowledge_engine import m26_aq_semantic_contract as semantic_contract
+from knowledge_engine import m26_pa7_semantic_closure_runtime as runtime
 
 
 def _slots() -> list[dict[str, Any]]:

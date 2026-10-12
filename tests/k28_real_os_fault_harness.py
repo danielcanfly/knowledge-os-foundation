@@ -11,7 +11,6 @@ import hmac
 import http.client
 import json
 import os
-from pathlib import Path
 import signal
 import socket
 import sqlite3
@@ -19,9 +18,9 @@ import subprocess
 import sys
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import parse_qs, urlparse
-
 from importlib.util import module_from_spec, spec_from_file_location
+from pathlib import Path
+from urllib.parse import parse_qs, urlparse
 
 # Load the real scoped AR02 source by path. Avoid importing the package's M26
 # provider bootstrap (httpx/credentials are not relevant to this isolated test).

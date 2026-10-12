@@ -1,5 +1,12 @@
 from __future__ import annotations
-import csv, json, statistics, sys, time, urllib.error, urllib.request
+
+import csv
+import json
+import statistics
+import sys
+import time
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]

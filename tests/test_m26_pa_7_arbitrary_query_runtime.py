@@ -14,8 +14,8 @@ import httpx
 import pytest
 from jsonschema import Draft202012Validator
 
-from knowledge_engine import m26_pa7_arbitrary_query_runtime as runtime_module
 from knowledge_engine import m26_aq_semantic_contract as semantic_contract
+from knowledge_engine import m26_pa7_arbitrary_query_runtime as runtime_module
 from knowledge_engine.m26_pa7_arbitrary_query_runtime import (
     LocalDenseProjectionChannel,
     PA7ArbitraryQueryError,

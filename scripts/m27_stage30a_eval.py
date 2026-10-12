@@ -1,6 +1,13 @@
 from __future__ import annotations
-import csv, json, sys, statistics, re, time
+
+import csv
+import json
+import re
+import statistics
+import sys
+import time
 from pathlib import Path
+
 sys.path.insert(0, "scripts")
 import m27_test_page_compare_19r as h
 

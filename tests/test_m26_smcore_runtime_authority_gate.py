@@ -3,7 +3,6 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 CANONICAL = "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query"
 LEGACY_MODULE = "m26_pa7_arbitrary_query_runtime"

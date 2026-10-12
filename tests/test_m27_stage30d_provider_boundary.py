@@ -2,6 +2,7 @@ import importlib.util
 import sys
 import unittest
 from pathlib import Path
+
 path = Path(__file__).resolve().parents[1] / "src/knowledge_engine/m27_semantic_entailment.py"
 spec = importlib.util.spec_from_file_location("m27_semantic_entailment_standalone", path)
 module = importlib.util.module_from_spec(spec)

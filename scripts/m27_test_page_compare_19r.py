@@ -1,5 +1,13 @@
 from __future__ import annotations
-import argparse, hashlib, json, statistics, subprocess, time, urllib.error, urllib.request
+
+import argparse
+import hashlib
+import json
+import statistics
+import subprocess
+import time
+import urllib.error
+import urllib.request
 from pathlib import Path
 from typing import Any
 

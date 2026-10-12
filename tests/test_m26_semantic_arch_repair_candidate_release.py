@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from knowledge_engine.errors import IntegrityError
 from knowledge_engine import m26_semantic_arch_repair_candidate_release as subject
+from knowledge_engine.errors import IntegrityError
 
 
 def test_source_bound_release_id_changes_with_source_and_admission_identity() -> None:

@@ -1,5 +1,6 @@
 """OS subprocess performs resumed reads using the SAME durable SQLite ledger."""
 from __future__ import annotations
+
 import json
 import os
 import sys
@@ -7,7 +8,9 @@ import time
 from pathlib import Path
 
 from knowledge_engine.m27_m28_local_rights_memory_fence import (
-    LifecycleDenied, LocalLease, LocalRightsMemoryFence,
+    LifecycleDenied,
+    LocalLease,
+    LocalRightsMemoryFence,
 )
 
 

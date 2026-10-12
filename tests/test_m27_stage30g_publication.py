@@ -1,5 +1,6 @@
 """Offline fail-closed checks for Stage30G partial integration."""
 import unittest
+
 from knowledge_engine.m27_agent_product_runtime import build_agent_native_product_answer
 from knowledge_engine.m27_semantic_entailment import EntailmentVerdict, SupportLabel
 

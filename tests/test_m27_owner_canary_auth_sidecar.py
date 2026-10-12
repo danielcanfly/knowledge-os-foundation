@@ -5,7 +5,6 @@ import tempfile
 from pathlib import Path
 
 import pytest
-
 from scripts.m27_owner_canary_auth_sidecar import _load_first_private_value
 
 

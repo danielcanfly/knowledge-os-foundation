@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 from knowledge_engine import m26_pa7_arbitrary_query_runtime as runtime
 from tests.m26_answer_bundle_fixture import synthetic_full_production_answer_bundle

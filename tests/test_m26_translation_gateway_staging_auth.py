@@ -7,8 +7,8 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
-from knowledge_engine.auth import Authenticator, Principal
 from knowledge_engine import m26_translation_gateway_public_api as gateway_module
+from knowledge_engine.auth import Authenticator, Principal
 from knowledge_engine.m26_translation_gateway_public_api import (
     create_app,
 )

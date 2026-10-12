@@ -8,9 +8,10 @@ import statistics
 import sys
 import time
 import urllib.request
-from dataclasses import dataclass, asdict, field
+from collections.abc import Iterable
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 WORD_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_'-]*")
 STOPWORDS = {

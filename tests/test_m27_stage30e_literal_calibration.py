@@ -3,6 +3,7 @@ import sys
 import types
 import unittest
 from pathlib import Path
+
 root=Path(__file__).resolve().parents[1] / "src/knowledge_engine"
 pkg=types.ModuleType("knowledge_engine")
 pkg.__path__=[str(root)]
@@ -12,8 +13,14 @@ for name in ("m27_semantic_entailment","m27_native_literal_provider"):
     module=importlib.util.module_from_spec(spec)
     sys.modules[spec.name]=module
     spec.loader.exec_module(module)
-from knowledge_engine.m27_semantic_entailment import EvidencePassage, MaterialClaim, SupportLabel, verify_material_claim
 from knowledge_engine.m27_native_literal_provider import LiteralBaselineProvider
+from knowledge_engine.m27_semantic_entailment import (
+    EvidencePassage,
+    MaterialClaim,
+    SupportLabel,
+    verify_material_claim,
+)
+
 
 class CalibrationTests(unittest.TestCase):
     def verdict(self, claim, evidence, claim_language="en", evidence_language="en"):
