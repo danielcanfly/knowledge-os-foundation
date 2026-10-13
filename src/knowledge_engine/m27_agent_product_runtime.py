@@ -573,7 +573,15 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
             (_locator_id(item),), (_source_identity(item),), 1,
             "SUPPORTED", "SEMANTIC_VERIFIED", "evidence_bound", (citation,)))
     if not claims: gaps.append(M27VerifierGap.UNSUPPORTED_CLAIM_SPAN.value)
-    if len(_M27_WORD_RE.findall(" ".join(quotes))) < 45:
+    # Distinct source locators do not turn one repeated claim into two.
+    # Count unique verified claim surfaces for product depth and length; provider
+    # approval is necessary but cannot independently waive the thin-answer gate.
+    normalized_claim_surfaces = tuple(
+        re.sub(r"\s+", " ", quote).strip().casefold() for quote in quotes
+    )
+    distinct_claim_surfaces = tuple(dict.fromkeys(normalized_claim_surfaces))
+    if (len(distinct_claim_surfaces) < len(normalized_claim_surfaces)
+            or len(_M27_WORD_RE.findall(" ".join(distinct_claim_surfaces))) < min_publish_words):
         gaps.append(M27VerifierGap.PRODUCT_THIN_SURFACE.value)
     answer_text = _localized_answer(question, selected, quotes, broad=broad)
     obligation_gap = _question_obligation_gap(question, answer_text)
