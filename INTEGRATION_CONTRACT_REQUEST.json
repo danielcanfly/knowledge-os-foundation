@@ -1,0 +1,39 @@
+{
+  "schema_version": "m27-wave-a-a01-integration-contract-request/v1",
+  "worker": "A01",
+  "candidate_base_head": "216f912994d20d134b1c8af50f7b2dd1a1c89a15",
+  "scope": "own isolated nonproduction worktree only",
+  "contract": "m26-fast-public/canonical-semantic-v2",
+  "ownership": [
+    "src/knowledge_engine/m26_aq_semantic_contract.py",
+    "src/knowledge_engine/m27_runtime_execution.py"
+  ],
+  "compatibility": {
+    "legacy_contract_v1": {
+      "original_unchanged_nodes": 3,
+      "classified": "CONTRACT_CONFLICT",
+      "semantics": "single-call-only, empty semantic_closure; original tests remain red by design"
+    },
+    "canonical_v2": {
+      "semantics": "non-empty semantic closure proof retained on verified answer, bounded provider attempts; request physical attempt and cost ledger separately exposed",
+      "default_legacy_shim_max_provider_calls": 2,
+      "one_call_budget_explicitly_supported": true
+    },
+    "provider_usage": {
+      "legacy_provider_call_count": "verifier-local logical call count remains for compatibility",
+      "provider_usage_contract_request_provider_calls": "all injected provider.call boundaries",
+      "physical_attempts_observed": "transport attempts for first-party MiniMax, API call boundaries for opaque injected providers",
+      "unknown_effect_retry": "prohibited",
+      "cost_cap": "fail-closed"
+    },
+    "production_evidence_bridge": {
+      "authority": "pinned production-equivalent source/release/locator/digest required",
+      "verification": "canonical M26 semantic provider and independent conservative lexical necessary-condition guard; no unsupported source proposition admitted",
+      "scope": "local synthetic fixtures only"
+    }
+  },
+  "integration_request": "A08/Integrator independently review versioned contract, run unchanged legacy and v2 oracle as distinct denominators, merge only after scope/ABI approval; do not rewrite historic v1 tests/attestation or Q34",
+  "protected_scopes_unchanged": true,
+  "original_tests_unmodified": true,
+  "no_real_production_or_external_provider": true
+}

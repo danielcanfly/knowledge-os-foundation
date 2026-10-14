@@ -15,7 +15,7 @@ import httpx
 from . import m26_pa7_arbitrary_query_runtime as legacy
 from . import m26_pa7_semantic_closure_runtime as runtime
 from .m26_gemini_dense_fallback import M26_GEMINI_CANDIDATE_RELEASE_ID
-from .m26_pa5_v8_live import LiveGateError, MiniMaxClient
+from .m26_pa5_v8_live import AnswerProviderAttemptBudget, LiveGateError, MiniMaxClient
 from .m26_preamble_r1_candidate_release import (
     PREAMBLE_R1_RELEASE_ID,
     preamble_r1_authority_mismatch,
@@ -36,6 +36,7 @@ from .m27_bounded_agentic_retrieval_runtime import (
 )
 
 CONTRACT_SCHEMA_VERSION = "m26-aq-canonical-semantic-contract/v1"
+FAST_PUBLIC_CONTRACT_VERSION = "m26-fast-public/canonical-semantic-v2"
 CONTRACT_MATCHER_VERSION = "authority-boundary-natural-equivalence/v2"
 CANONICAL_RUNTIME_ENTRYPOINT = (
     "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query"
@@ -178,6 +179,99 @@ def _quality_plain_answer_text(answer_text: str) -> str:
 class _FastAttemptOutcome:
     response: dict[str, Any] | None = None
     envelope: FastAttemptEnvelope | None = None
+
+
+class _InjectedProviderQuota:
+    """Request-scoped budget for injected providers (including test doubles).
+
+    A provider exception has an unknown external effect: no retry is permitted.
+    Physical calls made internally by an injected SDK are not observable here;
+    real MiniMax transport gets its own physical-attempt ledger.
+    """
+
+    def __init__(self, client: Any, *, max_calls: int, max_cost: Decimal) -> None:
+        if type(max_calls) is not int or max_calls < 1:
+            raise ValueError("max_provider_calls must be a positive integer")
+        if not max_cost.is_finite() or max_cost < 0:
+            raise ValueError("max_cost must be a finite nonnegative Decimal")
+        self._client = client
+        self.max_calls = max_calls
+        self.max_cost = max_cost
+        self.attempt_budget = AnswerProviderAttemptBudget(max_calls)
+        self.calls = 0
+        self.cost = Decimal("0")
+        self._uncertain_effect = False
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._client, name)
+
+    def call(self, payload: Mapping[str, Any], call_class: str) -> dict[str, Any]:
+        if self._uncertain_effect:
+            raise LiveGateError("provider result unknown; retry prohibited")
+        self.attempt_budget.consume(call_class=call_class, provider="injected")
+        self.calls += 1
+        try:
+            result = self._client.call(payload, call_class)
+        except Exception as exc:
+            self._uncertain_effect = True
+            raise LiveGateError("provider result unavailable; unknown effect") from exc
+        if not isinstance(result, Mapping):
+            self._uncertain_effect = True
+            raise LiveGateError("provider result not a mapping")
+        try:
+            cost = Decimal(str(result.get("cost_usd", "0")))
+        except (ValueError, ArithmeticError) as exc:
+            self._uncertain_effect = True
+            raise LiveGateError("invalid provider cost accounting") from exc
+        if not cost.is_finite() or cost < 0:
+            self._uncertain_effect = True
+            raise LiveGateError("invalid provider cost accounting")
+        self.cost += cost
+        if self.cost > self.max_cost:
+            self._uncertain_effect = True
+            raise LiveGateError("provider cost cap exceeded; no publication")
+        return dict(result)
+
+
+def _finalize_provider_usage(
+    response: dict[str, Any], provider: Any
+) -> dict[str, Any]:
+    """Publish real attempt/cost totals, including fail-closed paths.
+
+    Some M26 recovery branches return a verifier-local call count of zero even
+    though fast-candidate attempts were already spent. Request usage must never
+    be replaced by the verifier-local counter.
+    """
+    attempts = getattr(provider, "attempt_budget", None)
+    budget = attempts.snapshot() if callable(getattr(attempts, "snapshot", None)) else {}
+    calls = getattr(provider, "calls", 0)
+    call_count = len(calls) if isinstance(calls, (list, tuple)) else int(calls or 0)
+    # The legacy provider_call_count represents verifier-local logical calls.
+    # Preserve it for existing readers and expose the authoritative request
+    # ledger separately. In particular an abstention may report zero verifier
+    # calls after spending two fast attempts; the ledger must not hide them.
+    logical_calls = int(response.get("provider_call_count", 0) or 0)
+    response["provider_call_count_semantics"] = "legacy_verifier_local"
+    response["provider_invoked"] = bool(call_count)
+    cost = getattr(provider, "cost", None)
+    if isinstance(cost, Decimal):
+        response["payg_equivalent_cost_usd"] = format(cost, "f")
+    response["provider_usage_contract"] = {
+        "schema_version": "m26-provider-usage-budget/v2",
+        "request_provider_calls": call_count,
+        "legacy_verifier_local_calls": logical_calls,
+        "legacy_count_underreports_attempts": logical_calls < call_count,
+        "physical_attempts_observed": budget.get(
+            "consumed_physical_attempts", call_count
+        ),
+        "max_physical_attempts": budget.get("max_physical_attempts"),
+        "internal_sdk_attempt_visibility": (
+            "per_transport" if isinstance(provider, MiniMaxClient)
+            else "provider_call_boundary_only"
+        ),
+        "unknown_effect_retry_prohibited": True,
+    }
+    return response
 
 
 FAST_RETRY_ONCE = "FAST_RETRY_ONCE"
@@ -4125,6 +4219,7 @@ def _response_with_contract(response: dict[str, Any]) -> dict[str, Any]:
     contract = _semantic_contract_public()
     response["semantic_contract_fingerprint"] = contract["fingerprint"]
     response["canonical_runtime"] = runtime_contract_identity()
+    response["fast_public_contract_version"] = FAST_PUBLIC_CONTRACT_VERSION
     closure = response.get("semantic_closure")
     if isinstance(closure, dict):
         closure["semantic_contract"] = contract
@@ -6033,13 +6128,20 @@ def run_owner_arbitrary_query(
             )
         )
 
-    provider = provider_client
+    provider = (
+        _InjectedProviderQuota(
+            provider_client, max_calls=max_provider_calls, max_cost=max_cost
+        )
+        if provider_client is not None
+        else None
+    )
     if provider is None:
         try:
             provider = MiniMaxClient(
                 os.environ.get("MINIMAX_API_KEY", ""),
                 max_calls=max_provider_calls,
                 max_cost=max_cost,
+                attempt_budget=AnswerProviderAttemptBudget(max_provider_calls),
             )
         except LiveGateError as exc:
             verification = legacy._verified_abstention(
@@ -6336,7 +6438,7 @@ def run_owner_arbitrary_query(
             stage="publication",
             status=fast_outcome.response.get("status", ""),
         )
-        return fast_outcome.response
+        return _finalize_provider_usage(fast_outcome.response, provider)
     legacy._emit_runtime_event(event_sink, "stage.started", stage="closure")
     legacy._emit_runtime_event(event_sink, "stage.started", stage="review")
     legacy._emit_runtime_event(event_sink, "stage.started", stage="verification")
@@ -6414,4 +6516,4 @@ def run_owner_arbitrary_query(
         stage="publication",
         status=response.get("status", ""),
     )
-    return response
+    return _finalize_provider_usage(response, provider)

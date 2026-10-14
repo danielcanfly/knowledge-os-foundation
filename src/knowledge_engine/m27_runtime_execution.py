@@ -140,6 +140,86 @@ def _verification_citations_are_selected(
     return True
 
 
+# Production evidence can have a valid immutable citation binding while a
+# provider incorrectly labels an unrelated proposition as "ENTAILED".
+# This is a deliberately conservative NECESSARY lexical grounding check,
+# not a substitute for the semantic verifier. Unsupported content fails
+# closed; unfamiliar paraphrases may abstain rather than be over-admitted.
+_PRODUCTION_GROUNDING_STOP = frozenset({
+    "a", "an", "and", "are", "as", "at", "be", "been", "by", "do",
+    "does", "for", "from", "has", "have", "in", "into", "is", "it",
+    "of", "on", "or", "that", "the", "their", "this", "to", "was",
+    "were", "which", "with",
+})
+_PRODUCTION_GROUNDING_EQUIVALENT = {
+    "keeps": "store", "keep": "store", "kept": "store",
+    "stores": "store", "stored": "store", "storage": "store",
+    "analyzes": "analysis", "analyze": "analysis",
+    "analyzing": "analysis", "analyses": "analysis",
+    "analytics": "analysis", "analytical": "analysis",
+    "supports": "support", "supported": "support",
+}
+
+
+def _production_grounding_terms(value: str) -> set[str]:
+    return {
+        _PRODUCTION_GROUNDING_EQUIVALENT.get(term, term)
+        for term in re.findall(r"[a-z0-9]+|[\u3400-\u9fff]+", value.casefold())
+        if term not in _PRODUCTION_GROUNDING_STOP
+    }
+
+
+def _production_claims_lexically_grounded(
+    verification: Mapping[str, Any],
+    selected: Sequence[Mapping[str, Any]],
+) -> bool:
+    """Conservative independent veto over the provider's entailment judgment.
+
+    Every published claim must name an admitted citation and introduce no
+    material term absent from that cited source, modulo closed equivalents.
+    The ordinary verifier and pinned citation checks remain mandatory.
+    """
+    claims = verification.get("answer_claims")
+    citations = verification.get("citations")
+    if not isinstance(claims, list) or not claims:
+        return False
+    if not isinstance(citations, list) or not citations:
+        return False
+    admitted = {str(item.get("evidence_id", "")): item for item in selected}
+    by_citation = {
+        str(citation.get("citation_id", "")): admitted.get(
+            str(citation.get("evidence_id", ""))
+        )
+        for citation in citations
+        if isinstance(citation, Mapping)
+    }
+    cited_evidence: list[Mapping[str, Any]] = []
+    for claim in claims:
+        if not isinstance(claim, Mapping):
+            return False
+        content = str(claim.get("surface_text") or "").strip()
+        ids = claim.get("citation_ids")
+        if not content or not isinstance(ids, list) or not ids:
+            return False
+        sources = [by_citation.get(str(cid)) for cid in ids]
+        if any(source is None for source in sources):
+            return False
+        support = _production_grounding_terms(
+            " ".join(str(source.get("passage_text") or "") for source in sources)
+        )
+        terms = _production_grounding_terms(content)
+        if not terms or not terms.issubset(support):
+            return False
+        cited_evidence.extend(source for source in sources if source is not None)
+    published = str(verification.get("answer_text") or "")
+    published = re.sub(r"\[claim_\d+_ref_\d+\]", "", published)
+    answer_terms = _production_grounding_terms(published)
+    all_support = _production_grounding_terms(
+        " ".join(str(source.get("passage_text") or "") for source in cited_evidence)
+    )
+    return bool(answer_terms) and answer_terms.issubset(all_support)
+
+
 def _bound_evidence(
     *,
     output: object,
@@ -437,12 +517,19 @@ def execute_isolated(
                             or {"required": False, "matched": False},
                         )
                     else:
-                        # Keep the pinned production-evidence claim-graph
-                        # path and its formal citation-authority checks.
-                        answer = build_claim_native_answer(
+                        # A pinned production bundle establishes evidence identity,
+                        # not semantic entailment. Verify the model-generated answer
+                        # against the admitted M26 evidence before publication, and
+                        # enforce production citation bindings below.
+                        answer, _closure = synthesize_and_verify(
                             question=request.question,
+                            trace_id=f"{task.task_id}:{round_index}",
+                            intent_class=request.intent_class,
                             evidence=selected,
-                            event_sink=request.event_sink,
+                            provider_client=provider,
+                            requirements=request.requirements,
+                            endpoint_proof=request.endpoint_proof
+                            or {"required": False, "matched": False},
                         )
                     verification = dict(answer)
                 except (ProviderQuotaExhausted, SemanticProviderUnavailable):
@@ -478,6 +565,25 @@ def execute_isolated(
                         "answer_claims": [],
                         "reason_codes": ("CITATION_BINDING_DRIFT",),
                         "gap_taxonomy": ["CITATION_BINDING_DRIFT"],
+                    }
+                if (
+                    production_authority is not None
+                    and verification.get("status") == "owner_only_cited_answer"
+                    and not _production_claims_lexically_grounded(verification, selected)
+                ):
+                    # A model's own ENTAILED label cannot certify that it did
+                    # not add unsupported propositions to a pinned source.
+                    answer = {}
+                    verification = {
+                        "status": "owner_only_safe_abstention",
+                        "safe_abstention": True,
+                        "citation_locator_valid": False,
+                        "material_claim_support_verified": False,
+                        "unsupported_accepted_claims": 0,
+                        "citations": [],
+                        "answer_claims": [],
+                        "reason_codes": ("PRODUCTION_CLAIM_UNGROUNDED",),
+                        "gap_taxonomy": ["PRODUCTION_CLAIM_UNGROUNDED"],
                     }
             verifier_end_ns = time.perf_counter_ns()
             status = str(verification.get("status", "unknown"))
@@ -581,7 +687,7 @@ def execute_isolated(
                         else "synthetic_only"
                     ),
                     "compiler_authority": (
-                        "production_evidence_preserved_after_formal_authority_admission"
+                        "m26_3_synthetic_selector_non_authoritative"
                         if production_authority is not None
                         else "m26_3_synthetic_only"
                     ),
