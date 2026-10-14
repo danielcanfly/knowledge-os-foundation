@@ -416,12 +416,12 @@ def build_owner_graph_dto(
     if expected_node_count is not None and len(nodes) != expected_node_count:
         raise M26AskApiError(
             "M26_OWNER_GRAPH_COUNT_MISMATCH",
-            "current production graph node count does not match the active manifest",
+            "current production graph counts do not match the active manifest (nodes)",
         )
     if expected_edge_count is not None and len(edges) != expected_edge_count:
         raise M26AskApiError(
             "M26_OWNER_GRAPH_COUNT_MISMATCH",
-            "current production graph edge count does not match the active manifest",
+            "current production graph counts do not match the active manifest (edges)",
         )
 
     payload = {

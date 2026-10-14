@@ -8,6 +8,7 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
+from .m26_aq_semantic_contract import synthesize_and_verify
 from .m26_context_compiler import compile_context_package
 from .m26_retrieval_envelope import with_self_digest
 from .m27_adaptive_compute import AdaptiveComputeBudget, AdaptiveComputeController
@@ -73,17 +74,22 @@ class ProviderQuota:
         start_ns = time.perf_counter_ns()
         try:
             result = self._provider.call(payload, call_class)
-        except Exception:
+        except Exception as exc:
             self.telemetry.append(
                 ProviderCallTelemetry(
                     call_index=self.calls,
                     call_class=call_class,
                     latency_ms=elapsed_ms(start_ns, time.perf_counter_ns()),
                     success=False,
-                    reason_code="PROVIDER_EXCEPTION",
+                    reason_code="PROVIDER_EXCEPTION_UNKNOWN_EFFECT",
                 )
             )
-            raise
+            # An exception does not prove that the call had no effect.
+            # Consume the remaining grant and refuse any local retry.
+            self.max_calls = self.calls
+            raise SemanticProviderUnavailable(
+                "provider result unavailable; retries prohibited after uncertain effect"
+            ) from exc
         self.telemetry.append(
             ProviderCallTelemetry(
                 call_index=self.calls,
@@ -414,12 +420,44 @@ def execute_isolated(
                 }
             else:
                 verifier_start_ns = time.perf_counter_ns()
-                answer = build_claim_native_answer(
-                    question=request.question,
-                    evidence=selected,
-                    event_sink=request.event_sink,
-                )
-                verification = dict(answer)
+                try:
+                    if production_authority is None:
+                        # The isolated M26.3 synthetic route must execute the
+                        # canonical M26 semantic closure, including its real
+                        # provider verification. A claim graph over selected
+                        # passages alone cannot certify a model answer.
+                        answer, _closure = synthesize_and_verify(
+                            question=request.question,
+                            trace_id=f"{task.task_id}:{round_index}",
+                            intent_class=request.intent_class,
+                            evidence=selected,
+                            provider_client=provider,
+                            requirements=request.requirements,
+                            endpoint_proof=request.endpoint_proof
+                            or {"required": False, "matched": False},
+                        )
+                    else:
+                        # Keep the pinned production-evidence claim-graph
+                        # path and its formal citation-authority checks.
+                        answer = build_claim_native_answer(
+                            question=request.question,
+                            evidence=selected,
+                            event_sink=request.event_sink,
+                        )
+                    verification = dict(answer)
+                except (ProviderQuotaExhausted, SemanticProviderUnavailable):
+                    # Provider allowance is a hard upper bound. A failed or
+                    # unknown-effect attempt must never authorize a retry.
+                    answer = {}
+                    verification = {
+                        "status": "owner_only_safe_abstention",
+                        "safe_abstention": True,
+                        "citation_locator_valid": False,
+                        "material_claim_support_verified": False,
+                        "unsupported_accepted_claims": 0,
+                        "citations": [],
+                        "reason_codes": ("PROVIDER_OR_DEADLINE_EXHAUSTED",),
+                    }
                 if (
                     production_authority is not None
                     and verification.get("status") == "owner_only_cited_answer"

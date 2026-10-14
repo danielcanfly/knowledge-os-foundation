@@ -1305,7 +1305,11 @@ def _facet_local_provider_payload(
         "dropped_claims. source_span_hint and why are explanatory metadata only and may "
         "not add facts. Do not return facets, citations, sources, status, labels, covers, "
         "or unanswered dimensions. For numbered or versioned entities and graph facts, "
-        "preserve identity, polarity, direction, quantity, time, and boundary exactly."
+        "preserve identity, polarity, direction, quantity, time, and boundary exactly. "
+        "For supplied graph relations, explain what supplied evidence entails or does not entail, "
+        "including supported negation, limitation, boundary, comparison, or non-inference. "
+        "If uncertain between material_claim and model_explanation, "
+        "choose material_claim and bind evidence."
     )
     max_tokens = _compact_provider_output_tokens(
         question=question,

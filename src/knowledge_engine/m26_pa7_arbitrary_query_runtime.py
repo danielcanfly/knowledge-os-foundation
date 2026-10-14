@@ -475,6 +475,8 @@ DEFINITION_PREDICATE_TERMS = {
     "task",
     "tells",
     "tool",
+    "turning",
+    "turns",
     "uses",
 }
 DEFINITION_CATEGORY_TERMS = {
@@ -2949,7 +2951,9 @@ def _normalize_fast_provider_result(result: Mapping[str, Any]) -> dict[str, Any]
         candidates.append(fenced.strip())
     brace_start = stripped.find("{")
     brace_end = stripped.rfind("}")
-    if brace_start >= 0 and brace_end > brace_start:
+    # A constrained frame with stray prefix material is not a trustworthy JSON
+    # envelope. Only the complete constrained-object parser may recover it.
+    if "<|constrain|>" not in stripped and brace_start >= 0 and brace_end > brace_start:
         candidates.append(stripped[brace_start : brace_end + 1])
     if (
         stripped.startswith("<|start|>assistant")
