@@ -1,0 +1,71 @@
+{
+  "request_id": "M27-A08-AR07-AR10-ABI-20261014",
+  "owner": "A08 isolated source-only nonprod",
+  "base_head": "216f912994d20d134b1c8af50f7b2dd1a1c89a15",
+  "contract_version": "m27-a08-decision-cost/v1",
+  "consumer_integration": "Integrator-only after Master acceptance; NEVER direct auto-merge",
+  "input": {
+    "task_contract": {
+      "task_id": "string",
+      "tenant": "string",
+      "budget": {
+        "max_provider_calls": "bounded int <=3",
+        "max_tool_calls": 0,
+        "max_latency_ms": "finite int",
+        "max_cost_micro_usd": "finite int",
+        "max_input_tokens": "finite int",
+        "max_output_tokens": "finite int"
+      }
+    },
+    "provider_quote": {
+      "quote_id": "pinned version",
+      "rate_input": "micro-USD/1000 tokens",
+      "rate_output": "micro-USD/1000 tokens",
+      "provider_model_revision": "required for live usage",
+      "valid_until": "required for live pricing"
+    },
+    "signed_actual_usage_receipt": "required for genuine billing; NOT present in fixture"
+  },
+  "output": {
+    "per_task": {
+      "accepted": "boolean",
+      "status": "enum",
+      "provider_attempts": "int",
+      "usage_tokens": "simulated in local ablation",
+      "cost_micro_usd": "simulated in local ablation",
+      "latency_ms": "modeled in local ablation",
+      "source_evidence_sha": "pinned"
+    },
+    "fail_closed": [
+      "CALL_QUOTA_EXCEEDED",
+      "TOKEN_CAP_EXCEEDED",
+      "COST_CAP_EXCEEDED",
+      "LATENCY_CAP_EXCEEDED",
+      "UNKNOWN_EFFECT_RECONCILE_REQUIRED",
+      "USAGE_RECEIPT_UNKNOWN",
+      "USAGE_RECEIPT_MISMATCH",
+      "UNTRUSTED_OR_STALE_QUOTE"
+    ],
+    "proposal": "m27-a08-review-only/v1",
+    "promotion": "human + independent qualified evaluator only",
+    "rollback": "baseline policy exact pinned identifier"
+  },
+  "economic_status": {
+    "model": "simulated fixed quote, never real provider price",
+    "usage": "deterministic simulator, never provider receipt",
+    "latency": "modeled, never network measurement",
+    "finops_real_gate": "OPEN requires approved provider, pinned live price, actual usage, independent charge/invoice",
+    "client_quality_gate": "OPEN formal grader and independent original523/holdout200"
+  },
+  "permissions": {
+    "production": false,
+    "other_workers": false,
+    "q34_frozen": false,
+    "active_policy_update": false
+  },
+  "requested_next": [
+    "A01 ABI ratify policy envelope after independent acceptance",
+    "Integrator binds admitted TaskContract and approved provider budget and observed usage via real adapter only",
+    "Review board evaluates candidate; no autopromotion"
+  ]
+}

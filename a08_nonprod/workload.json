@@ -1,0 +1,944 @@
+{
+  "abi": "m27-a08-firstparty-workload/v1",
+  "cases": [
+    {
+      "id": "A08-001",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from ADAPTIVE_POLICY_HANDOFF.md, return verified excerpts for task 1.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/handoffs/ADAPTIVE_POLICY_HANDOFF.md",
+          "quote": "- targeted adaptive/runtime regression: 50 passed",
+          "sha256": "a9019cf5257ab0506fbe4b810b0a627f6252e7e09a309b5624bfb8330608162b"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-002",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from stage11_autonomous_agent_learning_report.md and m27_w3_ar07_compute_budget_v1_experimental_receipts.md, return verified excerpts for task 2.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "PRODUCTION_ENABLEMENT: NOT_APPLICABLE",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        },
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "There is no authentic Provider price, actual call or billing, IdP-issued",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-003",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from README.md, return verified excerpts for task 3.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "README.md",
+          "quote": "export FILESYSTEM_STORE_ROOT=.artifacts/store",
+          "sha256": "6c4cd1dcb30def669bfd674ac7b3a0d53e7ef8ae917ce102c907a754a32d921b"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-004",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from README.md and stage11_autonomous_agent_learning_report.md, return verified excerpts for task 4.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "README.md",
+          "quote": "- Verifies every artifact before Runtime activation.",
+          "sha256": "6c4cd1dcb30def669bfd674ac7b3a0d53e7ef8ae917ce102c907a754a32d921b"
+        },
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "A rejected or superseded proposal cannot return to `READY_FOR_REVIEW`.",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-005",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from stage11_autonomous_agent_learning_report.md, return verified excerpts for task 5.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "/home/ubuntu/LLM_Wiki-m27-context-runtime/.venv/bin/ruff check   src/knowledge_engine/m27_*.py   tests/test_m27_*.py",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-006",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from LEARNING_META_HANDOFF.md and 50_learning_meta_harness_loop_report.md, return verified excerpts for task 6.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/handoffs/LEARNING_META_HANDOFF.md",
+          "quote": "Status: `M27_LEARNING_META_LOOP_READY`",
+          "sha256": "65b3bd300ad60309298040491531051a73d401f8d127bf2b0a5909c755837a4a"
+        },
+        {
+          "path": "docs/m27/research/50_learning_meta_harness_loop_report.md",
+          "quote": "- `mine_failure_modes(...)` for aggregate failure mining.",
+          "sha256": "d15447bcc58890f0c0df6db87ea4aa39643885ef61b3dddcfd25339c61f3e091"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-007",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from 47_adaptive_planner_compute_report.md, return verified excerpts for task 7.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/47_adaptive_planner_compute_report.md",
+          "quote": "New module: `src/knowledge_engine/m27_adaptive_compute.py`",
+          "sha256": "01f2f8483df4d8a5a9ad1aad0fbcde48ed6c465472cd333b4d03b5fcdc81d745"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-008",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from m27_w3_ar07_compute_budget_v1_experimental_receipts.md and README.md, return verified excerpts for task 8.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "PYTHONPATH=src PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        },
+        {
+          "path": "README.md",
+          "quote": "Production-shaped Builder, Runtime, release controller, and governed knowledge-production plane for Daniel's Knowledge OS.",
+          "sha256": "6c4cd1dcb30def669bfd674ac7b3a0d53e7ef8ae917ce102c907a754a32d921b"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-009",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from stage11_autonomous_agent_learning_report.md, return verified excerpts for task 9.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "Existing Stage 1-10 modules also do not import the new learning modules.",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-010",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from m27_w3_ar07_compute_budget_v1_experimental_receipts.md and 50_learning_meta_harness_loop_report.md, return verified excerpts for task 10.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "Real Provider and economic qualification: OPEN",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        },
+        {
+          "path": "docs/m27/research/50_learning_meta_harness_loop_report.md",
+          "quote": "- restart, stop, rebuild, or deploy production,",
+          "sha256": "d15447bcc58890f0c0df6db87ea4aa39643885ef61b3dddcfd25339c61f3e091"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-011",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from stage11_autonomous_agent_learning_report.md, return verified excerpts for task 11.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "/home/ubuntu/LLM_Wiki-m27-context-runtime/.venv/bin/ruff check   src/knowledge_engine/m26_aq_semantic_contract.py   --ignore F841",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-012",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from stage11_autonomous_agent_learning_report.md and m27_w3_ar07_compute_budget_v1_experimental_receipts.md, return verified excerpts for task 12.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "3. The proposal store is process-local in-memory only. Persistence is intentionally deferred to avoid coupling Stage 11 to Stage 8 or production storage.",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        },
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "An AR02 DurableWriterV1 reserve uses the existing WAL+FULL chain-verified",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-013",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from stage11_autonomous_agent_learning_report.md, return verified excerpts for task 13.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "tests/test_m27_learning_contracts.py",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-014",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from ADAPTIVE_POLICY_HANDOFF.md and 50_learning_meta_harness_loop_report.md, return verified excerpts for task 14.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/handoffs/ADAPTIVE_POLICY_HANDOFF.md",
+          "quote": "- hard continuation/tool/provider ceilings",
+          "sha256": "a9019cf5257ab0506fbe4b810b0a627f6252e7e09a309b5624bfb8330608162b"
+        },
+        {
+          "path": "docs/m27/research/50_learning_meta_harness_loop_report.md",
+          "quote": "- Existing FastAPI / Starlette / httpx deprecation warning from testclient stack. Not introduced by this session.",
+          "sha256": "d15447bcc58890f0c0df6db87ea4aa39643885ef61b3dddcfd25339c61f3e091"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-015",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from README.md, return verified excerpts for task 15.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "README.md",
+          "quote": "- Emits a final M12 release-blocking decision with complete boundary and regression evidence.",
+          "sha256": "6c4cd1dcb30def669bfd674ac7b3a0d53e7ef8ae917ce102c907a754a32d921b"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-016",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from LEARNING_META_HANDOFF.md and m27_w3_ar07_compute_budget_v1_experimental_receipts.md, return verified excerpts for task 16.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/handoffs/LEARNING_META_HANDOFF.md",
+          "quote": "3. Stage 11 learning proposals marked `READY_FOR_REVIEW`,",
+          "sha256": "65b3bd300ad60309298040491531051a73d401f8d127bf2b0a5909c755837a4a"
+        },
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "repeated attempts and unplanned token usage fail closed. Positive cost",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-017",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from m27_w3_ar07_compute_budget_v1_experimental_receipts.md, return verified excerpts for task 17.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "revocation, expired/missing/double/unknown quote, currency/model mismatch,",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-018",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from m27_w3_ar07_compute_budget_v1_experimental_receipts.md and stage11_autonomous_agent_learning_report.md, return verified excerpts for task 18.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "caller-supplied approval. It verifies tenant/run/task/version/principal via",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        },
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "Stage 8 workspace dependency added: NO",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-019",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from LEARNING_META_HANDOFF.md, return verified excerpts for task 19.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/handoffs/LEARNING_META_HANDOFF.md",
+          "quote": "1. deterministic failure-mode mining,",
+          "sha256": "65b3bd300ad60309298040491531051a73d401f8d127bf2b0a5909c755837a4a"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-020",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from stage11_autonomous_agent_learning_report.md and README.md, return verified excerpts for task 20.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "2. Stage 11 has no live ingestion wiring from trace/eval stores. This is deliberate: callers must first reduce allowed sanitized observations into `LearningSignal` metadata.",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        },
+        {
+          "path": "README.md",
+          "quote": "- Computes deterministic retrieval, citation, answer-quality, and performance metrics from explicit governed observations.",
+          "sha256": "6c4cd1dcb30def669bfd674ac7b3a0d53e7ef8ae917ce102c907a754a32d921b"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-021",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from m27_w3_ar07_compute_budget_v1_experimental_receipts.md, return verified excerpts for task 21.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "ACK and T3 POSSIBLY_SENT fence are durably recorded. Only then does the",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-022",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from m27_w3_ar07_compute_budget_v1_experimental_receipts.md and 47_adaptive_planner_compute_report.md, return verified excerpts for task 22.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "overruns and late bill adjustments are recorded in the AR02 adjustment",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        },
+        {
+          "path": "docs/m27/research/47_adaptive_planner_compute_report.md",
+          "quote": "- a first empty retrieval may receive one bounded probe to preserve verifier-gap recovery;",
+          "sha256": "01f2f8483df4d8a5a9ad1aad0fbcde48ed6c465472cd333b4d03b5fcdc81d745"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-023",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from 47_adaptive_planner_compute_report.md, return verified excerpts for task 23.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/47_adaptive_planner_compute_report.md",
+          "quote": "- `src/knowledge_engine/m27_context_orchestrator.py`",
+          "sha256": "01f2f8483df4d8a5a9ad1aad0fbcde48ed6c465472cd333b4d03b5fcdc81d745"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-024",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from README.md and stage11_autonomous_agent_learning_report.md, return verified excerpts for task 24.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "README.md",
+          "quote": "--output-dir .artifacts/review-packet",
+          "sha256": "6c4cd1dcb30def669bfd674ac7b3a0d53e7ef8ae917ce102c907a754a32d921b"
+        },
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "production R2/Qdrant/sqlite writes: NO",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-025",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from m27_w3_ar07_compute_budget_v1_experimental_receipts.md, return verified excerpts for task 25.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "ledger, and must remain economically unqualified.",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-026",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from 47_adaptive_planner_compute_report.md and README.md, return verified excerpts for task 26.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/47_adaptive_planner_compute_report.md",
+          "quote": "- `GENERAL` keeps existing caller-requested bounded continuation/tool limits, still under hard caps.",
+          "sha256": "01f2f8483df4d8a5a9ad1aad0fbcde48ed6c465472cd333b4d03b5fcdc81d745"
+        },
+        {
+          "path": "README.md",
+          "quote": "M5 intake stores raw evidence and generated review material outside the canonical source bundle. The command cannot publish a candidate or production release.",
+          "sha256": "6c4cd1dcb30def669bfd674ac7b3a0d53e7ef8ae917ce102c907a754a32d921b"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-027",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from m27_w3_ar07_compute_budget_v1_experimental_receipts.md, return verified excerpts for task 27.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "- New adversarial cases cover concurrent attempts exhausting the same cost",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-028",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from stage11_autonomous_agent_learning_report.md and 50_learning_meta_harness_loop_report.md, return verified excerpts for task 28.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "/home/ubuntu/LLM_Wiki-m27-context-runtime/.venv/bin/ruff check   src/knowledge_engine/m27_learning*.py   tests/test_m27_learning*.py",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        },
+        {
+          "path": "docs/m27/research/50_learning_meta_harness_loop_report.md",
+          "quote": "- `tests/test_m27_meta_harness_runtime.py`",
+          "sha256": "d15447bcc58890f0c0df6db87ea4aa39643885ef61b3dddcfd25339c61f3e091"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-029",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from 47_adaptive_planner_compute_report.md, return verified excerpts for task 29.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/47_adaptive_planner_compute_report.md",
+          "quote": "- exhausted adaptive budget terminates;",
+          "sha256": "01f2f8483df4d8a5a9ad1aad0fbcde48ed6c465472cd333b4d03b5fcdc81d745"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-030",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from 47_adaptive_planner_compute_report.md and LEARNING_META_HANDOFF.md, return verified excerpts for task 30.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/47_adaptive_planner_compute_report.md",
+          "quote": "- Direct and multilingual knowledge use `STANDARD`.",
+          "sha256": "01f2f8483df4d8a5a9ad1aad0fbcde48ed6c465472cd333b4d03b5fcdc81d745"
+        },
+        {
+          "path": "docs/m27/handoffs/LEARNING_META_HANDOFF.md",
+          "quote": "- Worktree: `/home/ubuntu/LLM_Wiki-m27-learning-meta`",
+          "sha256": "65b3bd300ad60309298040491531051a73d401f8d127bf2b0a5909c755837a4a"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-031",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from 50_learning_meta_harness_loop_report.md, return verified excerpts for task 31.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/50_learning_meta_harness_loop_report.md",
+          "quote": "- no provider/backend/process/production dependencies,",
+          "sha256": "d15447bcc58890f0c0df6db87ea4aa39643885ef61b3dddcfd25339c61f3e091"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-032",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from 47_adaptive_planner_compute_report.md and m27_w3_ar07_compute_budget_v1_experimental_receipts.md, return verified excerpts for task 32.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/47_adaptive_planner_compute_report.md",
+          "quote": "- `src/knowledge_engine/m27_runtime_harness.py`",
+          "sha256": "01f2f8483df4d8a5a9ad1aad0fbcde48ed6c465472cd333b4d03b5fcdc81d745"
+        },
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "AR02 spent-vs-reserved counters across fresh SQLite connections.",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "development"
+    },
+    {
+      "id": "A08-033",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from README.md, return verified excerpts for task 33.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "README.md",
+          "quote": "--capture-id capture_0123456789abcdef0123456789abcdef \\",
+          "sha256": "6c4cd1dcb30def669bfd674ac7b3a0d53e7ef8ae917ce102c907a754a32d921b"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "independent_holdout"
+    },
+    {
+      "id": "A08-034",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from ADAPTIVE_POLICY_HANDOFF.md and stage11_autonomous_agent_learning_report.md, return verified excerpts for task 34.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/handoffs/ADAPTIVE_POLICY_HANDOFF.md",
+          "quote": "- runtime integration into isolated executable M27 execution",
+          "sha256": "a9019cf5257ab0506fbe4b810b0a627f6252e7e09a309b5624bfb8330608162b"
+        },
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "A `LearningSignal` contains only bounded sanitized metadata:",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "independent_holdout"
+    },
+    {
+      "id": "A08-035",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from stage11_autonomous_agent_learning_report.md, return verified excerpts for task 35.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "Stage 11 accepts bounded codes, counts, safe IDs, opaque artifact IDs, and bounded candidate summaries.",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "independent_holdout"
+    },
+    {
+      "id": "A08-036",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from 50_learning_meta_harness_loop_report.md and stage11_autonomous_agent_learning_report.md, return verified excerpts for task 36.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/50_learning_meta_harness_loop_report.md",
+          "quote": "- no wiring into runtime execution or production surfaces.",
+          "sha256": "d15447bcc58890f0c0df6db87ea4aa39643885ef61b3dddcfd25339c61f3e091"
+        },
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "Therefore Stage 11 is not wired into:",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "independent_holdout"
+    },
+    {
+      "id": "A08-037",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from README.md, return verified excerpts for task 37.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "README.md",
+          "quote": "export OBJECT_STORE_BACKEND=filesystem",
+          "sha256": "6c4cd1dcb30def669bfd674ac7b3a0d53e7ef8ae917ce102c907a754a32d921b"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "independent_holdout"
+    },
+    {
+      "id": "A08-038",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from m27_w3_ar07_compute_budget_v1_experimental_receipts.md and 50_learning_meta_harness_loop_report.md, return verified excerpts for task 38.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "tested against the same pinned interpreter.",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        },
+        {
+          "path": "docs/m27/research/50_learning_meta_harness_loop_report.md",
+          "quote": "The existing Stage 11 and Stage 12 isolation tests now explicitly allow only the new coordinator file:",
+          "sha256": "d15447bcc58890f0c0df6db87ea4aa39643885ef61b3dddcfd25339c61f3e091"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "independent_holdout"
+    },
+    {
+      "id": "A08-039",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from m27_w3_ar07_compute_budget_v1_experimental_receipts.md, return verified excerpts for task 39.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "are in the worker REPORT and evidence-index scratch directory.",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "independent_holdout"
+    },
+    {
+      "id": "A08-040",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from 50_learning_meta_harness_loop_report.md and README.md, return verified excerpts for task 40.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/50_learning_meta_harness_loop_report.md",
+          "quote": "- auto-generate or apply code patches from meta-harness candidates.",
+          "sha256": "d15447bcc58890f0c0df6db87ea4aa39643885ef61b3dddcfd25339c61f3e091"
+        },
+        {
+          "path": "README.md",
+          "quote": "M12.6 computes `apmetricset_` / `apmetrics_` answer-quality and performance evidence from bounded observations. See `docs/m12/m12-6-answer-performance-metrics.md`.",
+          "sha256": "6c4cd1dcb30def669bfd674ac7b3a0d53e7ef8ae917ce102c907a754a32d921b"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "independent_holdout"
+    },
+    {
+      "id": "A08-041",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from README.md, return verified excerpts for task 41.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "README.md",
+          "quote": "- Supports filesystem and Cloudflare R2 object stores.",
+          "sha256": "6c4cd1dcb30def669bfd674ac7b3a0d53e7ef8ae917ce102c907a754a32d921b"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "independent_holdout"
+    },
+    {
+      "id": "A08-042",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from ADAPTIVE_POLICY_HANDOFF.md and LEARNING_META_HANDOFF.md, return verified excerpts for task 42.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/handoffs/ADAPTIVE_POLICY_HANDOFF.md",
+          "quote": "Workspace: `/home/ubuntu/LLM_Wiki-m27-adaptive-planner`",
+          "sha256": "a9019cf5257ab0506fbe4b810b0a627f6252e7e09a309b5624bfb8330608162b"
+        },
+        {
+          "path": "docs/m27/handoffs/LEARNING_META_HANDOFF.md",
+          "quote": "- metadata-only review packet from `render_review_packet(...)`",
+          "sha256": "65b3bd300ad60309298040491531051a73d401f8d127bf2b0a5909c755837a4a"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "independent_holdout"
+    },
+    {
+      "id": "A08-043",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from ADAPTIVE_POLICY_HANDOFF.md, return verified excerpts for task 43.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/handoffs/ADAPTIVE_POLICY_HANDOFF.md",
+          "quote": "- first-empty-retrieval bounded probe behavior",
+          "sha256": "a9019cf5257ab0506fbe4b810b0a627f6252e7e09a309b5624bfb8330608162b"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "independent_holdout"
+    },
+    {
+      "id": "A08-044",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from m27_w3_ar07_compute_budget_v1_experimental_receipts.md and stage11_autonomous_agent_learning_report.md, return verified excerpts for task 44.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "An InvoiceFixture for the pinned route/price can settle one AR02 charge.",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        },
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "No full523, Docker build, container restart, external provider call, or production invocation was run.",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "independent_holdout"
+    },
+    {
+      "id": "A08-045",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from 47_adaptive_planner_compute_report.md, return verified excerpts for task 45.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/47_adaptive_planner_compute_report.md",
+          "quote": "- Explicit safe-abstention or exhausted budget fails closed.",
+          "sha256": "01f2f8483df4d8a5a9ad1aad0fbcde48ed6c465472cd333b4d03b5fcdc81d745"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "independent_holdout"
+    },
+    {
+      "id": "A08-046",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from stage11_autonomous_agent_learning_report.md and m27_w3_ar07_compute_budget_v1_experimental_receipts.md, return verified excerpts for task 46.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "python3 -m compileall -q src/knowledge_engine tests",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        },
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "after reserve, after approval, after claim, after local ACK and after T3",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "independent_holdout"
+    },
+    {
+      "id": "A08-047",
+      "kind": "QA",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 1,
+      "question": "Using immutable firstparty evidence from stage11_autonomous_agent_learning_report.md, return verified excerpts for task 47.",
+      "quota_calls": 2,
+      "source_evidence": [
+        {
+          "path": "docs/m27/research/stage11_autonomous_agent_learning_report.md",
+          "quote": "src/knowledge_engine/m27_learning_runtime.py",
+          "sha256": "0b7bdc3e22e91eb6f87b264390aec5e8a320a9886e57f14a2ae6994ce9f2b6e0"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "independent_holdout"
+    },
+    {
+      "id": "A08-048",
+      "kind": "RESEARCH",
+      "max_fee_usd_per_task": 0.0018,
+      "needed_rounds": 2,
+      "question": "Using immutable firstparty evidence from ADAPTIVE_POLICY_HANDOFF.md and m27_w3_ar07_compute_budget_v1_experimental_receipts.md, return verified excerpts for task 48.",
+      "quota_calls": 3,
+      "source_evidence": [
+        {
+          "path": "docs/m27/handoffs/ADAPTIVE_POLICY_HANDOFF.md",
+          "quote": "Base: `4c348d569364c8783ae72abd73e28d1f6ead7914`",
+          "sha256": "a9019cf5257ab0506fbe4b810b0a627f6252e7e09a309b5624bfb8330608162b"
+        },
+        {
+          "path": "docs/m27/m27_w3_ar07_compute_budget_v1_experimental_receipts.md",
+          "quote": "single-writer CAS. A local SQLite sidecar pins route, quote, consent and",
+          "sha256": "1cf3cadf1121cf504740dbdbf4621f80656d94bfa22bd4d531c07836a95c5d62"
+        }
+      ],
+      "source_rights": "OWNER_FIRSTPARTY_CODEBASE",
+      "split": "independent_holdout"
+    }
+  ],
+  "scenario": "fixture deterministic tokens + modeled latency; not live LLM",
+  "sealed_holdout_note": "16 predeclared records; separate quote and IDs; not externally blind",
+  "source_base_commit": "216f912994d20d134b1c8af50f7b2dd1a1c89a15"
+}
