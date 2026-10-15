@@ -1,0 +1,77 @@
+{
+  "name": "real_model_adversarial_safe_refusal",
+  "pass": true,
+  "error": null,
+  "duration_ms": 6744.449,
+  "data": {
+    "status": 200,
+    "events": [
+      {
+        "event": "run.started",
+        "provider": "local_open_weight_qwen2.5_0.5b_instruct",
+        "run_id": "real_local_negative_871cc1b90330",
+        "seq": 1,
+        "server_ns": 178062297606166,
+        "client_received_ns": 178062297933541
+      },
+      {
+        "event": "safe.refusal",
+        "reason": "producer_refused",
+        "run_id": "real_local_negative_871cc1b90330",
+        "seq": 2,
+        "server_ns": 178069004182583,
+        "client_received_ns": 178069006143916
+      },
+      {
+        "event": "worker.finished",
+        "run_id": "real_local_negative_871cc1b90330",
+        "seq": 3,
+        "server_ns": 178069037187958,
+        "worker_finished_ns": 178069036541041,
+        "client_received_ns": 178069037842708
+      },
+      {
+        "event": "run.terminal",
+        "run_id": "real_local_negative_871cc1b90330",
+        "seq": 4,
+        "server_ns": 178069037448750,
+        "status": "refused",
+        "verified_current": 0,
+        "client_received_ns": 178069037899875
+      }
+    ],
+    "run_id": "real_local_negative_871cc1b90330",
+    "model_audit": {
+      "pid": 41538,
+      "records": [
+        {
+          "attempt": 1,
+          "billable_provider_calls": 0,
+          "duration_ms": 5993.044,
+          "exit_code": 0,
+          "kind": "real_model_generation",
+          "llama_cli_pid": 41539,
+          "max_attempts": 2,
+          "max_new_tokens": 52,
+          "mode": "real_local_negative",
+          "model": "Qwen/Qwen2.5-0.5B-Instruct-GGUF Q4_K_M",
+          "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+          "output": "",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "raw_cli_stdout_sha256": "d53bab92fc43fc4640edc80122a7f5d9fdbca2acc1ad041c4c3c24c7917cd2f7",
+          "real_local_llm": true,
+          "seed": 1442,
+          "source_sha256": "6fb67439514ee5013335ccead56b0c346ff84aa53fd83424d15037b2a275b9ca",
+          "stderr_tail": ""
+        },
+        {
+          "adapter_pid": 41538,
+          "kind": "real_model_adapter.fail_closed",
+          "real_model": true,
+          "reason": "empty_or_nonzero_model_output"
+        }
+      ],
+      "journal_path": "/private/tmp/m27-b01-v2-clean-repro-retry/wave_b01/components/a04/evidence/model_generation/child_41538.jsonl"
+    }
+  }
+}

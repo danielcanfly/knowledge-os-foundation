@@ -1,0 +1,128 @@
+{
+  "name": "real_model_revocation_and_retraction",
+  "pass": true,
+  "error": null,
+  "duration_ms": 13149.706,
+  "data": {
+    "status": 200,
+    "events": [
+      {
+        "event": "run.started",
+        "provider": "local_open_weight_qwen2.5_0.5b_instruct",
+        "run_id": "real_local_073242df202d",
+        "seq": 1,
+        "server_ns": 178084137212958,
+        "client_received_ns": 178084137636083
+      },
+      {
+        "claim_index": 1,
+        "event": "claim.verified",
+        "fact_key": "atlas_stages",
+        "proof_sha256": "cc722b06b16ca23575495f44e140f6dff975e740a79f1b3821aa4d83ebfc4f24",
+        "run_id": "real_local_073242df202d",
+        "seq": 2,
+        "server_ns": 178093104221875,
+        "source_id": "atlas-A",
+        "source_sha256": "cb47bc6b5526493abeeeb60b26065eb1b5b1671c957c3f62661cf08f49ea6b07",
+        "span": [
+          0,
+          82
+        ],
+        "text": "Atlas's nonproduction trial employs exactly two review stages: intake and verification.",
+        "verifier": "bounded_curated_entailment_v1",
+        "client_received_ns": 178093107200458
+      },
+      {
+        "event": "claim.retracted",
+        "prior_seq": 2,
+        "reason": "source_revoked",
+        "run_id": "real_local_073242df202d",
+        "seq": 3,
+        "server_ns": 178093211767958,
+        "client_received_ns": 178093212683583
+      },
+      {
+        "claim_index": 2,
+        "event": "claim.verified",
+        "fact_key": "delta_cadence",
+        "proof_sha256": "53911d21a6567b25a6c84db5342dc2daed6ecd6ee3b844b3a86baf838a7092b5",
+        "run_id": "real_local_073242df202d",
+        "seq": 4,
+        "server_ns": 178097257106958,
+        "source_id": "delta-B",
+        "source_sha256": "51364fecf68358c4202a211cbeb62234d5d4c487237b8ee097046245cdb4d774",
+        "span": [
+          0,
+          78
+        ],
+        "text": "Delta notebook executes every four hours during local validation exercises.",
+        "verifier": "bounded_curated_entailment_v1",
+        "client_received_ns": 178097258944833
+      },
+      {
+        "event": "worker.finished",
+        "run_id": "real_local_073242df202d",
+        "seq": 5,
+        "server_ns": 178097269638875,
+        "worker_finished_ns": 178097269218250,
+        "client_received_ns": 178097269897375
+      },
+      {
+        "event": "run.terminal",
+        "run_id": "real_local_073242df202d",
+        "seq": 6,
+        "server_ns": 178097269830750,
+        "status": "rejected",
+        "verified_current": 1,
+        "client_received_ns": 178097270027875
+      }
+    ],
+    "run_id": "real_local_073242df202d",
+    "model_audit": {
+      "pid": 41580,
+      "records": [
+        {
+          "attempt": 1,
+          "billable_provider_calls": 0,
+          "duration_ms": 6020.827,
+          "exit_code": 0,
+          "kind": "real_model_generation",
+          "llama_cli_pid": 41583,
+          "max_attempts": 2,
+          "max_new_tokens": 52,
+          "mode": "real_local",
+          "model": "Qwen/Qwen2.5-0.5B-Instruct-GGUF Q4_K_M",
+          "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+          "output": "Atlas's nonproduction trial employs exactly two review stages: intake and verification.",
+          "output_sha256": "3232e7e31b55148cb4b55bd747d7bd1247fc6b0b48d15672fe52bc4ab5048bfb",
+          "raw_cli_stdout_sha256": "a05ebe4032a9dbdf391eb4f30d8be5cc0575b1a79fe1c9a4e4f6cd64ebc73ea1",
+          "real_local_llm": true,
+          "seed": 1442,
+          "source_sha256": "6fb67439514ee5013335ccead56b0c346ff84aa53fd83424d15037b2a275b9ca",
+          "stderr_tail": ""
+        },
+        {
+          "attempt": 1,
+          "billable_provider_calls": 0,
+          "duration_ms": 4152.93,
+          "exit_code": 0,
+          "kind": "real_model_generation",
+          "llama_cli_pid": 41588,
+          "max_attempts": 2,
+          "max_new_tokens": 52,
+          "mode": "real_local",
+          "model": "Qwen/Qwen2.5-0.5B-Instruct-GGUF Q4_K_M",
+          "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+          "output": "Delta notebook executes every four hours during local validation exercises.",
+          "output_sha256": "9e2e3994ccbbd2d003515637b4d46f30bd682542dd91b1c61ad801110e46bf0c",
+          "raw_cli_stdout_sha256": "3cc88f0f10bbfe1cdd9e3c08bcb04a2a0ac035626643f90b8784e6e4d9651e98",
+          "real_local_llm": true,
+          "seed": 1495,
+          "source_sha256": "170ef769b6a63261f9985ef70cf1ec64d2c42b35143a715a3425f64b541fa9b5",
+          "stderr_tail": ""
+        }
+      ],
+      "journal_path": "/private/tmp/m27-b01-v2-clean-repro-retry/wave_b01/components/a04/evidence/model_generation/child_41580.jsonl"
+    }
+  }
+}

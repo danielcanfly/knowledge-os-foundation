@@ -1,0 +1,37 @@
+{
+  "files": {
+    "licenses/QWEN2.5_APACHE-2.0.txt": {
+      "bytes": 11343,
+      "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e",
+      "spdx": "Apache-2.0",
+      "tracked_source_license": true
+    },
+    "llama-b11425-bin-macos-arm64.tar.gz": {
+      "retained_in_runtime": false,
+      "source_bytes": 11966456,
+      "source_sha256": "14811f683abf2f32c62df48fcc36dbe4f0da307094080095eebb2b3906e705e4"
+    },
+    "llama-b11425/LICENSE": {
+      "bytes": 1078,
+      "sha256": "94f29bbed6a22c35b992c5c6ebf0e7c92f13b836b90f36f461c9cf2f0f1d010d",
+      "spdx": "MIT"
+    },
+    "llama-b11425/llama-cli": {
+      "bytes": 49960,
+      "executable": true,
+      "sha256": "cf4f088f32507af619a1d65516d235ef7644db8c81ff1d3e175ff640dab75ab7"
+    },
+    "qwen2.5-0.5b-instruct-q4_k_m.gguf": {
+      "bytes": 491400032,
+      "sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db"
+    }
+  },
+  "manifest_sha256": "f11f2a3cd19adb4fb22bdf8b0879b44ddb394eae8beab70b105395563913ae56",
+  "model_mode": "hardlink",
+  "native_q34": false,
+  "network_download": false,
+  "production_authority": false,
+  "runtime_outside_git": true,
+  "schema": "m27.a04.external-model-runtime-stage/v2",
+  "scope": "NONPROD_LOCAL_ONLY"
+}

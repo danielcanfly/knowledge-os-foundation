@@ -1,0 +1,12 @@
+{
+  "case": "unknown_receipt_ack",
+  "elapsed_ms": 0.981,
+  "error": null,
+  "evidence": {
+    "response": {
+      "error": "unknown_run"
+    },
+    "status": 404
+  },
+  "pass": true
+}

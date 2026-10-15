@@ -1,0 +1,87 @@
+{
+  "case": "duplicate_run_id",
+  "elapsed_ms": 926.018,
+  "error": null,
+  "evidence": {
+    "first_run": {
+      "events": [
+        {
+          "client_received_ns": 178047643079750,
+          "event": "run.started",
+          "provider": "deterministic_external_stub",
+          "run_id": "dup_run_8b67276ff615",
+          "seq": 1,
+          "server_ns": 178047642738125
+        },
+        {
+          "claim_index": 1,
+          "client_ack_response": {
+            "accepted": true
+          },
+          "client_ack_status": 200,
+          "client_received_ns": 178047731006250,
+          "event": "claim.verified",
+          "fact_key": "atlas_stages",
+          "proof_sha256": "eb4ab01eb56ca33bf13de00b89bbd2e57a13a9f9734e70720af22d281181ae1c",
+          "run_id": "dup_run_8b67276ff615",
+          "seq": 2,
+          "server_ns": 178047730312583,
+          "source_id": "atlas-A",
+          "source_sha256": "cb47bc6b5526493abeeeb60b26065eb1b5b1671c957c3f62661cf08f49ea6b07",
+          "span": [
+            0,
+            82
+          ],
+          "text": "The Atlas trial has two distinct review stages.",
+          "verifier": "bounded_curated_entailment_v1"
+        },
+        {
+          "claim_index": 2,
+          "client_ack_response": {
+            "accepted": true
+          },
+          "client_ack_status": 200,
+          "client_received_ns": 178047982159750,
+          "event": "claim.verified",
+          "fact_key": "delta_cadence",
+          "proof_sha256": "98fdd0108a893cc9f89d3cfb68ea78633c5c968f5eced885df3c0b9f4dfcc9c3",
+          "run_id": "dup_run_8b67276ff615",
+          "seq": 3,
+          "server_ns": 178047981793958,
+          "source_id": "delta-B",
+          "source_sha256": "51364fecf68358c4202a211cbeb62234d5d4c487237b8ee097046245cdb4d774",
+          "span": [
+            0,
+            78
+          ],
+          "text": "The Delta notebook runs once every four hours.",
+          "verifier": "bounded_curated_entailment_v1"
+        },
+        {
+          "client_received_ns": 178048565599750,
+          "event": "worker.finished",
+          "run_id": "dup_run_8b67276ff615",
+          "seq": 4,
+          "server_ns": 178048565289250,
+          "worker_finished_ns": 178048564986666
+        },
+        {
+          "client_received_ns": 178048565862041,
+          "event": "run.terminal",
+          "run_id": "dup_run_8b67276ff615",
+          "seq": 5,
+          "server_ns": 178048565467916,
+          "status": "succeeded",
+          "verified_current": 2
+        }
+      ],
+      "run_id": "dup_run_8b67276ff615",
+      "status": 200
+    },
+    "response": {
+      "error": "duplicate_run"
+    },
+    "second_status": 409
+  },
+  "pass": true
+}

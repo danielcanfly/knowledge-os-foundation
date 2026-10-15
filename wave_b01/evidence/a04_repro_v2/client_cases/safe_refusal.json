@@ -1,0 +1,45 @@
+{
+  "case": "safe_refusal",
+  "elapsed_ms": 124.476,
+  "error": null,
+  "evidence": {
+    "events": [
+      {
+        "client_received_ns": 178033914357833,
+        "event": "run.started",
+        "provider": "deterministic_external_stub",
+        "run_id": "refuse_8537aeb5a825",
+        "seq": 1,
+        "server_ns": 178033913999125
+      },
+      {
+        "client_received_ns": 178034029273625,
+        "event": "safe.refusal",
+        "reason": "producer_refused",
+        "run_id": "refuse_8537aeb5a825",
+        "seq": 2,
+        "server_ns": 178034027827791
+      },
+      {
+        "client_received_ns": 178034035628833,
+        "event": "worker.finished",
+        "run_id": "refuse_8537aeb5a825",
+        "seq": 3,
+        "server_ns": 178034035202500,
+        "worker_finished_ns": 178034034732000
+      },
+      {
+        "client_received_ns": 178034035749208,
+        "event": "run.terminal",
+        "run_id": "refuse_8537aeb5a825",
+        "seq": 4,
+        "server_ns": 178034035497000,
+        "status": "refused",
+        "verified_current": 0
+      }
+    ],
+    "run_id": "refuse_8537aeb5a825",
+    "status": 200
+  },
+  "pass": true
+}

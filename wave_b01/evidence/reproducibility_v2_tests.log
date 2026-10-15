@@ -1,0 +1,10 @@
+test_a04_bundle_is_complete_safe_and_content_addressed (wave_b01.test_reproducibility.ReproducibilityV2Tests.test_a04_bundle_is_complete_safe_and_content_addressed) ... ok
+test_all_ten_receipt_log_pairs_have_honest_v2_links (wave_b01.test_reproducibility.ReproducibilityV2Tests.test_all_ten_receipt_log_pairs_have_honest_v2_links) ... ok
+test_bad_runtime_assets_fail_closed_and_leave_no_stage (wave_b01.test_reproducibility.ReproducibilityV2Tests.test_bad_runtime_assets_fail_closed_and_leave_no_stage) ... ok
+test_candidate_v2_full_pins_and_negative_authority (wave_b01.test_reproducibility.ReproducibilityV2Tests.test_candidate_v2_full_pins_and_negative_authority) ... ok
+test_external_runtime_manifest_and_licenses_are_pinned (wave_b01.test_reproducibility.ReproducibilityV2Tests.test_external_runtime_manifest_and_licenses_are_pinned) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.478s
+
+OK

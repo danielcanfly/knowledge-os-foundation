@@ -1,0 +1,37 @@
+{
+  "name": "real_model_hard_timeout",
+  "pass": true,
+  "error": null,
+  "duration_ms": 169.381,
+  "data": {
+    "status": 200,
+    "events": [
+      {
+        "event": "run.started",
+        "provider": "local_open_weight_qwen2.5_0.5b_instruct",
+        "run_id": "real_local_208e2c1dbc0c",
+        "seq": 1,
+        "server_ns": 178097278329541,
+        "client_received_ns": 178097278783916
+      },
+      {
+        "event": "worker.finished",
+        "run_id": "real_local_208e2c1dbc0c",
+        "seq": 2,
+        "server_ns": 178097442435916,
+        "worker_finished_ns": 178097441783833,
+        "client_received_ns": 178097442963000
+      },
+      {
+        "event": "run.terminal",
+        "run_id": "real_local_208e2c1dbc0c",
+        "seq": 3,
+        "server_ns": 178097442815625,
+        "status": "timeout",
+        "verified_current": 0,
+        "client_received_ns": 178097443321041
+      }
+    ],
+    "run_id": "real_local_208e2c1dbc0c"
+  }
+}

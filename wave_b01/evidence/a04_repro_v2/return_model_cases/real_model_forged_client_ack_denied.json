@@ -1,0 +1,146 @@
+{
+  "name": "real_model_forged_client_ack_denied",
+  "pass": true,
+  "error": null,
+  "duration_ms": 34503.042,
+  "data": {
+    "status": 200,
+    "events": [
+      {
+        "event": "run.started",
+        "provider": "local_open_weight_qwen2.5_0.5b_instruct",
+        "run_id": "real_local_7ce9ff8248d9",
+        "seq": 1,
+        "server_ns": 178102956180541,
+        "client_received_ns": 178102956697500
+      },
+      {
+        "claim_index": 1,
+        "event": "claim.verified",
+        "fact_key": "atlas_stages",
+        "proof_sha256": "cc722b06b16ca23575495f44e140f6dff975e740a79f1b3821aa4d83ebfc4f24",
+        "run_id": "real_local_7ce9ff8248d9",
+        "seq": 2,
+        "server_ns": 178132607838958,
+        "source_id": "atlas-A",
+        "source_sha256": "cb47bc6b5526493abeeeb60b26065eb1b5b1671c957c3f62661cf08f49ea6b07",
+        "span": [
+          0,
+          82
+        ],
+        "text": "Atlas's nonproduction trial employs exactly two review stages: intake and verification.",
+        "verifier": "bounded_curated_entailment_v1",
+        "client_received_ns": 178132613769416,
+        "client_ack_status": 200,
+        "client_ack_response": {
+          "accepted": true
+        }
+      },
+      {
+        "claim_index": 2,
+        "event": "claim.verified",
+        "fact_key": "delta_cadence",
+        "proof_sha256": "53911d21a6567b25a6c84db5342dc2daed6ecd6ee3b844b3a86baf838a7092b5",
+        "run_id": "real_local_7ce9ff8248d9",
+        "seq": 3,
+        "server_ns": 178137436008000,
+        "source_id": "delta-B",
+        "source_sha256": "51364fecf68358c4202a211cbeb62234d5d4c487237b8ee097046245cdb4d774",
+        "span": [
+          0,
+          78
+        ],
+        "text": "Delta notebook executes every four hours during local validation exercises.",
+        "verifier": "bounded_curated_entailment_v1",
+        "client_received_ns": 178137438397375,
+        "client_ack_status": 200,
+        "client_ack_response": {
+          "accepted": true
+        }
+      },
+      {
+        "event": "worker.finished",
+        "run_id": "real_local_7ce9ff8248d9",
+        "seq": 4,
+        "server_ns": 178137453397291,
+        "worker_finished_ns": 178137453108625,
+        "client_received_ns": 178137453768750
+      },
+      {
+        "event": "run.terminal",
+        "run_id": "real_local_7ce9ff8248d9",
+        "seq": 5,
+        "server_ns": 178137453726583,
+        "status": "succeeded",
+        "verified_current": 2,
+        "client_received_ns": 178137454062958
+      }
+    ],
+    "run_id": "real_local_7ce9ff8248d9",
+    "model_audit": {
+      "pid": 41596,
+      "records": [
+        {
+          "attempt": 1,
+          "billable_provider_calls": 0,
+          "duration_ms": 20043.698,
+          "kind": "real_model_generation_attempt_timeout",
+          "max_attempts": 2,
+          "max_tokens": 52,
+          "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+          "pid": 41597,
+          "real_local_llm": true,
+          "seed": 1442,
+          "timeout": true
+        },
+        {
+          "attempt": 2,
+          "billable_provider_calls": 0,
+          "duration_ms": 8396.591,
+          "exit_code": 0,
+          "kind": "real_model_generation",
+          "llama_cli_pid": 41608,
+          "max_attempts": 2,
+          "max_new_tokens": 52,
+          "mode": "real_local",
+          "model": "Qwen/Qwen2.5-0.5B-Instruct-GGUF Q4_K_M",
+          "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+          "output": "Atlas's nonproduction trial employs exactly two review stages: intake and verification.",
+          "output_sha256": "3232e7e31b55148cb4b55bd747d7bd1247fc6b0b48d15672fe52bc4ab5048bfb",
+          "raw_cli_stdout_sha256": "70d42d6f4b259924847291c6d11818c9ec30e5af952406a7c886909d2942649d",
+          "real_local_llm": true,
+          "seed": 1442,
+          "source_sha256": "6fb67439514ee5013335ccead56b0c346ff84aa53fd83424d15037b2a275b9ca",
+          "stderr_tail": ""
+        },
+        {
+          "attempt": 1,
+          "billable_provider_calls": 0,
+          "duration_ms": 4826.192,
+          "exit_code": 0,
+          "kind": "real_model_generation",
+          "llama_cli_pid": 41635,
+          "max_attempts": 2,
+          "max_new_tokens": 52,
+          "mode": "real_local",
+          "model": "Qwen/Qwen2.5-0.5B-Instruct-GGUF Q4_K_M",
+          "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+          "output": "Delta notebook executes every four hours during local validation exercises.",
+          "output_sha256": "9e2e3994ccbbd2d003515637b4d46f30bd682542dd91b1c61ad801110e46bf0c",
+          "raw_cli_stdout_sha256": "2d1f754da261d2969a65cfddc09f53c271a5cdb68a657c4dbe41ab736376333b",
+          "real_local_llm": true,
+          "seed": 1495,
+          "source_sha256": "170ef769b6a63261f9985ef70cf1ec64d2c42b35143a715a3425f64b541fa9b5",
+          "stderr_tail": ""
+        }
+      ],
+      "journal_path": "/private/tmp/m27-b01-v2-clean-repro-retry/wave_b01/components/a04/evidence/model_generation/child_41596.jsonl"
+    },
+    "forged_ack": {
+      "status": 409,
+      "body": {
+        "error": "unverified_or_retracted_ack"
+      }
+    }
+  }
+}

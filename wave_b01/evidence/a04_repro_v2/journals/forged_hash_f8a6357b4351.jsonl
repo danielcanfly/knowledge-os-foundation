@@ -1,0 +1,10 @@
+{"allowed_sources": ["atlas-A", "delta-B"], "deadline_ms": 2500, "kind": "run.admitted", "monotonic_ns": 178035054919791, "native_q34": false, "provider": "deterministic_external_stub", "run_id": "forged_hash_f8a6357b4351", "tenant": "tenant-alpha"}
+{"event": "run.started", "kind": "event", "monotonic_ns": 178035055844583, "provider": "deterministic_external_stub", "run_id": "forged_hash_f8a6357b4351", "seq": 1, "server_ns": 178035055841750}
+{"command_basename": "stub_provider.py", "kind": "provider.spawn", "monotonic_ns": 178035064261666, "pid": 41492, "provider": "deterministic_external_stub", "run_id": "forged_hash_f8a6357b4351"}
+{"event": "claim.rejected", "kind": "event", "monotonic_ns": 178035172721208, "reason": "forged_source_digest", "run_id": "forged_hash_f8a6357b4351", "seq": 2, "server_ns": 178035172706833}
+{"event": "claim.rejected", "kind": "event", "monotonic_ns": 178035461789041, "reason": "claim_sequence", "run_id": "forged_hash_f8a6357b4351", "seq": 3, "server_ns": 178035461782333}
+{"exit_code": 0, "kind": "provider.exit", "kind_of_provider": "deterministic_external_stub", "monotonic_ns": 178036036595708, "pid": 41492, "run_id": "forged_hash_f8a6357b4351", "stderr": ""}
+{"kind": "worker.finished", "monotonic_ns": 178036037226916, "run_id": "forged_hash_f8a6357b4351", "worker_finished_ns": 178036037224958}
+{"event": "worker.finished", "kind": "event", "monotonic_ns": 178036037664666, "run_id": "forged_hash_f8a6357b4351", "seq": 4, "server_ns": 178036037661250, "worker_finished_ns": 178036037224958}
+{"event": "run.terminal", "kind": "event", "monotonic_ns": 178036037919041, "run_id": "forged_hash_f8a6357b4351", "seq": 5, "server_ns": 178036037916291, "status": "rejected", "verified_current": 0}
+{"client_disconnected": false, "kind": "run.closed", "monotonic_ns": 178036038159291, "run_id": "forged_hash_f8a6357b4351", "terminal_sent": true, "worker_finished_ns": 178036037224958}
