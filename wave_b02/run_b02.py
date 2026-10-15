@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import argparse
 import json
 import math
 import os
@@ -30,6 +31,7 @@ ROOT = Path(__file__).resolve().parent
 EVIDENCE = ROOT / "evidence"
 RAW = EVIDENCE / "raw"
 PYTHON = Path("/opt/homebrew/bin/python3.11")
+TEST_PYTHON = REPO.parents[2] / "06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python"
 ASSET_DIR = REPO.parent / "A04" / "model_runtime"
 MODEL_MANIFEST = REPO / "wave_b01/components/a04/MODEL_RUNTIME_MANIFEST.json"
 
@@ -195,12 +197,45 @@ def artifact_inventory() -> dict[str, Any]:
             "artifacts": rows}
 
 
+def archive_failed_attempt() -> Path:
+    history = ROOT / "history"
+    history.mkdir(exist_ok=True)
+    number = 1
+    while (history / f"attempt_{number:03d}").exists():
+        number += 1
+    destination = history / f"attempt_{number:03d}"
+    destination.mkdir()
+    if EVIDENCE.exists():
+        shutil.move(str(EVIDENCE), destination / "evidence")
+    for name in ("B02_AUTHORITY_LEDGER.json", "B02_RELEASE_GATES.json",
+                 "B02_NONPROD_CANDIDATE_MANIFEST.json", "B02_ARTIFACT_INVENTORY.json",
+                 "B02_RESULTS.json"):
+        path = ROOT / name
+        if path.exists():
+            shutil.move(str(path), destination / name)
+    write_json(destination / "ARCHIVE_RECEIPT.json", {
+        "schema": "m27.wave-b02.failed-attempt-archive/v1",
+        "reason": "PRESERVED_BEFORE_EXPLICIT_RESUME",
+        "destination": str(destination.relative_to(REPO)),
+    })
+    return destination
+
+
 def main() -> int:
-    if EVIDENCE.exists() or any((ROOT / name).exists() for name in (
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--resume", action="store_true",
+                        help="preserve a failed attempt and start a fresh evidence directory")
+    args = parser.parse_args()
+    outputs_exist = EVIDENCE.exists() or any((ROOT / name).exists() for name in (
             "B02_AUTHORITY_LEDGER.json", "B02_RELEASE_GATES.json",
             "B02_NONPROD_CANDIDATE_MANIFEST.json", "B02_ARTIFACT_INVENTORY.json",
-            "B02_RESULTS.json")):
+            "B02_RESULTS.json"))
+    if outputs_exist and args.resume:
+        archive_failed_attempt()
+    elif outputs_exist:
         raise RuntimeError("CLEAN_B02_OUTPUT_REQUIRED")
+    if not TEST_PYTHON.is_file():
+        raise RuntimeError("ACCEPTED_TEST_PYTHON_MISSING")
     RAW.mkdir(parents=True)
     ledger = build_authority_ledger()
     write_json(ROOT / "B02_AUTHORITY_LEDGER.json", ledger)
@@ -209,15 +244,15 @@ def main() -> int:
     suites.append(execute("b02_authority_candidate_11",
                           [str(PYTHON), "-B", "-m", "unittest", "-v", "wave_b02.test_b02"], REPO))
     suites.append(execute("b01_cross_module_regression_10",
-                          [str(PYTHON), "-B", "-m", "unittest", "-v", "wave_b01.test_integration"], REPO))
+                          [str(TEST_PYTHON), "-B", "-m", "unittest", "-v", "wave_b01.test_integration"], REPO))
     suites.append(execute("a05_source_context_regression_31",
-                          [str(PYTHON), "-B", "a05_run_tests.py"],
+                          [str(TEST_PYTHON), "-B", "a05_run_tests.py"],
                           REPO / "wave_b01/components/a05/adapter"))
     suites.append(execute("a06_durable_recovery_regression_25",
-                          [str(PYTHON), "-B", "-m", "unittest", "-v", "test_a06"],
+                          [str(TEST_PYTHON), "-B", "-m", "unittest", "-v", "test_a06"],
                           REPO / "wave_b01/components/a06"))
     suites.append(execute("a07_memory_revocation_regression_21",
-                          [str(PYTHON), "-B", "-m", "unittest", "-v", "test_a07_memory"],
+                          [str(TEST_PYTHON), "-B", "-m", "unittest", "-v", "test_a07_memory"],
                           REPO / "wave_b01/components/a07"))
     stage, replay = run_a04()
     suites.extend((stage, replay))
