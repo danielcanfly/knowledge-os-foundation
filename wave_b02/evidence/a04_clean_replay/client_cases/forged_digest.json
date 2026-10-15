@@ -1,0 +1,53 @@
+{
+  "case": "forged_digest",
+  "elapsed_ms": 852.333,
+  "error": null,
+  "evidence": {
+    "events": [
+      {
+        "client_received_ns": 196573775989250,
+        "event": "run.started",
+        "provider": "deterministic_external_stub",
+        "run_id": "forged_hash_2e28ed05f723",
+        "seq": 1,
+        "server_ns": 196573775320125
+      },
+      {
+        "client_received_ns": 196573827762166,
+        "event": "claim.rejected",
+        "reason": "forged_source_digest",
+        "run_id": "forged_hash_2e28ed05f723",
+        "seq": 2,
+        "server_ns": 196573827467208
+      },
+      {
+        "client_received_ns": 196574085679291,
+        "event": "claim.rejected",
+        "reason": "claim_sequence",
+        "run_id": "forged_hash_2e28ed05f723",
+        "seq": 3,
+        "server_ns": 196574085217250
+      },
+      {
+        "client_received_ns": 196574621441625,
+        "event": "worker.finished",
+        "run_id": "forged_hash_2e28ed05f723",
+        "seq": 4,
+        "server_ns": 196574621153333,
+        "worker_finished_ns": 196574620698416
+      },
+      {
+        "client_received_ns": 196574621609208,
+        "event": "run.terminal",
+        "run_id": "forged_hash_2e28ed05f723",
+        "seq": 5,
+        "server_ns": 196574621378833,
+        "status": "rejected",
+        "verified_current": 0
+      }
+    ],
+    "run_id": "forged_hash_2e28ed05f723",
+    "status": 200
+  },
+  "pass": true
+}

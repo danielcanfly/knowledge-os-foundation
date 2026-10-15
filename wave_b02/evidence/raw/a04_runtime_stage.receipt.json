@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/opt/homebrew/bin/python3.11",
+    "-B",
+    "stage_model_runtime.py",
+    "--asset-dir",
+    "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/A04/model_runtime",
+    "--destination",
+    "/tmp/m27-b02-local-brzspan4/runtime",
+    "--model-mode",
+    "hardlink"
+  ],
+  "completed_unix_ns": 1792090811217825000,
+  "cwd": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b01/components/a04",
+  "exit_code": 0,
+  "name": "a04_runtime_stage",
+  "pass": true,
+  "schema": "m27.wave-b02.test-receipt/v1",
+  "started_unix_ns": 1792090809675403000,
+  "stderr": "wave_b02/evidence/raw/a04_runtime_stage.stderr.log",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "wave_b02/evidence/raw/a04_runtime_stage.stdout.log",
+  "stdout_sha256": "d7d6dc9746ae08807f63f9537eee4da64a1e93b8b84df214cc637cfa5fe1892e",
+  "summary": []
+}

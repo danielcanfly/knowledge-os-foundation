@@ -1,0 +1,165 @@
+{
+  "abi": "m27.wave-b02.authority-preflight/v1",
+  "entries": {
+    "a08_coding_source_edit": {
+      "checked_at": "2026-10-15T19:00:02.423523+00:00",
+      "evidence": [],
+      "reason": "Prior same-scope refusal preserved; no relay or rephrase.",
+      "scope": "PERSISTED_CODING_SOURCE_PATCH",
+      "status": "EXPLICITLY_REFUSED"
+    },
+    "b01_accepted_source": {
+      "checked_at": "2026-10-15T19:00:02.423523+00:00",
+      "evidence": [
+        {
+          "immutable_identity": true,
+          "kind": "MASTER_ACCEPTANCE",
+          "path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/02_REPORTS/PARALLEL_VNEXT_20261014/MASTER_B01_FINAL_SCOPED_ACCEPTANCE_20261015.md",
+          "sha256": "d98e1b7b651ab788afb980596c1a93f2985d873c74d7cb247618774172c8e217"
+        },
+        {
+          "immutable_identity": true,
+          "kind": "MACHINE_ACCEPTANCE",
+          "path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/02_REPORTS/PARALLEL_VNEXT_20261014/MASTER_B01_FINAL_SCOPED_ACCEPTANCE_20261015.json",
+          "sha256": "f5e548ae6ed061a68d5b83c438dc4d58771bbfe7ff5a604fae0bb167a42f606e"
+        }
+      ],
+      "reason": null,
+      "scope": "B01_NONPROD_EXACT_HEAD_TREE",
+      "status": "AUTHORIZED_WITH_RECEIPT"
+    },
+    "b02_local_engineering": {
+      "checked_at": "2026-10-15T19:00:02.423523+00:00",
+      "evidence": [
+        {
+          "immutable_identity": true,
+          "kind": "OWNER_DISPATCH",
+          "path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/01_DISPATCH/PARALLEL_VNEXT_20261014/B02_MASTER_DISPATCH_AUTHORITY_PREFLIGHT_20261016.md",
+          "sha256": "6cc6b59b5b113f824381ee7faea501d94657e200bfae29412b75778447cc1c04"
+        },
+        {
+          "immutable_identity": true,
+          "kind": "COMMON_RULES",
+          "path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/01_DISPATCH/PARALLEL_VNEXT_20261014/00_SHARED_EXECUTION_AND_100_PERCENT_RULES.md",
+          "sha256": "2128a3464be79acb59045696cd6a9c03647cfa1f5407fbe0e4fbcb49a2937578"
+        }
+      ],
+      "reason": null,
+      "scope": "LOCAL_NONPROD_S1_S4",
+      "status": "AUTHORIZED_WITH_RECEIPT"
+    },
+    "c28_launch": {
+      "checked_at": "2026-10-15T19:00:02.423523+00:00",
+      "evidence": [],
+      "reason": "Separate launch authorization absent.",
+      "scope": "C28_LIVE_TRIAL",
+      "status": "NOT_PROVEN"
+    },
+    "ci_signing_staging": {
+      "checked_at": "2026-10-15T19:00:02.423523+00:00",
+      "evidence": [],
+      "reason": "MG23 equivalent operation was explicitly refused; no retry.",
+      "scope": "PRIVATE_CI_SIGNING_OR_STAGING",
+      "status": "EXPLICITLY_REFUSED"
+    },
+    "external_provider": {
+      "checked_at": "2026-10-15T19:00:02.423523+00:00",
+      "evidence": [],
+      "reason": "No provider authorization/invoice.",
+      "scope": "BILLABLE_OR_REMOTE_PROVIDER",
+      "status": "NOT_PROVEN"
+    },
+    "formal_external_issuer": {
+      "checked_at": "2026-10-15T19:00:02.423523+00:00",
+      "evidence": [],
+      "reason": "No genuine external issuer receipt.",
+      "scope": "PRODUCT_SIGNING",
+      "status": "NOT_PROVEN"
+    },
+    "local_disposable_rollback": {
+      "checked_at": "2026-10-15T19:00:02.423523+00:00",
+      "evidence": [
+        {
+          "immutable_identity": true,
+          "kind": "OWNER_DISPATCH",
+          "path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/01_DISPATCH/PARALLEL_VNEXT_20261014/B02_MASTER_DISPATCH_AUTHORITY_PREFLIGHT_20261016.md",
+          "sha256": "6cc6b59b5b113f824381ee7faea501d94657e200bfae29412b75778447cc1c04"
+        }
+      ],
+      "reason": null,
+      "scope": "B02_OWNED_LOCAL_SANDBOX_ONLY",
+      "status": "AUTHORIZED_WITH_RECEIPT"
+    },
+    "local_open_model": {
+      "checked_at": "2026-10-15T19:00:02.423523+00:00",
+      "evidence": [
+        {
+          "immutable_identity": true,
+          "kind": "MASTER_ACCEPTANCE",
+          "path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/02_REPORTS/PARALLEL_VNEXT_20261014/MASTER_B01_FINAL_SCOPED_ACCEPTANCE_20261015.md",
+          "sha256": "d98e1b7b651ab788afb980596c1a93f2985d873c74d7cb247618774172c8e217"
+        }
+      ],
+      "reason": "Model/runtime/license digests are pinned by accepted B01.",
+      "scope": "LOCAL_NONPROD_QWEN_ONLY",
+      "status": "AUTHORIZED_WITH_RECEIPT"
+    },
+    "product_qdrant": {
+      "checked_at": "2026-10-15T19:00:02.423523+00:00",
+      "evidence": [],
+      "reason": "MG25 equivalent operation was explicitly refused; no retry.",
+      "scope": "ACTUAL_PRODUCT_QDRANT",
+      "status": "EXPLICITLY_REFUSED"
+    },
+    "production": {
+      "checked_at": "2026-10-15T19:00:02.423523+00:00",
+      "evidence": [],
+      "reason": "Owner dispatch forbids Production mutation.",
+      "scope": "PRODUCTION",
+      "status": "OUT_OF_SCOPE"
+    },
+    "q34_native_streaming": {
+      "checked_at": "2026-10-15T19:00:02.423523+00:00",
+      "evidence": [],
+      "reason": "Prior refusal preserved; Q34 remains frozen.",
+      "scope": "FROZEN_Q34_NATIVE_STREAMING",
+      "status": "EXPLICITLY_REFUSED"
+    },
+    "remote_kill_switch": {
+      "checked_at": "2026-10-15T19:00:02.423523+00:00",
+      "evidence": [],
+      "reason": "Only local disposable rollback is authorized.",
+      "scope": "REMOTE_ROLLBACK_OR_KILL_SWITCH",
+      "status": "NOT_PROVEN"
+    },
+    "sealed_evaluation": {
+      "checked_at": "2026-10-15T19:00:02.423523+00:00",
+      "evidence": [],
+      "reason": "No read, run, or mutation authorization.",
+      "scope": "PROTECTED_OR_SEALED_EVALUATION",
+      "status": "OUT_OF_SCOPE"
+    },
+    "signed_artifact_coverage": {
+      "checked_at": "2026-10-15T19:00:02.423523+00:00",
+      "evidence": [],
+      "reason": "Candidate is deliberately unsigned content-only.",
+      "scope": "SIGNED_RUNNABLE_PRODUCT",
+      "status": "NOT_PROVEN"
+    },
+    "trusted_idp": {
+      "checked_at": "2026-10-15T19:00:02.423523+00:00",
+      "evidence": [],
+      "reason": "No genuine IdP grant or attestation.",
+      "scope": "EXTERNAL_IDP",
+      "status": "NOT_PROVEN"
+    }
+  },
+  "external_operations_attempted": false,
+  "generated_at": "2026-10-15T19:00:02.423523+00:00",
+  "schema": "m27.wave-b02.authority-ledger/v1",
+  "secrets_inspected": false,
+  "sole_source": {
+    "head": "f47400fea3858260c9c34691af99b592f2f5c89b",
+    "tree": "006d55fb59d58d701f68047afe45953e6676bde4"
+  }
+}

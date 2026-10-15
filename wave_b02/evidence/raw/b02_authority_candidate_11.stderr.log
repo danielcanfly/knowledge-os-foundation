@@ -1,0 +1,16 @@
+test_expired_receipt_fails_closed (wave_b02.test_b02.AuthorityTests.test_expired_receipt_fails_closed) ... ok
+test_explicit_refusals_remain_denied (wave_b02.test_b02.AuthorityTests.test_explicit_refusals_remain_denied) ... ok
+test_forged_receipt_digest_fails_closed (wave_b02.test_b02.AuthorityTests.test_forged_receipt_digest_fails_closed) ... ok
+test_local_preflight_is_authorized_but_formal_release_is_not (wave_b02.test_b02.AuthorityTests.test_local_preflight_is_authorized_but_formal_release_is_not) ... ok
+test_missing_receipt_fails_closed (wave_b02.test_b02.AuthorityTests.test_missing_receipt_fails_closed) ... ok
+test_model_not_loaded_fails_closed (wave_b02.test_b02.AuthorityTests.test_model_not_loaded_fails_closed) ... ok
+test_provider_runaway_and_external_call_are_denied (wave_b02.test_b02.AuthorityTests.test_provider_runaway_and_external_call_are_denied) ... ok
+test_wrong_issuer_bad_certificate_and_replay_are_denied (wave_b02.test_b02.AuthorityTests.test_wrong_issuer_bad_certificate_and_replay_are_denied) ... ok
+test_candidate_build_is_deterministic_and_unsigned (wave_b02.test_b02.CandidateTests.test_candidate_build_is_deterministic_and_unsigned) ... ok
+test_oci_architecture_mismatch_is_denied (wave_b02.test_b02.CandidateTests.test_oci_architecture_mismatch_is_denied) ... ok
+test_source_identity_is_exact_accepted_b01 (wave_b02.test_b02.CandidateTests.test_source_identity_is_exact_accepted_b01) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 2.112s
+
+OK

@@ -1,0 +1,41 @@
+{
+  "actual_model_inference": true,
+  "billable_provider_calls": 0,
+  "deterministic_cases": {
+    "fail": 0,
+    "pass": 21,
+    "total": 21
+  },
+  "external_provider_calls": false,
+  "first_answer_event_clock": {
+    "first_client_received_ns": 196583613011416,
+    "first_server_ns": 196583612860958,
+    "run_id": "real_local_05a36e64d5e4",
+    "terminal_client_received_ns": 196586016667250,
+    "terminal_server_ns": 196586016517125
+  },
+  "latency_denominator": 10,
+  "latency_p95_ms": 7144.284,
+  "max_new_tokens_budget_sum": 520,
+  "model": "Qwen2.5-0.5B-Instruct Q4_K_M",
+  "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+  "native_q34": false,
+  "negative_cases": [
+    "real_model_adversarial_safe_refusal",
+    "real_model_source_tamper_failclosed",
+    "real_model_revocation_and_retraction",
+    "real_model_hard_timeout",
+    "real_model_cancel_cleanup",
+    "real_model_cross_tenant_denied",
+    "real_model_forged_client_ack_denied"
+  ],
+  "positive_receipt_sha256": "5e03774eaab7fc4429e6f04ee20c362ad000759217bc11a81d9ed16d24ad079e",
+  "real_model_cases": {
+    "fail": 0,
+    "pass": 8,
+    "total": 8
+  },
+  "schema": "m27.wave-b02.local-model-metrics/v1",
+  "successful_generation_attempts": 10,
+  "total_generation_duration_ms": 14300.986
+}

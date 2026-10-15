@@ -1,0 +1,1 @@
+{"architecture":"arm64","config":{"Labels":{"m27.runnable":"false","m27.scope":"UNSIGNED_NONPROD_CONTENT_ONLY","m27.source.head":"f47400fea3858260c9c34691af99b592f2f5c89b","m27.source.tree":"006d55fb59d58d701f68047afe45953e6676bde4"}},"os":"darwin","rootfs":{"diff_ids":["sha256:b6894634cfe0fabe494e7b74b20d7134d2602be0234fa1928b227d31728fe850"],"type":"layers"}}

@@ -1,0 +1,9 @@
+{"test": "two_real_model_generated_claims_preterminal", "PASS": true, "error": ""}
+{"test": "real_model_adversarial_safe_refusal", "PASS": true, "error": ""}
+{"test": "real_model_source_tamper_failclosed", "PASS": true, "error": ""}
+{"test": "real_model_revocation_and_retraction", "PASS": true, "error": ""}
+{"test": "real_model_hard_timeout", "PASS": true, "error": ""}
+{"test": "real_model_cancel_cleanup", "PASS": true, "error": ""}
+{"test": "real_model_cross_tenant_denied", "PASS": true, "error": ""}
+{"test": "real_model_forged_client_ack_denied", "PASS": true, "error": ""}
+{"SUMMARY": {"pass": 8, "fail": 0, "total": 8}}

@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/opt/homebrew/bin/python3.11",
+    "-B",
+    "run_repro_v2.py",
+    "--runtime",
+    "/tmp/m27-b02-local-brzspan4/runtime",
+    "--scratch",
+    "/tmp/m27-b02-local-brzspan4/scratch"
+  ],
+  "completed_unix_ns": 1792090853889312000,
+  "cwd": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b01/components/a04",
+  "exit_code": 0,
+  "name": "a04_clean_real_model_21_plus_8",
+  "pass": true,
+  "schema": "m27.wave-b02.test-receipt/v1",
+  "started_unix_ns": 1792090811701258000,
+  "stderr": "wave_b02/evidence/raw/a04_clean_real_model_21_plus_8.stderr.log",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "wave_b02/evidence/raw/a04_clean_real_model_21_plus_8.stdout.log",
+  "stdout_sha256": "c7d9d5bcd332233219dd4299467603916fdd6f36c05f549cf3289c96895f91c6",
+  "summary": [
+    "{\"real_model_counts\": {\"fail\": 0, \"pass\": 8, \"total\": 8}, \"receipt\": \"/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b01/components/a04/evidence/REPRO_RUN_RECEIPT_V2.json\", \"receipt_sha256\": \"2784fc56ebc77e12bc6b3bf0fe9046e773c662d17402ad34ce8e665c46e5b12d\", \"server_cleanup_complete\": true, \"status\": \"PASS\", \"stub_counts\": {\"fail\": 0, \"pass\": 21, \"total\": 21}}"
+  ]
+}

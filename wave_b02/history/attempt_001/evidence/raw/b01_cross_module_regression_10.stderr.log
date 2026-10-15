@@ -1,0 +1,25 @@
+test_integration (unittest.loader._FailedTest.test_integration) ... ERROR
+
+======================================================================
+ERROR: test_integration (unittest.loader._FailedTest.test_integration)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_integration
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/lib/python3.11/unittest/loader.py", line 162, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b01/test_integration.py", line 11, in <module>
+    from knowledge_engine.m26_aq_semantic_contract import runtime_contract_identity
+  File "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/src/knowledge_engine/__init__.py", line 9, in <module>
+    _install_m26_r3_runtime_trace()
+  File "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/src/knowledge_engine/m26_provider_contract_trace.py", line 457, in install_runtime_trace
+    from . import m26_pa7_arbitrary_query_runtime as legacy
+  File "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py", line 18, in <module>
+    import httpx
+ModuleNotFoundError: No module named 'httpx'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

@@ -1,0 +1,89 @@
+{
+  "case": "invalid_then_repaired",
+  "elapsed_ms": 815.024,
+  "error": null,
+  "evidence": {
+    "events": [
+      {
+        "client_received_ns": 196578846792666,
+        "event": "run.started",
+        "provider": "deterministic_external_stub",
+        "run_id": "repair_125b9e9a997c",
+        "seq": 1,
+        "server_ns": 196578846413666
+      },
+      {
+        "client_received_ns": 196578879478708,
+        "event": "claim.rejected",
+        "reason": "semantic_unsupported",
+        "run_id": "repair_125b9e9a997c",
+        "seq": 2,
+        "server_ns": 196578879236458
+      },
+      {
+        "claim_index": 1,
+        "client_ack_response": {
+          "accepted": true
+        },
+        "client_ack_status": 200,
+        "client_received_ns": 196579126725333,
+        "event": "claim.verified",
+        "fact_key": "atlas_stages",
+        "proof_sha256": "eb4ab01eb56ca33bf13de00b89bbd2e57a13a9f9734e70720af22d281181ae1c",
+        "run_id": "repair_125b9e9a997c",
+        "seq": 3,
+        "server_ns": 196579125872708,
+        "source_id": "atlas-A",
+        "source_sha256": "cb47bc6b5526493abeeeb60b26065eb1b5b1671c957c3f62661cf08f49ea6b07",
+        "span": [
+          0,
+          82
+        ],
+        "text": "The Atlas trial has two distinct review stages.",
+        "verifier": "bounded_curated_entailment_v1"
+      },
+      {
+        "claim_index": 2,
+        "client_ack_response": {
+          "accepted": true
+        },
+        "client_ack_status": 200,
+        "client_received_ns": 196579131668875,
+        "event": "claim.verified",
+        "fact_key": "delta_cadence",
+        "proof_sha256": "98fdd0108a893cc9f89d3cfb68ea78633c5c968f5eced885df3c0b9f4dfcc9c3",
+        "run_id": "repair_125b9e9a997c",
+        "seq": 4,
+        "server_ns": 196579128006708,
+        "source_id": "delta-B",
+        "source_sha256": "51364fecf68358c4202a211cbeb62234d5d4c487237b8ee097046245cdb4d774",
+        "span": [
+          0,
+          78
+        ],
+        "text": "The Delta notebook runs once every four hours.",
+        "verifier": "bounded_curated_entailment_v1"
+      },
+      {
+        "client_received_ns": 196579659466458,
+        "event": "worker.finished",
+        "run_id": "repair_125b9e9a997c",
+        "seq": 5,
+        "server_ns": 196579659027125,
+        "worker_finished_ns": 196579658453708
+      },
+      {
+        "client_received_ns": 196579659754333,
+        "event": "run.terminal",
+        "run_id": "repair_125b9e9a997c",
+        "seq": 6,
+        "server_ns": 196579659376291,
+        "status": "succeeded",
+        "verified_current": 2
+      }
+    ],
+    "run_id": "repair_125b9e9a997c",
+    "status": 200
+  },
+  "pass": true
+}

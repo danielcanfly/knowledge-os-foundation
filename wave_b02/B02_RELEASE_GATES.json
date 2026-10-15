@@ -1,0 +1,39 @@
+{
+  "abi": "m27.wave-b02.authority-preflight/v1",
+  "c28_live_trial": false,
+  "candidate_content_hash_verified": true,
+  "deployment_permitted": false,
+  "engineering_suites_pass": true,
+  "external_gate_truth": {
+    "a02_signature": "UNSIGNED_NONPROD_READ_ONLY",
+    "formal_x01_x09": "0/9_NOT_RUN",
+    "m26_regression": "857_PASS_6_HISTORICAL_FAIL",
+    "official_original523": "0/523_NOT_RUN",
+    "official_product_blind200": "0/200_NOT_RUN",
+    "q34_native_streaming": "NOT_QUALIFIED"
+  },
+  "formal_gate_checks": {
+    "ci_signing_staging": false,
+    "external_provider": false,
+    "formal_external_issuer": false,
+    "remote_kill_switch": false,
+    "signed_artifact_coverage": false,
+    "trusted_idp": false
+  },
+  "formal_product_go": false,
+  "local_gate_checks": {
+    "b01_accepted_source": true,
+    "b02_local_engineering": true,
+    "local_disposable_rollback": true,
+    "local_open_model": true
+  },
+  "local_model_e2e_verified": true,
+  "nonprod_preflight_engineering_pass": true,
+  "preserved_refusals": [
+    "ci_signing_staging",
+    "q34_native_streaming",
+    "product_qdrant",
+    "a08_coding_source_edit"
+  ],
+  "schema": "m27.wave-b02.release-gates/v1"
+}

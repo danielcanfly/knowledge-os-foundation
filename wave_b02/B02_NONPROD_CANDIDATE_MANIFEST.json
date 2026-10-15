@@ -1,0 +1,399 @@
+{
+  "classification": "UNSIGNED_NONPROD_CONTENT_ONLY",
+  "deployable": false,
+  "oci_content": {
+    "config_sha256": "51f196fdab40a1bf23f2e43d52c61d4695d7d6eb82a7f34c381195f4e54073c9",
+    "index_sha256": "bbbd3e5b9a44a0c394a6c3a27b22f320397fb8fd03f05561ae632517251d35db",
+    "layer_sha256": "b6894634cfe0fabe494e7b74b20d7134d2602be0234fa1928b227d31728fe850",
+    "layout_path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/evidence/candidate_oci_content",
+    "manifest_sha256": "a5f84298abaff94d2e091f6d17bcd1f27e89eb05202cc7367888791207c87a6c"
+  },
+  "platform": {
+    "architecture": "arm64",
+    "os": "darwin"
+  },
+  "schema": "m27.wave-b02.nonprod-candidate-manifest/v1",
+  "signed_runnable_product": false,
+  "sole_source": {
+    "head": "f47400fea3858260c9c34691af99b592f2f5c89b",
+    "tree": "006d55fb59d58d701f68047afe45953e6676bde4"
+  },
+  "source_file_count": 75,
+  "source_files": [
+    {
+      "bytes": 28144,
+      "path": "wave_b01/CANDIDATE_MANIFEST_V2.json",
+      "sha256": "aec454cd8f27367dfd00ab3dafcccd949fbb9d457e9b78d47d9012c177dfc942"
+    },
+    {
+      "bytes": 51,
+      "path": "wave_b01/__init__.py",
+      "sha256": "9ce062d12ca1e958b995d01f43baa4efaa02ec907bc0cad19039f67dd555ad53"
+    },
+    {
+      "bytes": 83,
+      "path": "wave_b01/components/a04/.gitignore",
+      "sha256": "2cdeee4138db364ab6c1a433dfa124d972a336767b6d83c73fd5c4d20da9e2be"
+    },
+    {
+      "bytes": 3650,
+      "path": "wave_b01/components/a04/INTEGRATION_CONTRACT_REQUEST.json",
+      "sha256": "d79f3c4a2b8cc369bf61d97fc905af72aa1b08779a7b444f9d9a945fded65f62"
+    },
+    {
+      "bytes": 1564,
+      "path": "wave_b01/components/a04/MODEL_RUNTIME_MANIFEST.json",
+      "sha256": "f11f2a3cd19adb4fb22bdf8b0879b44ddb394eae8beab70b105395563913ae56"
+    },
+    {
+      "bytes": 4252,
+      "path": "wave_b01/components/a04/README.md",
+      "sha256": "f6f6a0b49e4ae27190f428e4c135bafb8aefe84a8fc0a7fcd58184f43859f5c1"
+    },
+    {
+      "bytes": 20668,
+      "path": "wave_b01/components/a04/app.py",
+      "sha256": "eb46c30d88c7bf0cd67f2aa5d152c134c84fbc093715c15bc6935eb4f657f8b2"
+    },
+    {
+      "bytes": 2443,
+      "path": "wave_b01/components/a04/bootstrap.py",
+      "sha256": "ca8b8f2695fc4b830c7d4e223add996d0f029303173b48c5812991c1f1dd9a3b"
+    },
+    {
+      "bytes": 83,
+      "path": "wave_b01/components/a04/data/atlas.txt",
+      "sha256": "cb47bc6b5526493abeeeb60b26065eb1b5b1671c957c3f62661cf08f49ea6b07"
+    },
+    {
+      "bytes": 78,
+      "path": "wave_b01/components/a04/data/cedar.txt",
+      "sha256": "877bf5460697750de86b9bf93f8f592125465d3e43ce6440ff7ddbda0cb0fffe"
+    },
+    {
+      "bytes": 79,
+      "path": "wave_b01/components/a04/data/delta.txt",
+      "sha256": "51364fecf68358c4202a211cbeb62234d5d4c487237b8ee097046245cdb4d774"
+    },
+    {
+      "bytes": 1291,
+      "path": "wave_b01/components/a04/data/manifest.json",
+      "sha256": "ef3febbd15c983b3b4b2e3ebeb49829098be356c0038f46798db74cd19531db3"
+    },
+    {
+      "bytes": 11343,
+      "path": "wave_b01/components/a04/licenses/QWEN2.5_APACHE-2.0.txt",
+      "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+    },
+    {
+      "bytes": 6798,
+      "path": "wave_b01/components/a04/local_model_provider.py",
+      "sha256": "880b4a9015c72aa1019ddbc87cc73627e073cf2cb8fe33cf11faa5a072cccea9"
+    },
+    {
+      "bytes": 9577,
+      "path": "wave_b01/components/a04/run_repro_v2.py",
+      "sha256": "8ffeab6744e08ae73d25fddd487fffbcf42b847ec233a8aea15a8d43ec9687cc"
+    },
+    {
+      "bytes": 6668,
+      "path": "wave_b01/components/a04/stage_model_runtime.py",
+      "sha256": "2600997bfb8296dda503660ce62764048931190a3a2985a131c856a3fe70c03b"
+    },
+    {
+      "bytes": 1669,
+      "path": "wave_b01/components/a04/stub_provider.py",
+      "sha256": "002187e3956f9e66a1a021cfbca68c1c6ad888b143d58c47c2f94e030e532276"
+    },
+    {
+      "bytes": 15120,
+      "path": "wave_b01/components/a04/tests/acceptance.py",
+      "sha256": "5aa39b8b84aba0f1f729aaaa33a017f9df90ad174355923fc24a61637e5bd482"
+    },
+    {
+      "bytes": 7376,
+      "path": "wave_b01/components/a04/tests/real_model_acceptance.py",
+      "sha256": "0e7f8d214eff99e6c29769c5d98485940c1f5876a36e2ea2f724c44f692044bf"
+    },
+    {
+      "bytes": 1273,
+      "path": "wave_b01/components/a05/INTEGRATION_CONTRACT_REQUEST.json",
+      "sha256": "c19074d5957160344489cacf45adf7f1aeeff58eeb8fecb37b334a9384c52de5"
+    },
+    {
+      "bytes": 44,
+      "path": "wave_b01/components/a05/adapter/.gitignore",
+      "sha256": "900f63de880d9af8908aaf809d55f9b1082874d86e6f8ba2e69ed19cfcbc5f9c"
+    },
+    {
+      "bytes": 2192,
+      "path": "wave_b01/components/a05/adapter/README.md",
+      "sha256": "302e44b1f7702ee1e571d0880914de018a0362841397805af51756430f135080"
+    },
+    {
+      "bytes": 4880,
+      "path": "wave_b01/components/a05/adapter/a05_build_native.py",
+      "sha256": "54cb125b32953bcac58e9ccabdb85cdb001f103d374c9cd5535f840c0852bd2c"
+    },
+    {
+      "bytes": 4898,
+      "path": "wave_b01/components/a05/adapter/a05_build_release.py",
+      "sha256": "1b54a0bcc9b59fb377fd55064023be03ee48120cd9ce539923ec3fce0b78792f"
+    },
+    {
+      "bytes": 2902,
+      "path": "wave_b01/components/a05/adapter/a05_http_server.py",
+      "sha256": "eb00e4437a7e7f73d1cce85d1346677b9e2f0424d38b2063f6fd27672f3d5c52"
+    },
+    {
+      "bytes": 6031,
+      "path": "wave_b01/components/a05/adapter/a05_i37_native.py",
+      "sha256": "a2940d22e9c364a5b5413ba0b354b021a08efc7627edfc5bbef67afdbca096fb"
+    },
+    {
+      "bytes": 9761,
+      "path": "wave_b01/components/a05/adapter/a05_retrieval.py",
+      "sha256": "4caaad29ab61c50dc3ce7a14ae7eec667909d8ccbadf4d16a523719ff80ff466"
+    },
+    {
+      "bytes": 11229,
+      "path": "wave_b01/components/a05/adapter/a05_run_tests.py",
+      "sha256": "a0515e353fc9ad3a0b885781a9e525a78d34fb55fc0d041638d06398022c2ec3"
+    },
+    {
+      "bytes": 3183,
+      "path": "wave_b01/components/a05/adapter/a05_verify_sigstore.py",
+      "sha256": "9d22d6ad0d6c21bba9312928aa6a39f241fb3eee442c97b3d2e09d3e779c4474"
+    },
+    {
+      "bytes": 239,
+      "path": "wave_b01/components/a05/native_private_store/channels/a05-owner-context-nonprod-only.json",
+      "sha256": "44531cc5e408343138027b8f14f8074de15f144e437d272c55eef4679b40dee6"
+    },
+    {
+      "bytes": 1947,
+      "path": "wave_b01/components/a05/native_private_store/releases/a05native-7835ec95cee63972/document_source_index.json",
+      "sha256": "737cbbb60ba75cc4aca0a0c92fac6ad9eb2d4a88368804bdcd173cb47dd06aab"
+    },
+    {
+      "bytes": 2854,
+      "path": "wave_b01/components/a05/native_private_store/releases/a05native-7835ec95cee63972/graph.json",
+      "sha256": "7bca3ab2f13c89f85e47b448595ad0fea011dab994f6d67aae6b191b5fb1a26d"
+    },
+    {
+      "bytes": 2860,
+      "path": "wave_b01/components/a05/native_private_store/releases/a05native-7835ec95cee63972/graph_v2.json",
+      "sha256": "71a1f633369b336e18879d12c10622272fd31917f1eed75d20dc0991cbc56387"
+    },
+    {
+      "bytes": 21511,
+      "path": "wave_b01/components/a05/native_private_store/releases/a05native-7835ec95cee63972/lexical_index.json",
+      "sha256": "332405b5117e8c3dc26713e679fd44a8582bd015d15cba9364fcf38bdbd088f8"
+    },
+    {
+      "bytes": 2446,
+      "path": "wave_b01/components/a05/native_private_store/releases/a05native-7835ec95cee63972/manifest.json",
+      "sha256": "7e17f4cedc74c4d5baf864d2de00df7fa37000434053cf21f88989e992802a1f"
+    },
+    {
+      "bytes": 15079,
+      "path": "wave_b01/components/a05/native_private_store/releases/a05native-7835ec95cee63972/provenance.json",
+      "sha256": "94a94cf6ce3c089384dbce5e7e6c9ec1195201d3a699744dc6c6bf24c411f3c4"
+    },
+    {
+      "bytes": 9012,
+      "path": "wave_b01/components/a05/native_private_store/releases/a05native-7835ec95cee63972/semantic_inputs.json",
+      "sha256": "e70a80a933645e1231cfadc1242287bec941e0ba6f837b6cf1f539dcfbb02962"
+    },
+    {
+      "bytes": 13665,
+      "path": "wave_b01/components/a05/native_private_store/releases/a05native-7835ec95cee63972/source_documents.json",
+      "sha256": "0cc317bbf433a3298e93dbd06cc0896e5e06766dedb47668b50b90f74150dca5"
+    },
+    {
+      "bytes": 2026,
+      "path": "wave_b01/components/a05/source/00_m27_architecture_overview.md",
+      "sha256": "044c03b3d8ad38ac0a22a734a2469629c132499cce5c43d49138d703a5ffca1d"
+    },
+    {
+      "bytes": 1371,
+      "path": "wave_b01/components/a05/source/01_contracts.md",
+      "sha256": "6f98ef617f1c1957ccec627aeae0381f9db48dbd763503a818732bbeb1476a02"
+    },
+    {
+      "bytes": 1222,
+      "path": "wave_b01/components/a05/source/02_request_flow.md",
+      "sha256": "3a2223f821f06d43b2f745fb08452c2fb28b88583de04b3cb2a3f890fcadb891"
+    },
+    {
+      "bytes": 621,
+      "path": "wave_b01/components/a05/source/03_context_planner.md",
+      "sha256": "d3a45ae32dc5042fa1551aae5dfc84e0bd2acba96a45927c4e30fec1ed06291b"
+    },
+    {
+      "bytes": 688,
+      "path": "wave_b01/components/a05/source/04_context_compiler.md",
+      "sha256": "2fadb4d526b22474d13ae17ca6a7c483bb78aa6de73f8ac83bde6f54efeb1991"
+    },
+    {
+      "bytes": 785,
+      "path": "wave_b01/components/a05/source/05_compute_policy.md",
+      "sha256": "48c2dc3f462627c92a16a9eb746f3201da16bfcb7246300f1f2dd69396b804dd"
+    },
+    {
+      "bytes": 615,
+      "path": "wave_b01/components/a05/source/06_tool_and_capability_registry.md",
+      "sha256": "75d9ee39b4fcbf27bffd104d0dfd8910c52222125a1a852fc2fb72a3be569a3a"
+    },
+    {
+      "bytes": 475,
+      "path": "wave_b01/components/a05/source/07_skill_runtime.md",
+      "sha256": "87588347d9e8e4e6149b2990f55e89485fac71b8f3e1e64c9de44214fae56e8f"
+    },
+    {
+      "bytes": 583,
+      "path": "wave_b01/components/a05/source/08_workspace_and_memory.md",
+      "sha256": "d50a77a9eba2620858d68a5860e6d73729e0551cee603a00ac1d38d1f8b0906f"
+    },
+    {
+      "bytes": 721,
+      "path": "wave_b01/components/a05/source/09_governance_eval_release.md",
+      "sha256": "39646dc51000792b30cd273a787f2791ca8855ded461e509c335b495bbea4b56"
+    },
+    {
+      "bytes": 1259,
+      "path": "wave_b01/components/a05/source/10_migration_plan.md",
+      "sha256": "19a3df1cfd79092a3daf614b6bea92f7d62aab898281461530c82d04be35ea29"
+    },
+    {
+      "bytes": 15672,
+      "path": "wave_b01/components/a05/source/corpus.json",
+      "sha256": "7835ec95cee639722f89a0520336283f7e226358ad7be003a2a906635d1200e3"
+    },
+    {
+      "bytes": 805,
+      "path": "wave_b01/components/a05/source/release.json",
+      "sha256": "14bcbc9f40f6407a689f560a3c5658ad5f9b7152c98ddef490c4275cf3aa8288"
+    },
+    {
+      "bytes": 122,
+      "path": "wave_b01/components/a05/source/revocations.json",
+      "sha256": "7afa6e8eedad461f065ff395e3ef5daf16553e89d5833d39cbb838eba55f3b95"
+    },
+    {
+      "bytes": 36,
+      "path": "wave_b01/components/a06/.gitignore",
+      "sha256": "8aa24e1259c69eec69db2b6c89129f506f8f05f4052fa124d3e582422d6f1865"
+    },
+    {
+      "bytes": 2440,
+      "path": "wave_b01/components/a06/INTEGRATION_CONTRACT_REQUEST.json",
+      "sha256": "129097b1f3c839deb9dbf1cf1890cac9ecd42116b9f6928c6632f045d9095784"
+    },
+    {
+      "bytes": 2782,
+      "path": "wave_b01/components/a06/README.md",
+      "sha256": "37d47dbf79550fe78f6bfbf3de6b815f3d8756e7461ac57721cad3ed3a3fe2b4"
+    },
+    {
+      "bytes": 934,
+      "path": "wave_b01/components/a06/data/source_manifest.json",
+      "sha256": "d89784d54d5e39a3e44b605e56f8835a7c3245b49d7ab3008d66060be2c57c47"
+    },
+    {
+      "bytes": 45530,
+      "path": "wave_b01/components/a06/data/sources/CHARTER.md",
+      "sha256": "eb0788d82d7d7321d4bf5fc78b0d0e7f298d3262c7b418955df3f27909445c45"
+    },
+    {
+      "bytes": 11957,
+      "path": "wave_b01/components/a06/data/sources/DELIVERY.md",
+      "sha256": "ac451d197b64b9d45a0e8bc2112a1e572d8f9832c0f47ce2f00573fe0fb21817"
+    },
+    {
+      "bytes": 4197,
+      "path": "wave_b01/components/a06/data/sources/I37_ACCEPTANCE.md",
+      "sha256": "9816b56ae67b4e42bcb06d5b87fae77549f2bac98e992fce93bc82e1018cb764"
+    },
+    {
+      "bytes": 7838,
+      "path": "wave_b01/components/a06/experiment.py",
+      "sha256": "03c6237f4b445313b4679b4248514eccecb09784e9591cff605ae3fc2480720b"
+    },
+    {
+      "bytes": 977,
+      "path": "wave_b01/components/a06/observer.py",
+      "sha256": "c74e3aab64eb5e66afbe698a96571f0a250b2b39eb9bbd2f05ca0c4a07ee5c1c"
+    },
+    {
+      "bytes": 19579,
+      "path": "wave_b01/components/a06/runner.py",
+      "sha256": "f7556123c7285ff619ac829b9977124110e74989187f6c64b8f5a769ac3ca202"
+    },
+    {
+      "bytes": 16364,
+      "path": "wave_b01/components/a06/test_a06.py",
+      "sha256": "53e78666c38e51948168d67b7478b740e7bc9103bf40cc31a66a5350a5b3a546"
+    },
+    {
+      "bytes": 5122,
+      "path": "wave_b01/components/a06/verifier.py",
+      "sha256": "e8edaeb5dd1ec913a6c108379cfca58ce99a58e0b164194a7c0350f504f13b6c"
+    },
+    {
+      "bytes": 1971,
+      "path": "wave_b01/components/a07/INTEGRATION_CONTRACT_REQUEST.json",
+      "sha256": "70bd43d325347f0ce23909fc4e64413d3a38786d7db15675b28e01ff5d2ca176"
+    },
+    {
+      "bytes": 3971,
+      "path": "wave_b01/components/a07/README.md",
+      "sha256": "3c159961e7221a4b86d5b01480b0a49b612a99c64ea0b69cef7e78dff76bb07a"
+    },
+    {
+      "bytes": 1013,
+      "path": "wave_b01/components/a07/a07_child.py",
+      "sha256": "af70a42516a91b04555d0ff78f4657804c2cc507cb8029968833733b4549d001"
+    },
+    {
+      "bytes": 22123,
+      "path": "wave_b01/components/a07/a07_memory.py",
+      "sha256": "11779ffe287373f76ee5d6ebf44b448bf26ea245ee2edd20ec200aca5ba4e84c"
+    },
+    {
+      "bytes": 1611,
+      "path": "wave_b01/components/a07/before_m28_probe.py",
+      "sha256": "4b1a8cd241944927689ba2fe3f44d684e0fe505e6579b8c02e21dadf36005f8b"
+    },
+    {
+      "bytes": 13762,
+      "path": "wave_b01/components/a07/test_a07_memory.py",
+      "sha256": "7e71ec8b0d68cc1c563ca53b8553ac90a6356114fe859812e2c15d4a914f11c4"
+    },
+    {
+      "bytes": 3502,
+      "path": "wave_b01/evidence_inputs/a02_current_candidate_attestation.json",
+      "sha256": "1cfe8b4c4547244582473dac8781f4297ec92c3feecfa97e93e31a8a658324ef"
+    },
+    {
+      "bytes": 1243,
+      "path": "wave_b01/evidence_inputs/a10_scoped_completion.json",
+      "sha256": "eb73af46a90d3620efb9102a2aee077296f9f72a261833881e8fc5c23bb23de1"
+    },
+    {
+      "bytes": 6630,
+      "path": "wave_b01/integration.py",
+      "sha256": "0e00289d95b7c052720ff279df1371ffa2a26c5eefea70503c8ad2f20f36c25b"
+    },
+    {
+      "bytes": 1502,
+      "path": "wave_b01/interfaces/a10_public_contract.json",
+      "sha256": "a709260b653d4bfdcf8dc9e8ac2a51d8685dc3c3b2cf3c64f955b868dce5a4b4"
+    },
+    {
+      "bytes": 6625,
+      "path": "wave_b01/test_integration.py",
+      "sha256": "705c545ffb00de0635b54a87a26aeab0482723c28d36bc48bc94f8f62b54975f"
+    }
+  ]
+}

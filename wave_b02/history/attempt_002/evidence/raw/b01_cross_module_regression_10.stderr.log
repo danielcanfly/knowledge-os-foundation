@@ -1,0 +1,15 @@
+test_a01_runtime_contract_identity_remains_canonical (wave_b01.test_integration.WaveB01IntegrationTests.test_a01_runtime_contract_identity_remains_canonical) ... ok
+test_a02_and_a10_do_not_gain_authority (wave_b01.test_integration.WaveB01IntegrationTests.test_a02_and_a10_do_not_gain_authority) ... ok
+test_a04_stream_maps_to_a09_x09_and_rejects_tamper (wave_b01.test_integration.WaveB01IntegrationTests.test_a04_stream_maps_to_a09_x09_and_rejects_tamper) ... ok
+test_a05_source_context_positive_and_memory_excluded (wave_b01.test_integration.WaveB01IntegrationTests.test_a05_source_context_positive_and_memory_excluded) ... ok
+test_a05_unsupported_and_stale_sources_fail_closed (wave_b01.test_integration.WaveB01IntegrationTests.test_a05_unsupported_and_stale_sources_fail_closed) ... ok
+test_a07_memory_is_candidate_only_and_revocation_invalidates (wave_b01.test_integration.WaveB01IntegrationTests.test_a07_memory_is_candidate_only_and_revocation_invalidates) ... ok
+test_a08_unknown_effect_is_terminal_without_retry (wave_b01.test_integration.WaveB01IntegrationTests.test_a08_unknown_effect_is_terminal_without_retry) ... ok
+test_candidate_manifest_keeps_frozen_boundaries (wave_b01.test_integration.WaveB01IntegrationTests.test_candidate_manifest_keeps_frozen_boundaries) ... ok
+test_task_and_provider_lanes_are_bounded_and_separate (wave_b01.test_integration.WaveB01IntegrationTests.test_task_and_provider_lanes_are_bounded_and_separate) ... ok
+test_task_scope_escalation_is_denied (wave_b01.test_integration.WaveB01IntegrationTests.test_task_scope_escalation_is_denied) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.044s
+
+OK

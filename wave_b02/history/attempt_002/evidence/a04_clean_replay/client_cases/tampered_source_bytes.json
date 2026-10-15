@@ -1,0 +1,67 @@
+{
+  "case": "tampered_source_bytes",
+  "elapsed_ms": 803.423,
+  "error": null,
+  "evidence": {
+    "events": [
+      {
+        "client_received_ns": 196580055977500,
+        "event": "run.started",
+        "provider": "deterministic_external_stub",
+        "run_id": "good_9791f50d4fd1",
+        "seq": 1,
+        "server_ns": 196580055819916
+      },
+      {
+        "claim_index": 1,
+        "client_ack_response": {
+          "accepted": true
+        },
+        "client_ack_status": 200,
+        "client_received_ns": 196580097131250,
+        "event": "claim.verified",
+        "fact_key": "atlas_stages",
+        "proof_sha256": "eb4ab01eb56ca33bf13de00b89bbd2e57a13a9f9734e70720af22d281181ae1c",
+        "run_id": "good_9791f50d4fd1",
+        "seq": 2,
+        "server_ns": 196580096835750,
+        "source_id": "atlas-A",
+        "source_sha256": "cb47bc6b5526493abeeeb60b26065eb1b5b1671c957c3f62661cf08f49ea6b07",
+        "span": [
+          0,
+          82
+        ],
+        "text": "The Atlas trial has two distinct review stages.",
+        "verifier": "bounded_curated_entailment_v1"
+      },
+      {
+        "client_received_ns": 196580299947791,
+        "event": "claim.rejected",
+        "reason": "source_bytes_tampered",
+        "run_id": "good_9791f50d4fd1",
+        "seq": 3,
+        "server_ns": 196580298618958
+      },
+      {
+        "client_received_ns": 196580857215125,
+        "event": "worker.finished",
+        "run_id": "good_9791f50d4fd1",
+        "seq": 4,
+        "server_ns": 196580856672375,
+        "worker_finished_ns": 196580855835541
+      },
+      {
+        "client_received_ns": 196580857662500,
+        "event": "run.terminal",
+        "run_id": "good_9791f50d4fd1",
+        "seq": 5,
+        "server_ns": 196580857095916,
+        "status": "rejected",
+        "verified_current": 1
+      }
+    ],
+    "run_id": "good_9791f50d4fd1",
+    "status": 200
+  },
+  "pass": true
+}

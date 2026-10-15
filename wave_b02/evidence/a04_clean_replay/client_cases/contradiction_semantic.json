@@ -1,0 +1,53 @@
+{
+  "case": "contradiction_semantic",
+  "elapsed_ms": 766.568,
+  "error": null,
+  "evidence": {
+    "events": [
+      {
+        "client_received_ns": 196575452193791,
+        "event": "run.started",
+        "provider": "deterministic_external_stub",
+        "run_id": "contradiction_c0ae847c8a9f",
+        "seq": 1,
+        "server_ns": 196575452074000
+      },
+      {
+        "client_received_ns": 196575474482375,
+        "event": "claim.rejected",
+        "reason": "semantic_unsupported",
+        "run_id": "contradiction_c0ae847c8a9f",
+        "seq": 2,
+        "server_ns": 196575474218041
+      },
+      {
+        "client_received_ns": 196575706647500,
+        "event": "claim.rejected",
+        "reason": "claim_sequence",
+        "run_id": "contradiction_c0ae847c8a9f",
+        "seq": 3,
+        "server_ns": 196575706280791
+      },
+      {
+        "client_received_ns": 196576217711000,
+        "event": "worker.finished",
+        "run_id": "contradiction_c0ae847c8a9f",
+        "seq": 4,
+        "server_ns": 196576217464166,
+        "worker_finished_ns": 196576217097208
+      },
+      {
+        "client_received_ns": 196576217835083,
+        "event": "run.terminal",
+        "run_id": "contradiction_c0ae847c8a9f",
+        "seq": 5,
+        "server_ns": 196576217657125,
+        "status": "rejected",
+        "verified_current": 0
+      }
+    ],
+    "run_id": "contradiction_c0ae847c8a9f",
+    "status": 200
+  },
+  "pass": true
+}

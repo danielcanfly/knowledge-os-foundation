@@ -1,0 +1,19 @@
+{
+  "artifact_inventory_sha256": "1955ced0f68ff8e7ea1852b95bae1dbe5aaf1e34ca422a19f929f90fd9dc63c8",
+  "artifacts_verified": 219,
+  "b01_source_files_verified": 75,
+  "c28_live_trial": false,
+  "formal_product_go": false,
+  "historical_failure_archives_preserved": 2,
+  "nonprod_preflight_engineering_pass": true,
+  "oci_blobs_verified": 3,
+  "production_mutated": false,
+  "q34_mutated": false,
+  "schema": "m27.wave-b02.independent-seal-verification/v1",
+  "sealed_evaluation_accessed": false,
+  "status": "PASS",
+  "verified_git": {
+    "head": "ca8f03855ca14887861aa08120f870a78922630b",
+    "tree": "477d6220bc308e82bed4f6aea555941545186197"
+  }
+}

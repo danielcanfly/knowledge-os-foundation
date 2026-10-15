@@ -1,0 +1,69 @@
+{
+  "checkout": {
+    "head": "152eb6b567dbdd1697a4cdefcdf0a5e13acc52b5",
+    "tracked_clean_after": true,
+    "tracked_clean_before": true,
+    "tree": "43c8168a9c7798f5820e68a2014d9c2dd585128e"
+  },
+  "clients": [
+    {
+      "exit_code": 0,
+      "name": "client_21",
+      "pid": 64100,
+      "script": "tests/acceptance.py",
+      "stderr": "client_21.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "client_21.stdout.log",
+      "stdout_sha256": "7e4bea3d4a9245ebd8267fc2eb29de3773038bf845f4a477640eec8f619a4af7"
+    },
+    {
+      "exit_code": 0,
+      "name": "client_real_model_8",
+      "pid": 64458,
+      "script": "tests/real_model_acceptance.py",
+      "stderr": "client_real_model_8.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "client_real_model_8.stdout.log",
+      "stdout_sha256": "4af6396f264e05cbe7150e2ef9577d4a79a335a8ecb1ad0decb10d31e12d3e4f"
+    }
+  ],
+  "failure": null,
+  "native_q34": false,
+  "production_authority": false,
+  "real_model_counts": {
+    "fail": 0,
+    "pass": 8,
+    "total": 8
+  },
+  "runtime_stage_receipt_sha256": "98d2019bacaadc27896ffdfece7ea3ca4a28d09a80311799885d165501c6d374",
+  "runtime_warmup": {
+    "cache_home_outside_checkout": true,
+    "cache_tmp_outside_checkout": true,
+    "duration_ms": 13441.975,
+    "exit_code": 0,
+    "max_new_tokens": 1,
+    "pid": 64084,
+    "stderr": "runtime_warmup.stderr.log",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "runtime_warmup.stdout.log",
+    "stdout_sha256": "b3b21784ad63e70a303a58e7c5cac41e1a048a592673f5ec3d5e00ef83935d5f",
+    "timed_out": false,
+    "timeout_seconds": 240
+  },
+  "schema": "m27.a04.clean-checkout-replay/v2",
+  "scope": "NONPROD_LOCAL_ONLY",
+  "sealed_evaluation_access": false,
+  "server": {
+    "cleanup_complete": true,
+    "exit_code_after_cleanup": -15,
+    "pid": 64099,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "2d2e5701bddb1803febbc937289e1b315a280622bf5b4a093072b10cb6d213d2"
+  },
+  "status": "PASS",
+  "stub_counts": {
+    "fail": 0,
+    "pass": 21,
+    "total": 21
+  }
+}

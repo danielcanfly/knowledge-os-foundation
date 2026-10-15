@@ -1,0 +1,8 @@
+{
+  "checks": {
+    "cli": true,
+    "model": true
+  },
+  "stage_receipt_sha256": "98d2019bacaadc27896ffdfece7ea3ca4a28d09a80311799885d165501c6d374",
+  "validated": true
+}

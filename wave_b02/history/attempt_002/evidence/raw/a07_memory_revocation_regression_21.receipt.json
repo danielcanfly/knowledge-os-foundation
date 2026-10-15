@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "test_a07_memory"
+  ],
+  "completed_unix_ns": 1792090809674674000,
+  "cwd": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b01/components/a07",
+  "exit_code": 0,
+  "name": "a07_memory_revocation_regression_21",
+  "pass": true,
+  "schema": "m27.wave-b02.test-receipt/v1",
+  "started_unix_ns": 1792090806771672000,
+  "stderr": "wave_b02/evidence/raw/a07_memory_revocation_regression_21.stderr.log",
+  "stderr_sha256": "cf030c4ca424387db20e8d44a2e4cecd6312e80ef76488f272c01aae88dc37b2",
+  "stdout": "wave_b02/evidence/raw/a07_memory_revocation_regression_21.stdout.log",
+  "stdout_sha256": "330dfd5272a0a8185d1143bdc0cda3b8ae076380f946416ff11eb371a587212c",
+  "summary": [
+    "Ran 21 tests in 2.846s",
+    "OK"
+  ]
+}

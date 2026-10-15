@@ -1,0 +1,18 @@
+{
+  "manifests": [
+    {
+      "annotations": {
+        "org.opencontainers.image.ref.name": "b02-content-only"
+      },
+      "digest": "sha256:a5f84298abaff94d2e091f6d17bcd1f27e89eb05202cc7367888791207c87a6c",
+      "mediaType": "application/vnd.oci.image.manifest.v1+json",
+      "platform": {
+        "architecture": "arm64",
+        "os": "darwin"
+      },
+      "size": 467
+    }
+  ],
+  "mediaType": "application/vnd.oci.image.index.v1+json",
+  "schemaVersion": 2
+}

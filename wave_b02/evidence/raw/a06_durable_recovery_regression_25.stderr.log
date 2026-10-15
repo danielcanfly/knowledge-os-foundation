@@ -1,0 +1,30 @@
+test_01_complete_real_persisted_research_and_effect (test_a06.A06Tests.test_01_complete_real_persisted_research_and_effect) ... ok
+test_02_real_os_sigkill_resume_same_runid (test_a06.A06Tests.test_02_real_os_sigkill_resume_same_runid) ... ok
+test_03_timeout_unknown_reconcile_never_reissues_effect (test_a06.A06Tests.test_03_timeout_unknown_reconcile_never_reissues_effect) ... ok
+test_04_unknown_effect_without_observed_result_must_hold (test_a06.A06Tests.test_04_unknown_effect_without_observed_result_must_hold) ... ok
+test_05_cancel_is_terminal_without_effect (test_a06.A06Tests.test_05_cancel_is_terminal_without_effect) ... ok
+test_06_revoke_mid_execution_fails_closed (test_a06.A06Tests.test_06_revoke_mid_execution_fails_closed) ... ok
+test_07_cross_tenant_denied_before_admission (test_a06.A06Tests.test_07_cross_tenant_denied_before_admission) ... ok
+test_08_ambiguous_firstparty_source_abstain (test_a06.A06Tests.test_08_ambiguous_firstparty_source_abstain) ... ok
+test_09_source_byte_tamper_fails_sha (test_a06.A06Tests.test_09_source_byte_tamper_fails_sha) ... ok
+test_10_independent_verifier_rejects_artifact_tamper (test_a06.A06Tests.test_10_independent_verifier_rejects_artifact_tamper) ... ok
+test_11_precondition_drift_does_not_perform_write (test_a06.A06Tests.test_11_precondition_drift_does_not_perform_write) ... ok
+test_12_true_reversible_action_rollback_observed (test_a06.A06Tests.test_12_true_reversible_action_rollback_observed) ... ok
+test_13_expired_deadline_reject (test_a06.A06Tests.test_13_expired_deadline_reject) ... ok
+test_14_over_budget_reject (test_a06.A06Tests.test_14_over_budget_reject) ... ok
+test_15_unauthorized_scope_reject (test_a06.A06Tests.test_15_unauthorized_scope_reject) ... ok
+test_16_terminal_replay_does_not_repeat_effect (test_a06.A06Tests.test_16_terminal_replay_does_not_repeat_effect) ... ok
+test_17_unknown_run_denied (test_a06.A06Tests.test_17_unknown_run_denied) ... ok
+test_18_acl_metadata_reject (test_a06.A06Tests.test_18_acl_metadata_reject) ... ok
+test_19_revocation_after_verification_invalidates_current_publishability (test_a06.A06Tests.test_19_revocation_after_verification_invalidates_current_publishability) ... ok
+test_20_observation_tamper_independent_verifier_rejects (test_a06.A06Tests.test_20_observation_tamper_independent_verifier_rejects) ... ok
+test_21_action_requires_exact_owner (test_a06.A06Tests.test_21_action_requires_exact_owner) ... ok
+test_22_cancel_api_not_able_to_reissue_action (test_a06.A06Tests.test_22_cancel_api_not_able_to_reissue_action) ... ok
+test_23_revocation_after_action_automatically_rolls_back_before_abstain (test_a06.A06Tests.test_23_revocation_after_action_automatically_rolls_back_before_abstain) ... ok
+test_24_cancel_after_unknown_effect_reconciles_then_reverts (test_a06.A06Tests.test_24_cancel_after_unknown_effect_reconciles_then_reverts) ... ok
+test_25_cancel_unobserved_unknown_effect_holds_and_does_not_repeat (test_a06.A06Tests.test_25_cancel_unobserved_unknown_effect_holds_and_does_not_repeat) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 0.754s
+
+OK

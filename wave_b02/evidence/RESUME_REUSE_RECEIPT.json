@@ -1,0 +1,15 @@
+{
+  "a04_replay_receipt_sha256": "2784fc56ebc77e12bc6b3bf0fe9046e773c662d17402ad34ce8e665c46e5b12d",
+  "reason": "ALL_REQUIRED_SUITES_ALREADY_PASSED;AGGREGATION_ONLY_REPAIR",
+  "receipt_sha256": {
+    "a04_clean_real_model_21_plus_8": "94bd72411b84504899396704cc84c2d56d0d4aa562fec7d5ee830066461ed077",
+    "a04_runtime_stage": "185db14a311e1ceb7b43627109703c6c0e586678acecff619423c2fb2c00acf2",
+    "a05_source_context_regression_31": "c6fdb0cdfa772e598b33ddb7a59633aae6bd89e88ca1a52e06ab0cfd7a840c76",
+    "a06_durable_recovery_regression_25": "487d834da3fd51e5d7ebc5c662d26b649853f55fd5fc9e594e4d7ddc4786082c",
+    "a07_memory_revocation_regression_21": "7a6de1eae3963c22a7ed5d090dee856a9b54119867ed1151d5c57a3897f9dfb4",
+    "b01_cross_module_regression_10": "38f8a1c866770000e7a0e7d8cae493fefc2f0df945b90246e3ad496790286928",
+    "b02_authority_candidate_11": "ef70dd1be5d705305478bb75617ecf2bb4d2338d0be474628a3246903018055a"
+  },
+  "schema": "m27.wave-b02.resume-reuse/v1",
+  "source_attempt": "wave_b02/history/attempt_002"
+}

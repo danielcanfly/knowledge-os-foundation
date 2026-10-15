@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "wave_b01.test_integration"
+  ],
+  "completed_unix_ns": 1792090805602004000,
+  "cwd": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02",
+  "exit_code": 0,
+  "name": "b01_cross_module_regression_10",
+  "pass": true,
+  "schema": "m27.wave-b02.test-receipt/v1",
+  "started_unix_ns": 1792090804612810000,
+  "stderr": "wave_b02/evidence/raw/b01_cross_module_regression_10.stderr.log",
+  "stderr_sha256": "3fdb1bd75c1aaa32bb9191f3da5133e8679bc1db00a1df8b00d6e64104150417",
+  "stdout": "wave_b02/evidence/raw/b01_cross_module_regression_10.stdout.log",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "summary": [
+    "Ran 10 tests in 0.044s",
+    "OK"
+  ]
+}

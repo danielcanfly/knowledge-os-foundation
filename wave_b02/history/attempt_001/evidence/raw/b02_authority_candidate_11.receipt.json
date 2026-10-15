@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/opt/homebrew/bin/python3.11",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "wave_b02.test_b02"
+  ],
+  "completed_unix_ns": 1792090753485450000,
+  "cwd": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02",
+  "exit_code": 0,
+  "name": "b02_authority_candidate_11",
+  "pass": true,
+  "schema": "m27.wave-b02.test-receipt/v1",
+  "started_unix_ns": 1792090751523623000,
+  "stderr": "wave_b02/evidence/raw/b02_authority_candidate_11.stderr.log",
+  "stderr_sha256": "dd64055b1305e0e75a7518af9a132ae8a87eea9e8ff3c778ea20fce49b9be9ce",
+  "stdout": "wave_b02/evidence/raw/b02_authority_candidate_11.stdout.log",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "summary": [
+    "Ran 11 tests in 1.899s",
+    "OK"
+  ]
+}
