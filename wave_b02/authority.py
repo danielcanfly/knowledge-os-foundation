@@ -242,7 +242,7 @@ def validate_local_model_runtime(runtime: Path, manifest_path: Path) -> dict[str
 def enforce_provider_budget(records: Iterable[Mapping[str, Any]], *,
                             max_attempts: int, max_total_ms: float) -> dict[str, Any]:
     rows = list(records)
-    total_ms = sum(float(row.get("duration_ms", 0)) for row in rows)
+    total_ms = sum(float(row.get("duration_ms") or 0) for row in rows)
     if len(rows) > max_attempts or total_ms > max_total_ms:
         raise RuntimeError("PROVIDER_RUNAWAY_DENIED")
     if any(int(row.get("billable_provider_calls", 0)) != 0 for row in rows):
