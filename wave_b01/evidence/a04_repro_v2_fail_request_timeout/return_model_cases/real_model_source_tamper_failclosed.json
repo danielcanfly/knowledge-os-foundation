@@ -1,0 +1,110 @@
+{
+  "name": "real_model_source_tamper_failclosed",
+  "pass": true,
+  "error": null,
+  "duration_ms": 31584.966,
+  "data": {
+    "status": 200,
+    "events": [
+      {
+        "event": "run.started",
+        "provider": "local_open_weight_qwen2.5_0.5b_instruct",
+        "run_id": "real_local_fbcc771d0612",
+        "seq": 1,
+        "server_ns": 177683795747666,
+        "client_received_ns": 177683796270958
+      },
+      {
+        "claim_index": 1,
+        "event": "claim.verified",
+        "fact_key": "atlas_stages",
+        "proof_sha256": "cc722b06b16ca23575495f44e140f6dff975e740a79f1b3821aa4d83ebfc4f24",
+        "run_id": "real_local_fbcc771d0612",
+        "seq": 2,
+        "server_ns": 177697109835000,
+        "source_id": "atlas-A",
+        "source_sha256": "cb47bc6b5526493abeeeb60b26065eb1b5b1671c957c3f62661cf08f49ea6b07",
+        "span": [
+          0,
+          82
+        ],
+        "text": "Atlas's nonproduction trial employs exactly two review stages: intake and verification.",
+        "verifier": "bounded_curated_entailment_v1",
+        "client_received_ns": 177697126852416,
+        "client_ack_status": 200,
+        "client_ack_response": {
+          "accepted": true
+        }
+      },
+      {
+        "event": "claim.rejected",
+        "reason": "source_bytes_tampered",
+        "run_id": "real_local_fbcc771d0612",
+        "seq": 3,
+        "server_ns": 177715316370916,
+        "client_received_ns": 177715329334541
+      },
+      {
+        "event": "worker.finished",
+        "run_id": "real_local_fbcc771d0612",
+        "seq": 4,
+        "server_ns": 177715363884250,
+        "worker_finished_ns": 177715360626333,
+        "client_received_ns": 177715364477291
+      },
+      {
+        "event": "run.terminal",
+        "run_id": "real_local_fbcc771d0612",
+        "seq": 5,
+        "server_ns": 177715364344791,
+        "status": "rejected",
+        "verified_current": 1,
+        "client_received_ns": 177715364693916
+      }
+    ],
+    "run_id": "real_local_fbcc771d0612",
+    "tamper_detection_stage": "verification_boundary",
+    "model_audit": {
+      "pid": 41155,
+      "records": [
+        {
+          "billable_provider_calls": 0,
+          "duration_ms": 11452.577,
+          "exit_code": 0,
+          "kind": "real_model_generation",
+          "llama_cli_pid": 41159,
+          "max_new_tokens": 52,
+          "mode": "real_local",
+          "model": "Qwen/Qwen2.5-0.5B-Instruct-GGUF Q4_K_M",
+          "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+          "output": "Atlas's nonproduction trial employs exactly two review stages: intake and verification.",
+          "output_sha256": "3232e7e31b55148cb4b55bd747d7bd1247fc6b0b48d15672fe52bc4ab5048bfb",
+          "raw_cli_stdout_sha256": "3bfa18866a253517a5702c902679d92ddd86b7322be2ed349aa92e5658a923e0",
+          "real_local_llm": true,
+          "seed": 1442,
+          "source_sha256": "6fb67439514ee5013335ccead56b0c346ff84aa53fd83424d15037b2a275b9ca",
+          "stderr_tail": ""
+        },
+        {
+          "billable_provider_calls": 0,
+          "duration_ms": 18183.336,
+          "exit_code": 0,
+          "kind": "real_model_generation",
+          "llama_cli_pid": 41165,
+          "max_new_tokens": 52,
+          "mode": "real_local",
+          "model": "Qwen/Qwen2.5-0.5B-Instruct-GGUF Q4_K_M",
+          "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+          "output": "Delta notebook executes every four hours during local validation exercises.",
+          "output_sha256": "9e2e3994ccbbd2d003515637b4d46f30bd682542dd91b1c61ad801110e46bf0c",
+          "raw_cli_stdout_sha256": "5a0f29441522fff34453d15b7249d64cdb09c1cf2d4242853ea5bf3fdaca9977",
+          "real_local_llm": true,
+          "seed": 1495,
+          "source_sha256": "170ef769b6a63261f9985ef70cf1ec64d2c42b35143a715a3425f64b541fa9b5",
+          "stderr_tail": ""
+        }
+      ],
+      "journal_path": "/private/tmp/m27-b01-v2-clean-repro-final/wave_b01/components/a04/evidence/model_generation/child_41155.jsonl"
+    }
+  }
+}

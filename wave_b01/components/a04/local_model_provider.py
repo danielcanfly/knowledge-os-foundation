@@ -23,7 +23,11 @@ RUNTIME_MANIFEST=ROOT/"MODEL_RUNTIME_MANIFEST.json"
 PIN="74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db"
 CLI_PIN="cf4f088f32507af619a1d65516d235ef7644db8c81ff1d3e175ff640dab75ab7"
 MAX_TOKENS=52
-MAX_SECONDS=20
+# Warm requests normally complete in a few seconds, but a loaded macOS host can
+# transiently exceed 20 seconds.  Keep this below the caller's 60-second task
+# deadline while allowing one bounded request to finish instead of spuriously
+# converting genuine local inference into a refusal.
+MAX_SECONDS=45
 MAX_CALLS=2
 
 def sha(p):

@@ -1,0 +1,12 @@
+{
+  "name": "real_model_cross_tenant_denied",
+  "pass": true,
+  "error": null,
+  "duration_ms": 2.979,
+  "data": {
+    "response_code": 403,
+    "body": {
+      "error": "scope_forbidden"
+    }
+  }
+}

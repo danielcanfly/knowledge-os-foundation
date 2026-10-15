@@ -1,0 +1,53 @@
+{
+  "case": "forged_citation",
+  "elapsed_ms": 952.269,
+  "error": null,
+  "evidence": {
+    "events": [
+      {
+        "client_received_ns": 177651074133083,
+        "event": "run.started",
+        "provider": "deterministic_external_stub",
+        "run_id": "forged_ref_5e184e6f764e",
+        "seq": 1,
+        "server_ns": 177651073116500
+      },
+      {
+        "client_received_ns": 177651171253291,
+        "event": "claim.rejected",
+        "reason": "source_not_in_scope",
+        "run_id": "forged_ref_5e184e6f764e",
+        "seq": 2,
+        "server_ns": 177651170132333
+      },
+      {
+        "client_received_ns": 177651455823500,
+        "event": "claim.rejected",
+        "reason": "claim_sequence",
+        "run_id": "forged_ref_5e184e6f764e",
+        "seq": 3,
+        "server_ns": 177651454229375
+      },
+      {
+        "client_received_ns": 177652022856500,
+        "event": "worker.finished",
+        "run_id": "forged_ref_5e184e6f764e",
+        "seq": 4,
+        "server_ns": 177652022554250,
+        "worker_finished_ns": 177652022213875
+      },
+      {
+        "client_received_ns": 177652023058791,
+        "event": "run.terminal",
+        "run_id": "forged_ref_5e184e6f764e",
+        "seq": 5,
+        "server_ns": 177652022784500,
+        "status": "rejected",
+        "verified_current": 0
+      }
+    ],
+    "run_id": "forged_ref_5e184e6f764e",
+    "status": 200
+  },
+  "pass": true
+}

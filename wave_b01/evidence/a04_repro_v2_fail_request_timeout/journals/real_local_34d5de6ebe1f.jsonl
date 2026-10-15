@@ -1,0 +1,9 @@
+{"allowed_sources": ["atlas-A", "delta-B"], "deadline_ms": 70, "kind": "run.admitted", "monotonic_ns": 177726174660500, "native_q34": false, "provider": "local_open_weight_qwen2.5_0.5b_instruct", "run_id": "real_local_34d5de6ebe1f", "tenant": "tenant-alpha"}
+{"event": "run.started", "kind": "event", "monotonic_ns": 177726176588541, "provider": "local_open_weight_qwen2.5_0.5b_instruct", "run_id": "real_local_34d5de6ebe1f", "seq": 1, "server_ns": 177726176584083}
+{"command_basename": "local_model_provider.py", "kind": "provider.spawn", "monotonic_ns": 177726181038208, "pid": 41210, "provider": "local_open_weight_qwen2.5_0.5b_instruct", "run_id": "real_local_34d5de6ebe1f"}
+{"deadline_ms": 70, "kind": "deadline.exceeded", "monotonic_ns": 177726376742416, "run_id": "real_local_34d5de6ebe1f"}
+{"exit_code": -15, "kind": "provider.exit", "kind_of_provider": "local_open_weight_qwen2.5_0.5b_instruct", "monotonic_ns": 177726433837291, "pid": 41210, "run_id": "real_local_34d5de6ebe1f", "stderr": ""}
+{"kind": "worker.finished", "monotonic_ns": 177726434537250, "run_id": "real_local_34d5de6ebe1f", "worker_finished_ns": 177726434535666}
+{"event": "worker.finished", "kind": "event", "monotonic_ns": 177726435567708, "run_id": "real_local_34d5de6ebe1f", "seq": 2, "server_ns": 177726435551000, "worker_finished_ns": 177726434535666}
+{"event": "run.terminal", "kind": "event", "monotonic_ns": 177726437152875, "run_id": "real_local_34d5de6ebe1f", "seq": 3, "server_ns": 177726437148625, "status": "timeout", "verified_current": 0}
+{"client_disconnected": false, "kind": "run.closed", "monotonic_ns": 177726437554166, "run_id": "real_local_34d5de6ebe1f", "terminal_sent": true, "worker_finished_ns": 177726434535666}

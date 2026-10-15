@@ -1,0 +1,37 @@
+{
+  "case": "deadline_timeout",
+  "elapsed_ms": 199.575,
+  "error": null,
+  "evidence": {
+    "events": [
+      {
+        "client_received_ns": 177659101863958,
+        "event": "run.started",
+        "provider": "deterministic_external_stub",
+        "run_id": "slow_f1f0747819f4",
+        "seq": 1,
+        "server_ns": 177659099537250
+      },
+      {
+        "client_received_ns": 177659289250833,
+        "event": "worker.finished",
+        "run_id": "slow_f1f0747819f4",
+        "seq": 2,
+        "server_ns": 177659284470666,
+        "worker_finished_ns": 177659279307250
+      },
+      {
+        "client_received_ns": 177659290602375,
+        "event": "run.terminal",
+        "run_id": "slow_f1f0747819f4",
+        "seq": 3,
+        "server_ns": 177659288102916,
+        "status": "timeout",
+        "verified_current": 0
+      }
+    ],
+    "run_id": "slow_f1f0747819f4",
+    "status": 200
+  },
+  "pass": true
+}

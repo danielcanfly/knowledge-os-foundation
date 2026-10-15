@@ -1,0 +1,60 @@
+{
+  "case": "client_disconnect",
+  "elapsed_ms": 968.39,
+  "error": null,
+  "evidence": {
+    "events": [
+      {
+        "client_received_ns": 177663614196833,
+        "event": "run.started",
+        "provider": "deterministic_external_stub",
+        "run_id": "slow_fd941f888a47",
+        "seq": 1,
+        "server_ns": 177663613719166
+      },
+      {
+        "claim_index": 1,
+        "client_received_ns": 177663750652625,
+        "event": "claim.verified",
+        "fact_key": "atlas_stages",
+        "proof_sha256": "eb4ab01eb56ca33bf13de00b89bbd2e57a13a9f9734e70720af22d281181ae1c",
+        "run_id": "slow_fd941f888a47",
+        "seq": 2,
+        "server_ns": 177663748909416,
+        "source_id": "atlas-A",
+        "source_sha256": "cb47bc6b5526493abeeeb60b26065eb1b5b1671c957c3f62661cf08f49ea6b07",
+        "span": [
+          0,
+          82
+        ],
+        "text": "The Atlas trial has two distinct review stages.",
+        "verifier": "bounded_curated_entailment_v1"
+      }
+    ],
+    "run_id": "slow_fd941f888a47",
+    "server_disconnect_journal": [
+      {
+        "error": "BrokenPipeError",
+        "kind": "client.disconnected",
+        "monotonic_ns": 177664488799333,
+        "run_id": "slow_fd941f888a47"
+      },
+      {
+        "error": "BrokenPipeError",
+        "kind": "client.disconnected",
+        "monotonic_ns": 177664489329750,
+        "run_id": "slow_fd941f888a47"
+      },
+      {
+        "client_disconnected": true,
+        "kind": "run.closed",
+        "monotonic_ns": 177664521808458,
+        "run_id": "slow_fd941f888a47",
+        "terminal_sent": false,
+        "worker_finished_ns": null
+      }
+    ],
+    "status": 200
+  },
+  "pass": true
+}
