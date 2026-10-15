@@ -1,0 +1,53 @@
+{
+  "case": "contradiction_semantic",
+  "elapsed_ms": 1225.324,
+  "error": null,
+  "evidence": {
+    "events": [
+      {
+        "client_received_ns": 177844364108958,
+        "event": "run.started",
+        "provider": "deterministic_external_stub",
+        "run_id": "contradiction_5193fb865aa4",
+        "seq": 1,
+        "server_ns": 177844363533125
+      },
+      {
+        "client_received_ns": 177844499605625,
+        "event": "claim.rejected",
+        "reason": "semantic_unsupported",
+        "run_id": "contradiction_5193fb865aa4",
+        "seq": 2,
+        "server_ns": 177844498492250
+      },
+      {
+        "client_received_ns": 177844887970125,
+        "event": "claim.rejected",
+        "reason": "claim_sequence",
+        "run_id": "contradiction_5193fb865aa4",
+        "seq": 3,
+        "server_ns": 177844884734250
+      },
+      {
+        "client_received_ns": 177845575195750,
+        "event": "worker.finished",
+        "run_id": "contradiction_5193fb865aa4",
+        "seq": 4,
+        "server_ns": 177845574572958,
+        "worker_finished_ns": 177845573711583
+      },
+      {
+        "client_received_ns": 177845575572000,
+        "event": "run.terminal",
+        "run_id": "contradiction_5193fb865aa4",
+        "seq": 5,
+        "server_ns": 177845575077125,
+        "status": "rejected",
+        "verified_current": 0
+      }
+    ],
+    "run_id": "contradiction_5193fb865aa4",
+    "status": 200
+  },
+  "pass": true
+}

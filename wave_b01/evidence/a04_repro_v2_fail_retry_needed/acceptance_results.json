@@ -1,0 +1,140 @@
+{
+  "counts": {
+    "total": 21,
+    "pass": 21,
+    "fail": 0
+  },
+  "cases": [
+    {
+      "case": "verified_two_claims_preterminal",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/verified_two_claims_preterminal.json"
+    },
+    {
+      "case": "safe_refusal",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/safe_refusal.json"
+    },
+    {
+      "case": "forged_citation",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/forged_citation.json"
+    },
+    {
+      "case": "forged_digest",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/forged_digest.json"
+    },
+    {
+      "case": "forged_span",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/forged_span.json"
+    },
+    {
+      "case": "contradiction_semantic",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/contradiction_semantic.json"
+    },
+    {
+      "case": "partial_not_succeeded",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/partial_not_succeeded.json"
+    },
+    {
+      "case": "duplicate_claim_sequence",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/duplicate_claim_sequence.json"
+    },
+    {
+      "case": "out_of_order_repair_sequence",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/out_of_order_repair_sequence.json"
+    },
+    {
+      "case": "invalid_then_repaired",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/invalid_then_repaired.json"
+    },
+    {
+      "case": "deadline_timeout",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/deadline_timeout.json"
+    },
+    {
+      "case": "cancel_after_claim",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/cancel_after_claim.json"
+    },
+    {
+      "case": "cancel_race",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/cancel_race.json"
+    },
+    {
+      "case": "tampered_source_bytes",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/tampered_source_bytes.json"
+    },
+    {
+      "case": "source_revocation_retraction",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/source_revocation_retraction.json"
+    },
+    {
+      "case": "tenant_scope_acl",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/tenant_scope_acl.json"
+    },
+    {
+      "case": "tenant_identity_spoof",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/tenant_identity_spoof.json"
+    },
+    {
+      "case": "unauthenticated_rejected",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/unauthenticated_rejected.json"
+    },
+    {
+      "case": "unknown_receipt_ack",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/unknown_receipt_ack.json"
+    },
+    {
+      "case": "duplicate_run_id",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/duplicate_run_id.json"
+    },
+    {
+      "case": "client_disconnect",
+      "pass": true,
+      "error": null,
+      "receipt": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/client_cases/client_disconnect.json"
+    }
+  ],
+  "provider_kind": "deterministic_external_stub",
+  "native_q34": false,
+  "real_model_generated": false,
+  "independent_client_pid": 41301,
+  "port": 50394
+}

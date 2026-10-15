@@ -1,0 +1,69 @@
+{
+  "checkout": {
+    "head": "37df3970517d0de7923284c01577d61a4e1aecb6",
+    "tracked_clean_after": true,
+    "tracked_clean_before": true,
+    "tree": "db1af58e23a26e2fc50c2ffcd6c5833c58ed2025"
+  },
+  "clients": [
+    {
+      "exit_code": 0,
+      "name": "client_21",
+      "pid": 41301,
+      "script": "tests/acceptance.py",
+      "stderr": "client_21.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "client_21.stdout.log",
+      "stdout_sha256": "7e4bea3d4a9245ebd8267fc2eb29de3773038bf845f4a477640eec8f619a4af7"
+    },
+    {
+      "exit_code": 1,
+      "name": "client_real_model_8",
+      "pid": 41324,
+      "script": "tests/real_model_acceptance.py",
+      "stderr": "client_real_model_8.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "client_real_model_8.stdout.log",
+      "stdout_sha256": "23bb69980f92bf94798006c98508145a304075ed7103cc89a08c5fa30387a00c"
+    }
+  ],
+  "failure": "RuntimeError:CLIENT_FAILED:client_real_model_8",
+  "native_q34": false,
+  "production_authority": false,
+  "real_model_counts": {
+    "fail": 1,
+    "pass": 7,
+    "total": 8
+  },
+  "runtime_stage_receipt_sha256": "98d2019bacaadc27896ffdfece7ea3ca4a28d09a80311799885d165501c6d374",
+  "runtime_warmup": {
+    "cache_home_outside_checkout": true,
+    "cache_tmp_outside_checkout": true,
+    "duration_ms": 4819.124,
+    "exit_code": 0,
+    "max_new_tokens": 1,
+    "pid": 41299,
+    "stderr": "runtime_warmup.stderr.log",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "runtime_warmup.stdout.log",
+    "stdout_sha256": "7bc1c0d28a3411def9f1c70daf4da81460c2fbde48add0393e22c7f45c9837de",
+    "timed_out": false,
+    "timeout_seconds": 240
+  },
+  "schema": "m27.a04.clean-checkout-replay/v2",
+  "scope": "NONPROD_LOCAL_ONLY",
+  "sealed_evaluation_access": false,
+  "server": {
+    "cleanup_complete": true,
+    "exit_code_after_cleanup": -15,
+    "pid": 41300,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "70233f40d98977950a58baa2dd1146ec0189efd08eeb5bc86f4d953b721bce23"
+  },
+  "status": "FAIL",
+  "stub_counts": {
+    "fail": 0,
+    "pass": 21,
+    "total": 21
+  }
+}

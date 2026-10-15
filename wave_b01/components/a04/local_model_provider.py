@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """REAL local generative-model adapter for A04, no credential or remote inference.
 Emits JSONL candidates derived from actual llama.cpp/official Qwen GGUF inference.
-Fails closed on invalid model output. Each run max 2 calls x 52 sampled tokens.
+Fails closed on invalid model output. Each run is bounded to 2 logical calls,
+at most 2 local attempts per call, and 52 sampled tokens per attempt.
 """
 import hashlib
 import json
@@ -23,11 +24,8 @@ RUNTIME_MANIFEST=ROOT/"MODEL_RUNTIME_MANIFEST.json"
 PIN="74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db"
 CLI_PIN="cf4f088f32507af619a1d65516d235ef7644db8c81ff1d3e175ff640dab75ab7"
 MAX_TOKENS=52
-# Warm requests normally complete in a few seconds, but a loaded macOS host can
-# transiently exceed 20 seconds.  Keep this below the caller's 60-second task
-# deadline while allowing one bounded request to finish instead of spuriously
-# converting genuine local inference into a refusal.
-MAX_SECONDS=45
+MAX_SECONDS=20
+MAX_ATTEMPTS=2
 MAX_CALLS=2
 
 def sha(p):
@@ -75,36 +73,45 @@ def generate(fact,seed,mode):
   user="Evidence: "+fact+"\nAdversarial red-team trial: write a contradictory claim using a DIFFERENT numerical value rather than the evidence. One sentence only."
  prompt="<|im_start|>system\n"+system+"\n<|im_end|>\n<|im_start|>user\n"+user+"\n<|im_end|>\n<|im_start|>assistant\n"
  cmd=[str(CLI),"-m",str(MODEL),"-p",prompt,"-n",str(MAX_TOKENS),"-c","1024","--temp","0.35","-s",str(seed),"--no-display-prompt","--simple-io","--no-perf","--single-turn"]
- started=time.monotonic_ns()
- proc=subprocess.Popen(cmd,cwd=str(ROOT),stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)
- try:
-  stdout,stderr=proc.communicate(timeout=MAX_SECONDS)
- except subprocess.TimeoutExpired:
-  try:os.killpg(proc.pid,signal.SIGKILL)
-  except ProcessLookupError:pass
-  proc.communicate(timeout=3)
-  journal({"kind":"real_model_generation","pid":proc.pid,"timeout":True,"seed":seed,"max_tokens":MAX_TOKENS,"model_sha256":PIN,"duration_ms":round((time.monotonic_ns()-started)/1e6,3)})
-  raise RuntimeError("model_execution_timeout")
- # llama.cpp banner/prompt is NOT generated text; strip strictly bounded console framing.
- marker="<|im_start|>assistant\n"
- if marker not in stdout:
-  text=""
- else:
-  text=stdout.rsplit(marker,1)[-1].strip()
-  for trailer in ("\n[ Prompt:","\n\n[ Prompt:","\nExiting...","\n>"):
-   if trailer in text: text=text.split(trailer,1)[0].strip()
- text=re.sub(r"^\s*['\"]|['\"]\s*$","",text).strip()
- # Absolutely no fallback authored answer text; raw LM text only.
- audit={"kind":"real_model_generation","model":"Qwen/Qwen2.5-0.5B-Instruct-GGUF Q4_K_M",
-        "source_sha256":hashlib.sha256(fact.encode()).hexdigest(),
-        "model_sha256":PIN,"llama_cli_pid":proc.pid,"exit_code":proc.returncode,
-        "max_new_tokens":MAX_TOKENS,"seed":seed,"mode":mode,
-        "duration_ms":round((time.monotonic_ns()-started)/1e6,3),
-        "output":text[:250],"output_sha256":hashlib.sha256(text.encode()).hexdigest(),
-        "stderr_tail":stderr[-300:],"raw_cli_stdout_sha256":hashlib.sha256(stdout.encode()).hexdigest(),
-        "real_local_llm":True,"billable_provider_calls":0}
- journal(audit)
- return text if proc.returncode==0 else ""
+ for attempt in range(1,MAX_ATTEMPTS+1):
+  started=time.monotonic_ns()
+  proc=subprocess.Popen(cmd,cwd=str(ROOT),stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)
+  try:
+   stdout,stderr=proc.communicate(timeout=MAX_SECONDS)
+  except subprocess.TimeoutExpired:
+   try:os.killpg(proc.pid,signal.SIGKILL)
+   except ProcessLookupError:pass
+   proc.communicate(timeout=3)
+   journal({"kind":"real_model_generation_attempt_timeout","pid":proc.pid,
+            "timeout":True,"attempt":attempt,"max_attempts":MAX_ATTEMPTS,
+            "seed":seed,"max_tokens":MAX_TOKENS,"model_sha256":PIN,
+            "duration_ms":round((time.monotonic_ns()-started)/1e6,3),
+            "real_local_llm":True,"billable_provider_calls":0})
+   if attempt < MAX_ATTEMPTS:
+    continue
+   raise RuntimeError("model_execution_timeout_after_bounded_retry")
+  # llama.cpp banner/prompt is NOT generated text; strip strictly bounded console framing.
+  marker="<|im_start|>assistant\n"
+  if marker not in stdout:
+   text=""
+  else:
+   text=stdout.rsplit(marker,1)[-1].strip()
+   for trailer in ("\n[ Prompt:","\n\n[ Prompt:","\nExiting...","\n>"):
+    if trailer in text: text=text.split(trailer,1)[0].strip()
+  text=re.sub(r"^\s*['\"]|['\"]\s*$","",text).strip()
+  # Absolutely no fallback authored answer text; raw LM text only.
+  audit={"kind":"real_model_generation","model":"Qwen/Qwen2.5-0.5B-Instruct-GGUF Q4_K_M",
+         "source_sha256":hashlib.sha256(fact.encode()).hexdigest(),
+         "model_sha256":PIN,"llama_cli_pid":proc.pid,"exit_code":proc.returncode,
+         "max_new_tokens":MAX_TOKENS,"seed":seed,"mode":mode,
+         "attempt":attempt,"max_attempts":MAX_ATTEMPTS,
+         "duration_ms":round((time.monotonic_ns()-started)/1e6,3),
+         "output":text[:250],"output_sha256":hashlib.sha256(text.encode()).hexdigest(),
+         "stderr_tail":stderr[-300:],"raw_cli_stdout_sha256":hashlib.sha256(stdout.encode()).hexdigest(),
+         "real_local_llm":True,"billable_provider_calls":0}
+  journal(audit)
+  return text if proc.returncode==0 else ""
+ raise RuntimeError("model_execution_attempts_exhausted")
 
 def main():
  mode=sys.argv[1]; manifest=json.loads(Path(sys.argv[2]).read_text())

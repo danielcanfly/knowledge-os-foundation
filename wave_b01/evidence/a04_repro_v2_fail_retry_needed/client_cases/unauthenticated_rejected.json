@@ -1,0 +1,10 @@
+{
+  "case": "unauthenticated_rejected",
+  "elapsed_ms": 1.206,
+  "error": null,
+  "evidence": {
+    "response": "{\"error\": \"unauthorized\"}",
+    "status": 401
+  },
+  "pass": true
+}

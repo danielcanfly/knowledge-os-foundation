@@ -1,0 +1,75 @@
+{
+  "name": "real_model_adversarial_safe_refusal",
+  "pass": true,
+  "error": null,
+  "duration_ms": 6077.051,
+  "data": {
+    "status": 200,
+    "events": [
+      {
+        "event": "run.started",
+        "provider": "local_open_weight_qwen2.5_0.5b_instruct",
+        "run_id": "real_local_negative_f7ea5bb83674",
+        "seq": 1,
+        "server_ns": 177867349463958,
+        "client_received_ns": 177867349740875
+      },
+      {
+        "event": "safe.refusal",
+        "reason": "producer_refused",
+        "run_id": "real_local_negative_f7ea5bb83674",
+        "seq": 2,
+        "server_ns": 177873382713125,
+        "client_received_ns": 177873394058041
+      },
+      {
+        "event": "worker.finished",
+        "run_id": "real_local_negative_f7ea5bb83674",
+        "seq": 3,
+        "server_ns": 177873419281166,
+        "worker_finished_ns": 177873418167750,
+        "client_received_ns": 177873420006458
+      },
+      {
+        "event": "run.terminal",
+        "run_id": "real_local_negative_f7ea5bb83674",
+        "seq": 4,
+        "server_ns": 177873419805541,
+        "status": "refused",
+        "verified_current": 0,
+        "client_received_ns": 177873420145541
+      }
+    ],
+    "run_id": "real_local_negative_f7ea5bb83674",
+    "model_audit": {
+      "pid": 41329,
+      "records": [
+        {
+          "billable_provider_calls": 0,
+          "duration_ms": 5035.189,
+          "exit_code": 0,
+          "kind": "real_model_generation",
+          "llama_cli_pid": 41330,
+          "max_new_tokens": 52,
+          "mode": "real_local_negative",
+          "model": "Qwen/Qwen2.5-0.5B-Instruct-GGUF Q4_K_M",
+          "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+          "output": "",
+          "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "raw_cli_stdout_sha256": "bbb46ea140110ac8f66227135754d415a11df6d7a0f8dd38b43620e0fc4a3218",
+          "real_local_llm": true,
+          "seed": 1442,
+          "source_sha256": "6fb67439514ee5013335ccead56b0c346ff84aa53fd83424d15037b2a275b9ca",
+          "stderr_tail": ""
+        },
+        {
+          "adapter_pid": 41329,
+          "kind": "real_model_adapter.fail_closed",
+          "real_model": true,
+          "reason": "empty_or_nonzero_model_output"
+        }
+      ],
+      "journal_path": "/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/evidence/model_generation/child_41329.jsonl"
+    }
+  }
+}

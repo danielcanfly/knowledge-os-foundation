@@ -1,0 +1,7 @@
+{
+  "name": "real_model_forged_client_ack_denied",
+  "pass": false,
+  "error": "Traceback (most recent call last):\n  File \"/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/tests/real_model_acceptance.py\", line 140, in test\n    data=fn()\n         ^^^^\n  File \"/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/tests/real_model_acceptance.py\", line 129, in forged_ack_real\n    r=positive_real_model()\n      ^^^^^^^^^^^^^^^^^^^^^\n  File \"/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/tests/real_model_acceptance.py\", line 44, in positive_real_model\n    expect_order(r,min_claims=2)\n  File \"/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/tests/acceptance.py\", line 123, in expect_order\n    check(len(verified(data)) >= min_claims, \"too few verified claims\")\n  File \"/private/tmp/m27-b01-v2-clean-repro-pass/wave_b01/components/a04/tests/acceptance.py\", line 109, in check\n    raise AssertionError(msg)\nAssertionError: too few verified claims\n",
+  "duration_ms": 46494.75,
+  "data": null
+}
