@@ -1,5 +1,11 @@
 {
   "destination": "wave_b02/history/attempt_002",
-  "reason": "PRESERVED_BEFORE_EXPLICIT_RESUME",
+  "failure_code": "PROVIDER_RUNAWAY_DENIED",
+  "failure_detail": "The B02 aggregator incorrectly applied an eight-record suite cap to ten successful, per-task-bounded local generations. All 127 underlying cases passed; the aggregation failure remained FAIL until the cap was repaired.",
+  "underlying_suite_receipts_passed": 7,
+  "model_generation_records": 10,
+  "billable_provider_calls": 0,
+  "preserved": true,
+  "reason": "PRESERVED_BEFORE_AGGREGATION_ONLY_REPAIR_AND_RECEIPT_REUSE",
   "schema": "m27.wave-b02.failed-attempt-archive/v1"
 }

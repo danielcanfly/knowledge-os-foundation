@@ -1,5 +1,5 @@
 {
-  "artifact_inventory_sha256": "1955ced0f68ff8e7ea1852b95bae1dbe5aaf1e34ca422a19f929f90fd9dc63c8",
+  "artifact_inventory_sha256": "58accb26dfd6b06f5a45aaf2d7b2cca7b8d30ae547f1edee042ac978b12c0be3",
   "artifacts_verified": 219,
   "b01_source_files_verified": 75,
   "c28_live_trial": false,
@@ -13,7 +13,7 @@
   "sealed_evaluation_accessed": false,
   "status": "PASS",
   "verified_git": {
-    "head": "ca8f03855ca14887861aa08120f870a78922630b",
-    "tree": "477d6220bc308e82bed4f6aea555941545186197"
+    "head": "55104faa7fa4779c97b341ab70fa795cabfdde99",
+    "tree": "c12db4bf65b0fc71bcbb1d8c86955f7a0acfd3e5"
   }
 }

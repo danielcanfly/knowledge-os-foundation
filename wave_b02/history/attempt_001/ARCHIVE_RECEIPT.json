@@ -1,5 +1,10 @@
 {
   "destination": "wave_b02/history/attempt_001",
-  "reason": "PRESERVED_BEFORE_EXPLICIT_RESUME",
+  "failure_code": "TEST_ENVIRONMENT_DEPENDENCY_MISSING",
+  "failure_detail": "System Python lacked the B01-accepted httpx dependency; no product assertion was evaluated.",
+  "failed_receipt": "wave_b02/history/attempt_001/evidence/raw/b01_cross_module_regression_10.receipt.json",
+  "failed_stderr_sha256": "d48c42658075f9a5cbb41d366bcc6eaf2255286e977073bcc48f2ae208d50a61",
+  "preserved": true,
+  "reason": "PRESERVED_BEFORE_EXPLICIT_RESUME_WITH_ACCEPTED_TEST_ENVIRONMENT",
   "schema": "m27.wave-b02.failed-attempt-archive/v1"
 }

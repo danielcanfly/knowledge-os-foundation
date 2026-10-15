@@ -557,9 +557,9 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "bytes": 154,
+      "bytes": 581,
       "path": "wave_b02/history/attempt_001/ARCHIVE_RECEIPT.json",
-      "sha256": "132dde48ffad3113f9d13905ca71a820242e19138cc16b2cc83671005c5fac29"
+      "sha256": "402eb744a92a087f42c251d6a6ad87ad886c64b76efacdd3183f47d52ef2dd40"
     },
     {
       "bytes": 7014,
@@ -597,9 +597,9 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "bytes": 154,
+      "bytes": 595,
       "path": "wave_b02/history/attempt_002/ARCHIVE_RECEIPT.json",
-      "sha256": "58f3c0cf6b52251c5bca1224b0344b87f55fa2865552b8dc7fb4fccdec5ab4c8"
+      "sha256": "df1a8579c5a1c81ffc252f0e859f9155ff90a655767c73f3f0dd5120b35a45aa"
     },
     {
       "bytes": 7014,
