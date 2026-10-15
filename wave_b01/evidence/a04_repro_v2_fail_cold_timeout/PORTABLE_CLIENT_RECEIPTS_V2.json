@@ -1,0 +1,203 @@
+{
+  "absolute_receipt_pointers_replaced_by_relative_v2_pointers": true,
+  "real_model": {
+    "actual_model_inference": true,
+    "cases": [
+      {
+        "name": "two_real_model_generated_claims_preterminal",
+        "pass": false,
+        "receipt": "return_model_cases/two_real_model_generated_claims_preterminal.json",
+        "receipt_sha256": "aef4446ef0e4dbc90455c1e27621febe2b512467573d54375dfeda6cdb9305be"
+      },
+      {
+        "name": "real_model_adversarial_safe_refusal",
+        "pass": false,
+        "receipt": "return_model_cases/real_model_adversarial_safe_refusal.json",
+        "receipt_sha256": "3d9c636eab719ffe20ee978a08054e5dc3ad357bf92d85bf5f2d8ff389d5cc54"
+      },
+      {
+        "name": "real_model_source_tamper_failclosed",
+        "pass": false,
+        "receipt": "return_model_cases/real_model_source_tamper_failclosed.json",
+        "receipt_sha256": "d4af9f2be6fb79442030c36962bc10498c65b25a02679985029b2ab06efd62c2"
+      },
+      {
+        "name": "real_model_revocation_and_retraction",
+        "pass": false,
+        "receipt": "return_model_cases/real_model_revocation_and_retraction.json",
+        "receipt_sha256": "7da49294ae41a6cf5e34e882a5c10c2ae5d4c94935dd41cec968253730883d6b"
+      },
+      {
+        "name": "real_model_hard_timeout",
+        "pass": true,
+        "receipt": "return_model_cases/real_model_hard_timeout.json",
+        "receipt_sha256": "6f82fb77a82c9c37e213b25ea02e416cafd99d3cc00c2e3893178d8d7003b65a"
+      },
+      {
+        "name": "real_model_cancel_cleanup",
+        "pass": false,
+        "receipt": "return_model_cases/real_model_cancel_cleanup.json",
+        "receipt_sha256": "05f3d48ce9ee01b41b350720ea92da3cb17308db36427141e5df3a6664f43ab9"
+      },
+      {
+        "name": "real_model_cross_tenant_denied",
+        "pass": true,
+        "receipt": "return_model_cases/real_model_cross_tenant_denied.json",
+        "receipt_sha256": "a5ce277af495cfc392a481a2b35727f3c5238860f97b1b109afeaf18eecbbff3"
+      },
+      {
+        "name": "real_model_forged_client_ack_denied",
+        "pass": false,
+        "receipt": "return_model_cases/real_model_forged_client_ack_denied.json",
+        "receipt_sha256": "ec9399b605361cab9b2444e45b1c5b2de7bee0686a7a94de26d89e1b739a8a6a"
+      }
+    ],
+    "counts": {
+      "fail": 6,
+      "pass": 2,
+      "total": 8
+    },
+    "model": "Qwen2.5-0.5B-Instruct Q4_K_M",
+    "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+    "native_q34": false
+  },
+  "schema": "m27.a04.portable-client-receipts/v2",
+  "secret_scan": "PASS_NO_REDACTION_REQUIRED",
+  "stub": {
+    "cases": [
+      {
+        "name": "verified_two_claims_preterminal",
+        "pass": true,
+        "receipt": "client_cases/verified_two_claims_preterminal.json",
+        "receipt_sha256": "de09f6a3eb53d2b33a64e7ce1b7e554e4da49dcc855ad63798955a79e91ac620"
+      },
+      {
+        "name": "safe_refusal",
+        "pass": true,
+        "receipt": "client_cases/safe_refusal.json",
+        "receipt_sha256": "68a629476e2bf7334d776116fe8a1c0f963cdfce05cfd019c35511008568d973"
+      },
+      {
+        "name": "forged_citation",
+        "pass": true,
+        "receipt": "client_cases/forged_citation.json",
+        "receipt_sha256": "b2519909f16400de159ae928fb7f1a4c880e2511b9bb2acc088658f7e9201612"
+      },
+      {
+        "name": "forged_digest",
+        "pass": true,
+        "receipt": "client_cases/forged_digest.json",
+        "receipt_sha256": "585e34feac56def50839a1bdee709812d4dd1321823d6b8e81d804b22d3cc99b"
+      },
+      {
+        "name": "forged_span",
+        "pass": true,
+        "receipt": "client_cases/forged_span.json",
+        "receipt_sha256": "01107635761b14a4ee14ec36a39845dba3f6dd145f4e2db23c0e07f14ea0e05e"
+      },
+      {
+        "name": "contradiction_semantic",
+        "pass": true,
+        "receipt": "client_cases/contradiction_semantic.json",
+        "receipt_sha256": "14ab13bc550aff3b4f8378ca0775403fe433ae02dfef0566ff3ff7b84e073e7a"
+      },
+      {
+        "name": "partial_not_succeeded",
+        "pass": true,
+        "receipt": "client_cases/partial_not_succeeded.json",
+        "receipt_sha256": "1751f9a7a67b7692db001e3a774c5475a9e37a4c3acd3e9b6ad4283dbe99fd0b"
+      },
+      {
+        "name": "duplicate_claim_sequence",
+        "pass": true,
+        "receipt": "client_cases/duplicate_claim_sequence.json",
+        "receipt_sha256": "bcd70eb62a80722429743c3bdc842d5f15ca728b050124fcedc85815291575cf"
+      },
+      {
+        "name": "out_of_order_repair_sequence",
+        "pass": true,
+        "receipt": "client_cases/out_of_order_repair_sequence.json",
+        "receipt_sha256": "86881ee2cf8efe6591fb57e1e192b6c45deb074ddbfe4fe7b2383830aee65d12"
+      },
+      {
+        "name": "invalid_then_repaired",
+        "pass": true,
+        "receipt": "client_cases/invalid_then_repaired.json",
+        "receipt_sha256": "718a2ecd6d46464a18ac01e94368e8d76b7a40af45472b44f6fa9faefc5fbbb2"
+      },
+      {
+        "name": "deadline_timeout",
+        "pass": true,
+        "receipt": "client_cases/deadline_timeout.json",
+        "receipt_sha256": "0031083768afa19013791587efa6df5a746e9adc7de7fa345d7f5fb2cf66a382"
+      },
+      {
+        "name": "cancel_after_claim",
+        "pass": true,
+        "receipt": "client_cases/cancel_after_claim.json",
+        "receipt_sha256": "03c5a7239228d430fc3fd2597316b26ff5f052bedde4cb39dd02d2a50afd6728"
+      },
+      {
+        "name": "cancel_race",
+        "pass": true,
+        "receipt": "client_cases/cancel_race.json",
+        "receipt_sha256": "c32f0f3cd272193b1aa2b87dda04decf82dbe031f69ffbdf861a12e88b45bd6c"
+      },
+      {
+        "name": "tampered_source_bytes",
+        "pass": true,
+        "receipt": "client_cases/tampered_source_bytes.json",
+        "receipt_sha256": "fde4d2d384bb754c1ea42ac57aecdfd98f95ab7fe10a2f8071a8d5d3fb2a14b0"
+      },
+      {
+        "name": "source_revocation_retraction",
+        "pass": true,
+        "receipt": "client_cases/source_revocation_retraction.json",
+        "receipt_sha256": "f616c44e29ae78e77aa1fd7470477c9c010495518c4a37a4d31061d3bd159b25"
+      },
+      {
+        "name": "tenant_scope_acl",
+        "pass": true,
+        "receipt": "client_cases/tenant_scope_acl.json",
+        "receipt_sha256": "e53644e2c0b14f6fb7770728c952c66c932a27fbc8298fac16e30cd49e730e40"
+      },
+      {
+        "name": "tenant_identity_spoof",
+        "pass": true,
+        "receipt": "client_cases/tenant_identity_spoof.json",
+        "receipt_sha256": "1ff674680b098df0600b8376a411f203bcef3af9030ff9af71a7c5cec0e23f91"
+      },
+      {
+        "name": "unauthenticated_rejected",
+        "pass": true,
+        "receipt": "client_cases/unauthenticated_rejected.json",
+        "receipt_sha256": "e34328436143662205a3d5d6bbbc01c85fd7e01b5d0bd4d28bc1091292f32979"
+      },
+      {
+        "name": "unknown_receipt_ack",
+        "pass": true,
+        "receipt": "client_cases/unknown_receipt_ack.json",
+        "receipt_sha256": "24f0ec6179adc763169ae4ff9c2ff5585ca3b3d1f8f53b670d9bb16ed97a62ec"
+      },
+      {
+        "name": "duplicate_run_id",
+        "pass": true,
+        "receipt": "client_cases/duplicate_run_id.json",
+        "receipt_sha256": "fa74b1d3e18382f889703db87ce207ab568679581538376326ff48a2dc771ee9"
+      },
+      {
+        "name": "client_disconnect",
+        "pass": true,
+        "receipt": "client_cases/client_disconnect.json",
+        "receipt_sha256": "baa96d05bd4184d7e9327375b5b7c7e7887ef3ce526fc9e3497a4cc90b596047"
+      }
+    ],
+    "counts": {
+      "fail": 0,
+      "pass": 21,
+      "total": 21
+    },
+    "native_q34": false,
+    "provider_kind": "deterministic_external_stub"
+  }
+}

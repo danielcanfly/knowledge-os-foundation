@@ -1,0 +1,7 @@
+{
+  "name": "real_model_adversarial_safe_refusal",
+  "pass": false,
+  "error": "Traceback (most recent call last):\n  File \"/private/tmp/m27-b01-v2-clean-repro/wave_b01/components/a04/tests/real_model_acceptance.py\", line 140, in test\n    data=fn()\n         ^^^^\n  File \"/private/tmp/m27-b01-v2-clean-repro/wave_b01/components/a04/tests/real_model_acceptance.py\", line 57, in hallucination_failclosed\n    audit,calls=common_model_audit(r,min_calls=1)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/private/tmp/m27-b01-v2-clean-repro/wave_b01/components/a04/tests/real_model_acceptance.py\", line 35, in common_model_audit\n    check(a[\"real_local_llm\"] is True and a[\"exit_code\"]==0,\"real model process absent\")\n          ~^^^^^^^^^^^^^^^^^^\nKeyError: 'real_local_llm'\n",
+  "duration_ms": 21629.282,
+  "data": null
+}

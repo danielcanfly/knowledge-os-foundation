@@ -35,6 +35,58 @@ def outside_repo(path: Path) -> bool:
         return True
 
 
+def warm_model_runtime(runtime: Path, env: dict[str, str], python: str) -> dict:
+    """Prime llama.cpp's Metal cache inside the disposable clean environment.
+
+    A first launch with a new HOME/TMPDIR compiles Metal kernels and can take
+    substantially longer than an inference request.  Make that cold-start work
+    explicit, bounded, and auditable before exercising the 20-second request
+    deadline in the acceptance suite.
+    """
+    del python  # Keep the call signature aligned with the selected interpreter.
+    stdout_path = EVIDENCE / "runtime_warmup.stdout.log"
+    stderr_path = EVIDENCE / "runtime_warmup.stderr.log"
+    command = [
+        str(runtime / "llama-b11425" / "llama-cli"),
+        "-m", str(runtime / "qwen2.5-0.5b-instruct-q4_k_m.gguf"),
+        "-p", "<|im_start|>user\nReply with the word ready.\n<|im_end|>\n<|im_start|>assistant\n",
+        "-n", "1", "-c", "1024", "--temp", "0", "-s", "1442",
+        "--no-display-prompt", "--simple-io", "--no-perf", "--single-turn",
+    ]
+    started = time.monotonic_ns()
+    process = subprocess.Popen(
+        command, cwd=ROOT, env=env, stdin=subprocess.DEVNULL,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        start_new_session=True,
+    )
+    timed_out = False
+    try:
+        stdout, stderr = process.communicate(timeout=240)
+    except subprocess.TimeoutExpired:
+        timed_out = True
+        os.killpg(process.pid, signal.SIGKILL)
+        stdout, stderr = process.communicate(timeout=5)
+    stdout_path.write_text(stdout, encoding="utf-8")
+    stderr_path.write_text(stderr, encoding="utf-8")
+    result = {
+        "pid": process.pid,
+        "exit_code": process.returncode,
+        "timed_out": timed_out,
+        "duration_ms": round((time.monotonic_ns() - started) / 1e6, 3),
+        "max_new_tokens": 1,
+        "timeout_seconds": 240,
+        "stdout": stdout_path.name,
+        "stdout_sha256": sha256(stdout_path),
+        "stderr": stderr_path.name,
+        "stderr_sha256": sha256(stderr_path),
+        "cache_home_outside_checkout": outside_repo(Path(env["HOME"])),
+        "cache_tmp_outside_checkout": outside_repo(Path(env["TMPDIR"])),
+    }
+    if timed_out or process.returncode != 0 or not stdout.strip():
+        raise RuntimeError(f"MODEL_RUNTIME_WARMUP_FAILED:{result}")
+    return result
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--runtime", type=Path, required=True)
@@ -75,6 +127,8 @@ def main() -> int:
     (EVIDENCE / "bootstrap.stderr.log").write_text(bootstrap.stderr, encoding="utf-8")
     if bootstrap.returncode:
         raise RuntimeError("BOOTSTRAP_FAILED")
+
+    warmup = warm_model_runtime(runtime, env, python)
 
     server_stdout = (EVIDENCE / "server.stdout.log").open("w", encoding="utf-8")
     server_stderr = (EVIDENCE / "server.stderr.log").open("w", encoding="utf-8")
@@ -156,6 +210,7 @@ def main() -> int:
         "checkout": {"head": head, "tree": tree, "tracked_clean_before": tracked_before == "",
                      "tracked_clean_after": tracked_after == ""},
         "runtime_stage_receipt_sha256": sha256(stage_receipt),
+        "runtime_warmup": warmup,
         "server": {
             "pid": server.pid,
             "exit_code_after_cleanup": server.returncode,

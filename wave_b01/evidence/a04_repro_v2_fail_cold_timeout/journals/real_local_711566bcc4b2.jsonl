@@ -1,0 +1,9 @@
+{"allowed_sources": ["atlas-A", "delta-B"], "deadline_ms": 60000, "kind": "run.admitted", "monotonic_ns": 177253073622666, "native_q34": false, "provider": "local_open_weight_qwen2.5_0.5b_instruct", "run_id": "real_local_711566bcc4b2", "tenant": "tenant-alpha"}
+{"event": "run.started", "kind": "event", "monotonic_ns": 177253076261666, "provider": "local_open_weight_qwen2.5_0.5b_instruct", "run_id": "real_local_711566bcc4b2", "seq": 1, "server_ns": 177253076258083}
+{"command_basename": "local_model_provider.py", "kind": "provider.spawn", "monotonic_ns": 177253090493125, "pid": 40906, "provider": "local_open_weight_qwen2.5_0.5b_instruct", "run_id": "real_local_711566bcc4b2"}
+{"event": "safe.refusal", "kind": "event", "monotonic_ns": 177275069747375, "reason": "producer_refused", "run_id": "real_local_711566bcc4b2", "seq": 2, "server_ns": 177275069731625}
+{"exit_code": -15, "kind": "provider.exit", "kind_of_provider": "local_open_weight_qwen2.5_0.5b_instruct", "monotonic_ns": 177275082471791, "pid": 40906, "run_id": "real_local_711566bcc4b2", "stderr": ""}
+{"kind": "worker.finished", "monotonic_ns": 177275083346958, "run_id": "real_local_711566bcc4b2", "worker_finished_ns": 177275083345625}
+{"event": "worker.finished", "kind": "event", "monotonic_ns": 177275167578791, "run_id": "real_local_711566bcc4b2", "seq": 3, "server_ns": 177275167575041, "worker_finished_ns": 177275083345625}
+{"event": "run.terminal", "kind": "event", "monotonic_ns": 177275167894541, "run_id": "real_local_711566bcc4b2", "seq": 4, "server_ns": 177275167891791, "status": "refused", "verified_current": 0}
+{"client_disconnected": false, "kind": "run.closed", "monotonic_ns": 177275168253500, "run_id": "real_local_711566bcc4b2", "terminal_sent": true, "worker_finished_ns": 177275083345625}

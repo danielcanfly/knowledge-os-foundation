@@ -1,0 +1,55 @@
+{
+  "checkout": {
+    "head": "71757cdb2b0e4beac24aee9b3a4bfdb9cd5e1733",
+    "tracked_clean_after": true,
+    "tracked_clean_before": true,
+    "tree": "e4e6d0bcb465a0cc43b89ffe4afe46365fff3f59"
+  },
+  "clients": [
+    {
+      "exit_code": 0,
+      "name": "client_21",
+      "pid": 40797,
+      "script": "tests/acceptance.py",
+      "stderr": "client_21.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "client_21.stdout.log",
+      "stdout_sha256": "7e4bea3d4a9245ebd8267fc2eb29de3773038bf845f4a477640eec8f619a4af7"
+    },
+    {
+      "exit_code": 1,
+      "name": "client_real_model_8",
+      "pid": 40821,
+      "script": "tests/real_model_acceptance.py",
+      "stderr": "client_real_model_8.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "client_real_model_8.stdout.log",
+      "stdout_sha256": "ecbc640d57601ed18af6232f4ebe62f6ca93265f7729a28f605f2b2dc10801c7"
+    }
+  ],
+  "failure": "RuntimeError:CLIENT_FAILED:client_real_model_8",
+  "native_q34": false,
+  "production_authority": false,
+  "real_model_counts": {
+    "fail": 6,
+    "pass": 2,
+    "total": 8
+  },
+  "runtime_stage_receipt_sha256": "98d2019bacaadc27896ffdfece7ea3ca4a28d09a80311799885d165501c6d374",
+  "schema": "m27.a04.clean-checkout-replay/v2",
+  "scope": "NONPROD_LOCAL_ONLY",
+  "sealed_evaluation_access": false,
+  "server": {
+    "cleanup_complete": true,
+    "exit_code_after_cleanup": -15,
+    "pid": 40796,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "5e45eb6f36b1ba410c11332ab4fe311ac8c2b05e3593a33ab5920fb7b5c23b51"
+  },
+  "status": "FAIL",
+  "stub_counts": {
+    "fail": 0,
+    "pass": 21,
+    "total": 21
+  }
+}

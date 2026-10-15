@@ -1,0 +1,11 @@
+{"allowed_sources": ["atlas-A", "delta-B"], "deadline_ms": 140, "kind": "run.admitted", "monotonic_ns": 177136331382750, "native_q34": false, "provider": "deterministic_external_stub", "run_id": "slow_7d80e3fa3b27", "tenant": "tenant-alpha"}
+{"event": "run.started", "kind": "event", "monotonic_ns": 177136332202375, "provider": "deterministic_external_stub", "run_id": "slow_7d80e3fa3b27", "seq": 1, "server_ns": 177136332199916}
+{"command_basename": "stub_provider.py", "kind": "provider.spawn", "monotonic_ns": 177136336039916, "pid": 40811, "provider": "deterministic_external_stub", "run_id": "slow_7d80e3fa3b27"}
+{"claim_index": 1, "event": "claim.verified", "fact_key": "atlas_stages", "kind": "event", "monotonic_ns": 177136411450250, "proof_sha256": "eb4ab01eb56ca33bf13de00b89bbd2e57a13a9f9734e70720af22d281181ae1c", "run_id": "slow_7d80e3fa3b27", "seq": 2, "server_ns": 177136411442666, "source_id": "atlas-A", "source_sha256": "cb47bc6b5526493abeeeb60b26065eb1b5b1671c957c3f62661cf08f49ea6b07", "span": [0, 82], "text": "The Atlas trial has two distinct review stages.", "verifier": "bounded_curated_entailment_v1"}
+{"client_received_ns": 177136411810458, "kind": "client.ack", "monotonic_ns": 177136412764875, "proof": "eb4ab01eb56ca33bf13de00b89bbd2e57a13a9f9734e70720af22d281181ae1c", "run_id": "slow_7d80e3fa3b27", "seq": 2}
+{"deadline_ms": 140, "kind": "deadline.exceeded", "monotonic_ns": 177136527105708, "run_id": "slow_7d80e3fa3b27"}
+{"exit_code": -15, "kind": "provider.exit", "kind_of_provider": "deterministic_external_stub", "monotonic_ns": 177136557499458, "pid": 40811, "run_id": "slow_7d80e3fa3b27", "stderr": ""}
+{"kind": "worker.finished", "monotonic_ns": 177136557872083, "run_id": "slow_7d80e3fa3b27", "worker_finished_ns": 177136557870041}
+{"event": "worker.finished", "kind": "event", "monotonic_ns": 177136558212208, "run_id": "slow_7d80e3fa3b27", "seq": 3, "server_ns": 177136558208916, "worker_finished_ns": 177136557870041}
+{"event": "run.terminal", "kind": "event", "monotonic_ns": 177136558473125, "run_id": "slow_7d80e3fa3b27", "seq": 4, "server_ns": 177136558432833, "status": "timeout", "verified_current": 1}
+{"client_disconnected": false, "kind": "run.closed", "monotonic_ns": 177136559110250, "run_id": "slow_7d80e3fa3b27", "terminal_sent": true, "worker_finished_ns": 177136557870041}

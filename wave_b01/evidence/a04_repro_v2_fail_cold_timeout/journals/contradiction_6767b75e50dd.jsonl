@@ -1,0 +1,10 @@
+{"allowed_sources": ["atlas-A", "delta-B"], "deadline_ms": 2500, "kind": "run.admitted", "monotonic_ns": 177131454550125, "native_q34": false, "provider": "deterministic_external_stub", "run_id": "contradiction_6767b75e50dd", "tenant": "tenant-alpha"}
+{"event": "run.started", "kind": "event", "monotonic_ns": 177131456973333, "provider": "deterministic_external_stub", "run_id": "contradiction_6767b75e50dd", "seq": 1, "server_ns": 177131456969416}
+{"command_basename": "stub_provider.py", "kind": "provider.spawn", "monotonic_ns": 177131464607083, "pid": 40804, "provider": "deterministic_external_stub", "run_id": "contradiction_6767b75e50dd"}
+{"event": "claim.rejected", "kind": "event", "monotonic_ns": 177131595864458, "reason": "semantic_unsupported", "run_id": "contradiction_6767b75e50dd", "seq": 2, "server_ns": 177131595849000}
+{"event": "claim.rejected", "kind": "event", "monotonic_ns": 177131861042666, "reason": "claim_sequence", "run_id": "contradiction_6767b75e50dd", "seq": 3, "server_ns": 177131861034291}
+{"exit_code": 0, "kind": "provider.exit", "kind_of_provider": "deterministic_external_stub", "monotonic_ns": 177132439442791, "pid": 40804, "run_id": "contradiction_6767b75e50dd", "stderr": ""}
+{"kind": "worker.finished", "monotonic_ns": 177132440170583, "run_id": "contradiction_6767b75e50dd", "worker_finished_ns": 177132440167375}
+{"event": "worker.finished", "kind": "event", "monotonic_ns": 177132440905750, "run_id": "contradiction_6767b75e50dd", "seq": 4, "server_ns": 177132440899791, "worker_finished_ns": 177132440167375}
+{"event": "run.terminal", "kind": "event", "monotonic_ns": 177132441355833, "run_id": "contradiction_6767b75e50dd", "seq": 5, "server_ns": 177132441349625, "status": "rejected", "verified_current": 0}
+{"client_disconnected": false, "kind": "run.closed", "monotonic_ns": 177132441757458, "run_id": "contradiction_6767b75e50dd", "terminal_sent": true, "worker_finished_ns": 177132440167375}

@@ -1,0 +1,9 @@
+{"test": "two_real_model_generated_claims_preterminal", "PASS": false, "error": "p/m27-b01-v2-clean-repro/wave_b01/components/a04/tests/acceptance.py\", line 109, in check\n    raise AssertionError(msg)\nAssertionError: too few verified claims\n"}
+{"test": "real_model_adversarial_safe_refusal", "PASS": false, "error": "n_model_audit\n    check(a[\"real_local_llm\"] is True and a[\"exit_code\"]==0,\"real model process absent\")\n          ~^^^^^^^^^^^^^^^^^^\nKeyError: 'real_local_llm'\n"}
+{"test": "real_model_source_tamper_failclosed", "PASS": false, "error": "n_model_audit\n    check(a[\"real_local_llm\"] is True and a[\"exit_code\"]==0,\"real model process absent\")\n          ~^^^^^^^^^^^^^^^^^^\nKeyError: 'real_local_llm'\n"}
+{"test": "real_model_revocation_and_retraction", "PASS": false, "error": "m27-b01-v2-clean-repro/wave_b01/components/a04/tests/acceptance.py\", line 109, in check\n    raise AssertionError(msg)\nAssertionError: source retraction missing\n"}
+{"test": "real_model_hard_timeout", "PASS": true, "error": ""}
+{"test": "real_model_cancel_cleanup", "PASS": false, "error": "mp/m27-b01-v2-clean-repro/wave_b01/components/a04/tests/acceptance.py\", line 109, in check\n    raise AssertionError(msg)\nAssertionError: cancel endpoint failed\n"}
+{"test": "real_model_cross_tenant_denied", "PASS": true, "error": ""}
+{"test": "real_model_forged_client_ack_denied", "PASS": false, "error": "p/m27-b01-v2-clean-repro/wave_b01/components/a04/tests/acceptance.py\", line 109, in check\n    raise AssertionError(msg)\nAssertionError: too few verified claims\n"}
+{"SUMMARY": {"pass": 2, "fail": 6, "total": 8}}

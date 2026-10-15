@@ -1,0 +1,12 @@
+{
+  "case": "tenant_identity_spoof",
+  "elapsed_ms": 2.54,
+  "error": null,
+  "evidence": {
+    "response": {
+      "error": "tenant_mismatch"
+    },
+    "status": 403
+  },
+  "pass": true
+}

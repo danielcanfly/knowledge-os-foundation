@@ -25,6 +25,8 @@ SELECTED = (
     "REPRO_RUN_RECEIPT_V2.json",
     "bootstrap.stdout.log",
     "bootstrap.stderr.log",
+    "runtime_warmup.stdout.log",
+    "runtime_warmup.stderr.log",
     "server.stdout.log",
     "server.stderr.log",
     "client_21.stdout.log",

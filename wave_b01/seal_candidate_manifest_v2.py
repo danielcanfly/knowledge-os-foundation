@@ -67,19 +67,36 @@ def tracked_source(root: Path) -> dict[str, str]:
     return {name: sha256(root / name) for name in names if name}
 
 
+def accepted_component_source(name: str, root: Path) -> dict[str, str]:
+    if name != "A06":
+        return {
+            f"{name.lower()}/{key}": value
+            for key, value in tracked_source(root).items()
+        }
+    # A06 was committed inside the full I37 repository under a06/.  Bind only
+    # the accepted component paths introduced by that commit, then normalize
+    # the prefix to the integrated components/a06 layout.
+    changed = subprocess.check_output([
+        "git", "-C", str(root), "diff-tree", "--no-commit-id",
+        "--name-only", "-r", "HEAD",
+    ], text=True).splitlines()
+    paths = [path for path in changed if path.startswith("a06/")]
+    return {
+        f"a06/{Path(path).relative_to('a06').as_posix()}": sha256(root / path)
+        for path in paths
+    }
+
+
 def current_component_files() -> dict[str, Path]:
+    names = subprocess.check_output([
+        "git", "-C", str(ROOT), "ls-files", "-z", "wave_b01/components",
+    ]).decode().split("\0")
     result = {}
-    for path in sorted(COMPONENTS.rglob("*")):
-        if not path.is_file():
+    for name in names:
+        if not name:
             continue
+        path = ROOT / name
         relative = path.relative_to(COMPONENTS)
-        parts = relative.parts
-        if "__pycache__" in parts or "model_runtime" in parts:
-            continue
-        if parts[0] in ("a04", "a05", "a06") and "evidence" in parts:
-            continue
-        if relative.as_posix() in ("a04/data/tokens.json", "a04/data/revocations.json"):
-            continue
         result[relative.as_posix()] = path
     return result
 
@@ -105,10 +122,7 @@ def build(source_base: Path, a05_results_path: Path) -> dict:
             raise ValueError(f"{name}_TREE_MISMATCH")
         if git(source, "status", "--porcelain", "--untracked-files=no"):
             raise ValueError(f"{name}_TRACKED_DIRTY")
-        source_maps[name.lower()] = {
-            f"{name.lower()}/{key}": value
-            for key, value in tracked_source(source).items()
-        }
+        source_maps[name.lower()] = accepted_component_source(name, source)
     a05_results = json.loads(a05_results_path.read_text(encoding="utf-8"))
     if a05_results["git"]["a05_adapter"]["head"] != INPUTS["A05"]["head"]:
         raise ValueError("A05_HEAD_MISMATCH")

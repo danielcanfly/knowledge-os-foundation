@@ -1,0 +1,12 @@
+{
+  "case": "tenant_scope_acl",
+  "elapsed_ms": 2.612,
+  "error": null,
+  "evidence": {
+    "response": {
+      "error": "scope_forbidden"
+    },
+    "status": 403
+  },
+  "pass": true
+}

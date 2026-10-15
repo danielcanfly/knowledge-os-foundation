@@ -1,0 +1,7 @@
+{
+  "name": "real_model_revocation_and_retraction",
+  "pass": false,
+  "error": "Traceback (most recent call last):\n  File \"/private/tmp/m27-b01-v2-clean-repro/wave_b01/components/a04/tests/real_model_acceptance.py\", line 140, in test\n    data=fn()\n         ^^^^\n  File \"/private/tmp/m27-b01-v2-clean-repro/wave_b01/components/a04/tests/real_model_acceptance.py\", line 91, in source_revocation_model\n    check(\"claim.retracted\" in kinds(r),\"source retraction missing\")\n  File \"/private/tmp/m27-b01-v2-clean-repro/wave_b01/components/a04/tests/acceptance.py\", line 109, in check\n    raise AssertionError(msg)\nAssertionError: source retraction missing\n",
+  "duration_ms": 22443.312,
+  "data": null
+}

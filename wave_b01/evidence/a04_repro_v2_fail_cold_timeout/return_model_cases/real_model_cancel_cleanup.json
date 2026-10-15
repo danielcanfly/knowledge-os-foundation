@@ -1,0 +1,7 @@
+{
+  "name": "real_model_cancel_cleanup",
+  "pass": false,
+  "error": "Traceback (most recent call last):\n  File \"/private/tmp/m27-b01-v2-clean-repro/wave_b01/components/a04/tests/real_model_acceptance.py\", line 140, in test\n    data=fn()\n         ^^^^\n  File \"/private/tmp/m27-b01-v2-clean-repro/wave_b01/components/a04/tests/real_model_acceptance.py\", line 114, in cancelled_real\n    check(requests==[202],\"cancel endpoint failed\")\n  File \"/private/tmp/m27-b01-v2-clean-repro/wave_b01/components/a04/tests/acceptance.py\", line 109, in check\n    raise AssertionError(msg)\nAssertionError: cancel endpoint failed\n",
+  "duration_ms": 22002.653,
+  "data": null
+}

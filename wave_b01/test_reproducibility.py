@@ -70,6 +70,14 @@ class ReproducibilityV2Tests(unittest.TestCase):
         for name, item in manifest["files"].items():
             self.assertEqual(sha256(BUNDLE / name), item["sha256"])
         portable = json.loads((BUNDLE / "PORTABLE_CLIENT_RECEIPTS_V2.json").read_text())
+        replay = json.loads((BUNDLE / "REPRO_RUN_RECEIPT_V2.json").read_text())
+        self.assertEqual(replay["status"], "PASS")
+        self.assertFalse(replay["runtime_warmup"]["timed_out"])
+        self.assertEqual(replay["runtime_warmup"]["exit_code"], 0)
+        self.assertTrue(replay["runtime_warmup"]["cache_home_outside_checkout"])
+        self.assertTrue(replay["runtime_warmup"]["cache_tmp_outside_checkout"])
+        for name in ("runtime_warmup.stdout.log", "runtime_warmup.stderr.log"):
+            self.assertIn(name, manifest["files"])
         self.assertEqual(portable["stub"]["counts"], {"total": 21, "pass": 21, "fail": 0})
         self.assertEqual(portable["real_model"]["counts"], {"pass": 8, "fail": 0, "total": 8})
         self.assertEqual(len(portable["stub"]["cases"]), 21)

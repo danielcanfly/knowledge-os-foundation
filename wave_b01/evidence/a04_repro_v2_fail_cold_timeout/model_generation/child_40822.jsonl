@@ -1,0 +1,2 @@
+{"duration_ms": 20037.415, "kind": "real_model_generation", "max_tokens": 52, "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db", "pid": 40823, "seed": 1442, "timeout": true}
+{"adapter_pid": 40822, "kind": "real_model_adapter.fail_closed", "real_model": true, "reason": "model_crash_or_timeout:model_execution_timeout"}
