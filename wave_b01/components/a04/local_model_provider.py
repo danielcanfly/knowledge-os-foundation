@@ -14,13 +14,14 @@ import time
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent
-# Resolve the integration worktree's ignored runtime link before launching.
-# llama.cpp loads adjacent runtime assets relative to its executable path; an
-# unresolved directory symlink can leave the child waiting instead of reaching
-# inference even though the pinned binary and model bytes are valid.
-MODEL=(ROOT/"model_runtime/qwen2.5-0.5b-instruct-q4_k_m.gguf").resolve()
-CLI=(ROOT/"model_runtime/llama-b11425/llama-cli").resolve()
+REPO=ROOT.parents[2]
+RUNTIME_VALUE=os.environ.get("A04_MODEL_RUNTIME")
+RUNTIME=Path(RUNTIME_VALUE).expanduser().resolve() if RUNTIME_VALUE else None
+MODEL=(RUNTIME/"qwen2.5-0.5b-instruct-q4_k_m.gguf") if RUNTIME else None
+CLI=(RUNTIME/"llama-b11425/llama-cli") if RUNTIME else None
+RUNTIME_MANIFEST=ROOT/"MODEL_RUNTIME_MANIFEST.json"
 PIN="74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db"
+CLI_PIN="cf4f088f32507af619a1d65516d235ef7644db8c81ff1d3e175ff640dab75ab7"
 MAX_TOKENS=52
 MAX_SECONDS=20
 MAX_CALLS=2
@@ -30,6 +31,22 @@ def sha(p):
  with p.open("rb") as f:
   while b:=f.read(1024*1024):h.update(b)
  return h.hexdigest()
+
+def runtime_qualified():
+ if RUNTIME is None or not RUNTIME.is_dir() or RUNTIME==REPO or REPO in RUNTIME.parents:
+  return False
+ receipt_path=RUNTIME/"STAGE_RECEIPT.json"
+ if not receipt_path.is_file() or not RUNTIME_MANIFEST.is_file():return False
+ try:receipt=json.loads(receipt_path.read_text())
+ except Exception:return False
+ if receipt.get("schema")!="m27.a04.external-model-runtime-stage/v2":return False
+ if receipt.get("manifest_sha256")!=sha(RUNTIME_MANIFEST):return False
+ if receipt.get("runtime_outside_git") is not True:return False
+ if receipt.get("production_authority") is not False or receipt.get("native_q34") is not False:return False
+ if MODEL is None or CLI is None:return False
+ if not MODEL.is_file() or MODEL.is_symlink() or sha(MODEL)!=PIN:return False
+ if not CLI.is_file() or CLI.is_symlink() or not os.access(CLI,os.X_OK) or sha(CLI)!=CLI_PIN:return False
+ return True
 
 def journal(obj):
  root=ROOT/"evidence"/"model_generation"
@@ -90,7 +107,7 @@ def main():
  source_ids=json.loads(sys.argv[3])
  if mode not in ("real_local","real_local_negative") or len(source_ids)!=2 or not isinstance(source_ids,list):
   return fail("invalid_mode_or_source_ids")
- if not CLI.is_file() or not os.access(CLI,os.X_OK) or not MODEL.is_file() or sha(MODEL)!=PIN:
+ if not runtime_qualified():
   return fail("model_binary_or_digest_unqualified")
  for i,sid in enumerate(source_ids):
   if sid not in manifest:return fail("unknown_source")

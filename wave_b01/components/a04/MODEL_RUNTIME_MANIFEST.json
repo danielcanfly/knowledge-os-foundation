@@ -1,0 +1,37 @@
+{
+  "schema": "m27.a04.external-model-runtime/v2",
+  "scope": "NONPROD_LOCAL_ONLY",
+  "model": {
+    "filename": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+    "bytes": 491400032,
+    "sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+    "source": "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF",
+    "license": "Apache-2.0",
+    "license_source": "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/raw/main/LICENSE",
+    "license_file": "licenses/QWEN2.5_APACHE-2.0.txt",
+    "license_sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+  },
+  "llama_cpp": {
+    "release": "b11425",
+    "archive_filename": "llama-b11425-bin-macos-arm64.tar.gz",
+    "archive_bytes": 11966456,
+    "archive_sha256": "14811f683abf2f32c62df48fcc36dbe4f0da307094080095eebb2b3906e705e4",
+    "source": "https://github.com/ggml-org/llama.cpp/releases/tag/b11425",
+    "directory": "llama-b11425",
+    "cli": "llama-b11425/llama-cli",
+    "cli_bytes": 49960,
+    "cli_sha256": "cf4f088f32507af619a1d65516d235ef7644db8c81ff1d3e175ff640dab75ab7",
+    "license": "MIT",
+    "license_file": "llama-b11425/LICENSE",
+    "license_sha256": "94f29bbed6a22c35b992c5c6ebf0e7c92f13b836b90f36f461c9cf2f0f1d010d"
+  },
+  "staging_policy": {
+    "runtime_must_be_outside_git_checkout": true,
+    "network_download_performed_by_stager": false,
+    "source_assets_must_be_regular_files": true,
+    "large_assets_committed_to_git": false,
+    "production_authority": false,
+    "native_q34": false,
+    "sealed_evaluation_access": false
+  }
+}

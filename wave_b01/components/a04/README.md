@@ -13,7 +13,12 @@ Official licensed open-weight sources:
 - GGUF SHA256 (pinned): `74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db`
 - llama.cpp release asset SHA256 (official GitHub API digest): `14811f683abf2f32c62df48fcc36dbe4f0da307094080095eebb2b3906e705e4`
 
-Downloaded binaries are ignored by Git and stored **only inside** `model_runtime/` in A04. Zero remote inference, zero secret/provider credentials, zero billable cloud model calls. Local compute/electricity is **not** claimed to cost $0.
+Large binaries are never committed and are never staged below a Git checkout. The
+tracked `MODEL_RUNTIME_MANIFEST.json` pins the model, official llama.cpp release
+archive, extracted CLI, and both licenses. `stage_model_runtime.py` verifies an
+operator-authorized local asset directory and builds a new runtime outside Git.
+Zero remote inference, zero secret/provider credentials, zero billable cloud model
+calls. Local compute/electricity is **not** claimed to cost $0.
 
 ## Implementation and guarantees
 
@@ -21,14 +26,27 @@ First-party A04-authored synthetic source files + manifest SHA256, exact evidenc
 
 The bounded verifier validates only small, declared atomic count/cadence facts. It is NOT arbitrary-domain NLI or qualified original-source semantic truth. If the model hallucinates unsupported text, no `claim.verified` event is allowed. This is a **real model generation** milestone but does **not** admit the native Q34/REL01 hard Gate.
 
-## Reproduce in A04 only
+## Clean-checkout reproduction
 
-`/opt/homebrew/bin/python3.11 bootstrap.py` (only if source manifest exists/verified) then:
-`A04_TEST_MODE=1 A04_LOCAL_MODEL=1 /opt/homebrew/bin/python3.11 -u app.py --port-file evidence/port.txt`
+From a clean B01 checkout, choose new paths outside every Git tree:
 
-Independently from another OS process:
-`/opt/homebrew/bin/python3.11 tests/acceptance.py` (original 21)
-`/opt/homebrew/bin/python3.11 tests/real_model_acceptance.py` (8 model-specific cases)
+```bash
+/opt/homebrew/bin/python3.11 -B wave_b01/components/a04/stage_model_runtime.py \
+  --asset-dir /path/to/authorized/existing/A04/model_runtime \
+  --destination /tmp/m27-a04-runtime \
+  --model-mode hardlink
+
+/opt/homebrew/bin/python3.11 -B wave_b01/components/a04/run_repro_v2.py \
+  --runtime /tmp/m27-a04-runtime \
+  --scratch /tmp/m27-a04-scratch
+```
+
+The runner starts the loopback server and then launches the original 21-case
+client and 8-case real-model client as separate OS processes. It records their
+PIDs, ordered case receipts, server logs, generation logs, cleanup result and
+clean tracked Git state. The provider refuses to run unless
+`A04_MODEL_RUNTIME` points to an outside-tree runtime whose
+`STAGE_RECEIPT.json` matches the tracked manifest and all runtime pins.
 
 Original and newly added failure logs remain in A04/evidence; a successful rerun never deletes raw failed cases. Run and model adapter are constrained by a 60-second local task deadline, 2 real local decoder calls, 52 max generated tokens each, no automatic retry, isolated process group forced cleanup on cancellation/timeout.
 
