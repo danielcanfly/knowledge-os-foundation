@@ -1,0 +1,63 @@
+{
+  "counts": {
+    "pass": 8,
+    "fail": 0,
+    "total": 8
+  },
+  "tests": [
+    {
+      "name": "two_real_model_generated_claims_preterminal",
+      "pass": true,
+      "receipt_path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B01/wave_b01/components/a04/evidence/return_model_cases/two_real_model_generated_claims_preterminal.json",
+      "error": null
+    },
+    {
+      "name": "real_model_adversarial_safe_refusal",
+      "pass": true,
+      "receipt_path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B01/wave_b01/components/a04/evidence/return_model_cases/real_model_adversarial_safe_refusal.json",
+      "error": null
+    },
+    {
+      "name": "real_model_source_tamper_failclosed",
+      "pass": true,
+      "receipt_path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B01/wave_b01/components/a04/evidence/return_model_cases/real_model_source_tamper_failclosed.json",
+      "error": null
+    },
+    {
+      "name": "real_model_revocation_and_retraction",
+      "pass": true,
+      "receipt_path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B01/wave_b01/components/a04/evidence/return_model_cases/real_model_revocation_and_retraction.json",
+      "error": null
+    },
+    {
+      "name": "real_model_hard_timeout",
+      "pass": true,
+      "receipt_path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B01/wave_b01/components/a04/evidence/return_model_cases/real_model_hard_timeout.json",
+      "error": null
+    },
+    {
+      "name": "real_model_cancel_cleanup",
+      "pass": true,
+      "receipt_path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B01/wave_b01/components/a04/evidence/return_model_cases/real_model_cancel_cleanup.json",
+      "error": null
+    },
+    {
+      "name": "real_model_cross_tenant_denied",
+      "pass": true,
+      "receipt_path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B01/wave_b01/components/a04/evidence/return_model_cases/real_model_cross_tenant_denied.json",
+      "error": null
+    },
+    {
+      "name": "real_model_forged_client_ack_denied",
+      "pass": true,
+      "receipt_path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B01/wave_b01/components/a04/evidence/return_model_cases/real_model_forged_client_ack_denied.json",
+      "error": null
+    }
+  ],
+  "model": "Qwen2.5-0.5B-Instruct Q4_K_M",
+  "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+  "actual_model_inference": true,
+  "native_q34": false,
+  "client_pid": 18073,
+  "no_external_provider_calls": true
+}

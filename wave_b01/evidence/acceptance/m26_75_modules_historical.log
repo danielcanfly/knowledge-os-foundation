@@ -1,0 +1,73 @@
+........................................................................ [  8%]
+........................................................................ [ 16%]
+........................................................................ [ 25%]
+........................................................................ [ 33%]
+........................................................................ [ 41%]
+........................................................................ [ 50%]
+........................................................................ [ 58%]
+........................................................................ [ 66%]
+........................................................................ [ 75%]
+................................................................FFFF.F.. [ 83%]
+..............................F......................................... [ 91%]
+.......................................................................  [100%]
+=================================== FAILURES ===================================
+______________ test_fast_public_path_publishes_single_call_answer ______________
+tests/test_m26_pa_7_fast_public_path.py:133: in test_fast_public_path_publishes_single_call_answer
+    assert response["semantic_closure"] == {}
+E   AssertionError: assert {'canonical_f...ifier'}], ...} == {}
+E     
+E     Left contains 6 more items:
+E     {'canonical_fast_candidate': {'accepted': True,
+E                                   'attempted': True,
+E                                   'bounded_fast_repair_attempted': False,
+E                                   'fast_attempts': 1,
+E                                   'semantic_repair_invoked': False,...
+E     
+E     ...Full output truncated (41 lines hidden), use '-vv' to show
+_ test_fast_public_path_abstains_without_semantic_retry[<lambda>-PROVIDER_OUTPUT_INVALID0] _
+tests/test_m26_pa_7_fast_public_path.py:165: in test_fast_public_path_abstains_without_semantic_retry
+    assert provider.calls == 1
+E   assert 2 == 1
+E    +  where 2 = <tests.test_m26_pa_7_fast_public_path.FastAnswerProvider object at 0x112a6e090>.calls
+_ test_fast_public_path_abstains_without_semantic_retry[<lambda>-PROVIDER_OUTPUT_INVALID1] _
+tests/test_m26_pa_7_fast_public_path.py:165: in test_fast_public_path_abstains_without_semantic_retry
+    assert provider.calls == 1
+E   assert 2 == 1
+E    +  where 2 = <tests.test_m26_pa_7_fast_public_path.LeakyProvider object at 0x11290e950>.calls
+______ test_corrected_pa7_acceptance_schema_self_digest_and_live_evidence ______
+tests/test_m26_pa_7_reconciliation.py:104: in test_corrected_pa7_acceptance_schema_self_digest_and_live_evidence
+    assert acceptance["corrective_authority"] == {
+E   AssertionError: assert {'corrective_...3fc5b51', ...} == {'corrective_...3fc5b51', ...}
+E     
+E     Omitting 7 identical items, use -vv to show
+E     Differing items:
+E     {'formal_test_manifest_self_sha256': '62c14a4076238fd9f6c7424f5eccd555248616866caac5f2ea293bf1e6e073b9'} != {'formal_test_manifest_self_sha256': '2d0fbd3a837aab9f09996ba75000bf577e14db4dc01e483cc2aba3ad8ac07396'}
+E     Use -v to get more diff
+____________ test_corrected_formal_metrics_bound_product_readiness _____________
+tests/test_m26_pa_7_reconciliation.py:213: in test_corrected_formal_metrics_bound_product_readiness
+    assert evidence["formal"]["runtime_path"] == (
+E   AssertionError: assert 'knowledge_en...bitrary_query' == 'knowledge_en...bitrary_query'
+E     
+E     - knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query
+E     ?                         ^^^^   ^^^^^^^^^^
+E     + knowledge_engine.m26_pa7_arbitrary_query_runtime.run_owner_arbitrary_query
+E     ?                      + ++++++++++++ ++++ ^^   ^^
+_____ test_product_and_qualification_callers_use_single_runtime_authority ______
+tests/test_m26_smcore_runtime_authority_gate.py:22: in test_product_and_qualification_callers_use_single_runtime_authority
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/lib/python3.11/ast.py:50: in parse
+    return compile(source, filename, mode, flags,
+E     File "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B01/scripts/m27_stage30o_mixed_full523_admission_runner.py", line 269
+E       f"## Decision\n`{payload["decision"]}`\n\n"
+E                                 ^^^^^^^^
+E   SyntaxError: f-string: unmatched '['
+=========================== short test summary info ============================
+FAILED tests/test_m26_pa_7_fast_public_path.py::test_fast_public_path_publishes_single_call_answer
+FAILED tests/test_m26_pa_7_fast_public_path.py::test_fast_public_path_abstains_without_semantic_retry[<lambda>-PROVIDER_OUTPUT_INVALID0]
+FAILED tests/test_m26_pa_7_fast_public_path.py::test_fast_public_path_abstains_without_semantic_retry[<lambda>-PROVIDER_OUTPUT_INVALID1]
+FAILED tests/test_m26_pa_7_reconciliation.py::test_corrected_pa7_acceptance_schema_self_digest_and_live_evidence
+FAILED tests/test_m26_pa_7_reconciliation.py::test_corrected_formal_metrics_bound_product_readiness
+FAILED tests/test_m26_smcore_runtime_authority_gate.py::test_product_and_qualification_callers_use_single_runtime_authority
+6 failed, 857 passed, 1 warning in 138.38s (0:02:18)
+

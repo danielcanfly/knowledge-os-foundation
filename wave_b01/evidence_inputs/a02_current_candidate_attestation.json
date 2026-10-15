@@ -1,0 +1,69 @@
+{
+  "admission": "REVIEW_ONLY_NO_EXTERNAL_SIGNATURE",
+  "binding": {
+    "abi": {
+      "source_code_filename": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/A02/i37_snapshot/src/knowledge_engine/m26_aq_semantic_contract.py",
+      "trace_name": "run_owner_arbitrary_query"
+    },
+    "citation": {
+      "end_line": 8,
+      "lines_sha256": "ab5b72525c66b77874392687af6f9429b23137fa5ec775401748c923ef0c28b4",
+      "path": "src/knowledge_engine/m26_aq_semantic_contract.py",
+      "start_line": 1
+    },
+    "entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query",
+    "path": "src/knowledge_engine/m26_aq_semantic_contract.py",
+    "sha256": "bd5d890dbd9ac2926c6544a086c7c514e3a81904889ab9c8152eb7ef45dbf25c"
+  },
+  "classification": "CURRENT_CANDIDATE_NOT_OLD_HISTORY",
+  "historical_conflicts": {
+    "manifest_reference": {
+      "acceptance_claimed_manifest_self_sha256": "62c14a4076238fd9f6c7424f5eccd555248616866caac5f2ea293bf1e6e073b9",
+      "manifest_current_historical_self_sha256": "2d0fbd3a837aab9f09996ba75000bf577e14db4dc01e483cc2aba3ad8ac07396",
+      "mismatch_preserved": true,
+      "state": "OLD_HISTORY_REFERENCE_MISMATCH_NOT_REWRITTEN"
+    },
+    "runtime_path": {
+      "current_candidate_entrypoint": "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query",
+      "difference_preserved": true,
+      "historical_live_evidence_path": "knowledge_engine.m26_pa7_arbitrary_query_runtime.run_owner_arbitrary_query",
+      "state": "OLD_HISTORY_RUNTIME_NOT_RELABELLED"
+    }
+  },
+  "history": [
+    {
+      "file_sha256": "821a03cb807054084784236ddac060673ca326f74cea81938cb8399d2a9c4d2b",
+      "historical_self_sha256_as_claimed": "5358898627ededadd825af8794b27ee8be40d1bb5fb9ffd47e403c89909910ba",
+      "path": "pilot/m26/m26-pa-7-acceptance.json",
+      "state": "OLD_HISTORY_NOT_REISSUED"
+    },
+    {
+      "file_sha256": "22b4a006a6968f0faae10ba27695fe766d967caf57874e3aa411bef1a84639c1",
+      "historical_self_sha256_as_claimed": "2d0fbd3a837aab9f09996ba75000bf577e14db4dc01e483cc2aba3ad8ac07396",
+      "path": "pilot/m26/m26-pa-7-corrective-formal-test-manifest.json",
+      "state": "OLD_HISTORY_NOT_REISSUED"
+    },
+    {
+      "file_sha256": "8c5e79132bae71291bf883b99f67ba6de6de3f88bb6f7cfd95e2c0db4e034221",
+      "historical_self_sha256_as_claimed": "098bf0a450bfb118c53aec08e7772249083b3a1ae696447d10413053a3fc5b51",
+      "path": "pilot/m26/m26-pa-7-corrective-formal-test-contract.json",
+      "state": "OLD_HISTORY_NOT_REISSUED"
+    }
+  ],
+  "schema": "m27-a02-current-m26-source-attestation/v1",
+  "self_sha256": "9a19a5fee68880e3ce03f8bc891fae001ba32be22966f979afddaecdfd40320c",
+  "signature": {
+    "formal_release_authority": false,
+    "issuer": null,
+    "mode": "UNSIGNED_NONPROD"
+  },
+  "source": {
+    "git_head": "216f912994d20d134b1c8af50f7b2dd1a1c89a15",
+    "git_tree": "f65a00d7b538e7acbc3404fa822f89631ddeed91"
+  },
+  "witness": {
+    "file_sha256": "13af21ba21bba9741395cf8b67e61d2d937f4d08323becf0be75ab16f28354dc",
+    "path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/A02/evidence/v2/runtime_witness.json",
+    "self_sha256": "18a51fe5d279cc8da4169d51d5678cd1275b85df61fb33cc9cc20f8473750484"
+  }
+}

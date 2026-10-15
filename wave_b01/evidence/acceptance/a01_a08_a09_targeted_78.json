@@ -1,0 +1,30 @@
+{
+  "schema": "m27.wave-b01.test-receipt/v1",
+  "name": "a01_a08_a09_targeted_78",
+  "command": [
+    "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--disable-warnings",
+    "--tb=short",
+    "tests/test_a01_fast_public_contract_v2.py",
+    "tests/test_a01_production_bridge_negative.py",
+    "tests/test_m27_production_evidence_bridge.py",
+    "tests/test_m27_a09_abi_conformance.py",
+    "a08_nonprod/test_experiment.py"
+  ],
+  "cwd": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B01",
+  "exit_code": 0,
+  "expectation": "pass",
+  "expectation_met": true,
+  "seconds": 5.929,
+  "summary": [
+    "78 passed in 3.45s"
+  ],
+  "log": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B01/wave_b01/evidence/acceptance/a01_a08_a09_targeted_78.log",
+  "log_sha256": "0fd410daca330ecaba25e513ab0170ed972126e2f1103fca73d43c5537297790"
+}

@@ -1,0 +1,23 @@
+{
+  "schema": "m27.wave-b01.test-receipt/v1",
+  "name": "a06_component_25",
+  "command": [
+    "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "test_a06"
+  ],
+  "cwd": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B01/wave_b01/components/a06",
+  "exit_code": 0,
+  "expectation": "pass",
+  "expectation_met": true,
+  "seconds": 5.257,
+  "summary": [
+    "Ran 25 tests in 4.908s",
+    "OK"
+  ],
+  "log": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B01/wave_b01/evidence/acceptance/a06_component_25.log",
+  "log_sha256": "a80b1878c93d2cb4c776a994c5457ecaa7217f8fcc182012cadae3c7520a5b34"
+}

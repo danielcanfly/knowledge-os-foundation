@@ -1,0 +1,347 @@
+{
+  "schema": "m27.mg21.first_party_grounded_corpus.v1",
+  "subject_q34_head": "89f1d7be1623cd6926a69e38871544eefe39e584",
+  "created_utc": "2026-10-13T21:36:23.210892+00:00",
+  "owner_source_controller_confirmed": true,
+  "real_first_party_docs": 11,
+  "grounded_quote_count": 21,
+  "source_rights_scope": "FIRST_PARTY_OWNER_WRITTEN_ARCHITECTURE_DOCS_ONLY",
+  "third_party_mixed_corpus_qualified": false,
+  "original523_included": false,
+  "blind200_included": false,
+  "production_qualified": false,
+  "docs": [
+    {
+      "filename": "00_m27_architecture_overview.md",
+      "sha256": "044c03b3d8ad38ac0a22a734a2469629c132499cce5c43d49138d703a5ffca1d",
+      "bytes": 2026,
+      "snapshot_filename": "00_m27_architecture_overview.md",
+      "origin": "Q34/docs/m27/00_m27_architecture_overview.md",
+      "owner_source_rights": "OWNER_DECLARED_FIRST_PARTY",
+      "protected_evaluation": false
+    },
+    {
+      "filename": "01_contracts.md",
+      "sha256": "6f98ef617f1c1957ccec627aeae0381f9db48dbd763503a818732bbeb1476a02",
+      "bytes": 1371,
+      "snapshot_filename": "01_contracts.md",
+      "origin": "Q34/docs/m27/01_contracts.md",
+      "owner_source_rights": "OWNER_DECLARED_FIRST_PARTY",
+      "protected_evaluation": false
+    },
+    {
+      "filename": "02_request_flow.md",
+      "sha256": "3a2223f821f06d43b2f745fb08452c2fb28b88583de04b3cb2a3f890fcadb891",
+      "bytes": 1222,
+      "snapshot_filename": "02_request_flow.md",
+      "origin": "Q34/docs/m27/02_request_flow.md",
+      "owner_source_rights": "OWNER_DECLARED_FIRST_PARTY",
+      "protected_evaluation": false
+    },
+    {
+      "filename": "03_context_planner.md",
+      "sha256": "d3a45ae32dc5042fa1551aae5dfc84e0bd2acba96a45927c4e30fec1ed06291b",
+      "bytes": 621,
+      "snapshot_filename": "03_context_planner.md",
+      "origin": "Q34/docs/m27/03_context_planner.md",
+      "owner_source_rights": "OWNER_DECLARED_FIRST_PARTY",
+      "protected_evaluation": false
+    },
+    {
+      "filename": "04_context_compiler.md",
+      "sha256": "2fadb4d526b22474d13ae17ca6a7c483bb78aa6de73f8ac83bde6f54efeb1991",
+      "bytes": 688,
+      "snapshot_filename": "04_context_compiler.md",
+      "origin": "Q34/docs/m27/04_context_compiler.md",
+      "owner_source_rights": "OWNER_DECLARED_FIRST_PARTY",
+      "protected_evaluation": false
+    },
+    {
+      "filename": "05_compute_policy.md",
+      "sha256": "48c2dc3f462627c92a16a9eb746f3201da16bfcb7246300f1f2dd69396b804dd",
+      "bytes": 785,
+      "snapshot_filename": "05_compute_policy.md",
+      "origin": "Q34/docs/m27/05_compute_policy.md",
+      "owner_source_rights": "OWNER_DECLARED_FIRST_PARTY",
+      "protected_evaluation": false
+    },
+    {
+      "filename": "06_tool_and_capability_registry.md",
+      "sha256": "75d9ee39b4fcbf27bffd104d0dfd8910c52222125a1a852fc2fb72a3be569a3a",
+      "bytes": 615,
+      "snapshot_filename": "06_tool_and_capability_registry.md",
+      "origin": "Q34/docs/m27/06_tool_and_capability_registry.md",
+      "owner_source_rights": "OWNER_DECLARED_FIRST_PARTY",
+      "protected_evaluation": false
+    },
+    {
+      "filename": "07_skill_runtime.md",
+      "sha256": "87588347d9e8e4e6149b2990f55e89485fac71b8f3e1e64c9de44214fae56e8f",
+      "bytes": 475,
+      "snapshot_filename": "07_skill_runtime.md",
+      "origin": "Q34/docs/m27/07_skill_runtime.md",
+      "owner_source_rights": "OWNER_DECLARED_FIRST_PARTY",
+      "protected_evaluation": false
+    },
+    {
+      "filename": "08_workspace_and_memory.md",
+      "sha256": "d50a77a9eba2620858d68a5860e6d73729e0551cee603a00ac1d38d1f8b0906f",
+      "bytes": 583,
+      "snapshot_filename": "08_workspace_and_memory.md",
+      "origin": "Q34/docs/m27/08_workspace_and_memory.md",
+      "owner_source_rights": "OWNER_DECLARED_FIRST_PARTY",
+      "protected_evaluation": false
+    },
+    {
+      "filename": "09_governance_eval_release.md",
+      "sha256": "39646dc51000792b30cd273a787f2791ca8855ded461e509c335b495bbea4b56",
+      "bytes": 721,
+      "snapshot_filename": "09_governance_eval_release.md",
+      "origin": "Q34/docs/m27/09_governance_eval_release.md",
+      "owner_source_rights": "OWNER_DECLARED_FIRST_PARTY",
+      "protected_evaluation": false
+    },
+    {
+      "filename": "10_migration_plan.md",
+      "sha256": "19a3df1cfd79092a3daf614b6bea92f7d62aab898281461530c82d04be35ea29",
+      "bytes": 1259,
+      "snapshot_filename": "10_migration_plan.md",
+      "origin": "Q34/docs/m27/10_migration_plan.md",
+      "owner_source_rights": "OWNER_DECLARED_FIRST_PARTY",
+      "protected_evaluation": false
+    }
+  ],
+  "chunks": [
+    {
+      "passage_id": "D00P000",
+      "doc_id": "D00",
+      "source_filename": "00_m27_architecture_overview.md",
+      "source_sha256": "044c03b3d8ad38ac0a22a734a2469629c132499cce5c43d49138d703a5ffca1d",
+      "byte_start": 95,
+      "byte_end": 314,
+      "quote_sha256": "ca7e82aec2070abd82e6342869544a2dce85546ec3fecde19b241ab32a26c48c",
+      "quote": "M27 upgrades the current M26 Knowledge Engine into a context-native runtime that can plan context, select capabilities, allocate compute, verify outputs, and learn from traces without weakening deterministic governance.",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D00P001",
+      "doc_id": "D00",
+      "source_filename": "00_m27_architecture_overview.md",
+      "source_sha256": "044c03b3d8ad38ac0a22a734a2469629c132499cce5c43d49138d703a5ffca1d",
+      "byte_start": 552,
+      "byte_end": 748,
+      "quote_sha256": "0de3fbd17d2e82e90f905bd3d6cd95eed6544cfb6d30a305f54c58e0a1ee7e0e",
+      "quote": "- a rewrite of M26\n- a generic multi-agent swarm\n- an MCP-first system\n- a Jev-dependent system\n- a LangGraph / Agents SDK wrapper\n- a replacement for Qdrant, R2, citations, ACL, release, or evals",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D00P002",
+      "doc_id": "D00",
+      "source_filename": "00_m27_architecture_overview.md",
+      "source_sha256": "044c03b3d8ad38ac0a22a734a2469629c132499cce5c43d49138d703a5ffca1d",
+      "byte_start": 875,
+      "byte_end": 1016,
+      "quote_sha256": "5945c698e537b27ed75761c909cbeb8bbac6e80ec0ed5ded22759c4c2925cf46",
+      "quote": "2. Context & Capability Plane\n   Knowledge\n   Memory\n   Skills\n   Workspace\n   Tools\n   MCP / Native capability transport\n   Context Compiler",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D00P003",
+      "doc_id": "D00",
+      "source_filename": "00_m27_architecture_overview.md",
+      "source_sha256": "044c03b3d8ad38ac0a22a734a2469629c132499cce5c43d49138d703a5ffca1d",
+      "byte_start": 1018,
+      "byte_end": 1129,
+      "quote_sha256": "ee1709331a7702278d33b6fd58b982d0eb637170645f01ceac18788c02ccd701",
+      "quote": "3. Execution & Governance Plane\n   Harness\n   Policy\n   ACL\n   Verification\n   Tracing\n   Evaluation\n   Release",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D01P000",
+      "doc_id": "D01",
+      "source_filename": "01_contracts.md",
+      "source_sha256": "6f98ef617f1c1957ccec627aeae0381f9db48dbd763503a818732bbeb1476a02",
+      "byte_start": 22,
+      "byte_end": 86,
+      "quote_sha256": "e7ff7ede60d3ed135f9e87a37f7f97eca0bd42b13120341537a3a3bdf3e85565",
+      "quote": "Contracts are the first deliverable. Implementations come later.",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D01P001",
+      "doc_id": "D01",
+      "source_filename": "01_contracts.md",
+      "source_sha256": "6f98ef617f1c1957ccec627aeae0381f9db48dbd763503a818732bbeb1476a02",
+      "byte_start": 742,
+      "byte_end": 847,
+      "quote_sha256": "d3db744ce18e7b6e30a8e677a4a8afa2294b23a94edf8d159b33cd656ffc68bd",
+      "quote": "Responsible for knowledge retrieval and authoritative source access. Must not own final answer synthesis.",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D01P002",
+      "doc_id": "D01",
+      "source_filename": "01_contracts.md",
+      "source_sha256": "6f98ef617f1c1957ccec627aeae0381f9db48dbd763503a818732bbeb1476a02",
+      "byte_start": 871,
+      "byte_end": 1025,
+      "quote_sha256": "facc21c1d62f52b3c20e21168cba91e98b0e3a31ba961d5b446a389214fc61d1",
+      "quote": "Responsible for bounded decisions such as routing, classification, scoring, and compute tier suggestions. Must not own deep synthesis or production truth.",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D01P003",
+      "doc_id": "D01",
+      "source_filename": "01_contracts.md",
+      "source_sha256": "6f98ef617f1c1957ccec627aeae0381f9db48dbd763503a818732bbeb1476a02",
+      "byte_start": 1045,
+      "byte_end": 1121,
+      "quote_sha256": "a61eadca12dec24c37107ffc01ba4196bd1d32f14844e82bcb59ad0f3d9d67fc",
+      "quote": "Responsible for capability discovery and invocation. Must not bypass policy.",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D01P004",
+      "doc_id": "D01",
+      "source_filename": "01_contracts.md",
+      "source_sha256": "6f98ef617f1c1957ccec627aeae0381f9db48dbd763503a818732bbeb1476a02",
+      "byte_start": 1215,
+      "byte_end": 1298,
+      "quote_sha256": "32bc97753829e31d8b847bec92dbf917f3058ce7cd18077a9fa0449cd3680f36",
+      "quote": "Responsible for deterministic enforcement. Agent may request. PolicyEngine decides.",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D03P000",
+      "doc_id": "D03",
+      "source_filename": "03_context_planner.md",
+      "source_sha256": "d3a45ae32dc5042fa1551aae5dfc84e0bd2acba96a45927c4e30fec1ed06291b",
+      "byte_start": 418,
+      "byte_end": 481,
+      "quote_sha256": "9afb84bc9173b105262c838f9e0bb1cee647969796ad92a0256ce45c04bcff3f",
+      "quote": "Rule-based shadow planner only. No production behavior changes.",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D03P001",
+      "doc_id": "D03",
+      "source_filename": "03_context_planner.md",
+      "source_sha256": "d3a45ae32dc5042fa1551aae5dfc84e0bd2acba96a45927c4e30fec1ed06291b",
+      "byte_start": 508,
+      "byte_end": 620,
+      "quote_sha256": "8e97b490cd7b96894dd1c303deaf44c8f01a52415942fe0b3e4a0bb65c46ac90",
+      "quote": "The Context Planner does not call tools, fetch sources, write memory, decide production truth, or bypass policy.",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D04P000",
+      "doc_id": "D04",
+      "source_filename": "04_context_compiler.md",
+      "source_sha256": "2fadb4d526b22474d13ae17ca6a7c483bb78aa6de73f8ac83bde6f54efeb1991",
+      "byte_start": 582,
+      "byte_end": 687,
+      "quote_sha256": "9d926f88ed15bc8860c8037d45b779c687bc0d9468a8fac214f417f0489a3b70",
+      "quote": "The compiler must not silently promote unverified memory or agent observations into production knowledge.",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D05P000",
+      "doc_id": "D05",
+      "source_filename": "05_compute_policy.md",
+      "source_sha256": "48c2dc3f462627c92a16a9eb746f3201da16bfcb7246300f1f2dd69396b804dd",
+      "byte_start": 226,
+      "byte_end": 316,
+      "quote_sha256": "fb30a0094e3d98e66d19a889e70308dd7ce23474328a90bb0a144e8193f9f2f5",
+      "quote": "STANDARD\n  planner\n  one to two retrieval rounds\n  normal verification\n  standard deadline",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D07P000",
+      "doc_id": "D07",
+      "source_filename": "07_skill_runtime.md",
+      "source_sha256": "87588347d9e8e4e6149b2990f55e89485fac71b8f3e1e64c9de44214fae56e8f",
+      "byte_start": 414,
+      "byte_end": 474,
+      "quote_sha256": "ad547f2aae40303b089358e5297bbd19463cb613eaf05a343026e0c01a7083b0",
+      "quote": "A skill can describe procedure. It does not grant authority.",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D08P000",
+      "doc_id": "D08",
+      "source_filename": "08_workspace_and_memory.md",
+      "source_sha256": "d50a77a9eba2620858d68a5860e6d73729e0551cee603a00ac1d38d1f8b0906f",
+      "byte_start": 519,
+      "byte_end": 582,
+      "quote_sha256": "a56030a92d414549adde02fe2a374bf867a30488d02aa57d13c5bcdb17206805",
+      "quote": "Agent observations cannot directly become production knowledge.",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D10P000",
+      "doc_id": "D10",
+      "source_filename": "10_migration_plan.md",
+      "source_sha256": "19a3df1cfd79092a3daf614b6bea92f7d62aab898281461530c82d04be35ea29",
+      "byte_start": 229,
+      "byte_end": 313,
+      "quote_sha256": "45de00c5f34c012a05a3f2edac46f50c53cfa7d8c92e426b5f19975b8f4912f8",
+      "quote": "Write contract specs and conformance test skeletons. No production behavior changes.",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D10P001",
+      "doc_id": "D10",
+      "source_filename": "10_migration_plan.md",
+      "source_sha256": "19a3df1cfd79092a3daf614b6bea92f7d62aab898281461530c82d04be35ea29",
+      "byte_start": 351,
+      "byte_end": 439,
+      "quote_sha256": "3e81654b96bac48d19ec434b5175ded2c49ceedcc05d3ac522dcefc0e7d37754",
+      "quote": "Add shadow-only planner and compute policy trace. No production answer behavior changes.",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D10P002",
+      "doc_id": "D10",
+      "source_filename": "10_migration_plan.md",
+      "source_sha256": "19a3df1cfd79092a3daf614b6bea92f7d62aab898281461530c82d04be35ea29",
+      "byte_start": 474,
+      "byte_end": 564,
+      "quote_sha256": "66a6bd5209bd335f746f08c5184a19a232aef5d8dcb0e34f18a45ae76f3428ac",
+      "quote": "Wrap current M26 capabilities as domain tools behind native provider. No MCP required yet.",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D10P003",
+      "doc_id": "D10",
+      "source_filename": "10_migration_plan.md",
+      "source_sha256": "19a3df1cfd79092a3daf614b6bea92f7d62aab898281461530c82d04be35ea29",
+      "byte_start": 694,
+      "byte_end": 767,
+      "quote_sha256": "07c5af5d0d4c45cae8e73d687922501314a34f904440c3beefd3d32bb7943d89",
+      "quote": "Enable iterative search / inspect / open / retry only under feature flag.",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D10P004",
+      "doc_id": "D10",
+      "source_filename": "10_migration_plan.md",
+      "source_sha256": "19a3df1cfd79092a3daf614b6bea92f7d62aab898281461530c82d04be35ea29",
+      "byte_start": 930,
+      "byte_end": 994,
+      "quote_sha256": "23195af339740fdeb2971752e7db4d5ab96d0e7c0a11129c668f30859320b9be",
+      "quote": "Expose selected Knowledge / Eval / Runtime capabilities via MCP.",
+      "transport_allowed_only_after_live_revalidation": true
+    },
+    {
+      "passage_id": "D10P005",
+      "doc_id": "D10",
+      "source_filename": "10_migration_plan.md",
+      "source_sha256": "19a3df1cfd79092a3daf614b6bea92f7d62aab898281461530c82d04be35ea29",
+      "byte_start": 1113,
+      "byte_end": 1177,
+      "quote_sha256": "ea2b8816519ca26e18fab466bc7b536b716324073f4f5a4cc656cb88e4f360ea",
+      "quote": "Trace mining, skill proposals, retrieval tuning, compute tuning.",
+      "transport_allowed_only_after_live_revalidation": true
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+Delta notebook executes every four hours during the local validation exercise.

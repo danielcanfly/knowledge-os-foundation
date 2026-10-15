@@ -1,0 +1,26 @@
+{
+  "CHARTER": {
+    "kind": "owner-firstparty-local-snapshot",
+    "original": "read-only master document; this is a copied byte snapshot",
+    "role": "researcher",
+    "sha256": "eb0788d82d7d7321d4bf5fc78b0d0e7f298d3262c7b418955df3f27909445c45",
+    "source_id": "CHARTER",
+    "tenant": "tenant-a"
+  },
+  "DELIVERY": {
+    "kind": "owner-firstparty-local-snapshot",
+    "original": "read-only master document; this is a copied byte snapshot",
+    "role": "researcher",
+    "sha256": "ac451d197b64b9d45a0e8bc2112a1e572d8f9832c0f47ce2f00573fe0fb21817",
+    "source_id": "DELIVERY",
+    "tenant": "tenant-a"
+  },
+  "I37_ACCEPTANCE": {
+    "kind": "owner-firstparty-local-snapshot",
+    "original": "read-only master document; this is a copied byte snapshot",
+    "role": "researcher",
+    "sha256": "9816b56ae67b4e42bcb06d5b87fae77549f2bac98e992fce93bc82e1018cb764",
+    "source_id": "I37_ACCEPTANCE",
+    "tenant": "tenant-a"
+  }
+}

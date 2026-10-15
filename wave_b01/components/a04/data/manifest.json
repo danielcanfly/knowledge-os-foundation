@@ -1,0 +1,38 @@
+{
+  "atlas-A": {
+    "fact": {
+      "end": 82,
+      "key": "atlas_stages",
+      "paraphrase_regex": "The Atlas trial (?:has|uses) two (?:distinct )?review stages\\.",
+      "quote": "Atlas nonproduction trial uses exactly two review stages: intake and verification.",
+      "start": 0
+    },
+    "file": "atlas.txt",
+    "sha256": "cb47bc6b5526493abeeeb60b26065eb1b5b1671c957c3f62661cf08f49ea6b07",
+    "tenant": "tenant-alpha"
+  },
+  "cedar-C": {
+    "fact": {
+      "end": 77,
+      "key": "cedar_audit",
+      "paraphrase_regex": "The Cedar sandbox (?:keeps|stores) five audit records\\.",
+      "quote": "Cedar sandbox retains five audit records during the tenant-isolated exercise.",
+      "start": 0
+    },
+    "file": "cedar.txt",
+    "sha256": "877bf5460697750de86b9bf93f8f592125465d3e43ce6440ff7ddbda0cb0fffe",
+    "tenant": "tenant-beta"
+  },
+  "delta-B": {
+    "fact": {
+      "end": 78,
+      "key": "delta_cadence",
+      "paraphrase_regex": "The Delta notebook (?:runs|executes) (?:once )?every four hours\\.",
+      "quote": "Delta notebook executes every four hours during the local validation exercise.",
+      "start": 0
+    },
+    "file": "delta.txt",
+    "sha256": "51364fecf68358c4202a211cbeb62234d5d4c487237b8ee097046245cdb4d774",
+    "tenant": "tenant-alpha"
+  }
+}

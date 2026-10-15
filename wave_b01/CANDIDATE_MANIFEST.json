@@ -1,0 +1,21 @@
+{
+  "abi": "m27.wave-b01.nonprod-integration/v1",
+  "base_i37_head": "216f912994d20d134b1c8af50f7b2dd1a1c89a15",
+  "formal_x01_x09": "0/9_EXTERNAL_GATES_NOT_CLAIMED",
+  "official_original523": "NOT_RUN_0_OF_523",
+  "official_product_blind200": "NOT_RUN_0_OF_200",
+  "production_authority": false,
+  "q34_frozen_head": "89f1d7be1623cd6926a69e38871544eefe39e584",
+  "release_authority": false,
+  "scope": "NONPROD_ONLY",
+  "sealed_evaluation_access": false,
+  "source_inputs": {
+    "A01": "0349a6b75c644139dff351fe627973c54a8f61c7",
+    "A04": "964ee42",
+    "A05": "373720ebbbc427ed7cc47af2a1abe751d603ee85",
+    "A06": "f59ae5",
+    "A07": "411f0838",
+    "A08": "e6927805",
+    "A09": "f68278b6"
+  }
+}

@@ -1,0 +1,1 @@
+Cedar sandbox retains five audit records during the tenant-isolated exercise.

@@ -1,0 +1,95 @@
+{
+  "work_id": "A04",
+  "version": "a04.sse.claim_verified.v1",
+  "component": "standalone first-party Nonprod Claim Publisher",
+  "owner": "A04 only",
+  "native_q34_integrated": false,
+  "producer": {
+    "wire": "UTF-8 JSONL; one complete candidate per line; no final-buffer replay",
+    "fields": [
+      "type",
+      "index",
+      "source_id",
+      "source_sha256",
+      "fact_key",
+      "span",
+      "quote",
+      "text"
+    ],
+    "allowed_kinds": [
+      "claim",
+      "refusal",
+      "done"
+    ],
+    "must_be_incremental": true,
+    "current_producer": "two isolated modes: deterministic OS stub OR genuine local Qwen2.5-0.5B-Instruct GGUF via llama.cpp",
+    "real_model_provider_authorized": false,
+    "hard_model_gate": "Live genuine model-generated claim pre-worker-complete must be independently verified before full product claim",
+    "real_model_local_authorized": true,
+    "model_weights_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+    "model_runtime": "llama.cpp b11425 macOS ARM64, downloaded in A04 only",
+    "remote_provider_credentials_used": false,
+    "per_run_budget": "2 OS model inference subprocesses x 52 max tokens, no automatic retries, 60s app deadline; no remote provider calls",
+    "genuine_model_generated_first_text_in_standalone": "PASS on A04 local model only, independently verified TCP Client receipt and OS model audit",
+    "native_q34": "UNRESOLVED_AND_EXPRESSLY_EXCLUDED"
+  },
+  "verifier": {
+    "source": "immutable pinned owner-controlled document bytes with SHA256",
+    "semantic": "Source-byte and span check, bounded count/cadence semantic attributes, numerical contradiction guard, deny unsupported details; NOT open-world entailment",
+    "tenant": "auth principal and source ACL",
+    "revocation": "reload per prepublish and per worker/terminal",
+    "publish_only_after": "source_bytes && signed_digest_match && exact_span && evidence_quote && scoped_tenant && bounded_semantics && not_cancelled && not_revoked"
+  },
+  "sse": {
+    "content_type": "text/event-stream",
+    "events": [
+      "run.started",
+      "claim.verified",
+      "claim.rejected",
+      "claim.retracted",
+      "safe.refusal",
+      "worker.finished",
+      "run.terminal"
+    ],
+    "sequence": "strict increasing per RunId",
+    "proof_fields": [
+      "claim_index",
+      "text",
+      "source_id",
+      "source_sha256",
+      "span",
+      "fact_key",
+      "proof_sha256",
+      "verifier"
+    ],
+    "clock": "server_ns and client_received_ns monotonic independent processes",
+    "receipt": "authorized POST /v1/ack using {run_id,seq,proof,client_received_ns}"
+  },
+  "fail_closed": [
+    "unauthorized",
+    "tenant_mismatch",
+    "cross_tenant_source",
+    "wrong SHA",
+    "tampered bytes",
+    "bad span",
+    "forged citation",
+    "semantic contradiction",
+    "revoked",
+    "out of sequence",
+    "timeout",
+    "cancel",
+    "client disconnect",
+    "unknown run ack"
+  ],
+  "durability": "fsync JSONL per event in own local Nonprod worksite; no production ledger or external side effects",
+  "integration_request": "A04 standalone local-model contract ready for independent review only. No previously refused frozen Q34 handler edit; any future Product native integration requires separate compatible approval and independently qualified corpus/IdP and same-version release evidence.",
+  "boundaries": [
+    "NO native Q34 edit",
+    "NO Q34 frozen or I37 writes",
+    "NO production",
+    "NO protected 523/200",
+    "NO other worker writes",
+    "NO launchd",
+    "NO remote external provider without specific authorization and bounded receipt"
+  ]
+}

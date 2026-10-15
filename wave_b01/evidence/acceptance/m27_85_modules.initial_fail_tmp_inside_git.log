@@ -1,0 +1,302 @@
+........................................................................ [  2%]
+........................................................................ [  5%]
+........................................................................ [  7%]
+........................................................................ [ 10%]
+........................................................................ [ 12%]
+........................................................................ [ 15%]
+........................................................................ [ 18%]
+........................................................................ [ 20%]
+........................................................................ [ 23%]
+........................................................................ [ 25%]
+........................................................................ [ 28%]
+........................................................................ [ 31%]
+........................................................................ [ 33%]
+........................................................................ [ 36%]
+........................................................................ [ 38%]
+........................................................................ [ 41%]
+........................................................................ [ 44%]
+........................................................................ [ 46%]
+........................................................................ [ 49%]
+........................................................................ [ 51%]
+........................................................................ [ 54%]
+........................................................................ [ 57%]
+........................................................................ [ 59%]
+........................................................................ [ 62%]
+........................................................................ [ 64%]
+.....................................................................FFF [ 67%]
+FFF..F...................................F.............................. [ 70%]
+........................................FFFFFFFFFFFFFFFFF............... [ 72%]
+F....................................................................... [ 75%]
+........................................................................ [ 77%]
+........................................................................ [ 80%]
+...F.................................................................... [ 83%]
+........................................................................ [ 85%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+........................................................................ [ 93%]
+........................................................................ [ 96%]
+........................................................F............... [ 98%]
+..................................                                       [100%]
+=================================== FAILURES ===================================
+_______________ test_import_origin_adversaries[unexpected_cache] _______________
+tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py:291: in test_import_origin_adversaries
+    fail(reason, validate_import_proof, receipt, root, expected)
+tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py:45: in fail
+    assert str(error.value) == reason
+E   AssertionError: assert 'F12_IMPORT_HOST_SOURCE_LEAK' == 'F12_UNEXPECT...ACKAGE_MODULE'
+E     
+E     - F12_UNEXPECTED_PACKAGE_MODULE
+E     + F12_IMPORT_HOST_SOURCE_LEAK
+___________________ test_import_origin_adversaries[missing] ____________________
+tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py:291: in test_import_origin_adversaries
+    fail(reason, validate_import_proof, receipt, root, expected)
+tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py:45: in fail
+    assert str(error.value) == reason
+E   AssertionError: assert 'F12_IMPORT_HOST_SOURCE_LEAK' == 'F12_IMPORT_MODULE_COUNT'
+E     
+E     - F12_IMPORT_MODULE_COUNT
+E     + F12_IMPORT_HOST_SOURCE_LEAK
+____________________ test_import_origin_adversaries[shadow] ____________________
+tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py:291: in test_import_origin_adversaries
+    fail(reason, validate_import_proof, receipt, root, expected)
+tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py:45: in fail
+    assert str(error.value) == reason
+E   AssertionError: assert 'F12_IMPORT_HOST_SOURCE_LEAK' == 'F12_IMPORT_ORIGIN_UNVERIFIED'
+E     
+E     - F12_IMPORT_ORIGIN_UNVERIFIED
+E     + F12_IMPORT_HOST_SOURCE_LEAK
+____________________ test_import_origin_adversaries[origin] ____________________
+tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py:291: in test_import_origin_adversaries
+    fail(reason, validate_import_proof, receipt, root, expected)
+tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py:45: in fail
+    assert str(error.value) == reason
+E   AssertionError: assert 'F12_IMPORT_HOST_SOURCE_LEAK' == 'F12_IMPORT_ORIGIN_UNVERIFIED'
+E     
+E     - F12_IMPORT_ORIGIN_UNVERIFIED
+E     + F12_IMPORT_HOST_SOURCE_LEAK
+_____________________ test_import_origin_adversaries[hash] _____________________
+tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py:291: in test_import_origin_adversaries
+    fail(reason, validate_import_proof, receipt, root, expected)
+tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py:45: in fail
+    assert str(error.value) == reason
+E   AssertionError: assert 'F12_IMPORT_HOST_SOURCE_LEAK' == 'F12_IMPORT_S...HASH_MISMATCH'
+E     
+E     - F12_IMPORT_SOURCE_HASH_MISMATCH
+E     + F12_IMPORT_HOST_SOURCE_LEAK
+_________________ test_import_origin_adversaries[module_dict] __________________
+tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py:291: in test_import_origin_adversaries
+    fail(reason, validate_import_proof, receipt, root, expected)
+tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py:45: in fail
+    assert str(error.value) == reason
+E   AssertionError: assert 'F12_IMPORT_HOST_SOURCE_LEAK' == 'F12_IMPORT_ORIGIN_UNVERIFIED'
+E     
+E     - F12_IMPORT_ORIGIN_UNVERIFIED
+E     + F12_IMPORT_HOST_SOURCE_LEAK
+_________________ test_import_origin_adversaries[wrong_first] __________________
+tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py:291: in test_import_origin_adversaries
+    fail(reason, validate_import_proof, receipt, root, expected)
+tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py:45: in fail
+    assert str(error.value) == reason
+E   AssertionError: assert 'F12_IMPORT_HOST_SOURCE_LEAK' == 'F12_I02_NOT_IMPORTED_FIRST'
+E     
+E     - F12_I02_NOT_IMPORTED_FIRST
+E     + F12_IMPORT_HOST_SOURCE_LEAK
+______ test_two_disposable_builds_all_19_real_sources_and_full_i02_import ______
+tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py:455: in test_two_disposable_builds_all_19_real_sources_and_full_i02_import
+    assert result["import_verdict"] == "B12_FULL_I02_ISOLATED_MODULE_IMPORT_PASS"
+E   AssertionError: assert 'IMPORT_ORIGIN_UNVERIFIED' == 'B12_FULL_I02...E_IMPORT_PASS'
+E     
+E     - B12_FULL_I02_ISOLATED_MODULE_IMPORT_PASS
+E     + IMPORT_ORIGIN_UNVERIFIED
+_ test_isolated_proof_forgery_negative[extra_loaded-F13_IMPORT_MODULE_UNIVERSE] _
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_IMPORT_MODULE_UNIVERSE' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+_ test_isolated_proof_forgery_negative[missing_module-F13_IMPORT_MODULE_UNIVERSE] _
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_IMPORT_MODULE_UNIVERSE' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+_ test_isolated_proof_forgery_negative[second_i02-F13_IMPORT_MODULE_UNIVERSE] __
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_IMPORT_MODULE_UNIVERSE' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+_ test_isolated_proof_forgery_negative[bad_origin-F13_IMPORT_ORIGIN_OR_SHA_FORGED] _
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_IMPORT_ORIGIN_OR_SHA_FORGED' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+_ test_isolated_proof_forgery_negative[bad_sha-F13_IMPORT_ORIGIN_OR_SHA_FORGED] _
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_IMPORT_ORIGIN_OR_SHA_FORGED' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+_ test_isolated_proof_forgery_negative[fake_identity-F13_IMPORT_ORIGIN_OR_SHA_FORGED] _
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_IMPORT_ORIGIN_OR_SHA_FORGED' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+_ test_isolated_proof_forgery_negative[bogus_row_field-F13_IMPORT_ORIGIN_FORGED] _
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_IMPORT_ORIGIN_FORGED' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+_ test_isolated_proof_forgery_negative[fake_deferred-F13_DEFERRED_FUNCTIONAL_UNVERIFIED] _
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_DEFERRED_FUNCTIONAL_UNVERIFIED' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+_ test_isolated_proof_forgery_negative[no_deferred-F13_DEFERRED_FUNCTIONAL_UNVERIFIED] _
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_DEFERRED_FUNCTIONAL_UNVERIFIED' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+_ test_isolated_proof_forgery_negative[wrong_broker_path-F13_DEFERRED_FUNCTIONAL_UNVERIFIED] _
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_DEFERRED_FUNCTIONAL_UNVERIFIED' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+_ test_isolated_proof_forgery_negative[wrong_tenant_allowed-F13_DEFERRED_FUNCTIONAL_UNVERIFIED] _
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_DEFERRED_FUNCTIONAL_UNVERIFIED' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+_ test_isolated_proof_forgery_negative[wrong_purpose_allowed-F13_DEFERRED_FUNCTIONAL_UNVERIFIED] _
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_DEFERRED_FUNCTIONAL_UNVERIFIED' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+_ test_isolated_proof_forgery_negative[stale_source_allowed-F13_DEFERRED_FUNCTIONAL_UNVERIFIED] _
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_DEFERRED_FUNCTIONAL_UNVERIFIED' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+_ test_isolated_proof_forgery_negative[crypto_unavailable_false-F13_OPTIONAL_ED25519_POLICY_UNVERIFIED] _
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_OPTIONAL_ED25519_POLICY_UNVERIFIED' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+_ test_isolated_proof_forgery_negative[crypto_fake_positive-F13_OPTIONAL_ED25519_POLICY_UNVERIFIED] _
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_OPTIONAL_ED25519_POLICY_UNVERIFIED' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+_ test_isolated_proof_forgery_negative[crypto_grant-F13_OPTIONAL_ED25519_POLICY_UNVERIFIED] _
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_OPTIONAL_ED25519_POLICY_UNVERIFIED' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+_ test_isolated_proof_forgery_negative[crypto_not_attempted-F13_OPTIONAL_ED25519_POLICY_UNVERIFIED] _
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:310: in test_isolated_proof_forgery_negative
+    blocked(reason, validate_probe, obj, root,
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:41: in blocked
+    assert reason in str(e.value)
+E   AssertionError: assert 'F13_OPTIONAL_ED25519_POLICY_UNVERIFIED' in 'F13_IMPORT_HOST_OR_SITE_SHADOW'
+E    +  where 'F13_IMPORT_HOST_OR_SITE_SHADOW' = str(ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW'))
+E    +    where ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') = <ExceptionInfo ClosureBlocked('F13_IMPORT_HOST_OR_SITE_SHADOW') tblen=3>.value
+______________________ test_probe_receipt_positive_shape _______________________
+tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py:393: in test_probe_receipt_positive_shape
+    validate_probe(proof_fixture(root), root, expected)
+src/knowledge_engine/m27_w5_b13_core_dependency_closure_v1_experimental.py:363: in validate_probe
+    require(isinstance(paths, list) and paths and paths[0] == str(root.resolve())
+src/knowledge_engine/m27_w5_b13_core_dependency_closure_v1_experimental.py:69: in require
+    raise ClosureBlocked(reason)
+E   knowledge_engine.m27_w5_b13_core_dependency_closure_v1_experimental.ClosureBlocked: F13_IMPORT_HOST_OR_SITE_SHADOW
+_________________ test_actual_independent_client_socket_probe __________________
+tests/test_m27_w5_i15_native_local_client_integration_v1_experimental.py:201: in test_actual_independent_client_socket_probe
+    result = i15.probe(worktree, tmp_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/knowledge_engine/m27_w5_i15_native_local_client_integration_v1_experimental.py:810: in probe
+    require(not scratch.resolve().is_relative_to(worktree.resolve()), "SCRATCH_WITHIN_GIT")
+src/knowledge_engine/m27_w5_i15_native_local_client_integration_v1_experimental.py:73: in require
+    raise I15Denied(reason)
+E   knowledge_engine.m27_w5_i15_native_local_client_integration_v1_experimental.I15Denied: SCRATCH_WITHIN_GIT
+__________ test_real_socket_independent_processes_and_progress_denial __________
+tests/test_m27_w5_t14_loopback_first_text_wire_v1_experimental.py:493: in test_real_socket_independent_processes_and_progress_denial
+    result = t.probe(
+src/knowledge_engine/m27_w5_t14_loopback_first_text_wire_v1_experimental.py:666: in probe
+    need(not scratch.resolve().is_relative_to(worktree.resolve()), "SCRATCH_INSIDE_GIT_DENIED")
+src/knowledge_engine/m27_w5_t14_loopback_first_text_wire_v1_experimental.py:73: in need
+    raise WireDenied(reason)
+E   knowledge_engine.m27_w5_t14_loopback_first_text_wire_v1_experimental.WireDenied: SCRATCH_INSIDE_GIT_DENIED
+=========================== short test summary info ============================
+FAILED tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py::test_import_origin_adversaries[unexpected_cache]
+FAILED tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py::test_import_origin_adversaries[missing]
+FAILED tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py::test_import_origin_adversaries[shadow]
+FAILED tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py::test_import_origin_adversaries[origin]
+FAILED tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py::test_import_origin_adversaries[hash]
+FAILED tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py::test_import_origin_adversaries[module_dict]
+FAILED tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py::test_import_origin_adversaries[wrong_first]
+FAILED tests/test_m27_w5_b12_dependency_complete_package_v1_experimental.py::test_two_disposable_builds_all_19_real_sources_and_full_i02_import
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[extra_loaded-F13_IMPORT_MODULE_UNIVERSE]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[missing_module-F13_IMPORT_MODULE_UNIVERSE]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[second_i02-F13_IMPORT_MODULE_UNIVERSE]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[bad_origin-F13_IMPORT_ORIGIN_OR_SHA_FORGED]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[bad_sha-F13_IMPORT_ORIGIN_OR_SHA_FORGED]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[fake_identity-F13_IMPORT_ORIGIN_OR_SHA_FORGED]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[bogus_row_field-F13_IMPORT_ORIGIN_FORGED]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[fake_deferred-F13_DEFERRED_FUNCTIONAL_UNVERIFIED]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[no_deferred-F13_DEFERRED_FUNCTIONAL_UNVERIFIED]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[wrong_broker_path-F13_DEFERRED_FUNCTIONAL_UNVERIFIED]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[wrong_tenant_allowed-F13_DEFERRED_FUNCTIONAL_UNVERIFIED]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[wrong_purpose_allowed-F13_DEFERRED_FUNCTIONAL_UNVERIFIED]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[stale_source_allowed-F13_DEFERRED_FUNCTIONAL_UNVERIFIED]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[crypto_unavailable_false-F13_OPTIONAL_ED25519_POLICY_UNVERIFIED]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[crypto_fake_positive-F13_OPTIONAL_ED25519_POLICY_UNVERIFIED]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[crypto_grant-F13_OPTIONAL_ED25519_POLICY_UNVERIFIED]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_isolated_proof_forgery_negative[crypto_not_attempted-F13_OPTIONAL_ED25519_POLICY_UNVERIFIED]
+FAILED tests/test_m27_w5_b13_core_dependency_closure_v1_experimental.py::test_probe_receipt_positive_shape
+FAILED tests/test_m27_w5_i15_native_local_client_integration_v1_experimental.py::test_actual_independent_client_socket_probe
+FAILED tests/test_m27_w5_t14_loopback_first_text_wire_v1_experimental.py::test_real_socket_independent_processes_and_progress_denial
+28 failed, 2742 passed, 4 warnings in 114.35s (0:01:54)
+

@@ -1,0 +1,79 @@
+{
+  "worker": "A06",
+  "version": "a06-v1",
+  "status": "candidate_not_integrated",
+  "based_on_i37_head": "216f912994d20d134b1c8af50f7b2dd1a1c89a15",
+  "interfaces": {
+    "TaskContract": {
+      "mandatory": [
+        "run_id",
+        "tenant",
+        "actor",
+        "goal",
+        "deadline",
+        "budget",
+        "sources",
+        "rights",
+        "outcome",
+        "version"
+      ],
+      "immutability": "immutable_admitted_json_sha256",
+      "authority": "tenant-a owner-researcher, no actor role escalation"
+    },
+    "RunState": {
+      "journal": "sqlite FULL synchronous WAL; append-only ordered seq; atomic transitions",
+      "terminal": [
+        "VERIFIED",
+        "ABSTAINED",
+        "CANCELED"
+      ],
+      "correlation": "run_id"
+    },
+    "SourceEvidence": {
+      "source_id": [
+        "CHARTER",
+        "DELIVERY",
+        "I37_ACCEPTANCE"
+      ],
+      "claims": [
+        "source_sha256",
+        "line",
+        "start_byte",
+        "end_byte",
+        "quote_sha256"
+      ],
+      "constraints": "exact bytes, tenant + researcher ACL, ambiguity abstention, immediate revocation"
+    },
+    "ToolReceipt": {
+      "action_key": "A06-OBSERVE-${run_id}",
+      "allowed_effect": "owned local sandbox observation.json only",
+      "status": [
+        "PREPARED",
+        "UNKNOWN",
+        "APPLIED",
+        "RECONCILED",
+        "ROLLED_BACK"
+      ],
+      "idempotency": "one physical attempt; reconcile before resume retry; compensate on cancel/revoke"
+    },
+    "VerificationResult": {
+      "independent_verifier": "a06/verifier.py",
+      "requirements": "3 firstparty source matches, physical observer state, 1 effect attempt, journal chain, no revoked sources",
+      "unverifiable_outcome": "ABSTAIN or UNKNOWN-HOLD rather than VERIFIED"
+    }
+  },
+  "integrator_actions": [
+    "review ABI X01-X09 mapping before merge",
+    "connect to A01 TaskRuntime only through tested adapter, do not modify A01 module from A06",
+    "connect A05 source snapshots only after checking source rights and implementing stricter source admission",
+    "ensure A07 memory revocation event can invalidate A06 verifier; A06 existing source tombstones are local-scoped"
+  ],
+  "excluded": [
+    "historically refused persisted AR08 coding-source edit",
+    "Q34 native Streaming",
+    "production",
+    "protected benchmark",
+    "third party claim signatures",
+    "provider native read/write"
+  ]
+}

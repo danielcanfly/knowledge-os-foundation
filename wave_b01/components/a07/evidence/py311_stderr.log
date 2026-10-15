@@ -1,0 +1,26 @@
+test_01_multi_source_durable_positive (test_a07_memory.Lifecycle.test_01_multi_source_durable_positive) ... ok
+test_02_consent_required (test_a07_memory.Lifecycle.test_02_consent_required) ... ok
+test_03_cross_tenant_and_principal_denials (test_a07_memory.Lifecycle.test_03_cross_tenant_and_principal_denials) ... ok
+test_04_source_revoke_cascades_cache_and_memory (test_a07_memory.Lifecycle.test_04_source_revoke_cascades_cache_and_memory) ... ok
+test_05_revoking_one_source_invalidates_multi_source_derived (test_a07_memory.Lifecycle.test_05_revoking_one_source_invalidates_multi_source_derived) ... ok
+test_06_memory_delete_and_stale_replay (test_a07_memory.Lifecycle.test_06_memory_delete_and_stale_replay) ... ok
+test_07_consent_source_id_not_reused_after_revoke (test_a07_memory.Lifecycle.test_07_consent_source_id_not_reused_after_revoke) ... ok
+test_08_expired_memory_negative (test_a07_memory.Lifecycle.test_08_expired_memory_negative) ... ok
+test_09_expired_source_negative (test_a07_memory.Lifecycle.test_09_expired_source_negative) ... ok
+test_10_restorable_positive_snapshot (test_a07_memory.Lifecycle.test_10_restorable_positive_snapshot) ... ok
+test_11_revoked_snapshot_cannot_restore (test_a07_memory.Lifecycle.test_11_revoked_snapshot_cannot_restore) ... ok
+test_12_forced_old_data_rollback_does_not_override_guard (test_a07_memory.Lifecycle.test_12_forced_old_data_rollback_does_not_override_guard) ... ok
+test_13_deleted_memory_rollback_denied (test_a07_memory.Lifecycle.test_13_deleted_memory_rollback_denied) ... ok
+test_14_no_promotion_even_when_valid (test_a07_memory.Lifecycle.test_14_no_promotion_even_when_valid) ... ok
+test_15_integrity_tampering_fail_closed (test_a07_memory.Lifecycle.test_15_integrity_tampering_fail_closed) ... ok
+test_16_os_process_pause_revoke_resume (test_a07_memory.Lifecycle.test_16_os_process_pause_revoke_resume) ... ok
+test_17_negative_input_and_class (test_a07_memory.Lifecycle.test_17_negative_input_and_class) ... ok
+test_18_audit_and_no_external_remote_claim (test_a07_memory.Lifecycle.test_18_audit_and_no_external_remote_claim) ... ok
+test_19_snapshot_bytes_tamper_denied (test_a07_memory.Lifecycle.test_19_snapshot_bytes_tamper_denied) ... ok
+test_20_crash_during_cleanup_no_regrant (test_a07_memory.Lifecycle.test_20_crash_during_cleanup_no_regrant) ... ok
+test_21_forged_lineage_generation_fail_closed (test_a07_memory.Lifecycle.test_21_forged_lineage_generation_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 3.027s
+
+OK

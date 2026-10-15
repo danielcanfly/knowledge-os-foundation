@@ -1,0 +1,57 @@
+{
+  "schema": "m27.wave-a.integration-request/v1",
+  "producer": "A07",
+  "consumers": [
+    "A05",
+    "A06"
+  ],
+  "integration_status": "REQUEST_ONLY_NOT_MERGED",
+  "abi": "a07.governed-memory/v1",
+  "ownership": "A07 isolated local-only SQLite/file memory and derived cache",
+  "artifact": "a07_memory.py",
+  "transport": "in-process adapter; no shared runtime/source edits",
+  "request": {
+    "call": "candidate(tenant,principal,memid)",
+    "caller_requirements": [
+      "actual independent actor/tenant auth at adapter boundary",
+      "same tenant and principal as admitted TaskContract",
+      "recheck candidate on every context compilation/publication attempt",
+      "reject Denied; no silent fallback to cached material"
+    ],
+    "response_fields": [
+      "abi",
+      "status",
+      "tenant_id",
+      "memory_id",
+      "memory_class",
+      "summary",
+      "source_lineage",
+      "knowledge_authority",
+      "citation_eligible",
+      "answer_context_enabled",
+      "can_promote_to_knowledge"
+    ],
+    "release_behavior": "CANDIDATE_ONLY; NEVER VALID CITATION/EVIDENCE; invalidated candidate must not resurrect from lexical/vector/cache/checkpoint",
+    "revocation_contract": "per-source generations in independently persistent authority DB, durable tombstone committed before best-effort local physical cleanup",
+    "fail_closed_conditions": [
+      "missing_or_withdrawn_consent",
+      "source_expired",
+      "memory_expired",
+      "deleted_memory",
+      "cross_tenant_or_principal",
+      "lineage_version_mismatch",
+      "tampered_blob_or_snapshot",
+      "source_or_memory_snapshot_revoked"
+    ],
+    "unsupported": [
+      "Production_R2",
+      "Production_DB",
+      "Qdrant",
+      "third_party_remote_backup_erasure",
+      "formal_IdP",
+      "external_issuer",
+      "full_native_A05_A06_runtime_integration"
+    ],
+    "hand_off_requires": "sole Master-accepted integrator, not individual A05/A06 worker cross-merge"
+  }
+}

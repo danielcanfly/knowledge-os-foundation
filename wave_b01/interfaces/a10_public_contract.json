@@ -1,0 +1,30 @@
+{
+  "schema": "A10_INTEGRATION_CONTRACT_REQUEST_V1",
+  "owner": "A10_INDEPENDENT_EVALUATION_CUSTODY",
+  "scope": "NONPROD_ONLY",
+  "inputs": {
+    "blind200": "A10_RESPONSE_V1 with exactly the A10 opaque case IDs and bounded answer/citation/client-trace fields",
+    "original523": "A10_ROSTER_V1 schema validation only unless a separately authorized official custodian supplies the protected roster and grader interface"
+  },
+  "interfaces": {
+    "local_http": "authenticated 127.0.0.1 POST /v1/grade",
+    "cli": "src/score_holdout.py",
+    "custody_verifier": "src/verify_custody.py",
+    "protected_overlap": "src/opaque_overlap_audit.py (must be run and signed by a separately authorized custodian)"
+  },
+  "outputs": {
+    "safe_receipt": "aggregate and opaque per-item outcomes; no question or gold-answer fields",
+    "completion_receipt": "public/a10_scoped_completion.json"
+  },
+  "invariants": [
+    "A10 retains sealed gold and rubric",
+    "repair workers and Master do not receive question or gold-answer text",
+    "missing, timeout, abstention and wrong answers remain in the fixed denominator",
+    "fixture results are never renamed as Product scores",
+    "official Original523 and Product blind200 remain NOT_RUN until independent authority and qualified Product access exist",
+    "no Production, Q34, other Worker or release-pointer writes"
+  ],
+  "integration_owner": "future Master-designated serial Integrator",
+  "release_authority": false,
+  "production_authority": false
+}

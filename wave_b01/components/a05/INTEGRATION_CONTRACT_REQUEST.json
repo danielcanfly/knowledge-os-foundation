@@ -1,0 +1,36 @@
+{
+  "schema": "m27.a05.integration_contract_request.v1",
+  "owner": "A05_CONTEXT_NATIVE_RETRIEVAL",
+  "integration_target": "I37 successor candidate, never Q34 frozen",
+  "local_adapter_module": "adapter/a05_retrieval.py",
+  "local_native_release": "native_private_store/releases/a05native-7835ec95cee63972",
+  "original_signature_bound": "MG22 signed 11 first-party docs/21 spans only",
+  "required_consumer_inputs": [
+    "tenant",
+    "roles",
+    "release_id",
+    "source_revision",
+    "question",
+    "limit"
+  ],
+  "required_egress": [
+    "passage_id",
+    "document_sha256",
+    "byte_start",
+    "byte_end",
+    "excerpt_sha256",
+    "source_revision",
+    "release_id",
+    "revocation_epoch"
+  ],
+  "gates": [
+    "Enforce A05 access/freshness/revocation in native Context Compiler or at unavoidable source admission boundary",
+    "Reject direct native query bypass on revoked content",
+    "Use real qualified identity, test-only roles are not formal IdP",
+    "Do not promote sparse distributional rerank to Qdrant or pretrained embeddings",
+    "Preserve source-signed vs transformed-release-unsigned distinction",
+    "Retest cite provenance and unknown failclosed on I37 successor native App"
+  ],
+  "no_cross_worker_edit": true,
+  "production": false
+}
