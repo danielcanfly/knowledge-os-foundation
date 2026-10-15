@@ -195,12 +195,16 @@ def secret_scan() -> dict[str, Any]:
 
 def artifact_inventory() -> dict[str, Any]:
     inventory_path = ROOT / "B02_ARTIFACT_INVENTORY.json"
+    verify_receipt = ROOT / "B02_VERIFY_RECEIPT.json"
     rows = []
     for path in sorted(ROOT.rglob("*")):
-        if path.is_file() and path != inventory_path and "__pycache__" not in path.parts:
+        if (path.is_file() and path not in {inventory_path, verify_receipt}
+                and "__pycache__" not in path.parts):
             rows.append({"path": str(path.relative_to(REPO)), "bytes": path.stat().st_size,
                          "sha256": sha256_file(path)})
     return {"schema": "m27.wave-b02.artifact-inventory/v1", "artifact_count": len(rows),
+            "excluded_self_seals": [str(inventory_path.relative_to(REPO)),
+                                    str(verify_receipt.relative_to(REPO))],
             "artifacts": rows}
 
 
