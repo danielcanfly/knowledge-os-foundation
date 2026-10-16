@@ -176,10 +176,10 @@ def _elapsed_ms(start_ns: int, now_ns: int | None = None) -> float:
     return round(((now_ns or time.perf_counter_ns()) - start_ns) / 1_000_000, 3)
 
 def _language(question: str) -> str:
-    if any("\u4e00" <= ch <= "\u9fff" for ch in question):
-        return "zh"
     if any("\u3040" <= ch <= "\u30ff" for ch in question):
         return "ja"
+    if any("\u4e00" <= ch <= "\u9fff" for ch in question):
+        return "zh"
     return "en"
 
 def canonicalize_question_for_retrieval(question: str) -> str:
@@ -207,9 +207,7 @@ def canonicalize_question_for_retrieval(question: str) -> str:
     for triggers, expansion in rules:
         if any(trigger.casefold() in haystack for trigger in triggers):
             expansions.append(expansion)
-    if _language(q) in {"zh", "ja"} and not expansions:
-        # Generic English fallback is only for queries without a domain-specific
-        # canonical expansion. Otherwise it pollutes ranking with unrelated AI terms.
+    if _language(q) in {"zh", "ja"}:
         expansions.append("English corpus canonical concepts")
     if not expansions:
         return q
@@ -524,6 +522,7 @@ def build_agent_native_product_answer(*, question: str, intent_class: str, evide
             "strategy": "semantic_verification_over_available_bound_evidence",
             "provider_retry_used": False,
         })
+        gaps.append(M27VerifierGap.INSUFFICIENT_SOURCE_BREADTH.value)
     timeline.answer_planning_end_ms = _elapsed_ms(start_ns)
     if not selected:
         terminal = M27VerifierGap.TRUE_NO_EVIDENCE.value

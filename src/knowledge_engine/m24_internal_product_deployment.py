@@ -265,12 +265,12 @@ def _index_html() -> str:
   <meta http-equiv="Content-Security-Policy" content="{CSP_META}">
   <link rel="icon" type="image/png" href="favicon.png">
   <title>LLM Wiki Internal Product</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=pa7-full-graph-dom-20260801-1134">
   <script src="vendor/graphology.umd.min.js"></script>
   <script src="vendor/sigma.min.js"></script>
-  <script src="graph-explorer.js"></script>
-  <script src="m26-ask.js"></script>
-  <script type="module" src="app.js"></script>
+  <script src="graph-explorer.js?v=pa7-full-graph-dom-20260801-1134"></script>
+  <script src="m26-ask.js?v=pa7-full-graph-dom-20260801-1134"></script>
+  <script type="module" src="app.js?v=pa7-full-graph-dom-20260801-1134"></script>
 </head>
 <body>
   <a class="skip-link" href="#app-main">Skip to content</a>
@@ -290,7 +290,8 @@ def _index_html() -> str:
         <a href="/ask" data-route-link="ask">Ask Knowledge Engine</a>
         <a href="#/wiki?concept=concepts/harness" data-route-link="wiki">Concept Wiki</a>
         <a href="#/search" data-route-link="search">Lexical Search</a>
-        <a href="#/graph" data-route-link="graph">Graph Explorer</a>
+        <a href="#/graph" data-route-link="graph">Bounded Concept Graph</a>
+        <a href="/full-graph" data-full-graph-link>Full Knowledge Graph</a>
         <a href="#/sources" data-route-link="sources">Sources</a>
         <a href="#/release" data-route-link="release">Release</a>
         <a href="#/obsidian" data-route-link="obsidian">Obsidian</a>
@@ -298,7 +299,7 @@ def _index_html() -> str:
       </nav>
       <section class="boundary-panel" aria-label="Authority boundary">
         <h2>Boundary</h2>
-        <p>M24 artifacts are read-only. M26 Ask is owner-only through the trusted API.</p>
+        <p>M24 artifacts are read-only. M26 Ask and the exact Full Knowledge Graph are owner-only through the trusted API. The bounded graph remains a release-pinned explanatory view.</p>
       </section>
     </aside>
     <main id="app-main" class="workspace" tabindex="-1">
@@ -2677,6 +2678,32 @@ loadArtifacts()
 def _headers() -> str:
     return f"""/*
   Content-Security-Policy: {CSP}
+/ask
+  Cache-Control: no-store
+/ask/*
+  Cache-Control: no-store
+/full-graph
+  Cache-Control: no-store
+/full-graph/*
+  Cache-Control: no-store
+/full-graph.html
+  Cache-Control: no-store
+/index.html
+  Cache-Control: no-store
+/app.js
+  Cache-Control: no-store
+/m26-ask.js
+  Cache-Control: no-store
+/m26-full-graph.js
+  Cache-Control: no-store
+/m26-title-guard.js
+  Cache-Control: no-store
+/m26-pa7-route-prelock.js
+  Cache-Control: no-store
+/m26-pa7-full-graph-guard.js
+  Cache-Control: no-store
+/api/m26/*
+  Cache-Control: no-store
 """
 
 

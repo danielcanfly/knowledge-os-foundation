@@ -41,7 +41,10 @@ def test_m24_14_2_site_loads_local_sigma_assets_before_app_shell() -> None:
 
     assert '<script src="vendor/graphology.umd.min.js"></script>' in index
     assert '<script src="vendor/sigma.min.js"></script>' in index
-    assert '<script src="graph-explorer.js"></script>' in index
+    assert (
+        '<script src="graph-explorer.js?v=pa7-full-graph-dom-20260801-1134"></script>'
+        in index
+    )
     assert index.index("vendor/graphology.umd.min.js") < index.index("vendor/sigma.min.js")
     assert index.index("vendor/sigma.min.js") < index.index("graph-explorer.js")
     assert index.index("graph-explorer.js") < index.index("app.js")

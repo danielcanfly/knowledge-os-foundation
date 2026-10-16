@@ -266,7 +266,7 @@ def _write(payload: dict[str, Any]) -> None:
     (OUT / "97_m27_mixed_full523_admission_summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (OUT / "97_m27_mixed_full523_admission_report.md").write_text(
         "# Stage 30O Mixed Full523 Admission Runner\n\n"
-        f"## Decision\n`{payload["decision"]}`\n\n"
+        f"## Decision\n`{payload['decision']}`\n\n"
         "## Boundaries\n"
         "- Direct isolated candidate only: `127.0.0.1:18080`\n"
         "- Production M26 unchanged.\n"
@@ -279,7 +279,7 @@ def _write(payload: dict[str, Any]) -> None:
     )
     (HANDOFF_DIR / "M27_MIXED_FULL523_ADMISSION_RUNNER_HANDOFF.md").write_text(
         "# M27 Mixed Full523 Admission Runner Handoff\n\n"
-        f"Decision: `{payload["decision"]}`\n\n"
+        f"Decision: `{payload['decision']}`\n\n"
         "The runner splits the 523-case admission receipt by expectation. Live answer-stream execution is used only for expectations that belong on `/v1/answers/stream`; budget, M26 invariant, and governance cases are contract replay rows.\n\n"
         "Owner-only route certification remains pending and must not be inferred from this result.\n",
         encoding="utf-8",

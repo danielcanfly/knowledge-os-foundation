@@ -66,7 +66,8 @@ def _prewarm_production_answer_bundle() -> None:
 
 @asynccontextmanager
 async def _lifespan(app: FastAPI) -> Any:
-    _prewarm_production_answer_bundle()
+    if app.state.prewarm_production_answer_bundle:
+        _prewarm_production_answer_bundle()
     try:
         yield
     finally:
@@ -93,6 +94,7 @@ def create_app(
         os.environ.get("M26_PA7_GATE_PATH", DEFAULT_GATE_PATH.as_posix())
     )
     app.state.translation_provider = translation_provider
+    app.state.prewarm_production_answer_bundle = translation_provider is None
     app.state.translation_provider_factory = provider_factory or _default_provider_factory
     app.state.translation_provider_lock = threading.Lock()
     app.add_middleware(

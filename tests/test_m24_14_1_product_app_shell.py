@@ -41,7 +41,10 @@ def test_m24_14_1_shell_has_required_routes_and_states() -> None:
     index = SITE_ROOT.joinpath("index.html").read_text(encoding="utf-8")
     app_js = SITE_ROOT.joinpath("app.js").read_text(encoding="utf-8")
 
-    assert '<script type="module" src="app.js"></script>' in index
+    assert (
+        '<script type="module" '
+        'src="app.js?v=pa7-full-graph-dom-20260801-1134"></script>' in index
+    )
     assert '<main id="app-main"' in index
     assert 'id="app"' in index
     assert {item.route for item in report.route_evidence} == set(P1_ROUTES)
