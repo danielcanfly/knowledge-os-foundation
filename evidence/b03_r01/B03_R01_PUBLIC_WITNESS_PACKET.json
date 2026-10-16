@@ -1,0 +1,40 @@
+{
+  "candidate_commit": "f4de69b2ffa30e112ac72aa772602440d64561ef",
+  "candidate_tree": "c87e84eaaf973241c82104fc81d79325851cd226",
+  "claims": {
+    "artifact_files": 11,
+    "changed_files": 25,
+    "focused_passed": 43,
+    "focused_total": 43,
+    "regression_passed": 238,
+    "regression_total": 238
+  },
+  "contains_secrets": false,
+  "expected_public_digests": {
+    "admission": "3d99dcd2c23694c7d27288bd3f0848449f7a4cf12cfab9aa7f50738439498916",
+    "authority": "d71fb676085032b502bf5e97db5c98c93255683e05005092088cee0f5333da2c",
+    "evidence_hashes": "271fce46ba02562ecd342adbbf5b68091e17be3d9d2e561b0562022030782a55",
+    "independent_verify": "742a6672fb76c937dac40bff4fd89c7a39077a2c7278de1d2d33979df552220d",
+    "runtime_result": "82451ddf4d664c62079f2c495e43f973626a3f1bf7e59a9d2a66aa5253c7acdf"
+  },
+  "generated_at": "2026-10-16T10:31:26.111570+00:00",
+  "prohibited_substitutes": [
+    "same_uid_hmac",
+    "self_signature",
+    "copied_manifest",
+    "copied_report",
+    "local_fixture_signature"
+  ],
+  "required_algorithm": "Ed25519",
+  "required_issuer_role": "INDEPENDENT_MASTER_EVIDENCE_WITNESS",
+  "required_observation": {
+    "authorized_scope_receipt": true,
+    "custody_independent": true,
+    "fresh_timestamp": true,
+    "physical_bytes_observed": true,
+    "pid_and_command_bound": true
+  },
+  "schema": "m27-b03-r01-ready-to-sign-public-witness-packet/v1",
+  "signature_b64": null,
+  "status": "READY_NOT_SIGNED"
+}

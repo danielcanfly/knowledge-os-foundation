@@ -1,0 +1,24 @@
+{
+  "allowed_objects": [
+    "claimed B03 Git commit and tree objects",
+    "non-secret test receipts",
+    "non-secret artifact manifest and hashes"
+  ],
+  "automatic_retry_or_reroute_allowed": false,
+  "candidate_commit": "f4de69b2ffa30e112ac72aa772602440d64561ef",
+  "candidate_tree": "c87e84eaaf973241c82104fc81d79325851cd226",
+  "excluded_objects": [
+    "sealed question banks",
+    "original 523 protected items or gold answers",
+    "keys or tokens",
+    "protected grader or rubric secrets",
+    "Production"
+  ],
+  "generated_at": "2026-10-16T10:31:26.111570+00:00",
+  "must_be_genuinely_new_authorization": true,
+  "prior_equivalent_operation_refused": true,
+  "request_status": "READY_NOT_SENT",
+  "requested_operation": "independent read-only physical evidence observation",
+  "requested_witness_role": "INDEPENDENT_MASTER_EVIDENCE_WITNESS",
+  "schema": "m27-b03-r01-scoped-access-request/v1"
+}

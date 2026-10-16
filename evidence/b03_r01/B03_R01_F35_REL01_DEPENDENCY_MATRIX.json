@@ -1,0 +1,219 @@
+{
+  "authorized_fixture_positive": {
+    "expected_denominator": 523,
+    "f35_status": "CERTIFIED",
+    "fixture_only": true,
+    "formal_evidence": false,
+    "formal_product_go": false,
+    "observed_denominator": 523,
+    "passed": true,
+    "production_touched": false,
+    "reason_codes": [],
+    "rel01_status": "CERTIFIED",
+    "rel02_status": "NO_GO",
+    "schema": "m27-b03-r01-f35-rel01-admission-gate/v1"
+  },
+  "binding": {
+    "b02_commit": "9744b19141371ecc69b463118accfc29df18565d",
+    "reported_b03_commit": "f4de69b2ffa30e112ac72aa772602440d64561ef",
+    "reported_b03_tree": "c87e84eaaf973241c82104fc81d79325851cd226"
+  },
+  "current_formal_state": {
+    "expected_denominator": 523,
+    "f35_status": "HOLD",
+    "formal_product_go": false,
+    "observed_denominator": 0,
+    "passed": false,
+    "production_touched": false,
+    "reason_codes": [
+      "CUSTODY_NOT_INDEPENDENT",
+      "FIXED_DENOMINATOR_MISMATCH",
+      "FULL_DENOMINATOR_NOT_PASSED",
+      "IDP_RECEIPT_ABSENT_OR_INVALID",
+      "LATENCY_MISSING",
+      "REL01_AUTHORIZATION_ABSENT",
+      "SIGNER_RECEIPT_ABSENT_OR_INVALID",
+      "STALE_SOURCE",
+      "WRONG_OR_UNAUTHORIZED_ISSUER"
+    ],
+    "rel01_status": "NOT_CERTIFIED",
+    "rel02_status": "NO_GO",
+    "schema": "m27-b03-r01-f35-rel01-admission-gate/v1"
+  },
+  "formal_truth": {
+    "b27": "0/200",
+    "c28": "NOT_VERIFIED",
+    "ci": "NOT_VERIFIED",
+    "e27": "0/523",
+    "external_signer": "NOT_VERIFIED",
+    "f35": "HOLD",
+    "formal_product_go": false,
+    "historical_m26_failures_remaining": 6,
+    "idp": "NOT_VERIFIED",
+    "provider": "NOT_VERIFIED",
+    "q34_native_generated_stream": "UNQUALIFIED",
+    "rel01": "NOT_CERTIFIED",
+    "rel02": "NO_GO",
+    "x01_x09": "0/9"
+  },
+  "generated_at": "2026-10-16T10:31:26.111570+00:00",
+  "negative_cases": {
+    "absent_idp": {
+      "expected_denominator": 523,
+      "f35_status": "HOLD",
+      "formal_product_go": false,
+      "observed_denominator": 523,
+      "passed": false,
+      "production_touched": false,
+      "reason_codes": [
+        "IDP_RECEIPT_ABSENT_OR_INVALID"
+      ],
+      "rel01_status": "NOT_CERTIFIED",
+      "rel02_status": "NO_GO",
+      "schema": "m27-b03-r01-f35-rel01-admission-gate/v1"
+    },
+    "absent_signer": {
+      "expected_denominator": 523,
+      "f35_status": "HOLD",
+      "formal_product_go": false,
+      "observed_denominator": 523,
+      "passed": false,
+      "production_touched": false,
+      "reason_codes": [
+        "SIGNER_RECEIPT_ABSENT_OR_INVALID"
+      ],
+      "rel01_status": "NOT_CERTIFIED",
+      "rel02_status": "NO_GO",
+      "schema": "m27-b03-r01-f35-rel01-admission-gate/v1"
+    },
+    "candidate_mismatch": {
+      "expected_denominator": 523,
+      "f35_status": "HOLD",
+      "formal_product_go": false,
+      "observed_denominator": 523,
+      "passed": false,
+      "production_touched": false,
+      "reason_codes": [
+        "CANDIDATE_COMMIT_MISMATCH"
+      ],
+      "rel01_status": "NOT_CERTIFIED",
+      "rel02_status": "NO_GO",
+      "schema": "m27-b03-r01-f35-rel01-admission-gate/v1"
+    },
+    "clock": {
+      "expected_denominator": 523,
+      "f35_status": "HOLD",
+      "formal_product_go": false,
+      "observed_denominator": 523,
+      "passed": false,
+      "production_touched": false,
+      "reason_codes": [
+        "CLOCK_NOT_MONOTONIC"
+      ],
+      "rel01_status": "NOT_CERTIFIED",
+      "rel02_status": "NO_GO",
+      "schema": "m27-b03-r01-f35-rel01-admission-gate/v1"
+    },
+    "custody": {
+      "expected_denominator": 523,
+      "f35_status": "HOLD",
+      "formal_product_go": false,
+      "observed_denominator": 523,
+      "passed": false,
+      "production_touched": false,
+      "reason_codes": [
+        "CUSTODY_NOT_INDEPENDENT"
+      ],
+      "rel01_status": "NOT_CERTIFIED",
+      "rel02_status": "NO_GO",
+      "schema": "m27-b03-r01-f35-rel01-admission-gate/v1"
+    },
+    "false_safe": {
+      "expected_denominator": 523,
+      "f35_status": "HOLD",
+      "formal_product_go": false,
+      "observed_denominator": 523,
+      "passed": false,
+      "production_touched": false,
+      "reason_codes": [
+        "FALSE_SAFE_OR_UNSAFE_TERMINAL"
+      ],
+      "rel01_status": "NOT_CERTIFIED",
+      "rel02_status": "NO_GO",
+      "schema": "m27-b03-r01-f35-rel01-admission-gate/v1"
+    },
+    "fixed_denominator": {
+      "expected_denominator": 523,
+      "f35_status": "HOLD",
+      "formal_product_go": false,
+      "observed_denominator": 522,
+      "passed": false,
+      "production_touched": false,
+      "reason_codes": [
+        "FIXED_DENOMINATOR_MISMATCH",
+        "FULL_DENOMINATOR_NOT_PASSED"
+      ],
+      "rel01_status": "NOT_CERTIFIED",
+      "rel02_status": "NO_GO",
+      "schema": "m27-b03-r01-f35-rel01-admission-gate/v1"
+    },
+    "latency_outlier": {
+      "expected_denominator": 523,
+      "f35_status": "HOLD",
+      "formal_product_go": false,
+      "observed_denominator": 523,
+      "passed": false,
+      "production_touched": false,
+      "reason_codes": [
+        "LATENCY_OUTLIER"
+      ],
+      "rel01_status": "NOT_CERTIFIED",
+      "rel02_status": "NO_GO",
+      "schema": "m27-b03-r01-f35-rel01-admission-gate/v1"
+    },
+    "stale_source": {
+      "expected_denominator": 523,
+      "f35_status": "HOLD",
+      "formal_product_go": false,
+      "observed_denominator": 523,
+      "passed": false,
+      "production_touched": false,
+      "reason_codes": [
+        "STALE_SOURCE"
+      ],
+      "rel01_status": "NOT_CERTIFIED",
+      "rel02_status": "NO_GO",
+      "schema": "m27-b03-r01-f35-rel01-admission-gate/v1"
+    },
+    "unsafe_release": {
+      "expected_denominator": 523,
+      "f35_status": "HOLD",
+      "formal_product_go": false,
+      "observed_denominator": 523,
+      "passed": false,
+      "production_touched": true,
+      "reason_codes": [
+        "PRODUCTION_TOUCH_FORBIDDEN",
+        "REL01_AUTHORIZATION_ABSENT"
+      ],
+      "rel01_status": "NOT_CERTIFIED",
+      "rel02_status": "NO_GO",
+      "schema": "m27-b03-r01-f35-rel01-admission-gate/v1"
+    },
+    "wrong_issuer": {
+      "expected_denominator": 523,
+      "f35_status": "HOLD",
+      "formal_product_go": false,
+      "observed_denominator": 523,
+      "passed": false,
+      "production_touched": false,
+      "reason_codes": [
+        "WRONG_OR_UNAUTHORIZED_ISSUER"
+      ],
+      "rel01_status": "NOT_CERTIFIED",
+      "rel02_status": "NO_GO",
+      "schema": "m27-b03-r01-f35-rel01-admission-gate/v1"
+    }
+  },
+  "schema": "m27-b03-r01-f35-rel01-dependency-matrix/v1"
+}

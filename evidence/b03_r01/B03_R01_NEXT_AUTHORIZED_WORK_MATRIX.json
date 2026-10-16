@@ -1,0 +1,36 @@
+{
+  "formal_product_go": false,
+  "generated_at": "2026-10-16T10:31:26.111570+00:00",
+  "items": [
+    {
+      "item": "R01 execution classifier and real PID diagnostics",
+      "state": "DONE_WITH_RECEIPT"
+    },
+    {
+      "item": "R01 public receipt verifier positive/negative suite",
+      "state": "DONE_WITH_RECEIPT"
+    },
+    {
+      "item": "R01 F35/REL01 offline fail-closed harness",
+      "state": "DONE_WITH_RECEIPT"
+    },
+    {
+      "item": "ordinary local implementation or test defects",
+      "state": "SELF_REPAIRABLE_IN_R01"
+    },
+    {
+      "item": "B03 physical byte observation and countersignature",
+      "state": "NEEDS_DISTINCT_WORKER"
+    },
+    {
+      "item": "official 523/200, IdP, external signer, CI, C28, REL01/REL02",
+      "state": "REQUIRES_OFFICIAL_EXTERNAL_AUTHORIZATION"
+    },
+    {
+      "item": "previous broad B03 inspection operation or equivalent",
+      "state": "PRIOR_EXPLICIT_REFUSAL_NO_RETRY"
+    }
+  ],
+  "production_touched": false,
+  "schema": "m27-b03-r01-next-authorized-work-matrix/v1"
+}

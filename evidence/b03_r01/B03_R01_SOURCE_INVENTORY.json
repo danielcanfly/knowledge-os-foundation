@@ -1,0 +1,38 @@
+{
+  "base_commit": "9744b19141371ecc69b463118accfc29df18565d",
+  "base_tree": "5d47914335f5bef884017dbdd01441d9dcb8e1a0",
+  "files": [
+    {
+      "bytes": 1351,
+      "path": "docs/m27/B03_R01_ADMISSION_EVIDENCE_RECOVERY.md",
+      "sha256": "e5a161d63d54fe82b080ca5c408245c557c9731c60af0cc8964f15f1532af918"
+    },
+    {
+      "bytes": 28874,
+      "path": "scripts/m27_b03_r01_generate_evidence.py",
+      "sha256": "b079d3d3e7dc1d187a6c5265d10a8d5221db67cd8393bf1929a159502142420e"
+    },
+    {
+      "bytes": 2852,
+      "path": "src/knowledge_engine/m27_b03_r01_admission_gate.py",
+      "sha256": "a3104b6e271d73c65d919457dc44679298d57ec7b7e534410269e4bbdc93e8f7"
+    },
+    {
+      "bytes": 3313,
+      "path": "src/knowledge_engine/m27_b03_r01_execution_recovery.py",
+      "sha256": "21a1d7d63b5655c96ec174aba6ca15e1dede4ff2144d0cb3ac54862cf7726037"
+    },
+    {
+      "bytes": 5485,
+      "path": "src/knowledge_engine/m27_b03_r01_public_receipt.py",
+      "sha256": "e7b165771367a2747cd30ed93674b54a850480837b4d5b06f8c07791b75bd3dd"
+    },
+    {
+      "bytes": 9652,
+      "path": "tests/test_m27_b03_r01_recovery.py",
+      "sha256": "f3b46a1d4db9f5578af4a29bf0034c02993059f1c32c7c85664d229650f7132e"
+    }
+  ],
+  "generated_at": "2026-10-16T10:31:26.111570+00:00",
+  "schema": "m27-b03-r01-source-inventory/v1"
+}

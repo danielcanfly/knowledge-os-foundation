@@ -1,0 +1,125 @@
+{
+  "after_repair": {
+    "argv": [
+      "/Users/huaihsuanhuang/.pyenv/versions/3.11.15/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_m27_b03_r01_recovery.py"
+    ],
+    "command_id": "focused_after_import_path_repair",
+    "duration_monotonic_ns": 643475333,
+    "exit_code": 0,
+    "finished_monotonic_ns": 249215827074208,
+    "literal_denial_present": false,
+    "pid": 83029,
+    "started_monotonic_ns": 249215183598875,
+    "stderr_bytes": 0,
+    "stderr_path": "focused_after_import_path_repair.stderr.log",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 99,
+    "stdout_path": "focused_after_import_path_repair.stdout.log",
+    "stdout_sha256": "69227a3a28b50fd1a1dc7b6766c8bd59d0b558cef6c38f91817eb39382fdc634",
+    "timed_out": false
+  },
+  "authorized_admission_regression": {
+    "argv": [
+      "/Users/huaihsuanhuang/.pyenv/versions/3.11.15/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_m27_admission_metric_contract.py",
+      "tests/test_m27_release_hard_gates.py",
+      "tests/test_m27_isolated_admission_harness.py",
+      "tests/test_m27_w5_b13r_independent_evidence_admission_v1_experimental.py"
+    ],
+    "command_id": "authorized_admission_regression",
+    "duration_monotonic_ns": 727183500,
+    "exit_code": 0,
+    "finished_monotonic_ns": 249216555414166,
+    "literal_denial_present": false,
+    "pid": 83030,
+    "started_monotonic_ns": 249215828230666,
+    "stderr_bytes": 0,
+    "stderr_path": "authorized_admission_regression.stderr.log",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 180,
+    "stdout_path": "authorized_admission_regression.stdout.log",
+    "stdout_sha256": "fa0c436ae8c18f7ef0032bb10f15bb98abad2250419fba82ea4e385f9c6d7ede",
+    "timed_out": false
+  },
+  "before_repair": {
+    "argv": [
+      "/Users/huaihsuanhuang/.pyenv/versions/3.11.15/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_m27_b03_r01_recovery.py"
+    ],
+    "classification": "ORDINARY_TECHNICAL_ERROR",
+    "command_id": "focused_before_import_path_repair",
+    "diagnosis": "independent worktree src was absent from Python import path",
+    "duration_monotonic_ns": 906145625,
+    "exit_code": 2,
+    "finished_monotonic_ns": 249215183108000,
+    "literal_denial_present": false,
+    "pid": 83027,
+    "started_monotonic_ns": 249214276962375,
+    "stderr_bytes": 0,
+    "stderr_path": "focused_before_import_path_repair.stderr.log",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 1174,
+    "stdout_path": "focused_before_import_path_repair.stdout.log",
+    "stdout_sha256": "10f4ac96c617e3b4ff8461b87021270220e4d7111d74e750ec331916a0ca5844",
+    "timed_out": false
+  },
+  "fixture_side_effect_cleanup": {
+    "paths": [
+      "pilot/m24/internal-product-deployment/m24-p6-internal-product-deployment.json",
+      "pilot/m24/internal-product-deployment/site/_headers",
+      "pilot/m24/internal-product-deployment/site/index.html",
+      "pilot/m24/m24-14/product-app-shell/m24-14-1-product-app-shell.json"
+    ],
+    "restored_to_b02": true
+  },
+  "full_repository_diagnostic": {
+    "argv": [
+      "/Users/huaihsuanhuang/.pyenv/versions/3.11.15/bin/python",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "command_id": "authorized_full_source_regression",
+    "duration_monotonic_ns": 399327935416,
+    "exit_code": 1,
+    "finished_monotonic_ns": 249113693992166,
+    "literal_denial_present": false,
+    "pid": 76645,
+    "scope_note": "diagnostic only; includes environment-dependent, fixture-mutating, and historical exact-tree tests outside the R01 admission subset",
+    "started_monotonic_ns": 248714366056750,
+    "stderr_bytes": 0,
+    "stderr_path": "authorized_full_source_regression.stderr.log",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 268204,
+    "stdout_path": "authorized_full_source_regression.stdout.log",
+    "stdout_sha256": "bfd7100317460c8def8795361765dbd6e4bd023019246da6188589f2b2bd6ed5",
+    "summary": {
+      "errors": 11,
+      "failed": 80,
+      "passed": 8897,
+      "skipped": 2,
+      "status": "ORDINARY_TECHNICAL_ERROR"
+    },
+    "timed_out": false
+  },
+  "full_repository_passed": false,
+  "generated_at": "2026-10-16T10:31:26.111570+00:00",
+  "passed": true,
+  "r01_scoped_passed": true,
+  "repair": {
+    "action": "bind the R01 worktree src directory through PYTHONPATH",
+    "authorization_change": false,
+    "retry_bound": 1
+  },
+  "schema": "m27-b03-r01-test-execution/v1"
+}

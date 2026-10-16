@@ -1,0 +1,105 @@
+{
+  "b02_source_commit": "9744b19141371ecc69b463118accfc29df18565d",
+  "b02_source_tree": "5d47914335f5bef884017dbdd01441d9dcb8e1a0",
+  "b03_worker_claimed_status": "B03_WORKER_CLAIMED_PASS",
+  "checks": [
+    {
+      "actual_independent_observation": null,
+      "claim": "focused tests 43/43",
+      "expected_public_digest": "82451ddf4d664c62079f2c495e43f973626a3f1bf7e59a9d2a66aa5253c7acdf",
+      "minimal_authorized_witness": "independent Master evidence witness",
+      "observation_status": "B03_MASTER_PHYSICAL_EVIDENCE_NOT_YET_AVAILABLE",
+      "required_source_artifact": "B03 focused-test raw receipt and byte readback"
+    },
+    {
+      "actual_independent_observation": null,
+      "claim": "regression tests 238/238",
+      "expected_public_digest": "82451ddf4d664c62079f2c495e43f973626a3f1bf7e59a9d2a66aa5253c7acdf",
+      "minimal_authorized_witness": "independent Master evidence witness",
+      "observation_status": "B03_MASTER_PHYSICAL_EVIDENCE_NOT_YET_AVAILABLE",
+      "required_source_artifact": "B03 regression raw receipt and byte readback"
+    },
+    {
+      "actual_independent_observation": null,
+      "claim": "25 changed files",
+      "expected_public_digest": "271fce46ba02562ecd342adbbf5b68091e17be3d9d2e561b0562022030782a55",
+      "minimal_authorized_witness": "authorized read-only Git observer",
+      "observation_status": "B03_MASTER_PHYSICAL_EVIDENCE_NOT_YET_AVAILABLE",
+      "required_source_artifact": "B03 changed-file manifest"
+    },
+    {
+      "actual_independent_observation": null,
+      "claim": "11 artifact files",
+      "expected_public_digest": "271fce46ba02562ecd342adbbf5b68091e17be3d9d2e561b0562022030782a55",
+      "minimal_authorized_witness": "authorized read-only artifact observer",
+      "observation_status": "B03_MASTER_PHYSICAL_EVIDENCE_NOT_YET_AVAILABLE",
+      "required_source_artifact": "B03 artifact inventory"
+    },
+    {
+      "actual_independent_observation": null,
+      "claim": "HEAD f4de69b2ffa30e112ac72aa772602440d64561ef",
+      "expected_public_digest": "f4de69b2ffa30e112ac72aa772602440d64561ef",
+      "minimal_authorized_witness": "authorized read-only Git observer",
+      "observation_status": "B03_MASTER_PHYSICAL_EVIDENCE_NOT_YET_AVAILABLE",
+      "required_source_artifact": "B03 Git commit object"
+    },
+    {
+      "actual_independent_observation": null,
+      "claim": "TREE c87e84eaaf973241c82104fc81d79325851cd226",
+      "expected_public_digest": "c87e84eaaf973241c82104fc81d79325851cd226",
+      "minimal_authorized_witness": "authorized read-only Git observer",
+      "observation_status": "B03_MASTER_PHYSICAL_EVIDENCE_NOT_YET_AVAILABLE",
+      "required_source_artifact": "B03 Git tree object bound to claimed HEAD"
+    },
+    {
+      "actual_independent_observation": null,
+      "claim": "pre/post verifier",
+      "expected_public_digest": "742a6672fb76c937dac40bff4fd89c7a39077a2c7278de1d2d33979df552220d",
+      "minimal_authorized_witness": "distinct authorized verifier issuer",
+      "observation_status": "B03_MASTER_PHYSICAL_EVIDENCE_NOT_YET_AVAILABLE",
+      "required_source_artifact": "B03 independent verifier receipt"
+    }
+  ],
+  "claimed_candidate_commit": "f4de69b2ffa30e112ac72aa772602440d64561ef",
+  "claimed_candidate_tree": "c87e84eaaf973241c82104fc81d79325851cd226",
+  "claimed_counts": {
+    "artifact_files": 11,
+    "changed_files": 25,
+    "focused_passed": 43,
+    "focused_total": 43,
+    "regression_passed": 238,
+    "regression_total": 238
+  },
+  "copied_manifest_or_report_is_independent": false,
+  "gate_open": false,
+  "generated_at": "2026-10-16T10:31:26.111570+00:00",
+  "master_physical_evidence_status": "B03_MASTER_PHYSICAL_EVIDENCE_NOT_YET_AVAILABLE",
+  "public_report_digests": {
+    "admission": "3d99dcd2c23694c7d27288bd3f0848449f7a4cf12cfab9aa7f50738439498916",
+    "authority": "d71fb676085032b502bf5e97db5c98c93255683e05005092088cee0f5333da2c",
+    "evidence_hashes": "271fce46ba02562ecd342adbbf5b68091e17be3d9d2e561b0562022030782a55",
+    "independent_verify": "742a6672fb76c937dac40bff4fd89c7a39077a2c7278de1d2d33979df552220d",
+    "runtime_result": "82451ddf4d664c62079f2c495e43f973626a3f1bf7e59a9d2a66aa5253c7acdf"
+  },
+  "public_verifier_test_matrix": [
+    "authorized_ed25519_fixture",
+    "tamper",
+    "count_mismatch",
+    "missing_artifact",
+    "forged_issuer",
+    "revoked_issuer",
+    "expired_issuer",
+    "wrong_candidate",
+    "inconsistent_tree",
+    "pid_command_mismatch",
+    "stale_timestamp",
+    "forged_signature",
+    "missing_issuer_authorization",
+    "same_uid_hmac",
+    "replayed_or_copied_receipt"
+  ],
+  "r01_public_verifier_status": "R01_PUBLIC_VERIFIER_TEST_PASS",
+  "same_uid_hmac_is_independent": false,
+  "schema": "m27-b03-r01-independent-evidence-gate/v1",
+  "self_signature_is_independent": false
+}

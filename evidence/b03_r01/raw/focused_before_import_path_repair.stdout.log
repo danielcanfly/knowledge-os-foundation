@@ -1,0 +1,16 @@
+
+==================================== ERRORS ====================================
+_____________ ERROR collecting tests/test_m27_b03_r01_recovery.py ______________
+ImportError while importing test module '/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B03_R01/tests/test_m27_b03_r01_recovery.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/Users/huaihsuanhuang/.pyenv/versions/3.11.15/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_m27_b03_r01_recovery.py:12: in <module>
+    from knowledge_engine.m27_b03_r01_admission_gate import (
+E   ModuleNotFoundError: No module named 'knowledge_engine.m27_b03_r01_admission_gate'
+=========================== short test summary info ============================
+ERROR tests/test_m27_b03_r01_recovery.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.16s
