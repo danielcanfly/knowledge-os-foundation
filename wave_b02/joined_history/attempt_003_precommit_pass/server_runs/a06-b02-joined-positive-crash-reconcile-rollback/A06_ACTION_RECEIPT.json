@@ -1,0 +1,146 @@
+{
+  "a06_stage": "VERIFIED",
+  "action_ledger": [
+    1,
+    "ROLLED_BACK",
+    "{\"observation\": \"idle\", \"revision\": 0}",
+    "{\"observation\": \"reviewed\", \"revision\": 1, \"run_id\": \"a06-b02-joined-positive-crash-reconcile-rollback\"}"
+  ],
+  "after_crash": {
+    "observation": "reviewed",
+    "revision": 1,
+    "run_id": "a06-b02-joined-positive-crash-reconcile-rollback"
+  },
+  "after_rollback": {
+    "observation": "idle",
+    "revision": 0
+  },
+  "physical_attempts": 1,
+  "receipts": [
+    {
+      "command": [
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python",
+        "-B",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/a06_joined_child.py",
+        "admit",
+        "--db",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-positive-crash-reconcile-rollback/a06_action/journal.sqlite",
+        "--state",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-positive-crash-reconcile-rollback/a06_action/state",
+        "--run-id",
+        "a06-b02-joined-positive-crash-reconcile-rollback",
+        "--contract",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-positive-crash-reconcile-rollback/a06_action/A06_TASK_CONTRACT.json"
+      ],
+      "duration_ms": 261.958,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit_codes": [
+        0
+      ],
+      "name": "admit",
+      "pid": 16419,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "17a53b05d5010e8cd4cffd6e67544d8387b7c13a7443a2b0eabd973adc1a0c96"
+    },
+    {
+      "command": [
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python",
+        "-B",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/a06_joined_child.py",
+        "run",
+        "--db",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-positive-crash-reconcile-rollback/a06_action/journal.sqlite",
+        "--state",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-positive-crash-reconcile-rollback/a06_action/state",
+        "--run-id",
+        "a06-b02-joined-positive-crash-reconcile-rollback",
+        "--inject-unknown"
+      ],
+      "duration_ms": 236.275,
+      "exit_code": 73,
+      "expectation_met": true,
+      "expected_exit_codes": [
+        73
+      ],
+      "name": "crash_after_effect",
+      "pid": 16420,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "1740d30d80820ea923785cd1acd97cfd291cf38ce3fe37cbc57ee1c63e14a24c"
+    },
+    {
+      "command": [
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python",
+        "-B",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/a06_joined_child.py",
+        "run",
+        "--db",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-positive-crash-reconcile-rollback/a06_action/journal.sqlite",
+        "--state",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-positive-crash-reconcile-rollback/a06_action/state",
+        "--run-id",
+        "a06-b02-joined-positive-crash-reconcile-rollback"
+      ],
+      "duration_ms": 226.996,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit_codes": [
+        0
+      ],
+      "name": "resume_reconcile",
+      "pid": 16421,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "450dcd33969f31b2c5ae6573341631263ee5d8bc68a83a8877a009293e1c9ac1"
+    },
+    {
+      "command": [
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python",
+        "-B",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/a06_joined_child.py",
+        "rollback",
+        "--db",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-positive-crash-reconcile-rollback/a06_action/journal.sqlite",
+        "--state",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-positive-crash-reconcile-rollback/a06_action/state",
+        "--run-id",
+        "a06-b02-joined-positive-crash-reconcile-rollback"
+      ],
+      "duration_ms": 226.411,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit_codes": [
+        0
+      ],
+      "name": "rollback",
+      "pid": 16422,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "253490d19b27660708b8fb2db2b57b8a30eabde691caed40a42abe8cd47d0183"
+    },
+    {
+      "command": [
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python",
+        "-B",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/a06_joined_child.py",
+        "status",
+        "--db",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-positive-crash-reconcile-rollback/a06_action/journal.sqlite",
+        "--state",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-positive-crash-reconcile-rollback/a06_action/state",
+        "--run-id",
+        "a06-b02-joined-positive-crash-reconcile-rollback"
+      ],
+      "duration_ms": 242.351,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit_codes": [
+        0
+      ],
+      "name": "status_after_rollback",
+      "pid": 16423,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "014312e35dbd1a33ce901adb9f52277528f440f3536bcd87dd81f7d6985a1355"
+    }
+  ],
+  "run_id": "a06-b02-joined-positive-crash-reconcile-rollback",
+  "status": "RECONCILED_AND_ROLLED_BACK"
+}

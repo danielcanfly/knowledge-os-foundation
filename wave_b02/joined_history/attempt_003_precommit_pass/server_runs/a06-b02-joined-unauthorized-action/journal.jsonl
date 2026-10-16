@@ -1,0 +1,3 @@
+{"event": "run.started", "external_provider_calls": 0, "fault": "none", "run_id": "a06-b02-joined-unauthorized-action", "seq": 1, "server_ns": 237420900706500}
+{"error_code": "SCOPES_DENIED", "error_type": "PermissionError", "event": "run.error", "run_id": "a06-b02-joined-unauthorized-action", "seq": 2, "server_ns": 237420902193041}
+{"error_code": "SCOPES_DENIED", "error_type": "PermissionError", "event": "run.terminal", "run_id": "a06-b02-joined-unauthorized-action", "seq": 3, "server_ns": 237420902652916, "status": "denied", "verified_current": 0}

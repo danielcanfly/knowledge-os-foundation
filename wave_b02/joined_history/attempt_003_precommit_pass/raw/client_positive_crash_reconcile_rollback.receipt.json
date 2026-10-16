@@ -1,0 +1,24 @@
+{
+  "command": [
+    "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python",
+    "-B",
+    "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_client.py",
+    "--port",
+    "50037",
+    "--contract",
+    "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/contracts/positive_crash_reconcile_rollback.json",
+    "--fault",
+    "none",
+    "--output",
+    "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/client_cases/positive_crash_reconcile_rollback.json",
+    "--deadline-ms",
+    "60000"
+  ],
+  "duration_ms": 8025.01,
+  "exit_code": 0,
+  "name": "client_positive_crash_reconcile_rollback",
+  "pass": true,
+  "pid": 16415,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "5fc689f56759539038291e6ce69948657aa009ac67454bf5b4632880004e0e05"
+}

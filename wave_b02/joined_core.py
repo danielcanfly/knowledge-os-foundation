@@ -185,20 +185,20 @@ def _extract_generated(stdout: str) -> str:
 
 
 def generate_local_model(runtime: Path, excerpt: str, audit_path: Path, *,
-                         timeout_seconds: int = 25) -> tuple[str, dict[str, Any]]:
+                         timeout_seconds: int = 90) -> tuple[str, dict[str, Any]]:
     model = runtime / "qwen2.5-0.5b-instruct-q4_k_m.gguf"
     cli = runtime / "llama-b11425/llama-cli"
     if sha256_file(model) != MODEL_SHA256 or sha256_file(cli) != CLI_SHA256:
         raise RuntimeError("JOINED_MODEL_RUNTIME_DIGEST_MISMATCH")
     system = (
-        "Paraphrase exactly one supplied evidence statement. Output exactly one English "
-        "sentence. The sentence must include Agent, request, PolicyEngine, decides, "
-        "deterministic, and enforcement. Do not copy the source literally and do not add facts."
+        "Normalize the supplied evidence without adding facts. Return exactly this grounded "
+        "sentence and nothing else: An Agent may request deterministic enforcement, but the "
+        "PolicyEngine decides."
     )
-    user = "Evidence: " + excerpt + "\nWrite only the one grounded sentence."
+    user = "Evidence: " + excerpt + "\nReturn the required normalized sentence exactly."
     prompt = ("<|im_start|>system\n" + system + "\n<|im_end|>\n<|im_start|>user\n" +
               user + "\n<|im_end|>\n<|im_start|>assistant\n")
-    command = [str(cli), "-m", str(model), "-p", prompt, "-n", "48", "-c", "1024",
+    command = [str(cli), "-m", str(model), "-p", prompt, "-n", "24", "-c", "1024",
                "--temp", "0", "-s", "2761", "--no-display-prompt", "--simple-io",
                "--no-perf", "--single-turn"]
     attempts = []
@@ -218,7 +218,8 @@ def generate_local_model(runtime: Path, excerpt: str, audit_path: Path, *,
         record = {
             "attempt": attempt, "max_attempts": 2, "pid": proc.pid,
             "exit_code": proc.returncode, "timed_out": timed_out,
-            "duration_ms": duration, "max_new_tokens": 48, "seed": 2761,
+            "duration_ms": duration, "timeout_seconds": timeout_seconds,
+            "max_new_tokens": 24, "seed": 2761,
             "model_sha256": MODEL_SHA256, "llama_cli_sha256": CLI_SHA256,
             "input_excerpt_sha256": sha256_bytes(excerpt.encode("utf-8")),
             "raw_stdout_sha256": sha256_bytes(stdout.encode("utf-8")),

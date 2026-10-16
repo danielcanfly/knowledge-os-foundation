@@ -1,0 +1,41 @@
+{
+  "a05_context_grant": {
+    "expires_at": "2027-01-11T21:36:23.210892+00:00",
+    "release_id": "a05context-7835ec95cee63972",
+    "roles": [
+      "internal"
+    ],
+    "source_revision": "89f1d7be1623cd6926a69e38871544eefe39e584",
+    "tenant": "other-tenant"
+  },
+  "a06_admission": {
+    "abi": "m27.wave-b01.nonprod-integration/v1",
+    "production_authority": false,
+    "provider_lane": {
+      "economics": "SIMULATED_NOT_INVOICE",
+      "max_provider_calls": 3,
+      "max_tool_calls": 0,
+      "policy": "a08-adaptive",
+      "review_only": true,
+      "revision": "1.1.0-review-only"
+    },
+    "task_lane": {
+      "budget": {
+        "max_action_attempts": 1,
+        "max_source_reads": 3
+      },
+      "rights": [
+        "read-firstparty",
+        "write-own-observation"
+      ],
+      "run_id": "a06-b02-joined-wrong-acl",
+      "tenant": "tenant-a",
+      "version": "a06-v1"
+    }
+  },
+  "a06_projection_sha256": "f4f664b2f27cc39113e64a926a7642f6776a530b29b7c6e732d502be78acec2a",
+  "joined_contract_sha256": "db66d883cb4489cf2b3cc86921c6528a67e1b309431a8e7335f634d6904bf56c",
+  "production_authority": false,
+  "run_id": "a06-b02-joined-wrong-acl",
+  "schema": "m27.wave-b02.joined-admission/v1"
+}

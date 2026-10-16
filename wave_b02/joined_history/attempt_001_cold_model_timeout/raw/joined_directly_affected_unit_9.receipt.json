@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "wave_b02.test_joined_e2e"
+  ],
+  "duration_ms": 1967.608,
+  "exit_code": 0,
+  "name": "joined_directly_affected_unit_9",
+  "pass": true,
+  "pid": 16116,
+  "stderr_sha256": "a52b3297178ced0135e95c725f4c0251722ac8c76792da596c7ea4fc2317fa30",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

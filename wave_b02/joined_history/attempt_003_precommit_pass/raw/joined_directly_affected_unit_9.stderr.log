@@ -1,0 +1,14 @@
+test_a05_exact_passage_and_no_memory (wave_b02.test_joined_e2e.JoinedContractTests.test_a05_exact_passage_and_no_memory) ... ok
+test_admission_binds_a06_projection_and_a05_grant (wave_b02.test_joined_e2e.JoinedContractTests.test_admission_binds_a06_projection_and_a05_grant) ... ok
+test_bounded_verifier_accepts_grounded_paraphrase (wave_b02.test_joined_e2e.JoinedContractTests.test_bounded_verifier_accepts_grounded_paraphrase) ... ok
+test_bounded_verifier_rejects_span_and_text_tamper (wave_b02.test_joined_e2e.JoinedContractTests.test_bounded_verifier_rejects_span_and_text_tamper) ... ok
+test_exhausted_action_budget_is_denied (wave_b02.test_joined_e2e.JoinedContractTests.test_exhausted_action_budget_is_denied) ... ok
+test_source_byte_tamper_is_denied (wave_b02.test_joined_e2e.JoinedContractTests.test_source_byte_tamper_is_denied) ... ok
+test_stale_source_is_denied (wave_b02.test_joined_e2e.JoinedContractTests.test_stale_source_is_denied) ... ok
+test_unauthorized_action_is_denied (wave_b02.test_joined_e2e.JoinedContractTests.test_unauthorized_action_is_denied) ... ok
+test_wrong_a05_acl_is_denied (wave_b02.test_joined_e2e.JoinedContractTests.test_wrong_a05_acl_is_denied) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.131s
+
+OK

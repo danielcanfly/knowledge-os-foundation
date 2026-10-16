@@ -1,0 +1,22 @@
+{
+  "actor": "owner-researcher",
+  "budget": {
+    "max_action_attempts": 1,
+    "max_source_reads": 3
+  },
+  "deadline": "2026-10-23T07:14:36.312043+00:00",
+  "goal": "Produce one grounded policy claim and a reversible local observation",
+  "outcome": "verified-research-and-reversible-observation",
+  "rights": [
+    "read-firstparty",
+    "write-own-observation"
+  ],
+  "run_id": "a06-b02-joined-positive-crash-reconcile-rollback",
+  "sources": [
+    "CHARTER",
+    "DELIVERY",
+    "I37_ACCEPTANCE"
+  ],
+  "tenant": "tenant-a",
+  "version": "a06-v1"
+}

@@ -1,0 +1,32 @@
+{
+  "client_pid": 16449,
+  "completed_ns": 237421178746250,
+  "controls": [],
+  "events": [
+    {
+      "client_received_ns": 237421177439250,
+      "event": "run.started",
+      "external_provider_calls": 0,
+      "fault": "none",
+      "run_id": "a06-b02-joined-exhausted-budget",
+      "seq": 1,
+      "server_ns": 237421176120750
+    },
+    {
+      "client_received_ns": 237421178623708,
+      "error_code": "BUDGET_DENIED",
+      "error_type": "ValueError",
+      "event": "run.terminal",
+      "run_id": "a06-b02-joined-exhausted-budget",
+      "seq": 3,
+      "server_ns": 237421177965916,
+      "status": "denied",
+      "verified_current": 0
+    }
+  ],
+  "fault": "none",
+  "http_status": 200,
+  "run_id": "a06-b02-joined-exhausted-budget",
+  "schema": "m27.wave-b02.joined-independent-client/v1",
+  "started_ns": 237421165750208
+}

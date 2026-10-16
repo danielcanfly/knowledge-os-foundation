@@ -1,0 +1,28 @@
+{
+  "command": [
+    "/tmp/m27-b02-joined-scptr1xg/runtime/llama-b11425/llama-cli",
+    "-m",
+    "/tmp/m27-b02-joined-scptr1xg/runtime/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+    "-p",
+    "<|im_start|>user\nReply ready.\n<|im_end|>\n<|im_start|>assistant\n",
+    "-n",
+    "1",
+    "-c",
+    "1024",
+    "--temp",
+    "0",
+    "-s",
+    "2761",
+    "--no-display-prompt",
+    "--simple-io",
+    "--no-perf",
+    "--single-turn"
+  ],
+  "duration_ms": 9139.943,
+  "exit_code": 0,
+  "name": "runtime_warmup",
+  "pass": true,
+  "pid": 16395,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "d8f2230ee755172d18765afe595aebfff5712109514bb4b4be732b5f0b59e36e"
+}

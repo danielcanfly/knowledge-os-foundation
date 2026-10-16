@@ -1,0 +1,2 @@
+{"event": "run.started", "external_provider_calls": 0, "fault": "cancel", "run_id": "a06-b02-joined-cancel", "seq": 1, "server_ns": 237422506250750}
+{"event": "run.terminal", "run_id": "a06-b02-joined-cancel", "seq": 2, "server_ns": 237422795700708, "status": "cancelled", "verified_current": 0}

@@ -1,0 +1,149 @@
+{
+  "client_pid": 16415,
+  "completed_ns": 237412221534083,
+  "controls": [
+    {
+      "body": {
+        "accepted": false,
+        "error": "ACK_PROOF_MISMATCH"
+      },
+      "kind": "forged_ack",
+      "status": 409
+    },
+    {
+      "body": {
+        "accepted": true
+      },
+      "kind": "valid_ack",
+      "status": 200
+    },
+    {
+      "body": {
+        "accepted": false,
+        "error": "ACK_REPLAY"
+      },
+      "kind": "replay_ack",
+      "status": 409
+    }
+  ],
+  "events": [
+    {
+      "client_received_ns": 237404550932125,
+      "event": "run.started",
+      "external_provider_calls": 0,
+      "fault": "none",
+      "run_id": "a06-b02-joined-positive-crash-reconcile-rollback",
+      "seq": 1,
+      "server_ns": 237404549612791
+    },
+    {
+      "a06_projection_sha256": "0b8db2406f32f7a007176ed36cd5097eff5343b1393753b5647fcd6e8b1e97f7",
+      "budget": {
+        "max_action_attempts": 1,
+        "max_context_reads": 1,
+        "max_model_calls": 1,
+        "max_source_reads": 3
+      },
+      "client_received_ns": 237404552848833,
+      "context_tenant": "owner-internal",
+      "contract_sha256": "8934dfabd6ab962397ad6429456d8fdc83a8529ab85a84edb68bed1127c21bc7",
+      "event": "task.admitted",
+      "rights": [
+        "read-firstparty",
+        "write-own-observation"
+      ],
+      "run_id": "a06-b02-joined-positive-crash-reconcile-rollback",
+      "seq": 2,
+      "server_ns": 237404552244958,
+      "tenant": "tenant-a"
+    },
+    {
+      "client_received_ns": 237404581141875,
+      "event": "context.retrieved",
+      "excerpt_sha256": "32bc97753829e31d8b847bec92dbf917f3058ce7cd18077a9fa0449cd3680f36",
+      "memory_candidates_included": 0,
+      "passage_id": "D01P004",
+      "release_id": "a05context-7835ec95cee63972",
+      "revocation_epoch": 1,
+      "run_id": "a06-b02-joined-positive-crash-reconcile-rollback",
+      "seq": 3,
+      "server_ns": 237404580514458,
+      "source_id": "01_contracts.md",
+      "source_revision": "89f1d7be1623cd6926a69e38871544eefe39e584",
+      "source_sha256": "6f98ef617f1c1957ccec627aeae0381f9db48dbd763503a818732bbeb1476a02",
+      "span": [
+        1215,
+        1298
+      ]
+    },
+    {
+      "actual_local_model": true,
+      "billable_provider_calls": 0,
+      "client_received_ns": 237411007148875,
+      "event": "claim.verified",
+      "excerpt_sha256": "32bc97753829e31d8b847bec92dbf917f3058ce7cd18077a9fa0449cd3680f36",
+      "memory_citation_authority": false,
+      "model_output_sha256": "b18464e46e25a5a583a6f12001dd0074c23c6c95c36f241417bd76d20e56ebf5",
+      "passage_id": "D01P004",
+      "proof_sha256": "1a7f3f8fa0fb7a13cccbde381174e9cd2386d016c519aca30309f573745b53ad",
+      "release_id": "a05context-7835ec95cee63972",
+      "revocation_epoch": 1,
+      "run_id": "a06-b02-joined-positive-crash-reconcile-rollback",
+      "seq": 4,
+      "server_ns": 237411004789750,
+      "source_id": "01_contracts.md",
+      "source_revision": "89f1d7be1623cd6926a69e38871544eefe39e584",
+      "source_sha256": "6f98ef617f1c1957ccec627aeae0381f9db48dbd763503a818732bbeb1476a02",
+      "span": [
+        1215,
+        1298
+      ],
+      "text": "Agent may request deterministic enforcement, PolicyEngine decides.",
+      "text_sha256": "b18464e46e25a5a583a6f12001dd0074c23c6c95c36f241417bd76d20e56ebf5",
+      "verifier": "b02_a05_policyengine_bounded_entailment_v1"
+    },
+    {
+      "action_receipt_sha256": "75fd2e0f69e1d2ef4c430ca071fd9ab4a45f33f1573972a90ce1cccc418be341",
+      "action_status": "RECONCILED",
+      "client_received_ns": 237412219415875,
+      "event": "outcome.reconciled",
+      "physical_attempts": 1,
+      "run_id": "a06-b02-joined-positive-crash-reconcile-rollback",
+      "seq": 6,
+      "server_ns": 237412218466208
+    },
+    {
+      "after_rollback": {
+        "observation": "idle",
+        "revision": 0
+      },
+      "client_received_ns": 237412219905208,
+      "event": "outcome.rolled_back",
+      "run_id": "a06-b02-joined-positive-crash-reconcile-rollback",
+      "seq": 7,
+      "server_ns": 237412219266375
+    },
+    {
+      "client_received_ns": 237412220416958,
+      "event": "worker.finished",
+      "outcome": "verified-research-and-reversible-observation",
+      "run_id": "a06-b02-joined-positive-crash-reconcile-rollback",
+      "seq": 8,
+      "server_ns": 237412219859875
+    },
+    {
+      "client_received_ns": 237412221006000,
+      "event": "run.terminal",
+      "run_id": "a06-b02-joined-positive-crash-reconcile-rollback",
+      "seq": 9,
+      "server_ns": 237412220365291,
+      "status": "succeeded",
+      "verified_current": 1
+    }
+  ],
+  "fault": "none",
+  "http_status": 200,
+  "run_id": "a06-b02-joined-positive-crash-reconcile-rollback",
+  "schema": "m27.wave-b02.joined-independent-client/v1",
+  "started_ns": 237404540074625
+}

@@ -1,0 +1,53 @@
+{
+  "client_pid": 16424,
+  "completed_ns": 237412557562083,
+  "controls": [],
+  "events": [
+    {
+      "client_received_ns": 237412531856541,
+      "event": "run.started",
+      "external_provider_calls": 0,
+      "fault": "none",
+      "run_id": "a06-b02-joined-wrong-acl",
+      "seq": 1,
+      "server_ns": 237412530455416
+    },
+    {
+      "a06_projection_sha256": "f4f664b2f27cc39113e64a926a7642f6776a530b29b7c6e732d502be78acec2a",
+      "budget": {
+        "max_action_attempts": 1,
+        "max_context_reads": 1,
+        "max_model_calls": 1,
+        "max_source_reads": 3
+      },
+      "client_received_ns": 237412533975291,
+      "context_tenant": "other-tenant",
+      "contract_sha256": "db66d883cb4489cf2b3cc86921c6528a67e1b309431a8e7335f634d6904bf56c",
+      "event": "task.admitted",
+      "rights": [
+        "read-firstparty",
+        "write-own-observation"
+      ],
+      "run_id": "a06-b02-joined-wrong-acl",
+      "seq": 2,
+      "server_ns": 237412533341458,
+      "tenant": "tenant-a"
+    },
+    {
+      "client_received_ns": 237412557319333,
+      "error_code": "access_denied",
+      "error_type": "SourceError",
+      "event": "run.terminal",
+      "run_id": "a06-b02-joined-wrong-acl",
+      "seq": 4,
+      "server_ns": 237412556567500,
+      "status": "denied",
+      "verified_current": 0
+    }
+  ],
+  "fault": "none",
+  "http_status": 200,
+  "run_id": "a06-b02-joined-wrong-acl",
+  "schema": "m27.wave-b02.joined-independent-client/v1",
+  "started_ns": 237412517887666
+}

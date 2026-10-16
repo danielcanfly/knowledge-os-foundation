@@ -1,0 +1,28 @@
+{
+  "command": [
+    "/tmp/m27-b02-joined-efxcseem/runtime/llama-b11425/llama-cli",
+    "-m",
+    "/tmp/m27-b02-joined-efxcseem/runtime/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+    "-p",
+    "<|im_start|>user\nReply ready.\n<|im_end|>\n<|im_start|>assistant\n",
+    "-n",
+    "1",
+    "-c",
+    "1024",
+    "--temp",
+    "0",
+    "-s",
+    "2761",
+    "--no-display-prompt",
+    "--simple-io",
+    "--no-perf",
+    "--single-turn"
+  ],
+  "duration_ms": 11760.956,
+  "exit_code": 0,
+  "name": "runtime_warmup",
+  "pass": true,
+  "pid": 16329,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "8ceb70b94b53feba468b28392b5b5769933c96d9ccabb532d9cb67bb635d0118"
+}

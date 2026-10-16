@@ -1,0 +1,24 @@
+{
+  "command": [
+    "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python",
+    "-B",
+    "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_client.py",
+    "--port",
+    "50037",
+    "--contract",
+    "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/contracts/timeout.json",
+    "--fault",
+    "timeout",
+    "--output",
+    "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/client_cases/timeout.json",
+    "--deadline-ms",
+    "1"
+  ],
+  "duration_ms": 379.761,
+  "exit_code": 0,
+  "name": "client_timeout",
+  "pass": true,
+  "pid": 16454,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "855144788753b897da249836dd6efee1bc2bf7474b2cb2df5980a9e6179d5656"
+}

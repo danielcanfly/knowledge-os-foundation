@@ -1,0 +1,53 @@
+{
+  "client_pid": 16427,
+  "completed_ns": 237413154400208,
+  "controls": [],
+  "events": [
+    {
+      "client_received_ns": 237413096338000,
+      "event": "run.started",
+      "external_provider_calls": 0,
+      "fault": "revoked_source",
+      "run_id": "a06-b02-joined-revoked-source",
+      "seq": 1,
+      "server_ns": 237413095696333
+    },
+    {
+      "a06_projection_sha256": "97603014d627d0cceda4a35b1382681cd41d540cee6957afeee4873b08ea113a",
+      "budget": {
+        "max_action_attempts": 1,
+        "max_context_reads": 1,
+        "max_model_calls": 1,
+        "max_source_reads": 3
+      },
+      "client_received_ns": 237413097912875,
+      "context_tenant": "owner-internal",
+      "contract_sha256": "5aa4b1017ac715e4ddd332afc4ef5b805d46b9369ec425041068118082c9a040",
+      "event": "task.admitted",
+      "rights": [
+        "read-firstparty",
+        "write-own-observation"
+      ],
+      "run_id": "a06-b02-joined-revoked-source",
+      "seq": 2,
+      "server_ns": 237413097336416,
+      "tenant": "tenant-a"
+    },
+    {
+      "client_received_ns": 237413154194333,
+      "error_code": "joined_target_passage_mismatch",
+      "error_type": "SourceError",
+      "event": "run.terminal",
+      "run_id": "a06-b02-joined-revoked-source",
+      "seq": 4,
+      "server_ns": 237413153496541,
+      "status": "denied",
+      "verified_current": 0
+    }
+  ],
+  "fault": "revoked_source",
+  "http_status": 200,
+  "run_id": "a06-b02-joined-revoked-source",
+  "schema": "m27.wave-b02.joined-independent-client/v1",
+  "started_ns": 237413087448333
+}

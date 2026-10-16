@@ -1,0 +1,41 @@
+{
+  "a05_context_grant": {
+    "expires_at": "2027-01-11T21:36:23.210892+00:00",
+    "release_id": "a05context-7835ec95cee63972",
+    "roles": [
+      "internal"
+    ],
+    "source_revision": "89f1d7be1623cd6926a69e38871544eefe39e584",
+    "tenant": "owner-internal"
+  },
+  "a06_admission": {
+    "abi": "m27.wave-b01.nonprod-integration/v1",
+    "production_authority": false,
+    "provider_lane": {
+      "economics": "SIMULATED_NOT_INVOICE",
+      "max_provider_calls": 3,
+      "max_tool_calls": 0,
+      "policy": "a08-adaptive",
+      "review_only": true,
+      "revision": "1.1.0-review-only"
+    },
+    "task_lane": {
+      "budget": {
+        "max_action_attempts": 1,
+        "max_source_reads": 3
+      },
+      "rights": [
+        "read-firstparty",
+        "write-own-observation"
+      ],
+      "run_id": "a06-b02-joined-missing-verified-text",
+      "tenant": "tenant-a",
+      "version": "a06-v1"
+    }
+  },
+  "a06_projection_sha256": "55703c137d5ef6e62ed0bf4646fa5771459fde2f1ef2eabc58c017bf5c909a32",
+  "joined_contract_sha256": "1793719149e1ec35a487ac7cc189a3817b8e67cebeddafa5dc51f46191e1e5bf",
+  "production_authority": false,
+  "run_id": "a06-b02-joined-missing-verified-text",
+  "schema": "m27.wave-b02.joined-admission/v1"
+}
