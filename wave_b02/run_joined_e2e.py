@@ -221,7 +221,7 @@ def main() -> int:
         server_stdout = (EVIDENCE / "raw/server.stdout.log").open("w", encoding="utf-8")
         server_stderr = (EVIDENCE / "raw/server.stderr.log").open("w", encoding="utf-8")
         server = subprocess.Popen(
-            [str(PYTHON), "-B", "-u", str(REPO / "wave_b02/joined_server.py"),
+            [str(TEST_PYTHON), "-B", "-u", str(REPO / "wave_b02/joined_server.py"),
              "--runtime", str(runtime), "--scratch", str(scratch),
              "--evidence", str(EVIDENCE), "--port-file", str(port_file)],
             cwd=REPO, env=env, stdin=subprocess.DEVNULL, stdout=server_stdout,
@@ -242,7 +242,7 @@ def main() -> int:
             deadline_ms = 1 if name == "timeout" else 60000
             receipt = execute(
                 "client_" + name,
-                [str(PYTHON), "-B", str(REPO / "wave_b02/joined_client.py"),
+                [str(TEST_PYTHON), "-B", str(REPO / "wave_b02/joined_client.py"),
                  "--port", str(port), "--contract", str(contract_path), "--fault", fault,
                  "--output", str(output), "--deadline-ms", str(deadline_ms)],
                 REPO, env, timeout=240)
