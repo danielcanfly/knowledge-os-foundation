@@ -1,0 +1,32 @@
+{
+  "client_pid": 16559,
+  "completed_ns": 237536231753916,
+  "controls": [],
+  "events": [
+    {
+      "client_received_ns": 237536230659500,
+      "event": "run.started",
+      "external_provider_calls": 0,
+      "fault": "none",
+      "run_id": "a06-b02-joined-unauthorized-action",
+      "seq": 1,
+      "server_ns": 237536229416583
+    },
+    {
+      "client_received_ns": 237536231649625,
+      "error_code": "SCOPES_DENIED",
+      "error_type": "PermissionError",
+      "event": "run.terminal",
+      "run_id": "a06-b02-joined-unauthorized-action",
+      "seq": 3,
+      "server_ns": 237536231149583,
+      "status": "denied",
+      "verified_current": 0
+    }
+  ],
+  "fault": "none",
+  "http_status": 200,
+  "run_id": "a06-b02-joined-unauthorized-action",
+  "schema": "m27.wave-b02.joined-independent-client/v1",
+  "started_ns": 237536218440458
+}

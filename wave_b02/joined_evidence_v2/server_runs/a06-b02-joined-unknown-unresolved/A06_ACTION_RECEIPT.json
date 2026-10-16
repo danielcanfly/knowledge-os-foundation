@@ -1,0 +1,123 @@
+{
+  "a06_stage": "ACTION_PREPARED",
+  "action_ledger": [
+    1,
+    "UNKNOWN",
+    "{\"observation\": \"idle\", \"revision\": 0}",
+    "{\"observation\": \"reviewed\", \"revision\": 1, \"run_id\": \"a06-b02-joined-unknown-unresolved\"}"
+  ],
+  "after_crash": {
+    "observation": "reviewed",
+    "revision": 1,
+    "run_id": "a06-b02-joined-unknown-unresolved"
+  },
+  "after_unobservable": {
+    "observation": "idle",
+    "revision": 0
+  },
+  "physical_retry_count": 0,
+  "receipts": [
+    {
+      "command": [
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python",
+        "-B",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/a06_joined_child.py",
+        "admit",
+        "--db",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-unknown-unresolved/a06_action/journal.sqlite",
+        "--state",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-unknown-unresolved/a06_action/state",
+        "--run-id",
+        "a06-b02-joined-unknown-unresolved",
+        "--contract",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-unknown-unresolved/a06_action/A06_TASK_CONTRACT.json"
+      ],
+      "duration_ms": 385.682,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit_codes": [
+        0
+      ],
+      "name": "admit",
+      "pid": 16582,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "96186df74d9d5a9cd106c945ceaf3986bfe0a7c0c2b886471931222d508d119b"
+    },
+    {
+      "command": [
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python",
+        "-B",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/a06_joined_child.py",
+        "run",
+        "--db",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-unknown-unresolved/a06_action/journal.sqlite",
+        "--state",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-unknown-unresolved/a06_action/state",
+        "--run-id",
+        "a06-b02-joined-unknown-unresolved",
+        "--inject-unknown"
+      ],
+      "duration_ms": 317.213,
+      "exit_code": 73,
+      "expectation_met": true,
+      "expected_exit_codes": [
+        73
+      ],
+      "name": "crash_after_effect",
+      "pid": 16583,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c7c963029cfe193e05ac712d7b916fb9d90b52873913d86fd77f9b446a854e33"
+    },
+    {
+      "command": [
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python",
+        "-B",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/a06_joined_child.py",
+        "run",
+        "--db",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-unknown-unresolved/a06_action/journal.sqlite",
+        "--state",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-unknown-unresolved/a06_action/state",
+        "--run-id",
+        "a06-b02-joined-unknown-unresolved"
+      ],
+      "duration_ms": 263.352,
+      "exit_code": 1,
+      "expectation_met": true,
+      "expected_exit_codes": [
+        1,
+        2
+      ],
+      "name": "resume_unknown_hold",
+      "pid": 16584,
+      "stderr_sha256": "daa0c944e3b8872ea82493514c3f9a6ebcfba849e39b547243619e8158ee3f9d",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/MG09_LOCAL_NONPROD_BOOTSTRAP_20261013/.venv/bin/python",
+        "-B",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/a06_joined_child.py",
+        "status",
+        "--db",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-unknown-unresolved/a06_action/journal.sqlite",
+        "--state",
+        "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/B02/wave_b02/joined_evidence_v2/server_runs/a06-b02-joined-unknown-unresolved/a06_action/state",
+        "--run-id",
+        "a06-b02-joined-unknown-unresolved"
+      ],
+      "duration_ms": 337.286,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit_codes": [
+        0
+      ],
+      "name": "status_unknown_hold",
+      "pid": 16586,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "9169888a03cf3f97398b7d9cead7eadb471d86c295c5078c5cced2b6db873030"
+    }
+  ],
+  "run_id": "a06-b02-joined-unknown-unresolved",
+  "status": "UNKNOWN_EFFECT_RECONCILE_REQUIRED"
+}

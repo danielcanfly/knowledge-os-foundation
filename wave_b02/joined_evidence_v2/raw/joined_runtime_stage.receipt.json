@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/opt/homebrew/bin/python3.11",
+    "-B",
+    "stage_model_runtime.py",
+    "--asset-dir",
+    "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/A04/model_runtime",
+    "--destination",
+    "/tmp/m27-b02-joined-hhjvjpdn/runtime",
+    "--model-mode",
+    "hardlink"
+  ],
+  "duration_ms": 5165.857,
+  "exit_code": 0,
+  "name": "joined_runtime_stage",
+  "pass": true,
+  "pid": 16501,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "b421a4c52f95536a17f1b5ae79d0451a260137eb9e5aad34d93c5df5ae72c7ab"
+}

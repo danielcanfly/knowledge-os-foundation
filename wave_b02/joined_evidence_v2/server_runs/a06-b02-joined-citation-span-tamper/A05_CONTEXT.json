@@ -1,0 +1,32 @@
+{
+  "abstention_reason": null,
+  "answer_generated": false,
+  "citation_authority": "A05_PINNED_FIRSTPARTY_SOURCE_ONLY",
+  "memory_candidates_included": 0,
+  "release_id": "a05context-7835ec95cee63972",
+  "results": [
+    {
+      "citation": {
+        "byte_end": 1298,
+        "byte_start": 1215,
+        "document": "01_contracts.md",
+        "document_sha256": "6f98ef617f1c1957ccec627aeae0381f9db48dbd763503a818732bbeb1476a02",
+        "excerpt_sha256": "32bc97753829e31d8b847bec92dbf917f3058ce7cd18077a9fa0449cd3680f36",
+        "expires_at": "2027-01-11T21:36:23.210892+00:00",
+        "passage_id": "D01P004",
+        "release_id": "a05context-7835ec95cee63972",
+        "revocation_epoch": 1,
+        "snapshot_at": "2026-10-13T21:36:23.210892+00:00",
+        "source_revision": "89f1d7be1623cd6926a69e38871544eefe39e584",
+        "source_uri": "urn:sha256:6f98ef617f1c1957ccec627aeae0381f9db48dbd763503a818732bbeb1476a02"
+      },
+      "excerpt": "Responsible for deterministic enforcement. Agent may request. PolicyEngine decides.",
+      "lexical_score": 16.48785952,
+      "passage_id": "D01P004",
+      "score": 16.6271214
+    }
+  ],
+  "retrieval": "BM25_plus_local_distributional_rerank_NOT_product_vector",
+  "revocation_epoch": 1,
+  "status": "source_passages"
+}

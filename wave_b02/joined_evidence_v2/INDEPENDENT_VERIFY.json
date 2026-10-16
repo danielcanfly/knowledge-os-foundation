@@ -1,0 +1,137 @@
+{
+  "a05_exact_source": {
+    "docs": 11,
+    "document": "01_contracts.md",
+    "excerpt_sha256": "32bc97753829e31d8b847bec92dbf917f3058ce7cd18077a9fa0449cd3680f36",
+    "source_sha256": "6f98ef617f1c1957ccec627aeae0381f9db48dbd763503a818732bbeb1476a02",
+    "span": [
+      1215,
+      1298
+    ],
+    "spans": 21
+  },
+  "c28_live_trial": false,
+  "case_checks": [
+    {
+      "name": "positive_crash_reconcile_rollback",
+      "receipt_sha256": "9cc8f4f07b0538cd2cc21b337d9c8ba498359215c89beae6ad7d182c87b136cc",
+      "terminal": "succeeded"
+    },
+    {
+      "name": "wrong_acl",
+      "receipt_sha256": "58cd25c1b4962f0a73f4c7af539291c3127a9c987cc2763cb2c0653cdb12ef6c",
+      "terminal": "denied"
+    },
+    {
+      "name": "stale_source",
+      "receipt_sha256": "8ddf46f558a1a62e8ea699c00a561ff3f95f26e1586943f921d50f003441af0d",
+      "terminal": "denied"
+    },
+    {
+      "name": "revoked_source",
+      "receipt_sha256": "70d718262d0986185821c136111064dc37741593c974eef2857f99b6d92cfee2",
+      "terminal": "denied"
+    },
+    {
+      "name": "source_byte_tamper",
+      "receipt_sha256": "ac8bcb31847ff9d37e1dc9b15fbf45586fcc576fd253314ad4b8408f4b20a021",
+      "terminal": "denied"
+    },
+    {
+      "name": "citation_span_tamper",
+      "receipt_sha256": "bc88893c3843b555184368a2dae99f43d61524a97d24bb7b57bdc22c35781f87",
+      "terminal": "denied"
+    },
+    {
+      "name": "unauthorized_action",
+      "receipt_sha256": "f8f8c0fe8a61a539d4f3422a8c1101fc60e334ac4bd49b5365f24b6faf6f6da5",
+      "terminal": "denied"
+    },
+    {
+      "name": "exhausted_budget",
+      "receipt_sha256": "d0b0b4a5284c4de21dfe723477e68e3e4e2b80b7a3968e38b416d1950eaf1abd",
+      "terminal": "denied"
+    },
+    {
+      "name": "missing_verified_text",
+      "receipt_sha256": "41915d01d17fd8c06418ad4f5b76ffebbfdb49f6d1422d073ec7b272147c1bc6",
+      "terminal": "denied"
+    },
+    {
+      "name": "invalid_verified_text",
+      "receipt_sha256": "308122597ff946685edd650ae0cff24fbbfc8b31ec7c8a75c0cb11b0cb9cab84",
+      "terminal": "denied"
+    },
+    {
+      "name": "timeout",
+      "receipt_sha256": "32bbe962fd05b9df1df3eff4cac9961a64ec0f30fe834cba563afb2e45e79de5",
+      "terminal": "timeout"
+    },
+    {
+      "name": "cancel",
+      "receipt_sha256": "e8201385ba7400ef5d67291a67e6937af04f0bd8347e47cb3fc78fbbeeb6985a",
+      "terminal": "cancelled"
+    },
+    {
+      "name": "unknown_unresolved",
+      "receipt_sha256": "db25c7b802ab74c36bec6163153420ce7f57b718c1921f1357a6cb08793f933f",
+      "terminal": "held_unknown"
+    }
+  ],
+  "execution_head": "e7ced87bd1ffc5baa28b4e2a5a571bd163318a39",
+  "execution_tree": "9cbc715263ba9414e30a7563edc788d367bf68a9",
+  "external_provider_calls": 0,
+  "formal_product_go": false,
+  "history_preserved": [
+    "cold_model_timeout",
+    "verifier_rejection",
+    "precommit_pass"
+  ],
+  "model_checks": {
+    "positive_crash_reconcile_rollback": {
+      "duration_ms": 4683.618,
+      "output_sha256": "b18464e46e25a5a583a6f12001dd0074c23c6c95c36f241417bd76d20e56ebf5",
+      "pid": 16524
+    },
+    "unknown_unresolved": {
+      "duration_ms": 5732.415,
+      "output_sha256": "b18464e46e25a5a583a6f12001dd0074c23c6c95c36f241417bd76d20e56ebf5",
+      "pid": 16580
+    }
+  },
+  "old_127_rerun": false,
+  "positive_action": {
+    "receipt_sha256": "4a3552f5c56e74ab8c23526c402464f07e73754818154164387f006f2124548a",
+    "sqlite_sha256": "f517f4e7bb264af8480754d4bc83bd3b47a1c236c5ab6719c7d7ffbe6dea9ab4",
+    "sqlite_tables": [
+      "actions",
+      "evidence",
+      "journal",
+      "revoked",
+      "runs",
+      "sqlite_sequence"
+    ]
+  },
+  "schema": "m27.wave-b02.joined-independent-verification/v1",
+  "source_sha256": {
+    "a06_joined_child.py": "ef6f4418a5a17f0fd10d456de13573670cbc56d01836af9ee9469d4b1a4f76ba",
+    "joined_client.py": "f51b4a55b7a559179b9db661c74867c18b0fd0d6f3ba17b534ef32320363187f",
+    "joined_core.py": "64fb5f85444bc5a23238020286bd9bab622f3fe1e068da42856e958fdaa55d2f",
+    "joined_server.py": "5431d1eed04ec7a8ba9121704594f57fa5b4c0813b8c4652bceaaedd48e0c34a",
+    "run_joined_e2e.py": "1d3dfa942c7a9770cfd69238c09d45ee651cbde06f31226822eaa76f2afb0a09",
+    "test_joined_e2e.py": "f5cba77f2a903c8b7e534463bfa5bfd2dcb6ec993207006982091ec0337ac54e"
+  },
+  "status": "PASS",
+  "unknown_action": {
+    "receipt_sha256": "5723dfef8343de5548c4ce7d658c64d7379ce5fa119703a34bd1796ff462f7a9",
+    "sqlite_sha256": "d6a92a79e7f475fcc92913b0d01a7b0aa7535fabaaac65bdafa5fa96b7133b0f",
+    "sqlite_tables": [
+      "actions",
+      "evidence",
+      "journal",
+      "revoked",
+      "runs",
+      "sqlite_sequence"
+    ]
+  }
+}

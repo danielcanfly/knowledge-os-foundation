@@ -1,0 +1,27 @@
+{
+  "attempts": [
+    {
+      "actual_local_model": true,
+      "attempt": 1,
+      "billable_provider_calls": 0,
+      "duration_ms": 3883.027,
+      "exit_code": 0,
+      "external_provider_calls": 0,
+      "input_excerpt_sha256": "32bc97753829e31d8b847bec92dbf917f3058ce7cd18077a9fa0449cd3680f36",
+      "llama_cli_sha256": "cf4f088f32507af619a1d65516d235ef7644db8c81ff1d3e175ff640dab75ab7",
+      "max_attempts": 2,
+      "max_new_tokens": 24,
+      "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+      "output": "Agent may request deterministic enforcement, PolicyEngine decides.",
+      "output_sha256": "b18464e46e25a5a583a6f12001dd0074c23c6c95c36f241417bd76d20e56ebf5",
+      "pid": 16556,
+      "raw_stdout_sha256": "7ca59753db0ac0f51a7b21231455deb263d2031e1352735a6e5b7c954018829e",
+      "seed": 2761,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 90
+    }
+  ],
+  "schema": "m27.wave-b02.joined-model-audit/v1",
+  "selected_attempt": 1
+}

@@ -1,0 +1,30 @@
+{
+  "client_pid": 16567,
+  "completed_ns": 237537924834958,
+  "controls": [],
+  "events": [
+    {
+      "client_received_ns": 237537838371000,
+      "event": "run.started",
+      "external_provider_calls": 0,
+      "fault": "timeout",
+      "run_id": "a06-b02-joined-timeout",
+      "seq": 1,
+      "server_ns": 237537835386458
+    },
+    {
+      "client_received_ns": 237537924599875,
+      "event": "run.terminal",
+      "run_id": "a06-b02-joined-timeout",
+      "seq": 2,
+      "server_ns": 237537923195000,
+      "status": "timeout",
+      "verified_current": 0
+    }
+  ],
+  "fault": "timeout",
+  "http_status": 200,
+  "run_id": "a06-b02-joined-timeout",
+  "schema": "m27.wave-b02.joined-independent-client/v1",
+  "started_ns": 237537821314375
+}

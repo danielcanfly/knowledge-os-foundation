@@ -1,0 +1,33 @@
+{
+  "a06_sources": [
+    "CHARTER",
+    "DELIVERY",
+    "I37_ACCEPTANCE"
+  ],
+  "actor": "owner-researcher",
+  "budget": {
+    "max_action_attempts": 1,
+    "max_context_reads": 1,
+    "max_model_calls": 1,
+    "max_source_reads": 3
+  },
+  "context_grant": {
+    "expires_at": "2027-01-11T21:36:23.210892+00:00",
+    "release_id": "a05context-7835ec95cee63972",
+    "roles": [
+      "internal"
+    ],
+    "source_revision": "89f1d7be1623cd6926a69e38871544eefe39e584",
+    "tenant": "owner-internal"
+  },
+  "deadline": "2026-10-23T07:16:40.220660+00:00",
+  "goal": "Produce one grounded policy claim and a reversible local observation",
+  "outcome": "verified-research-and-reversible-observation",
+  "rights": [
+    "read-firstparty",
+    "write-own-observation"
+  ],
+  "run_id": "a06-b02-joined-stale-source",
+  "tenant": "tenant-a",
+  "version": "m27.b02.joined-task/v1"
+}

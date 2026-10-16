@@ -1,0 +1,38 @@
+{
+  "client_pid": 16569,
+  "completed_ns": 237538615135458,
+  "controls": [
+    {
+      "body": {
+        "accepted": true
+      },
+      "kind": "cancel",
+      "status": 202
+    }
+  ],
+  "events": [
+    {
+      "client_received_ns": 237538316395333,
+      "event": "run.started",
+      "external_provider_calls": 0,
+      "fault": "cancel",
+      "run_id": "a06-b02-joined-cancel",
+      "seq": 1,
+      "server_ns": 237538314828458
+    },
+    {
+      "client_received_ns": 237538614618583,
+      "event": "run.terminal",
+      "run_id": "a06-b02-joined-cancel",
+      "seq": 2,
+      "server_ns": 237538613072291,
+      "status": "cancelled",
+      "verified_current": 0
+    }
+  ],
+  "fault": "cancel",
+  "http_status": 200,
+  "run_id": "a06-b02-joined-cancel",
+  "schema": "m27.wave-b02.joined-independent-client/v1",
+  "started_ns": 237538300739000
+}

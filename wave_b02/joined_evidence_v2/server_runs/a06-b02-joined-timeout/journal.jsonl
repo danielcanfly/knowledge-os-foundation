@@ -1,0 +1,2 @@
+{"event": "run.started", "external_provider_calls": 0, "fault": "timeout", "run_id": "a06-b02-joined-timeout", "seq": 1, "server_ns": 237537835386458}
+{"event": "run.terminal", "run_id": "a06-b02-joined-timeout", "seq": 2, "server_ns": 237537923195000, "status": "timeout", "verified_current": 0}
