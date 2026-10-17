@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>M27 CACHE04 isolated cache mode UI</title>
+<style>body{background:#f1f4f8;color:#1b2738;font:16px system-ui}main{background:white;max-width:750px;margin:35px auto;padding:28px;border:1px solid #bcc9d6;border-radius:12px}h1{font-size:1.5rem}.warn{background:#ffefc7;padding:10px}label{display:block;margin:14px 0}input[type=text]{padding:10px;width:90%}button{padding:12px;margin:6px;cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #2471c8}pre{padding:15px;background:#182637;color:white;white-space:pre-wrap;overflow-wrap:anywhere}</style></head>
+<body><main><h1>Semantic Answer Cache · Native mode adapter</h1>
+<p class="warn">NONPROD LOCAL FIXTURE ONLY · NOT AUTHENTICATED PRODUCT</p>
+<p>Demonstrates real browser → HTTP → CACHE01 parser → runtime decision → receipt. Cache is OFF by default; no answer, semantic HIT or qualified write is published.</p>
+<label for="question">Demo question <input type="text" id="question" maxlength="2000" value="What is the source-bound cache policy?"></label>
+<label for="allow"><input type="checkbox" id="allow" checked> Use answer cache (AUTO); uncheck to BYPASS</label>
+<p>Mode selection: <strong id="selected">AUTO</strong></p>
+<button type="button" id="send">Submit selected mode</button>
+<button type="button" id="refresh">Advanced: REFRESH</button>
+<p>Bypass only applies to this semantic answer cache, not provider prompt caching, retrieval caches, memory or all storage. REFRESH skips prior cache lookups; a real qualified verified final would be required for a future atomic replacement.</p>
+<h2>HTTP / runtime receipt</h2><pre id="receipt" role="status" aria-live="polite">No request submitted.</pre><pre id="e2e" aria-label="Browser click HTTP test results"></pre>
+<script nonce="__CSP_NONCE__">
+"use strict";
+(() => {
+const allow=document.getElementById("allow"), selected=document.getElementById("selected"), receipt=document.getElementById("receipt");
+const send=document.getElementById("send"), refresh=document.getElementById("refresh"), question=document.getElementById("question");
+const history=[]; let pending=Promise.resolve();
+async function submit(mode) {
+ const request_id=crypto.randomUUID().replace(/-/g,"");
+ try {
+   const response=await fetch("/__cache04/demo/request",{
+     method:"POST",credentials:"same-origin",
+     headers:{"Content-Type":"application/json","X-Cache-Demo-Request":"1"},
+     body:JSON.stringify({schema_version:"m27.cache04-choice-demo/v1",request_id,cache_mode:mode,question:question.value})
+   });
+   const data=await response.json();
+   const item={http_status:response.status,request_id:data.request_id||request_id,
+     cache_mode:data.cache_mode||mode,cache_status:data.cache_status||null,scope:data.scope||null,
+     answer_cache_hit_admitted:data.answer_cache_hit_admitted===true,
+     cache_io_performed:data.cache_io_performed===true,error:data.error||null};
+   history.push(item);receipt.textContent=JSON.stringify(item,null,2);return item;
+ } catch(_err){const item={http_status:0,cache_mode:mode,error:"HTTP_FAILURE"};
+   history.push(item);receipt.textContent=JSON.stringify(item);return item;}
+}
+send.addEventListener("click",()=>{pending=submit(allow.checked?"AUTO":"BYPASS");});
+allow.addEventListener("change",()=>{selected.textContent=allow.checked?"AUTO":"BYPASS";pending=submit(allow.checked?"AUTO":"BYPASS");});
+refresh.addEventListener("click",()=>{selected.textContent="REFRESH (one request)";pending=submit("REFRESH");});
+if(new URLSearchParams(location.search).get("e2e")==="1"){(async()=>{
+ send.click();await pending;allow.click();await pending;refresh.click();await pending;
+ const fixtureEnabled=new URLSearchParams(location.search).get("fixture_feature")==="enabled";
+ const expected=fixtureEnabled?"LOOKUP_REQUIRED,BYPASSED,REGENERATE_NO_LOOKUP":"DISABLED,BYPASSED,DISABLED";
+ const ok=history.length===3&&history.map(x=>x.cache_mode).join(",")==="AUTO,BYPASS,REFRESH"
+  &&history.map(x=>x.cache_status).join(",")===expected
+  &&history.every(x=>x.http_status===200&&x.scope==="LOCAL_FIXTURE_ONLY"&&!x.answer_cache_hit_admitted&&!x.cache_io_performed);
+ const result={browser_dom_clicks:3,http_results:history,verdict:ok?"PASS_BROWSER_CLICK_HTTP_RUNTIME":"FAIL"};
+ document.getElementById("e2e").textContent=JSON.stringify(result);
+ document.documentElement.dataset.e2e=ok?"pass":"fail";
+})();}
+})();
+</script></main></body></html>
