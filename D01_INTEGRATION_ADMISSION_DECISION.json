@@ -1,0 +1,16 @@
+{
+  "C02_SEMANTIC_ADMISSION": false,
+  "C28": false,
+  "F35": false,
+  "FORMAL_PRODUCT_GO": false,
+  "NATIVE_COMPOSER_ADMISSION": false,
+  "PRODUCTION": "NO_GO",
+  "REL01": false,
+  "custodian_receipts_self_approved": 0,
+  "d01_authorized_engineering": "PASS",
+  "external_gate_disposition": "RETAINED_SEPARATELY_NOT_D01_ENGINEERING_FAILURE",
+  "official_client_publications": 0,
+  "owner_adrs_self_approved": 0,
+  "schema": "m27.d01.integration-admission-decision/v1",
+  "semantic_provider_issuer_independent_qualification": "NOT_PROVEN"
+}

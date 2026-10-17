@@ -1,0 +1,18 @@
+{
+  "command": [
+    "python",
+    "tools/d01_verify_integration_evidence.py"
+  ],
+  "cwd": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01",
+  "duration_ms": 51.659,
+  "ended_wall_epoch_ns": 1792206440698644000,
+  "exit_code": 0,
+  "name": "d01_evidence_verifier",
+  "pid": 94307,
+  "schema": "m27.c02.command-receipt/v1",
+  "started_wall_epoch_ns": 1792206440646988000,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 60,
+  "stdout_sha256": "a9647e47a6ac91c5dd15456fe2bf10ddee99907f54f828c7eebe90b91e47f30a"
+}

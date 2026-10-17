@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/Users/huaihsuanhuang/.pyenv/versions/3.11.15/bin/python",
+    "-B",
+    "scripts/c01_run_residual_cases.py",
+    "--classification",
+    "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/02_REPORTS/M27_SUBMASTER_20261016/EVIDENCE/FAILURE_CLASSIFICATION.tsv",
+    "--log",
+    "evidence/d01/original_53/c01_original_51.pytest.log",
+    "--junit",
+    "evidence/d01/original_53/c01_original_51.junit.xml",
+    "--meta",
+    "evidence/d01/original_53/c01_original_51.meta"
+  ],
+  "cwd": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01",
+  "duration_ms": 17655.064,
+  "ended_wall_epoch_ns": 1792206149273998000,
+  "exit_code": 1,
+  "name": "c01_original_51",
+  "pid": 74656,
+  "schema": "m27.c02.command-receipt/v1",
+  "started_wall_epoch_ns": 1792206131618737000,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 97271,
+  "stdout_sha256": "7418131e1a097e65d4b155ed54b7bb388b19830bb517bfcf94c9fb118b2a15f0"
+}

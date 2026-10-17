@@ -1,0 +1,1594 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-8.4.2, pluggy-1.6.0 -- /Users/huaihsuanhuang/.pyenv/versions/3.11.15/bin/python
+rootdir: /Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01
+configfile: pyproject.toml
+plugins: anyio-4.14.1, cov-6.3.0, langsmith-0.11.1
+collecting ... collected 2 items
+
+tests/test_m27_2027_agent_product_runtime.py::test_claim_native_product_answer_is_publishable_and_streamable FAILED [ 50%]
+tests/test_m27_2027_agent_product_runtime.py::test_m27_runtime_does_not_import_m26_mature_answer_composer FAILED [100%]
+
+=================================== FAILURES ===================================
+________ test_claim_native_product_answer_is_publishable_and_streamable ________
+
+    def test_claim_native_product_answer_is_publishable_and_streamable() -> None:
+        result = build_agent_native_product_answer(
+            question="How does Kubernetes help AI infrastructure?",
+            intent_class="direct_grounded_knowledge",
+            evidence=(
+                _ev(1, "k8s-a", "Kubernetes coordinates services, scheduling, rollouts, and recovery for AI infrastructure so models can run as dependable services."),
+                _ev(2, "k8s-b", "AI infrastructure needs orchestration around GPU workloads, routing, observability, isolation, and operational control rather than only a model file."),
+                _ev(3, "k8s-c", "A production AI service uses runtime boundaries, citations, verification, and monitoring to avoid treating inference as a black box."),
+            ),
+        )
+>       assert result.publishable is True
+E       AssertionError: assert False is True
+E        +  where False = M27ProductAnswerResult(publishable=False, answer={}, claim_graph=(), plan=M27ProductAnswerPlan(question_language='en', canonical_question='How does Kubernetes help AI infrastructure? Kubernetes AI infrastructure orchestration GPU workloads services scaling', broad_homepage_question=True, required_source_breadth=2, selected_evidence_ids=('ev-1', 'ev-2'), distinct_sources=('k8s-a', 'k8s-b'), source_breadth_status='sufficient', answer_depth_target='multi-source_product_explanation', reason_codes=('M27_NATIVE_PRODUCT_PLANNER', 'ARTICLE_INDEX_SMELL_AVOIDED', 'SOURCE_BREADTH_GATE')), gap_taxonomy=('UNSUPPORTED_CLAIM_SPAN', 'PRODUCT_THIN_SURFACE'), repair_attempts=(), micro_timeline=M27ProductTimeline(request_start_ms=0.0, retrieval_start_ms=None, retrieval_end_ms=None, evidence_admission_start_ms=0.029, evidence_admission_end_ms=0.159, answer_planning_start_ms=0.183, answer_planning_end_ms=0.188, claim_graph_start_ms=0.188, claim_graph_end_ms=2.644, first_claim_verification_start_ms=2.648, first_claim_verification_end_ms=2.648, first_verified_claim_ready_ms=None, first_citation_bound_ms=None, first_cited_segment_ready_ms=None, first_material_emitted_ms=None, provider_call_count=0, provider_total_duration_ms=0.0, verifier_exclusive_duration_ms=0.0, final_emitted_ms=2.648), state_events=({'type': 'evidence_ready', 'event_ms': 0.165, 'selected_evidence_count': 2, 'distinct_source_count': 2}, {'type': 'answer_plan_ready', 'event_ms': 0.187, 'answer_plan': {'question_language': 'en', 'canonical_question': 'How does Kubernetes help AI infrastructure? Kubernetes AI infrastructure orchestration GPU workloads services scaling', 'broad_homepage_question': True, 'required_source_breadth': 2, 'selected_evidence_ids': ['ev-1', 'ev-2'], 'distinct_sources': ['k8s-a', 'k8s-b'], 'source_breadth_status': 'sufficient', 'answer_depth_target': 'multi-source_product_explanation', 'reason_codes': ['M27_NATIVE_PRODUCT_PLANNER', 'ARTICLE_INDEX_SMELL_AVOIDED', 'SOURCE_BREADTH_GATE']}}, {'type': 'claim_graph_ready', 'event_ms': 2.647, 'claim_count': 0}, {'type': 'verifier_gap_detected', 'event_ms': 2.65, 'gap_taxonomy': ['UNSUPPORTED_CLAIM_SPAN', 'PRODUCT_THIN_SURFACE']}, {'type': 'safe_terminal_done', 'event_ms': 2.652, 'terminal_reason': 'UNSUPPORTED_CLAIM_SPAN', 'gap_taxonomy': ['UNSUPPORTED_CLAIM_SPAN', 'PRODUCT_THIN_SURFACE']}), terminal_reason='UNSUPPORTED_CLAIM_SPAN', safe_terminal_justification={'structured': True, 'thin_cited_answer': True, 'gap_taxonomy': ['UNSUPPORTED_CLAIM_SPAN', 'PRODUCT_THIN_SURFACE'], 'source_breadth_status': 'sufficient', 'semantic_verification_receipts': [], 'rejected_semantic_verification_receipts': [{'claim_id': 'claim_1', 'evidence_ids': ['ev-1'], 'supporting_evidence_ids': [], 'support_class': 'insufficient_evidence', 'provider_status': 'none', 'confidence': 0.0, 'verified': False, 'publication_accepted': False, 'provider_attempt_count': 0, 'schema_retry_used': False, 'fail_closed_reason': 'M27_SEMANTIC_ENTAILMENT_PROVIDER_MISSING'}, {'claim_id': 'claim_2', 'evidence_ids': ['ev-2'], 'supporting_evidence_ids': [], 'support_class': 'insufficient_evidence', 'provider_status': 'none', 'confidence': 0.0, 'verified': False, 'publication_accepted': False, 'provider_attempt_count': 0, 'schema_retry_used': False, 'fail_closed_reason': 'M27_SEMANTIC_ENTAILMENT_PROVIDER_MISSING'}]}).publishable
+
+tests/test_m27_2027_agent_product_runtime.py:39: AssertionError
+_________ test_m27_runtime_does_not_import_m26_mature_answer_composer __________
+
+    def test_m27_runtime_does_not_import_m26_mature_answer_composer() -> None:
+        root = Path(__file__).resolve().parents[1]
+        runtime = (root / "src/knowledge_engine/m27_runtime_execution.py").read_text()
+        agent = (root / "src/knowledge_engine/m27_agent_product_runtime.py").read_text()
+>       assert "synthesize_and_verify" not in runtime
+E       assert 'synthesize_and_verify' not in 'from __future__ import annotations\n\nimport hashlib\nimport json\nimport re\nimport time\nfrom collections.abc import Callable, Mapping, Sequence\nfrom dataclasses import dataclass\nfrom typing import Any\n\nfrom .m26_aq_semantic_contract import synthesize_and_verify\nfrom .m26_context_compiler import compile_context_package\nfrom .m26_retrieval_envelope import with_self_digest\nfrom .m27_adaptive_compute import AdaptiveComputeBudget, AdaptiveComputeController\nfrom .m27_agent_product_runtime import build_claim_native_answer\nfrom .m27_context_orchestrator import M27RuntimeTask\nfrom .m27_production_evidence_bridge import (\n    ProductionEvidenceAuthority,\n    ProductionEvidenceBridgeError,\n    admit_production_evidence,\n    citation_bindings_preserved,\n    validate_production_authority,\n)\nfrom .m27_runtime_telemetry import (\n    M27RoundTelemetry,\n    M27RuntimeTelemetry,\n    ProviderCallTelemetry,\n    assert_privacy_safe_telemetry,\n    elapsed_ms,\n)\nfrom .m27_tool_contracts import KnowledgeSearchInput\nfrom .m27_tool_executor import ReadOnlyToolExecutor, ToolExecutionPolicy\nfrom .m27_workspace_contracts import WorkspaceArtifactKind, WorkspaceId, WorkspaceScope\nfrom .m27_workspace_store import WorkspaceStore\n\n\n@dataclass(frozen=True, slots=True)\nclass M27ExecutableRequest:\n    """Explicit isolated route with synthetic or pinned production-equivalent evidence."""\n\n    question: str\n    evidence_catalog: Mapping[str, Mapping[str, Any]]\n    compiler_policy: Mapping[str, Any]\n    semantic_provider: object\n    production_evidence_authority: ProductionEvidenceAuthority | None = None\n    requirements: Sequence[object] = ()\n    intent_class: str = "direct_grounded_knowledge"\n    endpoint_proof: Mapping[str, Any] | None = None\n    event_sink: Callable[[Mapping[str, Any]], None] | None = None\n\n\nclass ProviderQuotaExhausted(RuntimeError):\n    pass\n\n\nclass SemanticProviderUnavailable(RuntimeError):\n    pass\n\n\nclass ProviderQuota:\n    """Enforce caller\'s provider allowance across M26 internal verification calls."""\n\n    def __init__(self, provider: object, *, max_calls: int, deadline_at: float) -> None:\n        self._provider = provider\n        self.max_calls = max_calls\n        self.deadline_at = deadline_at\n        self.calls = 0\n        self.telemetry: list[ProviderCallTelemetry] = []\n\n    def call(self, payload: Mapping[str, Any], call_class: str) -> object:\n        if self.calls >= self.max_calls or time.monotonic() >= self.deadline_at:\n            raise ProviderQuotaExhausted("isolated M27 provider budget exhausted")\n        self.calls += 1\n        start_ns = time.perf_counter_ns()\n        try:\n            result = self._provider.call(payload, call_class)\n        except Exception as exc:\n            self.telemetry.append(\n                ProviderCallTelemetry(\n                    call_index=self.calls,\n                    call_class=call_class,\n                    latency_ms=elapsed_ms(start_ns, time.perf_counter_ns()),\n                    success=False,\n                    reason_code="PROVIDER_EXCEPTION_UNKNOWN_EFFECT",\n                )\n            )\n            # An exception does not prove that the call had no effect.\n            # Consume the remaining grant and refuse any local retry.\n            self.max_calls = self.calls\n            raise SemanticProviderUnavailable(\n                "provider result unavailable; retries prohibited after uncertain effect"\n            ) from exc\n        self.telemetry.append(\n            ProviderCallTelemetry(\n                call_index=self.calls,\n                call_class=call_class,\n                latency_ms=elapsed_ms(start_ns, time.perf_counter_ns()),\n                success=True,\n                reason_code="PROVIDER_CALL_OK",\n            )\n        )\n        return result\n\n\ndef _evidence_authority(request: M27ExecutableRequest) -> str:\n    if request.production_evidence_authority is not None:\n        return "production_equivalent"\n    return "synthetic_only"\n\n\ndef _release_for_compiler(request: M27ExecutableRequest) -> Mapping[str, Any]:\n    authority = request.production_evidence_authority\n    if authority is not None:\n        return {\n            "schema_version": "knowledge-engine-m27-production-evidence-bridge/v1",\n            "release_id": authority.release_id,\n            "manifest_sha256": authority.manifest_sha256,\n        }\n    return {"release_id": "isolated-synthetic"}\n\n\ndef _verification_citations_are_selected(\n    verification: Mapping[str, Any],\n    selected: Sequence[Mapping[str, Any]],\n) -> bool:\n    selected_locators = {str(item.get("locator_id") or "") for item in selected}\n    selected_evidence_ids = {str(item.get("evidence_id") or "") for item in selected}\n    citations = verification.get("citations")\n    if not isinstance(citations, Sequence) or isinstance(citations, (str, bytes)):\n        return False\n    for citation in citations:\n        if not isinstance(citation, Mapping):\n            return False\n        locator_id = str(citation.get("locator_id") or "")\n        evidence_id = str(citation.get("evidence_id") or "")\n        if locator_id and locator_id not in selected_locators:\n            return False\n        if evidence_id and evidence_id not in selected_evidence_ids:\n            return False\n    return True\n\n\n# Production evidence can have a valid immutable citation binding while a\n# provider incorrectly labels an unrelated proposition as "ENTAILED".\n# This is a deliberately conservative NECESSARY lexical grounding check,\n# not a substitute for the semantic verifier. Unsupported content fails\n# closed; unfamiliar paraphrases may abstain rather than be over-admitted.\n_PRODUCTION_GROUNDING_STOP = frozenset({\n    "a", "an", "and", "are", "as", "at", "be", "been", "by", "do",\n    "does", "for", "from", "has", "have", "in", "into", "is", "it",\n    "of", "on", "or", "that", "the", "their", "this", "to", "was",\n    "were", "which", "with",\n})\n_PRODUCTION_GROUNDING_EQUIVALENT = {\n    "keeps": "store", "keep": "store", "kept": "store",\n    "stores": "store", "stored": "store", "storage": "store",\n    "analyzes": "analysis", "analyze": "analysis",\n    "analyzing": "analysis", "analyses": "analysis",\n    "analytics": "analysis", "analytical": "analysis",\n    "supports": "support", "supported": "support",\n}\n\n\ndef _production_grounding_terms(value: str) -> set[str]:\n    return {\n        _PRODUCTION_GROUNDING_EQUIVALENT.get(term, term)\n        for term in re.findall(r"[a-z0-9]+|[\\u3400-\\u9fff]+", value.casefold())\n        if term not in _PRODUCTION_GROUNDING_STOP\n    }\n\n\ndef _production_claims_lexically_grounded(\n    verification: Mapping[str, Any],\n    selected: Sequence[Mapping[str, Any]],\n) -> bool:\n    """Conservative independent veto over the provider\'s entailment judgment.\n\n    Every published claim must name an admitted citation and introduce no\n    material term absent from that cited source, modulo closed equivalents.\n    The ordinary verifier and pinned citation checks remain mandatory.\n    """\n    claims = verification.get("answer_claims")\n    citations = verification.get("citations")\n    if not isinstance(claims, list) or not claims:\n        return False\n    if not isinstance(citations, list) or not citations:\n        return False\n    admitted = {str(item.get("evidence_id", "")): item for item in selected}\n    by_citation = {\n        str(citation.get("citation_id", "")): admitted.get(\n            str(citation.get("evidence_id", ""))\n        )\n        for citation in citations\n        if isinstance(citation, Mapping)\n    }\n    cited_evidence: list[Mapping[str, Any]] = []\n    for claim in claims:\n        if not isinstance(claim, Mapping):\n            return False\n        content = str(claim.get("surface_text") or "").strip()\n        ids = claim.get("citation_ids")\n        if not content or not isinstance(ids, list) or not ids:\n            return False\n        sources = [by_citation.get(str(cid)) for cid in ids]\n        if any(source is None for source in sources):\n            return False\n        support = _production_grounding_terms(\n            " ".join(str(source.get("passage_text") or "") for source in sources)\n        )\n        terms = _production_grounding_terms(content)\n        if not terms or not terms.issubset(support):\n            return False\n        cited_evidence.extend(source for source in sources if source is not None)\n    published = str(verification.get("answer_text") or "")\n    published = re.sub(r"\\[claim_\\d+_ref_\\d+\\]", "", published)\n    answer_terms = _production_grounding_terms(published)\n    all_support = _production_grounding_terms(\n        " ".join(str(source.get("passage_text") or "") for source in cited_evidence)\n    )\n    return bool(answer_terms) and answer_terms.issubset(all_support)\n\n\ndef _bound_evidence(\n    *,\n    output: object,\n    catalog: Mapping[str, Mapping[str, Any]],\n) -> tuple[dict[str, Any], ...]:\n    evidence: list[dict[str, Any]] = []\n    for item in getattr(output, "items", ()):\n        source = catalog.get(item.knowledge_id)\n        if source is None:\n            continue\n        if (\n            not item.source_identity\n            or not item.locator_id\n            or source.get("source_identity") != item.source_identity\n            or source.get("locator_id") != item.locator_id\n        ):\n            continue\n        raw = source.get("passage_text")\n        if not isinstance(raw, str) or not raw:\n            continue\n        if hashlib.sha256(raw.encode("utf-8")).hexdigest() != source.get("passage_text_sha256"):\n            continue\n        if not source.get("artifact_sha256") or not source.get("provenance_record_sha256"):\n            continue\n        evidence.append(dict(source))\n    return tuple(evidence)\n\n\ndef _compile_synthetic(\n    *,\n    evidence: Sequence[Mapping[str, Any]],\n    request_id: str,\n    policy: Mapping[str, Any],\n    release: Mapping[str, Any],\n) -> tuple[dict[str, Any], tuple[dict[str, Any], ...]]:\n    # M26.3 is synthetic-only by contract. Never treat this as production context.\n    unique: dict[str, dict[str, Any]] = {}\n    for index, item in enumerate(evidence, start=1):\n        pid = str(item.get("evidence_id", ""))\n        if not pid or pid in unique:\n            continue\n        content = str(item["passage_text"])\n        unique[pid] = {\n            "passage_id": pid,\n            "rank": index,\n            "text": content,\n            "text_sha256": hashlib.sha256(content.encode("utf-8")).hexdigest(),\n            "source_identity": item["source_identity"],\n            "locator_id": item["locator_id"],\n            "source_id": item.get("source_id", item["source_identity"]),\n            "section_id": item.get("section_id", item["locator_id"]),\n            "locator": {"locator_id": item["locator_id"]},\n        }\n    envelope = with_self_digest(\n        {\n            "schema_version": "knowledge-engine-m26-evidence-envelope/v1",\n            "request_id": request_id,\n            "sufficiency": "sufficient" if unique else "insufficient",\n            "release": dict(release),\n            "passages": list(unique.values()),\n            "excluded_evidence": [],\n        }\n    )\n    gap = with_self_digest(\n        {\n            "schema_version": "knowledge-engine-m26-retrieval-gap-report/v1",\n            "first_divergent_stage": "none",\n            "reason_codes": [],\n            "safe_for_context_compiler": bool(unique),\n        }\n    )\n    compiled = compile_context_package(envelope, gap, policy)\n    manifest = compiled.get("context_manifest")\n    if not isinstance(manifest, Mapping) or not compiled.get("safe_for_provider_mock"):\n        return compiled, ()\n    chosen = set(manifest.get("selected_passage_ids", ()))\n    return compiled, tuple(dict(item) for item in evidence if item.get("evidence_id") in chosen)\n\n\n\n\ndef execute_isolated(\n    *,\n    request: M27ExecutableRequest,\n    task: M27RuntimeTask,\n    plan: object,\n    budget_signal: Mapping[str, object],\n    executor: ReadOnlyToolExecutor,\n    store: WorkspaceStore,\n    route: str = "UNAVAILABLE",\n    compute_tier: str = "UNAVAILABLE",\n    budget_class: str = "UNAVAILABLE",\n    adaptive_budget: AdaptiveComputeBudget | None = None,\n    adaptive_controller: AdaptiveComputeController | None = None,\n) -> dict[str, object]:\n    """Execute actual Stage5 gather, M26.3 compile and canonical M26 verification.\n\n    No caller-supplied compiled/verification output enters this route.\n    """\n    execution_start_ns = time.perf_counter_ns()\n    workspace_id = WorkspaceId.from_safe_token(scope=WorkspaceScope.TASK, task_token=task.task_id)\n    store.create_workspace(workspace_id=workspace_id, scope=WorkspaceScope.TASK)\n    rounds: list[dict[str, object]] = []\n    telemetry_rounds: list[M27RoundTelemetry] = []\n    records: list[object] = []\n    gathered: dict[str, dict[str, Any]] = {}\n    answer: dict[str, Any] = {}\n    verification: dict[str, Any] = {}\n    terminal_reason = "UNVERIFIED_SAFE_TERMINAL"\n    deadline_ms = budget_signal.get("deadline_remaining_ms")\n    minimum_ms = budget_signal.get("minimum_budget_ms")\n    attempts = budget_signal.get("provider_attempts_remaining")\n    allowed_budget = (\n        type(deadline_ms) is int\n        and type(minimum_ms) is int\n        and type(attempts) is int\n        and deadline_ms >= minimum_ms > 0\n        and attempts > 0\n        and budget_signal.get("affordable") is True\n    )\n    adaptive_provider_cap = (\n        adaptive_budget.max_provider_calls if adaptive_budget is not None else 4\n    )\n    provider = ProviderQuota(\n        request.semantic_provider,\n        max_calls=(\n            min(attempts, adaptive_provider_cap)\n            if type(attempts) is int and attempts > 0\n            else 0\n        ),\n        deadline_at=time.monotonic()\n        + (deadline_ms / 1000 if type(deadline_ms) is int and deadline_ms > 0 else 0),\n    )\n    capabilities = tuple(getattr(plan, "tool_capabilities", ()))\n    effective_tool_cap = (\n        adaptive_budget.max_tool_calls if adaptive_budget is not None else task.max_tool_calls\n    )\n    effective_round_cap = (\n        adaptive_budget.max_continuation_rounds\n        if adaptive_budget is not None\n        else task.max_continuation_rounds\n    )\n    permitted = (\n        bool(capabilities)\n        and len(capabilities) <= effective_tool_cap\n        and all(capability == "knowledge.search" for capability in capabilities)\n    )\n    production_authority = request.production_evidence_authority\n    authority_rejection: str | None = None\n    if production_authority is not None:\n        try:\n            validate_production_authority(production_authority)\n        except ProductionEvidenceBridgeError as exc:\n            authority_rejection = exc.reason_code\n    # Fail closed when evidence authorities, budget or capability do not exist.\n    if not allowed_budget:\n        terminal_reason = "BUDGET_NOT_AUTHORITATIVE"\n    elif authority_rejection is not None:\n        terminal_reason = "PRODUCTION_EVIDENCE_AUTHORITY_REJECTED"\n    elif not permitted:\n        terminal_reason = "NO_AUTHORIZED_EVIDENCE_CAPABILITY"\n    else:\n        policy = ToolExecutionPolicy(\n            authorized_capabilities=tuple(sorted(capabilities)),\n            authorization_token=task.task_id,\n        )\n        for round_index in range(effective_round_cap + 1):\n            if len(records) >= effective_tool_cap:\n                terminal_reason = "TOOL_CALL_BUDGET_EXHAUSTED"\n                break\n            if provider.calls >= provider.max_calls or time.monotonic() >= provider.deadline_at:\n                terminal_reason = "PROVIDER_OR_DEADLINE_EXHAUSTED"\n                break\n            round_start_ns = time.perf_counter_ns()\n            provider_start_index = len(provider.telemetry)\n            tool_start_ns = time.perf_counter_ns()\n            retrieval = executor.execute(\n                "knowledge.search",\n                KnowledgeSearchInput(request_token=task.request_token),\n                policy=policy,\n                authorization_token=task.task_id,\n            )\n            tool_end_ns = time.perf_counter_ns()\n            records.append(retrieval.record)\n            previous_count = len(gathered)\n            binding_start_ns = time.perf_counter_ns()\n            bound = _bound_evidence(output=retrieval.output, catalog=request.evidence_catalog)\n            if production_authority is not None:\n                try:\n                    bound = admit_production_evidence(\n                        evidence=bound, authority=production_authority\n                    )\n                except ProductionEvidenceBridgeError as exc:\n                    binding_end_ns = time.perf_counter_ns()\n                    terminal_reason = "PRODUCTION_EVIDENCE_AUTHORITY_REJECTED"\n                    verification = {\n                        "status": "owner_only_safe_abstention",\n                        "safe_abstention": True,\n                        "citation_locator_valid": False,\n                        "material_claim_support_verified": False,\n                        "unsupported_accepted_claims": 0,\n                        "citations": [],\n                        "reason_codes": ("PRODUCTION_EVIDENCE_AUTHORITY_REJECTED", exc.reason_code),\n                    }\n                    round_end_ns = time.perf_counter_ns()\n                    provider_round = tuple(provider.telemetry[provider_start_index:])\n                    round_telemetry = M27RoundTelemetry(\n                        round_index=round_index,\n                        continuation_reason="INITIAL" if round_index == 0 else "VERIFIER_GAP",\n                        route=route,\n                        task_kind=task.kind.value,\n                        compute_tier=compute_tier,\n                        budget_class=budget_class,\n                        stage_latency_ms={\n                            "tool_ms": elapsed_ms(tool_start_ns, tool_end_ns),\n                            "evidence_binding_ms": elapsed_ms(binding_start_ns, binding_end_ns),\n                            "compiler_ms": 0.0,\n                            "provider_ms": 0.0,\n                            "verifier_ms": 0.0,\n                            "round_total_ms": elapsed_ms(round_start_ns, round_end_ns),\n                        },\n                        tool_calls=("knowledge.search",),\n                        retrieval_evidence_count=len(gathered),\n                        evidence_delta=0,\n                        compiler_status="authority_rejected",\n                        provider_calls=provider_round,\n                        verifier_status="owner_only_safe_abstention",\n                        continuation_allowed=False,\n                        continuation_decision="TERMINAL",\n                        terminal_reason=terminal_reason,\n                    )\n                    telemetry_rounds.append(round_telemetry)\n                    rounds.append(\n                        {\n                            "round_index": round_index,\n                            "continuation_reason": "INITIAL"\n                            if round_index == 0\n                            else "VERIFIER_GAP",\n                            "capabilities_invoked": ["knowledge.search"],\n                            "evidence_count": len(gathered),\n                            "evidence_delta": 0,\n                            "compiler_status": "authority_rejected",\n                            "verification_status": "owner_only_safe_abstention",\n                            "budget_outcome": "TERMINAL",\n                            "provider_calls": provider.calls,\n                            "tool_calls": len(records),\n                            "terminal_reason": terminal_reason,\n                            "evidence_authority": "production_equivalent",\n                            "compiler_authority": "m26_3_synthetic_selector_non_authoritative",\n                        }\n                    )\n                    break\n            for evidence in bound:\n                gathered[str(evidence["evidence_id"])] = evidence\n            binding_end_ns = time.perf_counter_ns()\n            compiler_start_ns = time.perf_counter_ns()\n            if production_authority is not None:\n                compiled = {"status": "production_evidence_preserved", "safe_for_provider_mock": True}\n                selected = tuple(dict(item) for item in gathered.values())\n            else:\n                compiled, selected = _compile_synthetic(\n                    evidence=tuple(gathered.values()),\n                    request_id=f"{task.task_id}:{round_index}",\n                    policy=request.compiler_policy,\n                    release=_release_for_compiler(request),\n                )\n            compiler_end_ns = time.perf_counter_ns()\n            compiler_status = str(compiled.get("status", "unavailable"))\n            if not selected:\n                verifier_start_ns = time.perf_counter_ns()\n                verification = {\n                    "status": "owner_only_safe_abstention",\n                    "safe_abstention": True,\n                    "citation_locator_valid": False,\n                    "material_claim_support_verified": False,\n                    "unsupported_accepted_claims": 0,\n                    "citations": [],\n                }\n            else:\n                verifier_start_ns = time.perf_counter_ns()\n                try:\n                    if production_authority is None:\n                        # The isolated M26.3 synthetic route must execute the\n                        # canonical M26 semantic closure, including its real\n                        # provider verification. A claim graph over selected\n                        # passages alone cannot certify a model answer.\n                        answer, _closure = synthesize_and_verify(\n                            question=request.question,\n                            trace_id=f"{task.task_id}:{round_index}",\n                            intent_class=request.intent_class,\n                            evidence=selected,\n                            provider_client=provider,\n                            requirements=request.requirements,\n                            endpoint_proof=request.endpoint_proof\n                            or {"required": False, "matched": False},\n                        )\n                    else:\n                        # A pinned production bundle establishes evidence identity,\n                        # not semantic entailment. Verify the model-generated answer\n                        # against the admitted M26 evidence before publication, and\n                        # enforce production citation bindings below.\n                        answer, _closure = synthesize_and_verify(\n                            question=request.question,\n                            trace_id=f"{task.task_id}:{round_index}",\n                            intent_class=request.intent_class,\n                            evidence=selected,\n                            provider_client=provider,\n                            requirements=request.requirements,\n                            endpoint_proof=request.endpoint_proof\n                            or {"required": False, "matched": False},\n                        )\n                    verification = dict(answer)\n                except (ProviderQuotaExhausted, SemanticProviderUnavailable):\n                    # Provider allowance is a hard upper bound. A failed or\n                    # unknown-effect attempt must never authorize a retry.\n                    answer = {}\n                    verification = {\n                        "status": "owner_only_safe_abstention",\n                        "safe_abstention": True,\n                        "citation_locator_valid": False,\n                        "material_claim_support_verified": False,\n                        "unsupported_accepted_claims": 0,\n                        "citations": [],\n                        "reason_codes": ("PROVIDER_OR_DEADLINE_EXHAUSTED",),\n                    }\n                if (\n                    production_authority is not None\n                    and verification.get("status") == "owner_only_cited_answer"\n                    and not citation_bindings_preserved(\n                        citations=verification.get("citations"),\n                        selected_evidence=selected,\n                        authority=production_authority,\n                    )\n                ):\n                    answer = {}\n                    verification = {\n                        "status": "owner_only_safe_abstention",\n                        "safe_abstention": True,\n                        "citation_locator_valid": False,\n                        "material_claim_support_verified": False,\n                        "unsupported_accepted_claims": 0,\n                        "citations": [],\n                        "answer_claims": [],\n                        "reason_codes": ("CITATION_BINDING_DRIFT",),\n                        "gap_taxonomy": ["CITATION_BINDING_DRIFT"],\n                    }\n                if (\n                    production_authority is not None\n                    and verification.get("status") == "owner_only_cited_answer"\n                    and not _production_claims_lexically_grounded(verification, selected)\n                ):\n                    # A model\'s own ENTAILED label cannot certify that it did\n                    # not add unsupported propositions to a pinned source.\n                    answer = {}\n                    verification = {\n                        "status": "owner_only_safe_abstention",\n                        "safe_abstention": True,\n                        "citation_locator_valid": False,\n                        "material_claim_support_verified": False,\n                        "unsupported_accepted_claims": 0,\n                        "citations": [],\n                        "answer_claims": [],\n                        "reason_codes": ("PRODUCTION_CLAIM_UNGROUNDED",),\n                        "gap_taxonomy": ["PRODUCTION_CLAIM_UNGROUNDED"],\n                    }\n            verifier_end_ns = time.perf_counter_ns()\n            status = str(verification.get("status", "unknown"))\n            citations = verification.get("citations", [])\n            claim_native_verified = (\n                verification.get("answer_source") == "m27_agent_native_claim_graph"\n                and status == "owner_only_cited_answer"\n                and bool(verification.get("material_claim_support_verified"))\n                and bool(verification.get("citation_locator_valid"))\n                and verification.get("unsupported_accepted_claims") == 0\n                and bool(citations)\n                and bool(selected)\n            )\n            verified = (\n                status == "owner_only_cited_answer"\n                and bool(verification.get("material_claim_support_verified"))\n                and bool(verification.get("citation_locator_valid"))\n                and verification.get("unsupported_accepted_claims") == 0\n                and bool(citations)\n                and bool(selected)\n                and (claim_native_verified or _verification_citations_are_selected(verification, selected))\n            )\n            budget_ok = (\n                provider.calls < provider.max_calls\n                and time.monotonic() < provider.deadline_at\n                and len(records) < effective_tool_cap\n            )\n            has_gap = not verified\n            if adaptive_budget is not None and adaptive_controller is not None:\n                adaptive_continuation = adaptive_controller.decide_continuation(\n                    budget=adaptive_budget,\n                    telemetry={\n                        "evidence_delta": len(gathered) - previous_count,\n                        "round_total_ms": elapsed_ms(round_start_ns, time.perf_counter_ns()),\n                    },\n                    completed_rounds=round_index,\n                    tool_calls=len(records),\n                    provider_calls=provider.calls,\n                    verified=verified,\n                )\n                can_continue = has_gap and budget_ok and adaptive_continuation.allowed\n                adaptive_continuation_reason = adaptive_continuation.reason_code.value\n            else:\n                can_continue = has_gap and round_index < effective_round_cap and budget_ok\n                adaptive_continuation_reason = "LEGACY_BOUNDED_CONTINUATION"\n            terminal_reason = (\n                "VERIFIED_CITED_ANSWER"\n                if verified\n                else "VERIFIER_GAP_CONTINUE"\n                if can_continue\n                else "VERIFIER_GAP_SAFE_TERMINAL"\n            )\n            round_end_ns = time.perf_counter_ns()\n            provider_round = tuple(provider.telemetry[provider_start_index:])\n            provider_ms = round(sum(item.latency_ms for item in provider_round), 3)\n            verifier_total_ms = elapsed_ms(verifier_start_ns, verifier_end_ns)\n            verifier_exclusive_ms = round(max(0.0, verifier_total_ms - provider_ms), 3)\n            round_telemetry = M27RoundTelemetry(\n                round_index=round_index,\n                continuation_reason="INITIAL" if round_index == 0 else "VERIFIER_GAP",\n                route=route,\n                task_kind=task.kind.value,\n                compute_tier=compute_tier,\n                budget_class=budget_class,\n                stage_latency_ms={\n                    "tool_ms": elapsed_ms(tool_start_ns, tool_end_ns),\n                    "evidence_binding_ms": elapsed_ms(binding_start_ns, binding_end_ns),\n                    "compiler_ms": elapsed_ms(compiler_start_ns, compiler_end_ns),\n                    "provider_ms": provider_ms,\n                    "verifier_ms": verifier_exclusive_ms,\n                    "round_total_ms": elapsed_ms(round_start_ns, round_end_ns),\n                },\n                tool_calls=("knowledge.search",),\n                retrieval_evidence_count=len(gathered),\n                evidence_delta=len(gathered) - previous_count,\n                compiler_status=compiler_status,\n                provider_calls=provider_round,\n                verifier_status=status,\n                continuation_allowed=can_continue,\n                continuation_decision="CONTINUE" if can_continue else "TERMINAL",\n                terminal_reason=terminal_reason,\n            )\n            telemetry_rounds.append(round_telemetry)\n            rounds.append(\n                {\n                    "round_index": round_index,\n                    "continuation_reason": "INITIAL" if round_index == 0 else "VERIFIER_GAP",\n                    "capabilities_invoked": ["knowledge.search"],\n                    "evidence_count": len(gathered),\n                    "evidence_delta": len(gathered) - previous_count,\n                    "compiler_status": compiler_status,\n                    "verification_status": status,\n                    "budget_outcome": "CAN_CONTINUE" if can_continue else "TERMINAL",\n                    "provider_calls": provider.calls,\n                    "tool_calls": len(records),\n                    "terminal_reason": terminal_reason,\n                    "adaptive_continuation_reason": adaptive_continuation_reason,\n                    "evidence_authority": (\n                        "production_equivalent"\n                        if production_authority is not None\n                        else "synthetic_only"\n                    ),\n                    "compiler_authority": (\n                        "m26_3_synthetic_selector_non_authoritative"\n                        if production_authority is not None\n                        else "m26_3_synthetic_only"\n                    ),\n                }\n            )\n            if not can_continue:\n                break\n    authority_label = _evidence_authority(request)\n    verification = {\n        **verification,\n        "evidence_authority": authority_label,\n        "production_evidence_authority": production_authority is not None,\n    }\n    telemetry = M27RuntimeTelemetry(\n        request_id=task.request_token,\n        task_id=task.task_id,\n        route=route,\n        task_kind=task.kind.value,\n        compute_tier=compute_tier,\n        budget_class=budget_class,\n        rounds=tuple(telemetry_rounds),\n        terminal_reason=terminal_reason,\n        feature_flags={\n            "M27_ENABLED": True,\n            "ISOLATED_EXECUTABLE_RUNTIME": True,\n            "PRODUCTION_EQUIVALENT_EVIDENCE": production_authority is not None,\n        },\n        reason_codes=tuple(str(code) for code in getattr(plan, "reason_codes", ()))\n        + tuple(adaptive_budget.reason_codes if adaptive_budget is not None else ()),\n        total_latency_ms=elapsed_ms(execution_start_ns, time.perf_counter_ns()),\n    ).as_dict()\n    assert_privacy_safe_telemetry(telemetry)\n    result = {\n        "status_code": "M27_RUNTIME_COMPOSED"\n        if terminal_reason == "VERIFIED_CITED_ANSWER"\n        else "M27_RUNTIME_SAFE_TERMINAL",\n        "workspace_id": workspace_id.value,\n        "rounds": tuple(rounds),\n        "evidence_identities": tuple(\n            {\n                "evidence_id": item["evidence_id"],\n                "passage_id": item["evidence_id"],\n                "source_identity": item["source_identity"],\n                "locator_id": item["locator_id"],\n                "evidence_type": item.get("evidence_type", "passage"),\n                "release_id": item.get("release_id", ""),\n                "artifact_sha256": item.get("artifact_sha256", ""),\n                "provenance_record_sha256": item.get("provenance_record_sha256", ""),\n            }\n            for item in gathered.values()\n        ),\n        "tool_records": tuple(records),\n        "verification": verification,\n        "answer": answer if terminal_reason == "VERIFIED_CITED_ANSWER" else {},\n        "provider_calls": provider.calls,\n        "terminal_reason": terminal_reason,\n        "evidence_authority": authority_label,\n        "production_touched": False,\n        "telemetry": telemetry,\n    }\n    store.write_json_artifact(\n        workspace_id=workspace_id,\n        kind=WorkspaceArtifactKind.DIAGNOSTIC,\n        relative_path="runtime/execution_summary.json",\n        payload={\n            "status_code": result["status_code"],\n            "rounds": rounds,\n            "terminal_reason": terminal_reason,\n            "tool_calls": len(records),\n            "provider_calls": provider.calls,\n            "production_touched": False,\n            "evidence_authority": authority_label,\n            "telemetry_schema_version": telemetry["schema_version"],\n        },\n    )\n    store.write_json_artifact(\n        workspace_id=workspace_id,\n        kind=WorkspaceArtifactKind.DIAGNOSTIC,\n        relative_path="runtime/telemetry.json",\n        payload=telemetry,\n    )\n    return result\n'
+E         
+E         'synthesize_and_verify' is contained here:
+E           from __future__ import annotations
+E           
+E           import hashlib
+E           import json
+E           import re
+E           import time
+E           from collections.abc import Callable, Mapping, Sequence
+E           from dataclasses import dataclass
+E           from typing import Any
+E           
+E           from .m26_aq_semantic_contract import synthesize_and_verify
+E         ?                                       +++++++++++++++++++++
+E           from .m26_context_compiler import compile_context_package
+E           from .m26_retrieval_envelope import with_self_digest
+E           from .m27_adaptive_compute import AdaptiveComputeBudget, AdaptiveComputeController
+E           from .m27_agent_product_runtime import build_claim_native_answer
+E           from .m27_context_orchestrator import M27RuntimeTask
+E           from .m27_production_evidence_bridge import (
+E               ProductionEvidenceAuthority,
+E               ProductionEvidenceBridgeError,
+E               admit_production_evidence,
+E               citation_bindings_preserved,
+E               validate_production_authority,
+E           )
+E           from .m27_runtime_telemetry import (
+E               M27RoundTelemetry,
+E               M27RuntimeTelemetry,
+E               ProviderCallTelemetry,
+E               assert_privacy_safe_telemetry,
+E               elapsed_ms,
+E           )
+E           from .m27_tool_contracts import KnowledgeSearchInput
+E           from .m27_tool_executor import ReadOnlyToolExecutor, ToolExecutionPolicy
+E           from .m27_workspace_contracts import WorkspaceArtifactKind, WorkspaceId, WorkspaceScope
+E           from .m27_workspace_store import WorkspaceStore
+E           
+E           
+E           @dataclass(frozen=True, slots=True)
+E           class M27ExecutableRequest:
+E               """Explicit isolated route with synthetic or pinned production-equivalent evidence."""
+E           
+E               question: str
+E               evidence_catalog: Mapping[str, Mapping[str, Any]]
+E               compiler_policy: Mapping[str, Any]
+E               semantic_provider: object
+E               production_evidence_authority: ProductionEvidenceAuthority | None = None
+E               requirements: Sequence[object] = ()
+E               intent_class: str = "direct_grounded_knowledge"
+E               endpoint_proof: Mapping[str, Any] | None = None
+E               event_sink: Callable[[Mapping[str, Any]], None] | None = None
+E           
+E           
+E           class ProviderQuotaExhausted(RuntimeError):
+E               pass
+E           
+E           
+E           class SemanticProviderUnavailable(RuntimeError):
+E               pass
+E           
+E           
+E           class ProviderQuota:
+E               """Enforce caller's provider allowance across M26 internal verification calls."""
+E           
+E               def __init__(self, provider: object, *, max_calls: int, deadline_at: float) -> None:
+E                   self._provider = provider
+E                   self.max_calls = max_calls
+E                   self.deadline_at = deadline_at
+E                   self.calls = 0
+E                   self.telemetry: list[ProviderCallTelemetry] = []
+E           
+E               def call(self, payload: Mapping[str, Any], call_class: str) -> object:
+E                   if self.calls >= self.max_calls or time.monotonic() >= self.deadline_at:
+E                       raise ProviderQuotaExhausted("isolated M27 provider budget exhausted")
+E                   self.calls += 1
+E                   start_ns = time.perf_counter_ns()
+E                   try:
+E                       result = self._provider.call(payload, call_class)
+E                   except Exception as exc:
+E                       self.telemetry.append(
+E                           ProviderCallTelemetry(
+E                               call_index=self.calls,
+E                               call_class=call_class,
+E                               latency_ms=elapsed_ms(start_ns, time.perf_counter_ns()),
+E                               success=False,
+E                               reason_code="PROVIDER_EXCEPTION_UNKNOWN_EFFECT",
+E                           )
+E                       )
+E                       # An exception does not prove that the call had no effect.
+E                       # Consume the remaining grant and refuse any local retry.
+E                       self.max_calls = self.calls
+E                       raise SemanticProviderUnavailable(
+E                           "provider result unavailable; retries prohibited after uncertain effect"
+E                       ) from exc
+E                   self.telemetry.append(
+E                       ProviderCallTelemetry(
+E                           call_index=self.calls,
+E                           call_class=call_class,
+E                           latency_ms=elapsed_ms(start_ns, time.perf_counter_ns()),
+E                           success=True,
+E                           reason_code="PROVIDER_CALL_OK",
+E                       )
+E                   )
+E                   return result
+E           
+E           
+E           def _evidence_authority(request: M27ExecutableRequest) -> str:
+E               if request.production_evidence_authority is not None:
+E                   return "production_equivalent"
+E               return "synthetic_only"
+E           
+E           
+E           def _release_for_compiler(request: M27ExecutableRequest) -> Mapping[str, Any]:
+E               authority = request.production_evidence_authority
+E               if authority is not None:
+E                   return {
+E                       "schema_version": "knowledge-engine-m27-production-evidence-bridge/v1",
+E                       "release_id": authority.release_id,
+E                       "manifest_sha256": authority.manifest_sha256,
+E                   }
+E               return {"release_id": "isolated-synthetic"}
+E           
+E           
+E           def _verification_citations_are_selected(
+E               verification: Mapping[str, Any],
+E               selected: Sequence[Mapping[str, Any]],
+E           ) -> bool:
+E               selected_locators = {str(item.get("locator_id") or "") for item in selected}
+E               selected_evidence_ids = {str(item.get("evidence_id") or "") for item in selected}
+E               citations = verification.get("citations")
+E               if not isinstance(citations, Sequence) or isinstance(citations, (str, bytes)):
+E                   return False
+E               for citation in citations:
+E                   if not isinstance(citation, Mapping):
+E                       return False
+E                   locator_id = str(citation.get("locator_id") or "")
+E                   evidence_id = str(citation.get("evidence_id") or "")
+E                   if locator_id and locator_id not in selected_locators:
+E                       return False
+E                   if evidence_id and evidence_id not in selected_evidence_ids:
+E                       return False
+E               return True
+E           
+E           
+E           # Production evidence can have a valid immutable citation binding while a
+E           # provider incorrectly labels an unrelated proposition as "ENTAILED".
+E           # This is a deliberately conservative NECESSARY lexical grounding check,
+E           # not a substitute for the semantic verifier. Unsupported content fails
+E           # closed; unfamiliar paraphrases may abstain rather than be over-admitted.
+E           _PRODUCTION_GROUNDING_STOP = frozenset({
+E               "a", "an", "and", "are", "as", "at", "be", "been", "by", "do",
+E               "does", "for", "from", "has", "have", "in", "into", "is", "it",
+E               "of", "on", "or", "that", "the", "their", "this", "to", "was",
+E               "were", "which", "with",
+E           })
+E           _PRODUCTION_GROUNDING_EQUIVALENT = {
+E               "keeps": "store", "keep": "store", "kept": "store",
+E               "stores": "store", "stored": "store", "storage": "store",
+E               "analyzes": "analysis", "analyze": "analysis",
+E               "analyzing": "analysis", "analyses": "analysis",
+E               "analytics": "analysis", "analytical": "analysis",
+E               "supports": "support", "supported": "support",
+E           }
+E           
+E           
+E           def _production_grounding_terms(value: str) -> set[str]:
+E               return {
+E                   _PRODUCTION_GROUNDING_EQUIVALENT.get(term, term)
+E                   for term in re.findall(r"[a-z0-9]+|[\u3400-\u9fff]+", value.casefold())
+E                   if term not in _PRODUCTION_GROUNDING_STOP
+E               }
+E           
+E           
+E           def _production_claims_lexically_grounded(
+E               verification: Mapping[str, Any],
+E               selected: Sequence[Mapping[str, Any]],
+E           ) -> bool:
+E               """Conservative independent veto over the provider's entailment judgment.
+E           
+E               Every published claim must name an admitted citation and introduce no
+E               material term absent from that cited source, modulo closed equivalents.
+E               The ordinary verifier and pinned citation checks remain mandatory.
+E               """
+E               claims = verification.get("answer_claims")
+E               citations = verification.get("citations")
+E               if not isinstance(claims, list) or not claims:
+E                   return False
+E               if not isinstance(citations, list) or not citations:
+E                   return False
+E               admitted = {str(item.get("evidence_id", "")): item for item in selected}
+E               by_citation = {
+E                   str(citation.get("citation_id", "")): admitted.get(
+E                       str(citation.get("evidence_id", ""))
+E                   )
+E                   for citation in citations
+E                   if isinstance(citation, Mapping)
+E               }
+E               cited_evidence: list[Mapping[str, Any]] = []
+E               for claim in claims:
+E                   if not isinstance(claim, Mapping):
+E                       return False
+E                   content = str(claim.get("surface_text") or "").strip()
+E                   ids = claim.get("citation_ids")
+E                   if not content or not isinstance(ids, list) or not ids:
+E                       return False
+E                   sources = [by_citation.get(str(cid)) for cid in ids]
+E                   if any(source is None for source in sources):
+E                       return False
+E                   support = _production_grounding_terms(
+E                       " ".join(str(source.get("passage_text") or "") for source in sources)
+E                   )
+E                   terms = _production_grounding_terms(content)
+E                   if not terms or not terms.issubset(support):
+E                       return False
+E                   cited_evidence.extend(source for source in sources if source is not None)
+E               published = str(verification.get("answer_text") or "")
+E               published = re.sub(r"\[claim_\d+_ref_\d+\]", "", published)
+E               answer_terms = _production_grounding_terms(published)
+E               all_support = _production_grounding_terms(
+E                   " ".join(str(source.get("passage_text") or "") for source in cited_evidence)
+E               )
+E               return bool(answer_terms) and answer_terms.issubset(all_support)
+E           
+E           
+E           def _bound_evidence(
+E               *,
+E               output: object,
+E               catalog: Mapping[str, Mapping[str, Any]],
+E           ) -> tuple[dict[str, Any], ...]:
+E               evidence: list[dict[str, Any]] = []
+E               for item in getattr(output, "items", ()):
+E                   source = catalog.get(item.knowledge_id)
+E                   if source is None:
+E                       continue
+E                   if (
+E                       not item.source_identity
+E                       or not item.locator_id
+E                       or source.get("source_identity") != item.source_identity
+E                       or source.get("locator_id") != item.locator_id
+E                   ):
+E                       continue
+E                   raw = source.get("passage_text")
+E                   if not isinstance(raw, str) or not raw:
+E                       continue
+E                   if hashlib.sha256(raw.encode("utf-8")).hexdigest() != source.get("passage_text_sha256"):
+E                       continue
+E                   if not source.get("artifact_sha256") or not source.get("provenance_record_sha256"):
+E                       continue
+E                   evidence.append(dict(source))
+E               return tuple(evidence)
+E           
+E           
+E           def _compile_synthetic(
+E               *,
+E               evidence: Sequence[Mapping[str, Any]],
+E               request_id: str,
+E               policy: Mapping[str, Any],
+E               release: Mapping[str, Any],
+E           ) -> tuple[dict[str, Any], tuple[dict[str, Any], ...]]:
+E               # M26.3 is synthetic-only by contract. Never treat this as production context.
+E               unique: dict[str, dict[str, Any]] = {}
+E               for index, item in enumerate(evidence, start=1):
+E                   pid = str(item.get("evidence_id", ""))
+E                   if not pid or pid in unique:
+E                       continue
+E                   content = str(item["passage_text"])
+E                   unique[pid] = {
+E                       "passage_id": pid,
+E                       "rank": index,
+E                       "text": content,
+E                       "text_sha256": hashlib.sha256(content.encode("utf-8")).hexdigest(),
+E                       "source_identity": item["source_identity"],
+E                       "locator_id": item["locator_id"],
+E                       "source_id": item.get("source_id", item["source_identity"]),
+E                       "section_id": item.get("section_id", item["locator_id"]),
+E                       "locator": {"locator_id": item["locator_id"]},
+E                   }
+E               envelope = with_self_digest(
+E                   {
+E                       "schema_version": "knowledge-engine-m26-evidence-envelope/v1",
+E                       "request_id": request_id,
+E                       "sufficiency": "sufficient" if unique else "insufficient",
+E                       "release": dict(release),
+E                       "passages": list(unique.values()),
+E                       "excluded_evidence": [],
+E                   }
+E               )
+E               gap = with_self_digest(
+E                   {
+E                       "schema_version": "knowledge-engine-m26-retrieval-gap-report/v1",
+E                       "first_divergent_stage": "none",
+E                       "reason_codes": [],
+E                       "safe_for_context_compiler": bool(unique),
+E                   }
+E               )
+E               compiled = compile_context_package(envelope, gap, policy)
+E               manifest = compiled.get("context_manifest")
+E               if not isinstance(manifest, Mapping) or not compiled.get("safe_for_provider_mock"):
+E                   return compiled, ()
+E               chosen = set(manifest.get("selected_passage_ids", ()))
+E               return compiled, tuple(dict(item) for item in evidence if item.get("evidence_id") in chosen)
+E           
+E           
+E           
+E           
+E           def execute_isolated(
+E               *,
+E               request: M27ExecutableRequest,
+E               task: M27RuntimeTask,
+E               plan: object,
+E               budget_signal: Mapping[str, object],
+E               executor: ReadOnlyToolExecutor,
+E               store: WorkspaceStore,
+E               route: str = "UNAVAILABLE",
+E               compute_tier: str = "UNAVAILABLE",
+E               budget_class: str = "UNAVAILABLE",
+E               adaptive_budget: AdaptiveComputeBudget | None = None,
+E               adaptive_controller: AdaptiveComputeController | None = None,
+E           ) -> dict[str, object]:
+E               """Execute actual Stage5 gather, M26.3 compile and canonical M26 verification.
+E           
+E               No caller-supplied compiled/verification output enters this route.
+E               """
+E               execution_start_ns = time.perf_counter_ns()
+E               workspace_id = WorkspaceId.from_safe_token(scope=WorkspaceScope.TASK, task_token=task.task_id)
+E               store.create_workspace(workspace_id=workspace_id, scope=WorkspaceScope.TASK)
+E               rounds: list[dict[str, object]] = []
+E               telemetry_rounds: list[M27RoundTelemetry] = []
+E               records: list[object] = []
+E               gathered: dict[str, dict[str, Any]] = {}
+E               answer: dict[str, Any] = {}
+E               verification: dict[str, Any] = {}
+E               terminal_reason = "UNVERIFIED_SAFE_TERMINAL"
+E               deadline_ms = budget_signal.get("deadline_remaining_ms")
+E               minimum_ms = budget_signal.get("minimum_budget_ms")
+E               attempts = budget_signal.get("provider_attempts_remaining")
+E               allowed_budget = (
+E                   type(deadline_ms) is int
+E                   and type(minimum_ms) is int
+E                   and type(attempts) is int
+E                   and deadline_ms >= minimum_ms > 0
+E                   and attempts > 0
+E                   and budget_signal.get("affordable") is True
+E               )
+E               adaptive_provider_cap = (
+E                   adaptive_budget.max_provider_calls if adaptive_budget is not None else 4
+E               )
+E               provider = ProviderQuota(
+E                   request.semantic_provider,
+E                   max_calls=(
+E                       min(attempts, adaptive_provider_cap)
+E                       if type(attempts) is int and attempts > 0
+E                       else 0
+E                   ),
+E                   deadline_at=time.monotonic()
+E                   + (deadline_ms / 1000 if type(deadline_ms) is int and deadline_ms > 0 else 0),
+E               )
+E               capabilities = tuple(getattr(plan, "tool_capabilities", ()))
+E               effective_tool_cap = (
+E                   adaptive_budget.max_tool_calls if adaptive_budget is not None else task.max_tool_calls
+E               )
+E               effective_round_cap = (
+E                   adaptive_budget.max_continuation_rounds
+E                   if adaptive_budget is not None
+E                   else task.max_continuation_rounds
+E               )
+E               permitted = (
+E                   bool(capabilities)
+E                   and len(capabilities) <= effective_tool_cap
+E                   and all(capability == "knowledge.search" for capability in capabilities)
+E               )
+E               production_authority = request.production_evidence_authority
+E               authority_rejection: str | None = None
+E               if production_authority is not None:
+E                   try:
+E                       validate_production_authority(production_authority)
+E                   except ProductionEvidenceBridgeError as exc:
+E                       authority_rejection = exc.reason_code
+E               # Fail closed when evidence authorities, budget or capability do not exist.
+E               if not allowed_budget:
+E                   terminal_reason = "BUDGET_NOT_AUTHORITATIVE"
+E               elif authority_rejection is not None:
+E                   terminal_reason = "PRODUCTION_EVIDENCE_AUTHORITY_REJECTED"
+E               elif not permitted:
+E                   terminal_reason = "NO_AUTHORIZED_EVIDENCE_CAPABILITY"
+E               else:
+E                   policy = ToolExecutionPolicy(
+E                       authorized_capabilities=tuple(sorted(capabilities)),
+E                       authorization_token=task.task_id,
+E                   )
+E                   for round_index in range(effective_round_cap + 1):
+E                       if len(records) >= effective_tool_cap:
+E                           terminal_reason = "TOOL_CALL_BUDGET_EXHAUSTED"
+E                           break
+E                       if provider.calls >= provider.max_calls or time.monotonic() >= provider.deadline_at:
+E                           terminal_reason = "PROVIDER_OR_DEADLINE_EXHAUSTED"
+E                           break
+E                       round_start_ns = time.perf_counter_ns()
+E                       provider_start_index = len(provider.telemetry)
+E                       tool_start_ns = time.perf_counter_ns()
+E                       retrieval = executor.execute(
+E                           "knowledge.search",
+E                           KnowledgeSearchInput(request_token=task.request_token),
+E                           policy=policy,
+E                           authorization_token=task.task_id,
+E                       )
+E                       tool_end_ns = time.perf_counter_ns()
+E                       records.append(retrieval.record)
+E                       previous_count = len(gathered)
+E                       binding_start_ns = time.perf_counter_ns()
+E                       bound = _bound_evidence(output=retrieval.output, catalog=request.evidence_catalog)
+E                       if production_authority is not None:
+E                           try:
+E                               bound = admit_production_evidence(
+E                                   evidence=bound, authority=production_authority
+E                               )
+E                           except ProductionEvidenceBridgeError as exc:
+E                               binding_end_ns = time.perf_counter_ns()
+E                               terminal_reason = "PRODUCTION_EVIDENCE_AUTHORITY_REJECTED"
+E                               verification = {
+E                                   "status": "owner_only_safe_abstention",
+E                                   "safe_abstention": True,
+E                                   "citation_locator_valid": False,
+E                                   "material_claim_support_verified": False,
+E                                   "unsupported_accepted_claims": 0,
+E                                   "citations": [],
+E                                   "reason_codes": ("PRODUCTION_EVIDENCE_AUTHORITY_REJECTED", exc.reason_code),
+E                               }
+E                               round_end_ns = time.perf_counter_ns()
+E                               provider_round = tuple(provider.telemetry[provider_start_index:])
+E                               round_telemetry = M27RoundTelemetry(
+E                                   round_index=round_index,
+E                                   continuation_reason="INITIAL" if round_index == 0 else "VERIFIER_GAP",
+E                                   route=route,
+E                                   task_kind=task.kind.value,
+E                                   compute_tier=compute_tier,
+E                                   budget_class=budget_class,
+E                                   stage_latency_ms={
+E                                       "tool_ms": elapsed_ms(tool_start_ns, tool_end_ns),
+E                                       "evidence_binding_ms": elapsed_ms(binding_start_ns, binding_end_ns),
+E                                       "compiler_ms": 0.0,
+E                                       "provider_ms": 0.0,
+E                                       "verifier_ms": 0.0,
+E                                       "round_total_ms": elapsed_ms(round_start_ns, round_end_ns),
+E                                   },
+E                                   tool_calls=("knowledge.search",),
+E                                   retrieval_evidence_count=len(gathered),
+E                                   evidence_delta=0,
+E                                   compiler_status="authority_rejected",
+E                                   provider_calls=provider_round,
+E                                   verifier_status="owner_only_safe_abstention",
+E                                   continuation_allowed=False,
+E                                   continuation_decision="TERMINAL",
+E                                   terminal_reason=terminal_reason,
+E                               )
+E                               telemetry_rounds.append(round_telemetry)
+E                               rounds.append(
+E                                   {
+E                                       "round_index": round_index,
+E                                       "continuation_reason": "INITIAL"
+E                                       if round_index == 0
+E                                       else "VERIFIER_GAP",
+E                                       "capabilities_invoked": ["knowledge.search"],
+E                                       "evidence_count": len(gathered),
+E                                       "evidence_delta": 0,
+E                                       "compiler_status": "authority_rejected",
+E                                       "verification_status": "owner_only_safe_abstention",
+E                                       "budget_outcome": "TERMINAL",
+E                                       "provider_calls": provider.calls,
+E                                       "tool_calls": len(records),
+E                                       "terminal_reason": terminal_reason,
+E                                       "evidence_authority": "production_equivalent",
+E                                       "compiler_authority": "m26_3_synthetic_selector_non_authoritative",
+E                                   }
+E                               )
+E                               break
+E                       for evidence in bound:
+E                           gathered[str(evidence["evidence_id"])] = evidence
+E                       binding_end_ns = time.perf_counter_ns()
+E                       compiler_start_ns = time.perf_counter_ns()
+E                       if production_authority is not None:
+E                           compiled = {"status": "production_evidence_preserved", "safe_for_provider_mock": True}
+E                           selected = tuple(dict(item) for item in gathered.values())
+E                       else:
+E                           compiled, selected = _compile_synthetic(
+E                               evidence=tuple(gathered.values()),
+E                               request_id=f"{task.task_id}:{round_index}",
+E                               policy=request.compiler_policy,
+E                               release=_release_for_compiler(request),
+E                           )
+E                       compiler_end_ns = time.perf_counter_ns()
+E                       compiler_status = str(compiled.get("status", "unavailable"))
+E                       if not selected:
+E                           verifier_start_ns = time.perf_counter_ns()
+E                           verification = {
+E                               "status": "owner_only_safe_abstention",
+E                               "safe_abstention": True,
+E                               "citation_locator_valid": False,
+E                               "material_claim_support_verified": False,
+E                               "unsupported_accepted_claims": 0,
+E                               "citations": [],
+E                           }
+E                       else:
+E                           verifier_start_ns = time.perf_counter_ns()
+E                           try:
+E                               if production_authority is None:
+E                                   # The isolated M26.3 synthetic route must execute the
+E                                   # canonical M26 semantic closure, including its real
+E                                   # provider verification. A claim graph over selected
+E                                   # passages alone cannot certify a model answer.
+E                                   answer, _closure = synthesize_and_verify(
+E                                       question=request.question,
+E                                       trace_id=f"{task.task_id}:{round_index}",
+E                                       intent_class=request.intent_class,
+E                                       evidence=selected,
+E                                       provider_client=provider,
+E                                       requirements=request.requirements,
+E                                       endpoint_proof=request.endpoint_proof
+E                                       or {"required": False, "matched": False},
+E                                   )
+E                               else:
+E                                   # A pinned production bundle establishes evidence identity,
+E                                   # not semantic entailment. Verify the model-generated answer
+E                                   # against the admitted M26 evidence before publication, and
+E                                   # enforce production citation bindings below.
+E                                   answer, _closure = synthesize_and_verify(
+E                                       question=request.question,
+E                                       trace_id=f"{task.task_id}:{round_index}",
+E                                       intent_class=request.intent_class,
+E                                       evidence=selected,
+E                                       provider_client=provider,
+E                                       requirements=request.requirements,
+E                                       endpoint_proof=request.endpoint_proof
+E                                       or {"required": False, "matched": False},
+E                                   )
+E                               verification = dict(answer)
+E                           except (ProviderQuotaExhausted, SemanticProviderUnavailable):
+E                               # Provider allowance is a hard upper bound. A failed or
+E                               # unknown-effect attempt must never authorize a retry.
+E                               answer = {}
+E                               verification = {
+E                                   "status": "owner_only_safe_abstention",
+E                                   "safe_abstention": True,
+E                                   "citation_locator_valid": False,
+E                                   "material_claim_support_verified": False,
+E                                   "unsupported_accepted_claims": 0,
+E                                   "citations": [],
+E                                   "reason_codes": ("PROVIDER_OR_DEADLINE_EXHAUSTED",),
+E                               }
+E                           if (
+E                               production_authority is not None
+E                               and verification.get("status") == "owner_only_cited_answer"
+E                               and not citation_bindings_preserved(
+E                                   citations=verification.get("citations"),
+E                                   selected_evidence=selected,
+E                                   authority=production_authority,
+E                               )
+E                           ):
+E                               answer = {}
+E                               verification = {
+E                                   "status": "owner_only_safe_abstention",
+E                                   "safe_abstention": True,
+E                                   "citation_locator_valid": False,
+E                                   "material_claim_support_verified": False,
+E                                   "unsupported_accepted_claims": 0,
+E                                   "citations": [],
+E                                   "answer_claims": [],
+E                                   "reason_codes": ("CITATION_BINDING_DRIFT",),
+E                                   "gap_taxonomy": ["CITATION_BINDING_DRIFT"],
+E                               }
+E                           if (
+E                               production_authority is not None
+E                               and verification.get("status") == "owner_only_cited_answer"
+E                               and not _production_claims_lexically_grounded(verification, selected)
+E                           ):
+E                               # A model's own ENTAILED label cannot certify that it did
+E                               # not add unsupported propositions to a pinned source.
+E                               answer = {}
+E                               verification = {
+E                                   "status": "owner_only_safe_abstention",
+E                                   "safe_abstention": True,
+E                                   "citation_locator_valid": False,
+E                                   "material_claim_support_verified": False,
+E                                   "unsupported_accepted_claims": 0,
+E                                   "citations": [],
+E                                   "answer_claims": [],
+E                                   "reason_codes": ("PRODUCTION_CLAIM_UNGROUNDED",),
+E                                   "gap_taxonomy": ["PRODUCTION_CLAIM_UNGROUNDED"],
+E                               }
+E                       verifier_end_ns = time.perf_counter_ns()
+E                       status = str(verification.get("status", "unknown"))
+E                       citations = verification.get("citations", [])
+E                       claim_native_verified = (
+E                           verification.get("answer_source") == "m27_agent_native_claim_graph"
+E                           and status == "owner_only_cited_answer"
+E                           and bool(verification.get("material_claim_support_verified"))
+E                           and bool(verification.get("citation_locator_valid"))
+E                           and verification.get("unsupported_accepted_claims") == 0
+E                           and bool(citations)
+E                           and bool(selected)
+E                       )
+E                       verified = (
+E                           status == "owner_only_cited_answer"
+E                           and bool(verification.get("material_claim_support_verified"))
+E                           and bool(verification.get("citation_locator_valid"))
+E                           and verification.get("unsupported_accepted_claims") == 0
+E                           and bool(citations)
+E                           and bool(selected)
+E                           and (claim_native_verified or _verification_citations_are_selected(verification, selected))
+E                       )
+E                       budget_ok = (
+E                           provider.calls < provider.max_calls
+E                           and time.monotonic() < provider.deadline_at
+E                           and len(records) < effective_tool_cap
+E                       )
+E                       has_gap = not verified
+E                       if adaptive_budget is not None and adaptive_controller is not None:
+E                           adaptive_continuation = adaptive_controller.decide_continuation(
+E                               budget=adaptive_budget,
+E                               telemetry={
+E                                   "evidence_delta": len(gathered) - previous_count,
+E                                   "round_total_ms": elapsed_ms(round_start_ns, time.perf_counter_ns()),
+E                               },
+E                               completed_rounds=round_index,
+E                               tool_calls=len(records),
+E                               provider_calls=provider.calls,
+E                               verified=verified,
+E                           )
+E                           can_continue = has_gap and budget_ok and adaptive_continuation.allowed
+E                           adaptive_continuation_reason = adaptive_continuation.reason_code.value
+E                       else:
+E                           can_continue = has_gap and round_index < effective_round_cap and budget_ok
+E                           adaptive_continuation_reason = "LEGACY_BOUNDED_CONTINUATION"
+E                       terminal_reason = (
+E                           "VERIFIED_CITED_ANSWER"
+E                           if verified
+E                           else "VERIFIER_GAP_CONTINUE"
+E                           if can_continue
+E                           else "VERIFIER_GAP_SAFE_TERMINAL"
+E                       )
+E                       round_end_ns = time.perf_counter_ns()
+E                       provider_round = tuple(provider.telemetry[provider_start_index:])
+E                       provider_ms = round(sum(item.latency_ms for item in provider_round), 3)
+E                       verifier_total_ms = elapsed_ms(verifier_start_ns, verifier_end_ns)
+E                       verifier_exclusive_ms = round(max(0.0, verifier_total_ms - provider_ms), 3)
+E                       round_telemetry = M27RoundTelemetry(
+E                           round_index=round_index,
+E                           continuation_reason="INITIAL" if round_index == 0 else "VERIFIER_GAP",
+E                           route=route,
+E                           task_kind=task.kind.value,
+E                           compute_tier=compute_tier,
+E                           budget_class=budget_class,
+E                           stage_latency_ms={
+E                               "tool_ms": elapsed_ms(tool_start_ns, tool_end_ns),
+E                               "evidence_binding_ms": elapsed_ms(binding_start_ns, binding_end_ns),
+E                               "compiler_ms": elapsed_ms(compiler_start_ns, compiler_end_ns),
+E                               "provider_ms": provider_ms,
+E                               "verifier_ms": verifier_exclusive_ms,
+E                               "round_total_ms": elapsed_ms(round_start_ns, round_end_ns),
+E                           },
+E                           tool_calls=("knowledge.search",),
+E                           retrieval_evidence_count=len(gathered),
+E                           evidence_delta=len(gathered) - previous_count,
+E                           compiler_status=compiler_status,
+E                           provider_calls=provider_round,
+E                           verifier_status=status,
+E                           continuation_allowed=can_continue,
+E                           continuation_decision="CONTINUE" if can_continue else "TERMINAL",
+E                           terminal_reason=terminal_reason,
+E                       )
+E                       telemetry_rounds.append(round_telemetry)
+E                       rounds.append(
+E                           {
+E                               "round_index": round_index,
+E                               "continuation_reason": "INITIAL" if round_index == 0 else "VERIFIER_GAP",
+E                               "capabilities_invoked": ["knowledge.search"],
+E                               "evidence_count": len(gathered),
+E                               "evidence_delta": len(gathered) - previous_count,
+E                               "compiler_status": compiler_status,
+E                               "verification_status": status,
+E                               "budget_outcome": "CAN_CONTINUE" if can_continue else "TERMINAL",
+E                               "provider_calls": provider.calls,
+E                               "tool_calls": len(records),
+E                               "terminal_reason": terminal_reason,
+E                               "adaptive_continuation_reason": adaptive_continuation_reason,
+E                               "evidence_authority": (
+E                                   "production_equivalent"
+E                                   if production_authority is not None
+E                                   else "synthetic_only"
+E                               ),
+E                               "compiler_authority": (
+E                                   "m26_3_synthetic_selector_non_authoritative"
+E                                   if production_authority is not None
+E                                   else "m26_3_synthetic_only"
+E                               ),
+E                           }
+E                       )
+E                       if not can_continue:
+E                           break
+E               authority_label = _evidence_authority(request)
+E               verification = {
+E                   **verification,
+E                   "evidence_authority": authority_label,
+E                   "production_evidence_authority": production_authority is not None,
+E               }
+E               telemetry = M27RuntimeTelemetry(
+E                   request_id=task.request_token,
+E                   task_id=task.task_id,
+E                   route=route,
+E                   task_kind=task.kind.value,
+E                   compute_tier=compute_tier,
+E                   budget_class=budget_class,
+E                   rounds=tuple(telemetry_rounds),
+E                   terminal_reason=terminal_reason,
+E                   feature_flags={
+E                       "M27_ENABLED": True,
+E                       "ISOLATED_EXECUTABLE_RUNTIME": True,
+E                       "PRODUCTION_EQUIVALENT_EVIDENCE": production_authority is not None,
+E                   },
+E                   reason_codes=tuple(str(code) for code in getattr(plan, "reason_codes", ()))
+E                   + tuple(adaptive_budget.reason_codes if adaptive_budget is not None else ()),
+E                   total_latency_ms=elapsed_ms(execution_start_ns, time.perf_counter_ns()),
+E               ).as_dict()
+E               assert_privacy_safe_telemetry(telemetry)
+E               result = {
+E                   "status_code": "M27_RUNTIME_COMPOSED"
+E                   if terminal_reason == "VERIFIED_CITED_ANSWER"
+E                   else "M27_RUNTIME_SAFE_TERMINAL",
+E                   "workspace_id": workspace_id.value,
+E                   "rounds": tuple(rounds),
+E                   "evidence_identities": tuple(
+E                       {
+E                           "evidence_id": item["evidence_id"],
+E                           "passage_id": item["evidence_id"],
+E                           "source_identity": item["source_identity"],
+E                           "locator_id": item["locator_id"],
+E                           "evidence_type": item.get("evidence_type", "passage"),
+E                           "release_id": item.get("release_id", ""),
+E                           "artifact_sha256": item.get("artifact_sha256", ""),
+E                           "provenance_record_sha256": item.get("provenance_record_sha256", ""),
+E                       }
+E                       for item in gathered.values()
+E                   ),
+E                   "tool_records": tuple(records),
+E                   "verification": verification,
+E                   "answer": answer if terminal_reason == "VERIFIED_CITED_ANSWER" else {},
+E                   "provider_calls": provider.calls,
+E                   "terminal_reason": terminal_reason,
+E                   "evidence_authority": authority_label,
+E                   "production_touched": False,
+E                   "telemetry": telemetry,
+E               }
+E               store.write_json_artifact(
+E                   workspace_id=workspace_id,
+E                   kind=WorkspaceArtifactKind.DIAGNOSTIC,
+E                   relative_path="runtime/execution_summary.json",
+E                   payload={
+E                       "status_code": result["status_code"],
+E                       "rounds": rounds,
+E                       "terminal_reason": terminal_reason,
+E                       "tool_calls": len(records),
+E                       "provider_calls": provider.calls,
+E                       "production_touched": False,
+E                       "evidence_authority": authority_label,
+E                       "telemetry_schema_version": telemetry["schema_version"],
+E                   },
+E               )
+E               store.write_json_artifact(
+E                   workspace_id=workspace_id,
+E                   kind=WorkspaceArtifactKind.DIAGNOSTIC,
+E                   relative_path="runtime/telemetry.json",
+E                   payload=telemetry,
+E               )
+E               return result
+
+tests/test_m27_2027_agent_product_runtime.py:128: AssertionError
+- generated xml file: /Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01/evidence/d01/original_53/c02_original_2.junit.xml -
+=========================== short test summary info ============================
+FAILED tests/test_m27_2027_agent_product_runtime.py::test_claim_native_product_answer_is_publishable_and_streamable - AssertionError: assert False is True
+ +  where False = M27ProductAnswerResult(publishable=False, answer={}, claim_graph=(), plan=M27ProductAnswerPlan(question_language='en', canonical_question='How does Kubernetes help AI infrastructure? Kubernetes AI infrastructure orchestration GPU workloads services scaling', broad_homepage_question=True, required_source_breadth=2, selected_evidence_ids=('ev-1', 'ev-2'), distinct_sources=('k8s-a', 'k8s-b'), source_breadth_status='sufficient', answer_depth_target='multi-source_product_explanation', reason_codes=('M27_NATIVE_PRODUCT_PLANNER', 'ARTICLE_INDEX_SMELL_AVOIDED', 'SOURCE_BREADTH_GATE')), gap_taxonomy=('UNSUPPORTED_CLAIM_SPAN', 'PRODUCT_THIN_SURFACE'), repair_attempts=(), micro_timeline=M27ProductTimeline(request_start_ms=0.0, retrieval_start_ms=None, retrieval_end_ms=None, evidence_admission_start_ms=0.029, evidence_admission_end_ms=0.159, answer_planning_start_ms=0.183, answer_planning_end_ms=0.188, claim_graph_start_ms=0.188, claim_graph_end_ms=2.644, first_claim_verification_start_ms=2.648, first_claim_verification_end_ms=2.648, first_verified_claim_ready_ms=None, first_citation_bound_ms=None, first_cited_segment_ready_ms=None, first_material_emitted_ms=None, provider_call_count=0, provider_total_duration_ms=0.0, verifier_exclusive_duration_ms=0.0, final_emitted_ms=2.648), state_events=({'type': 'evidence_ready', 'event_ms': 0.165, 'selected_evidence_count': 2, 'distinct_source_count': 2}, {'type': 'answer_plan_ready', 'event_ms': 0.187, 'answer_plan': {'question_language': 'en', 'canonical_question': 'How does Kubernetes help AI infrastructure? Kubernetes AI infrastructure orchestration GPU workloads services scaling', 'broad_homepage_question': True, 'required_source_breadth': 2, 'selected_evidence_ids': ['ev-1', 'ev-2'], 'distinct_sources': ['k8s-a', 'k8s-b'], 'source_breadth_status': 'sufficient', 'answer_depth_target': 'multi-source_product_explanation', 'reason_codes': ['M27_NATIVE_PRODUCT_PLANNER', 'ARTICLE_INDEX_SMELL_AVOIDED', 'SOURCE_BREADTH_GATE']}}, {'type': 'claim_graph_ready', 'event_ms': 2.647, 'claim_count': 0}, {'type': 'verifier_gap_detected', 'event_ms': 2.65, 'gap_taxonomy': ['UNSUPPORTED_CLAIM_SPAN', 'PRODUCT_THIN_SURFACE']}, {'type': 'safe_terminal_done', 'event_ms': 2.652, 'terminal_reason': 'UNSUPPORTED_CLAIM_SPAN', 'gap_taxonomy': ['UNSUPPORTED_CLAIM_SPAN', 'PRODUCT_THIN_SURFACE']}), terminal_reason='UNSUPPORTED_CLAIM_SPAN', safe_terminal_justification={'structured': True, 'thin_cited_answer': True, 'gap_taxonomy': ['UNSUPPORTED_CLAIM_SPAN', 'PRODUCT_THIN_SURFACE'], 'source_breadth_status': 'sufficient', 'semantic_verification_receipts': [], 'rejected_semantic_verification_receipts': [{'claim_id': 'claim_1', 'evidence_ids': ['ev-1'], 'supporting_evidence_ids': [], 'support_class': 'insufficient_evidence', 'provider_status': 'none', 'confidence': 0.0, 'verified': False, 'publication_accepted': False, 'provider_attempt_count': 0, 'schema_retry_used': False, 'fail_closed_reason': 'M27_SEMANTIC_ENTAILMENT_PROVIDER_MISSING'}, {'claim_id': 'claim_2', 'evidence_ids': ['ev-2'], 'supporting_evidence_ids': [], 'support_class': 'insufficient_evidence', 'provider_status': 'none', 'confidence': 0.0, 'verified': False, 'publication_accepted': False, 'provider_attempt_count': 0, 'schema_retry_used': False, 'fail_closed_reason': 'M27_SEMANTIC_ENTAILMENT_PROVIDER_MISSING'}]}).publishable
+FAILED tests/test_m27_2027_agent_product_runtime.py::test_m27_runtime_does_not_import_m26_mature_answer_composer - assert 'synthesize_and_verify' not in 'from __future__ import annotations\n\nimport hashlib\nimport json\nimport re\nimport time\nfrom collections.abc import Callable, Mapping, Sequence\nfrom dataclasses import dataclass\nfrom typing import Any\n\nfrom .m26_aq_semantic_contract import synthesize_and_verify\nfrom .m26_context_compiler import compile_context_package\nfrom .m26_retrieval_envelope import with_self_digest\nfrom .m27_adaptive_compute import AdaptiveComputeBudget, AdaptiveComputeController\nfrom .m27_agent_product_runtime import build_claim_native_answer\nfrom .m27_context_orchestrator import M27RuntimeTask\nfrom .m27_production_evidence_bridge import (\n    ProductionEvidenceAuthority,\n    ProductionEvidenceBridgeError,\n    admit_production_evidence,\n    citation_bindings_preserved,\n    validate_production_authority,\n)\nfrom .m27_runtime_telemetry import (\n    M27RoundTelemetry,\n    M27RuntimeTelemetry,\n    ProviderCallTelemetry,\n    assert_privacy_safe_telemetry,\n    elapsed_ms,\n)\nfrom .m27_tool_contracts import KnowledgeSearchInput\nfrom .m27_tool_executor import ReadOnlyToolExecutor, ToolExecutionPolicy\nfrom .m27_workspace_contracts import WorkspaceArtifactKind, WorkspaceId, WorkspaceScope\nfrom .m27_workspace_store import WorkspaceStore\n\n\n@dataclass(frozen=True, slots=True)\nclass M27ExecutableRequest:\n    """Explicit isolated route with synthetic or pinned production-equivalent evidence."""\n\n    question: str\n    evidence_catalog: Mapping[str, Mapping[str, Any]]\n    compiler_policy: Mapping[str, Any]\n    semantic_provider: object\n    production_evidence_authority: ProductionEvidenceAuthority | None = None\n    requirements: Sequence[object] = ()\n    intent_class: str = "direct_grounded_knowledge"\n    endpoint_proof: Mapping[str, Any] | None = None\n    event_sink: Callable[[Mapping[str, Any]], None] | None = None\n\n\nclass ProviderQuotaExhausted(RuntimeError):\n    pass\n\n\nclass SemanticProviderUnavailable(RuntimeError):\n    pass\n\n\nclass ProviderQuota:\n    """Enforce caller\'s provider allowance across M26 internal verification calls."""\n\n    def __init__(self, provider: object, *, max_calls: int, deadline_at: float) -> None:\n        self._provider = provider\n        self.max_calls = max_calls\n        self.deadline_at = deadline_at\n        self.calls = 0\n        self.telemetry: list[ProviderCallTelemetry] = []\n\n    def call(self, payload: Mapping[str, Any], call_class: str) -> object:\n        if self.calls >= self.max_calls or time.monotonic() >= self.deadline_at:\n            raise ProviderQuotaExhausted("isolated M27 provider budget exhausted")\n        self.calls += 1\n        start_ns = time.perf_counter_ns()\n        try:\n            result = self._provider.call(payload, call_class)\n        except Exception as exc:\n            self.telemetry.append(\n                ProviderCallTelemetry(\n                    call_index=self.calls,\n                    call_class=call_class,\n                    latency_ms=elapsed_ms(start_ns, time.perf_counter_ns()),\n                    success=False,\n                    reason_code="PROVIDER_EXCEPTION_UNKNOWN_EFFECT",\n                )\n            )\n            # An exception does not prove that the call had no effect.\n            # Consume the remaining grant and refuse any local retry.\n            self.max_calls = self.calls\n            raise SemanticProviderUnavailable(\n                "provider result unavailable; retries prohibited after uncertain effect"\n            ) from exc\n        self.telemetry.append(\n            ProviderCallTelemetry(\n                call_index=self.calls,\n                call_class=call_class,\n                latency_ms=elapsed_ms(start_ns, time.perf_counter_ns()),\n                success=True,\n                reason_code="PROVIDER_CALL_OK",\n            )\n        )\n        return result\n\n\ndef _evidence_authority(request: M27ExecutableRequest) -> str:\n    if request.production_evidence_authority is not None:\n        return "production_equivalent"\n    return "synthetic_only"\n\n\ndef _release_for_compiler(request: M27ExecutableRequest) -> Mapping[str, Any]:\n    authority = request.production_evidence_authority\n    if authority is not None:\n        return {\n            "schema_version": "knowledge-engine-m27-production-evidence-bridge/v1",\n            "release_id": authority.release_id,\n            "manifest_sha256": authority.manifest_sha256,\n        }\n    return {"release_id": "isolated-synthetic"}\n\n\ndef _verification_citations_are_selected(\n    verification: Mapping[str, Any],\n    selected: Sequence[Mapping[str, Any]],\n) -> bool:\n    selected_locators = {str(item.get("locator_id") or "") for item in selected}\n    selected_evidence_ids = {str(item.get("evidence_id") or "") for item in selected}\n    citations = verification.get("citations")\n    if not isinstance(citations, Sequence) or isinstance(citations, (str, bytes)):\n        return False\n    for citation in citations:\n        if not isinstance(citation, Mapping):\n            return False\n        locator_id = str(citation.get("locator_id") or "")\n        evidence_id = str(citation.get("evidence_id") or "")\n        if locator_id and locator_id not in selected_locators:\n            return False\n        if evidence_id and evidence_id not in selected_evidence_ids:\n            return False\n    return True\n\n\n# Production evidence can have a valid immutable citation binding while a\n# provider incorrectly labels an unrelated proposition as "ENTAILED".\n# This is a deliberately conservative NECESSARY lexical grounding check,\n# not a substitute for the semantic verifier. Unsupported content fails\n# closed; unfamiliar paraphrases may abstain rather than be over-admitted.\n_PRODUCTION_GROUNDING_STOP = frozenset({\n    "a", "an", "and", "are", "as", "at", "be", "been", "by", "do",\n    "does", "for", "from", "has", "have", "in", "into", "is", "it",\n    "of", "on", "or", "that", "the", "their", "this", "to", "was",\n    "were", "which", "with",\n})\n_PRODUCTION_GROUNDING_EQUIVALENT = {\n    "keeps": "store", "keep": "store", "kept": "store",\n    "stores": "store", "stored": "store", "storage": "store",\n    "analyzes": "analysis", "analyze": "analysis",\n    "analyzing": "analysis", "analyses": "analysis",\n    "analytics": "analysis", "analytical": "analysis",\n    "supports": "support", "supported": "support",\n}\n\n\ndef _production_grounding_terms(value: str) -> set[str]:\n    return {\n        _PRODUCTION_GROUNDING_EQUIVALENT.get(term, term)\n        for term in re.findall(r"[a-z0-9]+|[\\u3400-\\u9fff]+", value.casefold())\n        if term not in _PRODUCTION_GROUNDING_STOP\n    }\n\n\ndef _production_claims_lexically_grounded(\n    verification: Mapping[str, Any],\n    selected: Sequence[Mapping[str, Any]],\n) -> bool:\n    """Conservative independent veto over the provider\'s entailment judgment.\n\n    Every published claim must name an admitted citation and introduce no\n    material term absent from that cited source, modulo closed equivalents.\n    The ordinary verifier and pinned citation checks remain mandatory.\n    """\n    claims = verification.get("answer_claims")\n    citations = verification.get("citations")\n    if not isinstance(claims, list) or not claims:\n        return False\n    if not isinstance(citations, list) or not citations:\n        return False\n    admitted = {str(item.get("evidence_id", "")): item for item in selected}\n    by_citation = {\n        str(citation.get("citation_id", "")): admitted.get(\n            str(citation.get("evidence_id", ""))\n        )\n        for citation in citations\n        if isinstance(citation, Mapping)\n    }\n    cited_evidence: list[Mapping[str, Any]] = []\n    for claim in claims:\n        if not isinstance(claim, Mapping):\n            return False\n        content = str(claim.get("surface_text") or "").strip()\n        ids = claim.get("citation_ids")\n        if not content or not isinstance(ids, list) or not ids:\n            return False\n        sources = [by_citation.get(str(cid)) for cid in ids]\n        if any(source is None for source in sources):\n            return False\n        support = _production_grounding_terms(\n            " ".join(str(source.get("passage_text") or "") for source in sources)\n        )\n        terms = _production_grounding_terms(content)\n        if not terms or not terms.issubset(support):\n            return False\n        cited_evidence.extend(source for source in sources if source is not None)\n    published = str(verification.get("answer_text") or "")\n    published = re.sub(r"\\[claim_\\d+_ref_\\d+\\]", "", published)\n    answer_terms = _production_grounding_terms(published)\n    all_support = _production_grounding_terms(\n        " ".join(str(source.get("passage_text") or "") for source in cited_evidence)\n    )\n    return bool(answer_terms) and answer_terms.issubset(all_support)\n\n\ndef _bound_evidence(\n    *,\n    output: object,\n    catalog: Mapping[str, Mapping[str, Any]],\n) -> tuple[dict[str, Any], ...]:\n    evidence: list[dict[str, Any]] = []\n    for item in getattr(output, "items", ()):\n        source = catalog.get(item.knowledge_id)\n        if source is None:\n            continue\n        if (\n            not item.source_identity\n            or not item.locator_id\n            or source.get("source_identity") != item.source_identity\n            or source.get("locator_id") != item.locator_id\n        ):\n            continue\n        raw = source.get("passage_text")\n        if not isinstance(raw, str) or not raw:\n            continue\n        if hashlib.sha256(raw.encode("utf-8")).hexdigest() != source.get("passage_text_sha256"):\n            continue\n        if not source.get("artifact_sha256") or not source.get("provenance_record_sha256"):\n            continue\n        evidence.append(dict(source))\n    return tuple(evidence)\n\n\ndef _compile_synthetic(\n    *,\n    evidence: Sequence[Mapping[str, Any]],\n    request_id: str,\n    policy: Mapping[str, Any],\n    release: Mapping[str, Any],\n) -> tuple[dict[str, Any], tuple[dict[str, Any], ...]]:\n    # M26.3 is synthetic-only by contract. Never treat this as production context.\n    unique: dict[str, dict[str, Any]] = {}\n    for index, item in enumerate(evidence, start=1):\n        pid = str(item.get("evidence_id", ""))\n        if not pid or pid in unique:\n            continue\n        content = str(item["passage_text"])\n        unique[pid] = {\n            "passage_id": pid,\n            "rank": index,\n            "text": content,\n            "text_sha256": hashlib.sha256(content.encode("utf-8")).hexdigest(),\n            "source_identity": item["source_identity"],\n            "locator_id": item["locator_id"],\n            "source_id": item.get("source_id", item["source_identity"]),\n            "section_id": item.get("section_id", item["locator_id"]),\n            "locator": {"locator_id": item["locator_id"]},\n        }\n    envelope = with_self_digest(\n        {\n            "schema_version": "knowledge-engine-m26-evidence-envelope/v1",\n            "request_id": request_id,\n            "sufficiency": "sufficient" if unique else "insufficient",\n            "release": dict(release),\n            "passages": list(unique.values()),\n            "excluded_evidence": [],\n        }\n    )\n    gap = with_self_digest(\n        {\n            "schema_version": "knowledge-engine-m26-retrieval-gap-report/v1",\n            "first_divergent_stage": "none",\n            "reason_codes": [],\n            "safe_for_context_compiler": bool(unique),\n        }\n    )\n    compiled = compile_context_package(envelope, gap, policy)\n    manifest = compiled.get("context_manifest")\n    if not isinstance(manifest, Mapping) or not compiled.get("safe_for_provider_mock"):\n        return compiled, ()\n    chosen = set(manifest.get("selected_passage_ids", ()))\n    return compiled, tuple(dict(item) for item in evidence if item.get("evidence_id") in chosen)\n\n\n\n\ndef execute_isolated(\n    *,\n    request: M27ExecutableRequest,\n    task: M27RuntimeTask,\n    plan: object,\n    budget_signal: Mapping[str, object],\n    executor: ReadOnlyToolExecutor,\n    store: WorkspaceStore,\n    route: str = "UNAVAILABLE",\n    compute_tier: str = "UNAVAILABLE",\n    budget_class: str = "UNAVAILABLE",\n    adaptive_budget: AdaptiveComputeBudget | None = None,\n    adaptive_controller: AdaptiveComputeController | None = None,\n) -> dict[str, object]:\n    """Execute actual Stage5 gather, M26.3 compile and canonical M26 verification.\n\n    No caller-supplied compiled/verification output enters this route.\n    """\n    execution_start_ns = time.perf_counter_ns()\n    workspace_id = WorkspaceId.from_safe_token(scope=WorkspaceScope.TASK, task_token=task.task_id)\n    store.create_workspace(workspace_id=workspace_id, scope=WorkspaceScope.TASK)\n    rounds: list[dict[str, object]] = []\n    telemetry_rounds: list[M27RoundTelemetry] = []\n    records: list[object] = []\n    gathered: dict[str, dict[str, Any]] = {}\n    answer: dict[str, Any] = {}\n    verification: dict[str, Any] = {}\n    terminal_reason = "UNVERIFIED_SAFE_TERMINAL"\n    deadline_ms = budget_signal.get("deadline_remaining_ms")\n    minimum_ms = budget_signal.get("minimum_budget_ms")\n    attempts = budget_signal.get("provider_attempts_remaining")\n    allowed_budget = (\n        type(deadline_ms) is int\n        and type(minimum_ms) is int\n        and type(attempts) is int\n        and deadline_ms >= minimum_ms > 0\n        and attempts > 0\n        and budget_signal.get("affordable") is True\n    )\n    adaptive_provider_cap = (\n        adaptive_budget.max_provider_calls if adaptive_budget is not None else 4\n    )\n    provider = ProviderQuota(\n        request.semantic_provider,\n        max_calls=(\n            min(attempts, adaptive_provider_cap)\n            if type(attempts) is int and attempts > 0\n            else 0\n        ),\n        deadline_at=time.monotonic()\n        + (deadline_ms / 1000 if type(deadline_ms) is int and deadline_ms > 0 else 0),\n    )\n    capabilities = tuple(getattr(plan, "tool_capabilities", ()))\n    effective_tool_cap = (\n        adaptive_budget.max_tool_calls if adaptive_budget is not None else task.max_tool_calls\n    )\n    effective_round_cap = (\n        adaptive_budget.max_continuation_rounds\n        if adaptive_budget is not None\n        else task.max_continuation_rounds\n    )\n    permitted = (\n        bool(capabilities)\n        and len(capabilities) <= effective_tool_cap\n        and all(capability == "knowledge.search" for capability in capabilities)\n    )\n    production_authority = request.production_evidence_authority\n    authority_rejection: str | None = None\n    if production_authority is not None:\n        try:\n            validate_production_authority(production_authority)\n        except ProductionEvidenceBridgeError as exc:\n            authority_rejection = exc.reason_code\n    # Fail closed when evidence authorities, budget or capability do not exist.\n    if not allowed_budget:\n        terminal_reason = "BUDGET_NOT_AUTHORITATIVE"\n    elif authority_rejection is not None:\n        terminal_reason = "PRODUCTION_EVIDENCE_AUTHORITY_REJECTED"\n    elif not permitted:\n        terminal_reason = "NO_AUTHORIZED_EVIDENCE_CAPABILITY"\n    else:\n        policy = ToolExecutionPolicy(\n            authorized_capabilities=tuple(sorted(capabilities)),\n            authorization_token=task.task_id,\n        )\n        for round_index in range(effective_round_cap + 1):\n            if len(records) >= effective_tool_cap:\n                terminal_reason = "TOOL_CALL_BUDGET_EXHAUSTED"\n                break\n            if provider.calls >= provider.max_calls or time.monotonic() >= provider.deadline_at:\n                terminal_reason = "PROVIDER_OR_DEADLINE_EXHAUSTED"\n                break\n            round_start_ns = time.perf_counter_ns()\n            provider_start_index = len(provider.telemetry)\n            tool_start_ns = time.perf_counter_ns()\n            retrieval = executor.execute(\n                "knowledge.search",\n                KnowledgeSearchInput(request_token=task.request_token),\n                policy=policy,\n                authorization_token=task.task_id,\n            )\n            tool_end_ns = time.perf_counter_ns()\n            records.append(retrieval.record)\n            previous_count = len(gathered)\n            binding_start_ns = time.perf_counter_ns()\n            bound = _bound_evidence(output=retrieval.output, catalog=request.evidence_catalog)\n            if production_authority is not None:\n                try:\n                    bound = admit_production_evidence(\n                        evidence=bound, authority=production_authority\n                    )\n                except ProductionEvidenceBridgeError as exc:\n                    binding_end_ns = time.perf_counter_ns()\n                    terminal_reason = "PRODUCTION_EVIDENCE_AUTHORITY_REJECTED"\n                    verification = {\n                        "status": "owner_only_safe_abstention",\n                        "safe_abstention": True,\n                        "citation_locator_valid": False,\n                        "material_claim_support_verified": False,\n                        "unsupported_accepted_claims": 0,\n                        "citations": [],\n                        "reason_codes": ("PRODUCTION_EVIDENCE_AUTHORITY_REJECTED", exc.reason_code),\n                    }\n                    round_end_ns = time.perf_counter_ns()\n                    provider_round = tuple(provider.telemetry[provider_start_index:])\n                    round_telemetry = M27RoundTelemetry(\n                        round_index=round_index,\n                        continuation_reason="INITIAL" if round_index == 0 else "VERIFIER_GAP",\n                        route=route,\n                        task_kind=task.kind.value,\n                        compute_tier=compute_tier,\n                        budget_class=budget_class,\n                        stage_latency_ms={\n                            "tool_ms": elapsed_ms(tool_start_ns, tool_end_ns),\n                            "evidence_binding_ms": elapsed_ms(binding_start_ns, binding_end_ns),\n                            "compiler_ms": 0.0,\n                            "provider_ms": 0.0,\n                            "verifier_ms": 0.0,\n                            "round_total_ms": elapsed_ms(round_start_ns, round_end_ns),\n                        },\n                        tool_calls=("knowledge.search",),\n                        retrieval_evidence_count=len(gathered),\n                        evidence_delta=0,\n                        compiler_status="authority_rejected",\n                        provider_calls=provider_round,\n                        verifier_status="owner_only_safe_abstention",\n                        continuation_allowed=False,\n                        continuation_decision="TERMINAL",\n                        terminal_reason=terminal_reason,\n                    )\n                    telemetry_rounds.append(round_telemetry)\n                    rounds.append(\n                        {\n                            "round_index": round_index,\n                            "continuation_reason": "INITIAL"\n                            if round_index == 0\n                            else "VERIFIER_GAP",\n                            "capabilities_invoked": ["knowledge.search"],\n                            "evidence_count": len(gathered),\n                            "evidence_delta": 0,\n                            "compiler_status": "authority_rejected",\n                            "verification_status": "owner_only_safe_abstention",\n                            "budget_outcome": "TERMINAL",\n                            "provider_calls": provider.calls,\n                            "tool_calls": len(records),\n                            "terminal_reason": terminal_reason,\n                            "evidence_authority": "production_equivalent",\n                            "compiler_authority": "m26_3_synthetic_selector_non_authoritative",\n                        }\n                    )\n                    break\n            for evidence in bound:\n                gathered[str(evidence["evidence_id"])] = evidence\n            binding_end_ns = time.perf_counter_ns()\n            compiler_start_ns = time.perf_counter_ns()\n            if production_authority is not None:\n                compiled = {"status": "production_evidence_preserved", "safe_for_provider_mock": True}\n                selected = tuple(dict(item) for item in gathered.values())\n            else:\n                compiled, selected = _compile_synthetic(\n                    evidence=tuple(gathered.values()),\n                    request_id=f"{task.task_id}:{round_index}",\n                    policy=request.compiler_policy,\n                    release=_release_for_compiler(request),\n                )\n            compiler_end_ns = time.perf_counter_ns()\n            compiler_status = str(compiled.get("status", "unavailable"))\n            if not selected:\n                verifier_start_ns = time.perf_counter_ns()\n                verification = {\n                    "status": "owner_only_safe_abstention",\n                    "safe_abstention": True,\n                    "citation_locator_valid": False,\n                    "material_claim_support_verified": False,\n                    "unsupported_accepted_claims": 0,\n                    "citations": [],\n                }\n            else:\n                verifier_start_ns = time.perf_counter_ns()\n                try:\n                    if production_authority is None:\n                        # The isolated M26.3 synthetic route must execute the\n                        # canonical M26 semantic closure, including its real\n                        # provider verification. A claim graph over selected\n                        # passages alone cannot certify a model answer.\n                        answer, _closure = synthesize_and_verify(\n                            question=request.question,\n                            trace_id=f"{task.task_id}:{round_index}",\n                            intent_class=request.intent_class,\n                            evidence=selected,\n                            provider_client=provider,\n                            requirements=request.requirements,\n                            endpoint_proof=request.endpoint_proof\n                            or {"required": False, "matched": False},\n                        )\n                    else:\n                        # A pinned production bundle establishes evidence identity,\n                        # not semantic entailment. Verify the model-generated answer\n                        # against the admitted M26 evidence before publication, and\n                        # enforce production citation bindings below.\n                        answer, _closure = synthesize_and_verify(\n                            question=request.question,\n                            trace_id=f"{task.task_id}:{round_index}",\n                            intent_class=request.intent_class,\n                            evidence=selected,\n                            provider_client=provider,\n                            requirements=request.requirements,\n                            endpoint_proof=request.endpoint_proof\n                            or {"required": False, "matched": False},\n                        )\n                    verification = dict(answer)\n                except (ProviderQuotaExhausted, SemanticProviderUnavailable):\n                    # Provider allowance is a hard upper bound. A failed or\n                    # unknown-effect attempt must never authorize a retry.\n                    answer = {}\n                    verification = {\n                        "status": "owner_only_safe_abstention",\n                        "safe_abstention": True,\n                        "citation_locator_valid": False,\n                        "material_claim_support_verified": False,\n                        "unsupported_accepted_claims": 0,\n                        "citations": [],\n                        "reason_codes": ("PROVIDER_OR_DEADLINE_EXHAUSTED",),\n                    }\n                if (\n                    production_authority is not None\n                    and verification.get("status") == "owner_only_cited_answer"\n                    and not citation_bindings_preserved(\n                        citations=verification.get("citations"),\n                        selected_evidence=selected,\n                        authority=production_authority,\n                    )\n                ):\n                    answer = {}\n                    verification = {\n                        "status": "owner_only_safe_abstention",\n                        "safe_abstention": True,\n                        "citation_locator_valid": False,\n                        "material_claim_support_verified": False,\n                        "unsupported_accepted_claims": 0,\n                        "citations": [],\n                        "answer_claims": [],\n                        "reason_codes": ("CITATION_BINDING_DRIFT",),\n                        "gap_taxonomy": ["CITATION_BINDING_DRIFT"],\n                    }\n                if (\n                    production_authority is not None\n                    and verification.get("status") == "owner_only_cited_answer"\n                    and not _production_claims_lexically_grounded(verification, selected)\n                ):\n                    # A model\'s own ENTAILED label cannot certify that it did\n                    # not add unsupported propositions to a pinned source.\n                    answer = {}\n                    verification = {\n                        "status": "owner_only_safe_abstention",\n                        "safe_abstention": True,\n                        "citation_locator_valid": False,\n                        "material_claim_support_verified": False,\n                        "unsupported_accepted_claims": 0,\n                        "citations": [],\n                        "answer_claims": [],\n                        "reason_codes": ("PRODUCTION_CLAIM_UNGROUNDED",),\n                        "gap_taxonomy": ["PRODUCTION_CLAIM_UNGROUNDED"],\n                    }\n            verifier_end_ns = time.perf_counter_ns()\n            status = str(verification.get("status", "unknown"))\n            citations = verification.get("citations", [])\n            claim_native_verified = (\n                verification.get("answer_source") == "m27_agent_native_claim_graph"\n                and status == "owner_only_cited_answer"\n                and bool(verification.get("material_claim_support_verified"))\n                and bool(verification.get("citation_locator_valid"))\n                and verification.get("unsupported_accepted_claims") == 0\n                and bool(citations)\n                and bool(selected)\n            )\n            verified = (\n                status == "owner_only_cited_answer"\n                and bool(verification.get("material_claim_support_verified"))\n                and bool(verification.get("citation_locator_valid"))\n                and verification.get("unsupported_accepted_claims") == 0\n                and bool(citations)\n                and bool(selected)\n                and (claim_native_verified or _verification_citations_are_selected(verification, selected))\n            )\n            budget_ok = (\n                provider.calls < provider.max_calls\n                and time.monotonic() < provider.deadline_at\n                and len(records) < effective_tool_cap\n            )\n            has_gap = not verified\n            if adaptive_budget is not None and adaptive_controller is not None:\n                adaptive_continuation = adaptive_controller.decide_continuation(\n                    budget=adaptive_budget,\n                    telemetry={\n                        "evidence_delta": len(gathered) - previous_count,\n                        "round_total_ms": elapsed_ms(round_start_ns, time.perf_counter_ns()),\n                    },\n                    completed_rounds=round_index,\n                    tool_calls=len(records),\n                    provider_calls=provider.calls,\n                    verified=verified,\n                )\n                can_continue = has_gap and budget_ok and adaptive_continuation.allowed\n                adaptive_continuation_reason = adaptive_continuation.reason_code.value\n            else:\n                can_continue = has_gap and round_index < effective_round_cap and budget_ok\n                adaptive_continuation_reason = "LEGACY_BOUNDED_CONTINUATION"\n            terminal_reason = (\n                "VERIFIED_CITED_ANSWER"\n                if verified\n                else "VERIFIER_GAP_CONTINUE"\n                if can_continue\n                else "VERIFIER_GAP_SAFE_TERMINAL"\n            )\n            round_end_ns = time.perf_counter_ns()\n            provider_round = tuple(provider.telemetry[provider_start_index:])\n            provider_ms = round(sum(item.latency_ms for item in provider_round), 3)\n            verifier_total_ms = elapsed_ms(verifier_start_ns, verifier_end_ns)\n            verifier_exclusive_ms = round(max(0.0, verifier_total_ms - provider_ms), 3)\n            round_telemetry = M27RoundTelemetry(\n                round_index=round_index,\n                continuation_reason="INITIAL" if round_index == 0 else "VERIFIER_GAP",\n                route=route,\n                task_kind=task.kind.value,\n                compute_tier=compute_tier,\n                budget_class=budget_class,\n                stage_latency_ms={\n                    "tool_ms": elapsed_ms(tool_start_ns, tool_end_ns),\n                    "evidence_binding_ms": elapsed_ms(binding_start_ns, binding_end_ns),\n                    "compiler_ms": elapsed_ms(compiler_start_ns, compiler_end_ns),\n                    "provider_ms": provider_ms,\n                    "verifier_ms": verifier_exclusive_ms,\n                    "round_total_ms": elapsed_ms(round_start_ns, round_end_ns),\n                },\n                tool_calls=("knowledge.search",),\n                retrieval_evidence_count=len(gathered),\n                evidence_delta=len(gathered) - previous_count,\n                compiler_status=compiler_status,\n                provider_calls=provider_round,\n                verifier_status=status,\n                continuation_allowed=can_continue,\n                continuation_decision="CONTINUE" if can_continue else "TERMINAL",\n                terminal_reason=terminal_reason,\n            )\n            telemetry_rounds.append(round_telemetry)\n            rounds.append(\n                {\n                    "round_index": round_index,\n                    "continuation_reason": "INITIAL" if round_index == 0 else "VERIFIER_GAP",\n                    "capabilities_invoked": ["knowledge.search"],\n                    "evidence_count": len(gathered),\n                    "evidence_delta": len(gathered) - previous_count,\n                    "compiler_status": compiler_status,\n                    "verification_status": status,\n                    "budget_outcome": "CAN_CONTINUE" if can_continue else "TERMINAL",\n                    "provider_calls": provider.calls,\n                    "tool_calls": len(records),\n                    "terminal_reason": terminal_reason,\n                    "adaptive_continuation_reason": adaptive_continuation_reason,\n                    "evidence_authority": (\n                        "production_equivalent"\n                        if production_authority is not None\n                        else "synthetic_only"\n                    ),\n                    "compiler_authority": (\n                        "m26_3_synthetic_selector_non_authoritative"\n                        if production_authority is not None\n                        else "m26_3_synthetic_only"\n                    ),\n                }\n            )\n            if not can_continue:\n                break\n    authority_label = _evidence_authority(request)\n    verification = {\n        **verification,\n        "evidence_authority": authority_label,\n        "production_evidence_authority": production_authority is not None,\n    }\n    telemetry = M27RuntimeTelemetry(\n        request_id=task.request_token,\n        task_id=task.task_id,\n        route=route,\n        task_kind=task.kind.value,\n        compute_tier=compute_tier,\n        budget_class=budget_class,\n        rounds=tuple(telemetry_rounds),\n        terminal_reason=terminal_reason,\n        feature_flags={\n            "M27_ENABLED": True,\n            "ISOLATED_EXECUTABLE_RUNTIME": True,\n            "PRODUCTION_EQUIVALENT_EVIDENCE": production_authority is not None,\n        },\n        reason_codes=tuple(str(code) for code in getattr(plan, "reason_codes", ()))\n        + tuple(adaptive_budget.reason_codes if adaptive_budget is not None else ()),\n        total_latency_ms=elapsed_ms(execution_start_ns, time.perf_counter_ns()),\n    ).as_dict()\n    assert_privacy_safe_telemetry(telemetry)\n    result = {\n        "status_code": "M27_RUNTIME_COMPOSED"\n        if terminal_reason == "VERIFIED_CITED_ANSWER"\n        else "M27_RUNTIME_SAFE_TERMINAL",\n        "workspace_id": workspace_id.value,\n        "rounds": tuple(rounds),\n        "evidence_identities": tuple(\n            {\n                "evidence_id": item["evidence_id"],\n                "passage_id": item["evidence_id"],\n                "source_identity": item["source_identity"],\n                "locator_id": item["locator_id"],\n                "evidence_type": item.get("evidence_type", "passage"),\n                "release_id": item.get("release_id", ""),\n                "artifact_sha256": item.get("artifact_sha256", ""),\n                "provenance_record_sha256": item.get("provenance_record_sha256", ""),\n            }\n            for item in gathered.values()\n        ),\n        "tool_records": tuple(records),\n        "verification": verification,\n        "answer": answer if terminal_reason == "VERIFIED_CITED_ANSWER" else {},\n        "provider_calls": provider.calls,\n        "terminal_reason": terminal_reason,\n        "evidence_authority": authority_label,\n        "production_touched": False,\n        "telemetry": telemetry,\n    }\n    store.write_json_artifact(\n        workspace_id=workspace_id,\n        kind=WorkspaceArtifactKind.DIAGNOSTIC,\n        relative_path="runtime/execution_summary.json",\n        payload={\n            "status_code": result["status_code"],\n            "rounds": rounds,\n            "terminal_reason": terminal_reason,\n            "tool_calls": len(records),\n            "provider_calls": provider.calls,\n            "production_touched": False,\n            "evidence_authority": authority_label,\n            "telemetry_schema_version": telemetry["schema_version"],\n        },\n    )\n    store.write_json_artifact(\n        workspace_id=workspace_id,\n        kind=WorkspaceArtifactKind.DIAGNOSTIC,\n        relative_path="runtime/telemetry.json",\n        payload=telemetry,\n    )\n    return result\n'
+  
+  'synthesize_and_verify' is contained here:
+    from __future__ import annotations
+    
+    import hashlib
+    import json
+    import re
+    import time
+    from collections.abc import Callable, Mapping, Sequence
+    from dataclasses import dataclass
+    from typing import Any
+    
+    from .m26_aq_semantic_contract import synthesize_and_verify
+  ?                                       +++++++++++++++++++++
+    from .m26_context_compiler import compile_context_package
+    from .m26_retrieval_envelope import with_self_digest
+    from .m27_adaptive_compute import AdaptiveComputeBudget, AdaptiveComputeController
+    from .m27_agent_product_runtime import build_claim_native_answer
+    from .m27_context_orchestrator import M27RuntimeTask
+    from .m27_production_evidence_bridge import (
+        ProductionEvidenceAuthority,
+        ProductionEvidenceBridgeError,
+        admit_production_evidence,
+        citation_bindings_preserved,
+        validate_production_authority,
+    )
+    from .m27_runtime_telemetry import (
+        M27RoundTelemetry,
+        M27RuntimeTelemetry,
+        ProviderCallTelemetry,
+        assert_privacy_safe_telemetry,
+        elapsed_ms,
+    )
+    from .m27_tool_contracts import KnowledgeSearchInput
+    from .m27_tool_executor import ReadOnlyToolExecutor, ToolExecutionPolicy
+    from .m27_workspace_contracts import WorkspaceArtifactKind, WorkspaceId, WorkspaceScope
+    from .m27_workspace_store import WorkspaceStore
+    
+    
+    @dataclass(frozen=True, slots=True)
+    class M27ExecutableRequest:
+        """Explicit isolated route with synthetic or pinned production-equivalent evidence."""
+    
+        question: str
+        evidence_catalog: Mapping[str, Mapping[str, Any]]
+        compiler_policy: Mapping[str, Any]
+        semantic_provider: object
+        production_evidence_authority: ProductionEvidenceAuthority | None = None
+        requirements: Sequence[object] = ()
+        intent_class: str = "direct_grounded_knowledge"
+        endpoint_proof: Mapping[str, Any] | None = None
+        event_sink: Callable[[Mapping[str, Any]], None] | None = None
+    
+    
+    class ProviderQuotaExhausted(RuntimeError):
+        pass
+    
+    
+    class SemanticProviderUnavailable(RuntimeError):
+        pass
+    
+    
+    class ProviderQuota:
+        """Enforce caller's provider allowance across M26 internal verification calls."""
+    
+        def __init__(self, provider: object, *, max_calls: int, deadline_at: float) -> None:
+            self._provider = provider
+            self.max_calls = max_calls
+            self.deadline_at = deadline_at
+            self.calls = 0
+            self.telemetry: list[ProviderCallTelemetry] = []
+    
+        def call(self, payload: Mapping[str, Any], call_class: str) -> object:
+            if self.calls >= self.max_calls or time.monotonic() >= self.deadline_at:
+                raise ProviderQuotaExhausted("isolated M27 provider budget exhausted")
+            self.calls += 1
+            start_ns = time.perf_counter_ns()
+            try:
+                result = self._provider.call(payload, call_class)
+            except Exception as exc:
+                self.telemetry.append(
+                    ProviderCallTelemetry(
+                        call_index=self.calls,
+                        call_class=call_class,
+                        latency_ms=elapsed_ms(start_ns, time.perf_counter_ns()),
+                        success=False,
+                        reason_code="PROVIDER_EXCEPTION_UNKNOWN_EFFECT",
+                    )
+                )
+                # An exception does not prove that the call had no effect.
+                # Consume the remaining grant and refuse any local retry.
+                self.max_calls = self.calls
+                raise SemanticProviderUnavailable(
+                    "provider result unavailable; retries prohibited after uncertain effect"
+                ) from exc
+            self.telemetry.append(
+                ProviderCallTelemetry(
+                    call_index=self.calls,
+                    call_class=call_class,
+                    latency_ms=elapsed_ms(start_ns, time.perf_counter_ns()),
+                    success=True,
+                    reason_code="PROVIDER_CALL_OK",
+                )
+            )
+            return result
+    
+    
+    def _evidence_authority(request: M27ExecutableRequest) -> str:
+        if request.production_evidence_authority is not None:
+            return "production_equivalent"
+        return "synthetic_only"
+    
+    
+    def _release_for_compiler(request: M27ExecutableRequest) -> Mapping[str, Any]:
+        authority = request.production_evidence_authority
+        if authority is not None:
+            return {
+                "schema_version": "knowledge-engine-m27-production-evidence-bridge/v1",
+                "release_id": authority.release_id,
+                "manifest_sha256": authority.manifest_sha256,
+            }
+        return {"release_id": "isolated-synthetic"}
+    
+    
+    def _verification_citations_are_selected(
+        verification: Mapping[str, Any],
+        selected: Sequence[Mapping[str, Any]],
+    ) -> bool:
+        selected_locators = {str(item.get("locator_id") or "") for item in selected}
+        selected_evidence_ids = {str(item.get("evidence_id") or "") for item in selected}
+        citations = verification.get("citations")
+        if not isinstance(citations, Sequence) or isinstance(citations, (str, bytes)):
+            return False
+        for citation in citations:
+            if not isinstance(citation, Mapping):
+                return False
+            locator_id = str(citation.get("locator_id") or "")
+            evidence_id = str(citation.get("evidence_id") or "")
+            if locator_id and locator_id not in selected_locators:
+                return False
+            if evidence_id and evidence_id not in selected_evidence_ids:
+                return False
+        return True
+    
+    
+    # Production evidence can have a valid immutable citation binding while a
+    # provider incorrectly labels an unrelated proposition as "ENTAILED".
+    # This is a deliberately conservative NECESSARY lexical grounding check,
+    # not a substitute for the semantic verifier. Unsupported content fails
+    # closed; unfamiliar paraphrases may abstain rather than be over-admitted.
+    _PRODUCTION_GROUNDING_STOP = frozenset({
+        "a", "an", "and", "are", "as", "at", "be", "been", "by", "do",
+        "does", "for", "from", "has", "have", "in", "into", "is", "it",
+        "of", "on", "or", "that", "the", "their", "this", "to", "was",
+        "were", "which", "with",
+    })
+    _PRODUCTION_GROUNDING_EQUIVALENT = {
+        "keeps": "store", "keep": "store", "kept": "store",
+        "stores": "store", "stored": "store", "storage": "store",
+        "analyzes": "analysis", "analyze": "analysis",
+        "analyzing": "analysis", "analyses": "analysis",
+        "analytics": "analysis", "analytical": "analysis",
+        "supports": "support", "supported": "support",
+    }
+    
+    
+    def _production_grounding_terms(value: str) -> set[str]:
+        return {
+            _PRODUCTION_GROUNDING_EQUIVALENT.get(term, term)
+            for term in re.findall(r"[a-z0-9]+|[\u3400-\u9fff]+", value.casefold())
+            if term not in _PRODUCTION_GROUNDING_STOP
+        }
+    
+    
+    def _production_claims_lexically_grounded(
+        verification: Mapping[str, Any],
+        selected: Sequence[Mapping[str, Any]],
+    ) -> bool:
+        """Conservative independent veto over the provider's entailment judgment.
+    
+        Every published claim must name an admitted citation and introduce no
+        material term absent from that cited source, modulo closed equivalents.
+        The ordinary verifier and pinned citation checks remain mandatory.
+        """
+        claims = verification.get("answer_claims")
+        citations = verification.get("citations")
+        if not isinstance(claims, list) or not claims:
+            return False
+        if not isinstance(citations, list) or not citations:
+            return False
+        admitted = {str(item.get("evidence_id", "")): item for item in selected}
+        by_citation = {
+            str(citation.get("citation_id", "")): admitted.get(
+                str(citation.get("evidence_id", ""))
+            )
+            for citation in citations
+            if isinstance(citation, Mapping)
+        }
+        cited_evidence: list[Mapping[str, Any]] = []
+        for claim in claims:
+            if not isinstance(claim, Mapping):
+                return False
+            content = str(claim.get("surface_text") or "").strip()
+            ids = claim.get("citation_ids")
+            if not content or not isinstance(ids, list) or not ids:
+                return False
+            sources = [by_citation.get(str(cid)) for cid in ids]
+            if any(source is None for source in sources):
+                return False
+            support = _production_grounding_terms(
+                " ".join(str(source.get("passage_text") or "") for source in sources)
+            )
+            terms = _production_grounding_terms(content)
+            if not terms or not terms.issubset(support):
+                return False
+            cited_evidence.extend(source for source in sources if source is not None)
+        published = str(verification.get("answer_text") or "")
+        published = re.sub(r"\[claim_\d+_ref_\d+\]", "", published)
+        answer_terms = _production_grounding_terms(published)
+        all_support = _production_grounding_terms(
+            " ".join(str(source.get("passage_text") or "") for source in cited_evidence)
+        )
+        return bool(answer_terms) and answer_terms.issubset(all_support)
+    
+    
+    def _bound_evidence(
+        *,
+        output: object,
+        catalog: Mapping[str, Mapping[str, Any]],
+    ) -> tuple[dict[str, Any], ...]:
+        evidence: list[dict[str, Any]] = []
+        for item in getattr(output, "items", ()):
+            source = catalog.get(item.knowledge_id)
+            if source is None:
+                continue
+            if (
+                not item.source_identity
+                or not item.locator_id
+                or source.get("source_identity") != item.source_identity
+                or source.get("locator_id") != item.locator_id
+            ):
+                continue
+            raw = source.get("passage_text")
+            if not isinstance(raw, str) or not raw:
+                continue
+            if hashlib.sha256(raw.encode("utf-8")).hexdigest() != source.get("passage_text_sha256"):
+                continue
+            if not source.get("artifact_sha256") or not source.get("provenance_record_sha256"):
+                continue
+            evidence.append(dict(source))
+        return tuple(evidence)
+    
+    
+    def _compile_synthetic(
+        *,
+        evidence: Sequence[Mapping[str, Any]],
+        request_id: str,
+        policy: Mapping[str, Any],
+        release: Mapping[str, Any],
+    ) -> tuple[dict[str, Any], tuple[dict[str, Any], ...]]:
+        # M26.3 is synthetic-only by contract. Never treat this as production context.
+        unique: dict[str, dict[str, Any]] = {}
+        for index, item in enumerate(evidence, start=1):
+            pid = str(item.get("evidence_id", ""))
+            if not pid or pid in unique:
+                continue
+            content = str(item["passage_text"])
+            unique[pid] = {
+                "passage_id": pid,
+                "rank": index,
+                "text": content,
+                "text_sha256": hashlib.sha256(content.encode("utf-8")).hexdigest(),
+                "source_identity": item["source_identity"],
+                "locator_id": item["locator_id"],
+                "source_id": item.get("source_id", item["source_identity"]),
+                "section_id": item.get("section_id", item["locator_id"]),
+                "locator": {"locator_id": item["locator_id"]},
+            }
+        envelope = with_self_digest(
+            {
+                "schema_version": "knowledge-engine-m26-evidence-envelope/v1",
+                "request_id": request_id,
+                "sufficiency": "sufficient" if unique else "insufficient",
+                "release": dict(release),
+                "passages": list(unique.values()),
+                "excluded_evidence": [],
+            }
+        )
+        gap = with_self_digest(
+            {
+                "schema_version": "knowledge-engine-m26-retrieval-gap-report/v1",
+                "first_divergent_stage": "none",
+                "reason_codes": [],
+                "safe_for_context_compiler": bool(unique),
+            }
+        )
+        compiled = compile_context_package(envelope, gap, policy)
+        manifest = compiled.get("context_manifest")
+        if not isinstance(manifest, Mapping) or not compiled.get("safe_for_provider_mock"):
+            return compiled, ()
+        chosen = set(manifest.get("selected_passage_ids", ()))
+        return compiled, tuple(dict(item) for item in evidence if item.get("evidence_id") in chosen)
+    
+    
+    
+    
+    def execute_isolated(
+        *,
+        request: M27ExecutableRequest,
+        task: M27RuntimeTask,
+        plan: object,
+        budget_signal: Mapping[str, object],
+        executor: ReadOnlyToolExecutor,
+        store: WorkspaceStore,
+        route: str = "UNAVAILABLE",
+        compute_tier: str = "UNAVAILABLE",
+        budget_class: str = "UNAVAILABLE",
+        adaptive_budget: AdaptiveComputeBudget | None = None,
+        adaptive_controller: AdaptiveComputeController | None = None,
+    ) -> dict[str, object]:
+        """Execute actual Stage5 gather, M26.3 compile and canonical M26 verification.
+    
+        No caller-supplied compiled/verification output enters this route.
+        """
+        execution_start_ns = time.perf_counter_ns()
+        workspace_id = WorkspaceId.from_safe_token(scope=WorkspaceScope.TASK, task_token=task.task_id)
+        store.create_workspace(workspace_id=workspace_id, scope=WorkspaceScope.TASK)
+        rounds: list[dict[str, object]] = []
+        telemetry_rounds: list[M27RoundTelemetry] = []
+        records: list[object] = []
+        gathered: dict[str, dict[str, Any]] = {}
+        answer: dict[str, Any] = {}
+        verification: dict[str, Any] = {}
+        terminal_reason = "UNVERIFIED_SAFE_TERMINAL"
+        deadline_ms = budget_signal.get("deadline_remaining_ms")
+        minimum_ms = budget_signal.get("minimum_budget_ms")
+        attempts = budget_signal.get("provider_attempts_remaining")
+        allowed_budget = (
+            type(deadline_ms) is int
+            and type(minimum_ms) is int
+            and type(attempts) is int
+            and deadline_ms >= minimum_ms > 0
+            and attempts > 0
+            and budget_signal.get("affordable") is True
+        )
+        adaptive_provider_cap = (
+            adaptive_budget.max_provider_calls if adaptive_budget is not None else 4
+        )
+        provider = ProviderQuota(
+            request.semantic_provider,
+            max_calls=(
+                min(attempts, adaptive_provider_cap)
+                if type(attempts) is int and attempts > 0
+                else 0
+            ),
+            deadline_at=time.monotonic()
+            + (deadline_ms / 1000 if type(deadline_ms) is int and deadline_ms > 0 else 0),
+        )
+        capabilities = tuple(getattr(plan, "tool_capabilities", ()))
+        effective_tool_cap = (
+            adaptive_budget.max_tool_calls if adaptive_budget is not None else task.max_tool_calls
+        )
+        effective_round_cap = (
+            adaptive_budget.max_continuation_rounds
+            if adaptive_budget is not None
+            else task.max_continuation_rounds
+        )
+        permitted = (
+            bool(capabilities)
+            and len(capabilities) <= effective_tool_cap
+            and all(capability == "knowledge.search" for capability in capabilities)
+        )
+        production_authority = request.production_evidence_authority
+        authority_rejection: str | None = None
+        if production_authority is not None:
+            try:
+                validate_production_authority(production_authority)
+            except ProductionEvidenceBridgeError as exc:
+                authority_rejection = exc.reason_code
+        # Fail closed when evidence authorities, budget or capability do not exist.
+        if not allowed_budget:
+            terminal_reason = "BUDGET_NOT_AUTHORITATIVE"
+        elif authority_rejection is not None:
+            terminal_reason = "PRODUCTION_EVIDENCE_AUTHORITY_REJECTED"
+        elif not permitted:
+            terminal_reason = "NO_AUTHORIZED_EVIDENCE_CAPABILITY"
+        else:
+            policy = ToolExecutionPolicy(
+                authorized_capabilities=tuple(sorted(capabilities)),
+                authorization_token=task.task_id,
+            )
+            for round_index in range(effective_round_cap + 1):
+                if len(records) >= effective_tool_cap:
+                    terminal_reason = "TOOL_CALL_BUDGET_EXHAUSTED"
+                    break
+                if provider.calls >= provider.max_calls or time.monotonic() >= provider.deadline_at:
+                    terminal_reason = "PROVIDER_OR_DEADLINE_EXHAUSTED"
+                    break
+                round_start_ns = time.perf_counter_ns()
+                provider_start_index = len(provider.telemetry)
+                tool_start_ns = time.perf_counter_ns()
+                retrieval = executor.execute(
+                    "knowledge.search",
+                    KnowledgeSearchInput(request_token=task.request_token),
+                    policy=policy,
+                    authorization_token=task.task_id,
+                )
+                tool_end_ns = time.perf_counter_ns()
+                records.append(retrieval.record)
+                previous_count = len(gathered)
+                binding_start_ns = time.perf_counter_ns()
+                bound = _bound_evidence(output=retrieval.output, catalog=request.evidence_catalog)
+                if production_authority is not None:
+                    try:
+                        bound = admit_production_evidence(
+                            evidence=bound, authority=production_authority
+                        )
+                    except ProductionEvidenceBridgeError as exc:
+                        binding_end_ns = time.perf_counter_ns()
+                        terminal_reason = "PRODUCTION_EVIDENCE_AUTHORITY_REJECTED"
+                        verification = {
+                            "status": "owner_only_safe_abstention",
+                            "safe_abstention": True,
+                            "citation_locator_valid": False,
+                            "material_claim_support_verified": False,
+                            "unsupported_accepted_claims": 0,
+                            "citations": [],
+                            "reason_codes": ("PRODUCTION_EVIDENCE_AUTHORITY_REJECTED", exc.reason_code),
+                        }
+                        round_end_ns = time.perf_counter_ns()
+                        provider_round = tuple(provider.telemetry[provider_start_index:])
+                        round_telemetry = M27RoundTelemetry(
+                            round_index=round_index,
+                            continuation_reason="INITIAL" if round_index == 0 else "VERIFIER_GAP",
+                            route=route,
+                            task_kind=task.kind.value,
+                            compute_tier=compute_tier,
+                            budget_class=budget_class,
+                            stage_latency_ms={
+                                "tool_ms": elapsed_ms(tool_start_ns, tool_end_ns),
+                                "evidence_binding_ms": elapsed_ms(binding_start_ns, binding_end_ns),
+                                "compiler_ms": 0.0,
+                                "provider_ms": 0.0,
+                                "verifier_ms": 0.0,
+                                "round_total_ms": elapsed_ms(round_start_ns, round_end_ns),
+                            },
+                            tool_calls=("knowledge.search",),
+                            retrieval_evidence_count=len(gathered),
+                            evidence_delta=0,
+                            compiler_status="authority_rejected",
+                            provider_calls=provider_round,
+                            verifier_status="owner_only_safe_abstention",
+                            continuation_allowed=False,
+                            continuation_decision="TERMINAL",
+                            terminal_reason=terminal_reason,
+                        )
+                        telemetry_rounds.append(round_telemetry)
+                        rounds.append(
+                            {
+                                "round_index": round_index,
+                                "continuation_reason": "INITIAL"
+                                if round_index == 0
+                                else "VERIFIER_GAP",
+                                "capabilities_invoked": ["knowledge.search"],
+                                "evidence_count": len(gathered),
+                                "evidence_delta": 0,
+                                "compiler_status": "authority_rejected",
+                                "verification_status": "owner_only_safe_abstention",
+                                "budget_outcome": "TERMINAL",
+                                "provider_calls": provider.calls,
+                                "tool_calls": len(records),
+                                "terminal_reason": terminal_reason,
+                                "evidence_authority": "production_equivalent",
+                                "compiler_authority": "m26_3_synthetic_selector_non_authoritative",
+                            }
+                        )
+                        break
+                for evidence in bound:
+                    gathered[str(evidence["evidence_id"])] = evidence
+                binding_end_ns = time.perf_counter_ns()
+                compiler_start_ns = time.perf_counter_ns()
+                if production_authority is not None:
+                    compiled = {"status": "production_evidence_preserved", "safe_for_provider_mock": True}
+                    selected = tuple(dict(item) for item in gathered.values())
+                else:
+                    compiled, selected = _compile_synthetic(
+                        evidence=tuple(gathered.values()),
+                        request_id=f"{task.task_id}:{round_index}",
+                        policy=request.compiler_policy,
+                        release=_release_for_compiler(request),
+                    )
+                compiler_end_ns = time.perf_counter_ns()
+                compiler_status = str(compiled.get("status", "unavailable"))
+                if not selected:
+                    verifier_start_ns = time.perf_counter_ns()
+                    verification = {
+                        "status": "owner_only_safe_abstention",
+                        "safe_abstention": True,
+                        "citation_locator_valid": False,
+                        "material_claim_support_verified": False,
+                        "unsupported_accepted_claims": 0,
+                        "citations": [],
+                    }
+                else:
+                    verifier_start_ns = time.perf_counter_ns()
+                    try:
+                        if production_authority is None:
+                            # The isolated M26.3 synthetic route must execute the
+                            # canonical M26 semantic closure, including its real
+                            # provider verification. A claim graph over selected
+                            # passages alone cannot certify a model answer.
+                            answer, _closure = synthesize_and_verify(
+                                question=request.question,
+                                trace_id=f"{task.task_id}:{round_index}",
+                                intent_class=request.intent_class,
+                                evidence=selected,
+                                provider_client=provider,
+                                requirements=request.requirements,
+                                endpoint_proof=request.endpoint_proof
+                                or {"required": False, "matched": False},
+                            )
+                        else:
+                            # A pinned production bundle establishes evidence identity,
+                            # not semantic entailment. Verify the model-generated answer
+                            # against the admitted M26 evidence before publication, and
+                            # enforce production citation bindings below.
+                            answer, _closure = synthesize_and_verify(
+                                question=request.question,
+                                trace_id=f"{task.task_id}:{round_index}",
+                                intent_class=request.intent_class,
+                                evidence=selected,
+                                provider_client=provider,
+                                requirements=request.requirements,
+                                endpoint_proof=request.endpoint_proof
+                                or {"required": False, "matched": False},
+                            )
+                        verification = dict(answer)
+                    except (ProviderQuotaExhausted, SemanticProviderUnavailable):
+                        # Provider allowance is a hard upper bound. A failed or
+                        # unknown-effect attempt must never authorize a retry.
+                        answer = {}
+                        verification = {
+                            "status": "owner_only_safe_abstention",
+                            "safe_abstention": True,
+                            "citation_locator_valid": False,
+                            "material_claim_support_verified": False,
+                            "unsupported_accepted_claims": 0,
+                            "citations": [],
+                            "reason_codes": ("PROVIDER_OR_DEADLINE_EXHAUSTED",),
+                        }
+                    if (
+                        production_authority is not None
+                        and verification.get("status") == "owner_only_cited_answer"
+                        and not citation_bindings_preserved(
+                            citations=verification.get("citations"),
+                            selected_evidence=selected,
+                            authority=production_authority,
+                        )
+                    ):
+                        answer = {}
+                        verification = {
+                            "status": "owner_only_safe_abstention",
+                            "safe_abstention": True,
+                            "citation_locator_valid": False,
+                            "material_claim_support_verified": False,
+                            "unsupported_accepted_claims": 0,
+                            "citations": [],
+                            "answer_claims": [],
+                            "reason_codes": ("CITATION_BINDING_DRIFT",),
+                            "gap_taxonomy": ["CITATION_BINDING_DRIFT"],
+                        }
+                    if (
+                        production_authority is not None
+                        and verification.get("status") == "owner_only_cited_answer"
+                        and not _production_claims_lexically_grounded(verification, selected)
+                    ):
+                        # A model's own ENTAILED label cannot certify that it did
+                        # not add unsupported propositions to a pinned source.
+                        answer = {}
+                        verification = {
+                            "status": "owner_only_safe_abstention",
+                            "safe_abstention": True,
+                            "citation_locator_valid": False,
+                            "material_claim_support_verified": False,
+                            "unsupported_accepted_claims": 0,
+                            "citations": [],
+                            "answer_claims": [],
+                            "reason_codes": ("PRODUCTION_CLAIM_UNGROUNDED",),
+                            "gap_taxonomy": ["PRODUCTION_CLAIM_UNGROUNDED"],
+                        }
+                verifier_end_ns = time.perf_counter_ns()
+                status = str(verification.get("status", "unknown"))
+                citations = verification.get("citations", [])
+                claim_native_verified = (
+                    verification.get("answer_source") == "m27_agent_native_claim_graph"
+                    and status == "owner_only_cited_answer"
+                    and bool(verification.get("material_claim_support_verified"))
+                    and bool(verification.get("citation_locator_valid"))
+                    and verification.get("unsupported_accepted_claims") == 0
+                    and bool(citations)
+                    and bool(selected)
+                )
+                verified = (
+                    status == "owner_only_cited_answer"
+                    and bool(verification.get("material_claim_support_verified"))
+                    and bool(verification.get("citation_locator_valid"))
+                    and verification.get("unsupported_accepted_claims") == 0
+                    and bool(citations)
+                    and bool(selected)
+                    and (claim_native_verified or _verification_citations_are_selected(verification, selected))
+                )
+                budget_ok = (
+                    provider.calls < provider.max_calls
+                    and time.monotonic() < provider.deadline_at
+                    and len(records) < effective_tool_cap
+                )
+                has_gap = not verified
+                if adaptive_budget is not None and adaptive_controller is not None:
+                    adaptive_continuation = adaptive_controller.decide_continuation(
+                        budget=adaptive_budget,
+                        telemetry={
+                            "evidence_delta": len(gathered) - previous_count,
+                            "round_total_ms": elapsed_ms(round_start_ns, time.perf_counter_ns()),
+                        },
+                        completed_rounds=round_index,
+                        tool_calls=len(records),
+                        provider_calls=provider.calls,
+                        verified=verified,
+                    )
+                    can_continue = has_gap and budget_ok and adaptive_continuation.allowed
+                    adaptive_continuation_reason = adaptive_continuation.reason_code.value
+                else:
+                    can_continue = has_gap and round_index < effective_round_cap and budget_ok
+                    adaptive_continuation_reason = "LEGACY_BOUNDED_CONTINUATION"
+                terminal_reason = (
+                    "VERIFIED_CITED_ANSWER"
+                    if verified
+                    else "VERIFIER_GAP_CONTINUE"
+                    if can_continue
+                    else "VERIFIER_GAP_SAFE_TERMINAL"
+                )
+                round_end_ns = time.perf_counter_ns()
+                provider_round = tuple(provider.telemetry[provider_start_index:])
+                provider_ms = round(sum(item.latency_ms for item in provider_round), 3)
+                verifier_total_ms = elapsed_ms(verifier_start_ns, verifier_end_ns)
+                verifier_exclusive_ms = round(max(0.0, verifier_total_ms - provider_ms), 3)
+                round_telemetry = M27RoundTelemetry(
+                    round_index=round_index,
+                    continuation_reason="INITIAL" if round_index == 0 else "VERIFIER_GAP",
+                    route=route,
+                    task_kind=task.kind.value,
+                    compute_tier=compute_tier,
+                    budget_class=budget_class,
+                    stage_latency_ms={
+                        "tool_ms": elapsed_ms(tool_start_ns, tool_end_ns),
+                        "evidence_binding_ms": elapsed_ms(binding_start_ns, binding_end_ns),
+                        "compiler_ms": elapsed_ms(compiler_start_ns, compiler_end_ns),
+                        "provider_ms": provider_ms,
+                        "verifier_ms": verifier_exclusive_ms,
+                        "round_total_ms": elapsed_ms(round_start_ns, round_end_ns),
+                    },
+                    tool_calls=("knowledge.search",),
+                    retrieval_evidence_count=len(gathered),
+                    evidence_delta=len(gathered) - previous_count,
+                    compiler_status=compiler_status,
+                    provider_calls=provider_round,
+                    verifier_status=status,
+                    continuation_allowed=can_continue,
+                    continuation_decision="CONTINUE" if can_continue else "TERMINAL",
+                    terminal_reason=terminal_reason,
+                )
+                telemetry_rounds.append(round_telemetry)
+                rounds.append(
+                    {
+                        "round_index": round_index,
+                        "continuation_reason": "INITIAL" if round_index == 0 else "VERIFIER_GAP",
+                        "capabilities_invoked": ["knowledge.search"],
+                        "evidence_count": len(gathered),
+                        "evidence_delta": len(gathered) - previous_count,
+                        "compiler_status": compiler_status,
+                        "verification_status": status,
+                        "budget_outcome": "CAN_CONTINUE" if can_continue else "TERMINAL",
+                        "provider_calls": provider.calls,
+                        "tool_calls": len(records),
+                        "terminal_reason": terminal_reason,
+                        "adaptive_continuation_reason": adaptive_continuation_reason,
+                        "evidence_authority": (
+                            "production_equivalent"
+                            if production_authority is not None
+                            else "synthetic_only"
+                        ),
+                        "compiler_authority": (
+                            "m26_3_synthetic_selector_non_authoritative"
+                            if production_authority is not None
+                            else "m26_3_synthetic_only"
+                        ),
+                    }
+                )
+                if not can_continue:
+                    break
+        authority_label = _evidence_authority(request)
+        verification = {
+            **verification,
+            "evidence_authority": authority_label,
+            "production_evidence_authority": production_authority is not None,
+        }
+        telemetry = M27RuntimeTelemetry(
+            request_id=task.request_token,
+            task_id=task.task_id,
+            route=route,
+            task_kind=task.kind.value,
+            compute_tier=compute_tier,
+            budget_class=budget_class,
+            rounds=tuple(telemetry_rounds),
+            terminal_reason=terminal_reason,
+            feature_flags={
+                "M27_ENABLED": True,
+                "ISOLATED_EXECUTABLE_RUNTIME": True,
+                "PRODUCTION_EQUIVALENT_EVIDENCE": production_authority is not None,
+            },
+            reason_codes=tuple(str(code) for code in getattr(plan, "reason_codes", ()))
+            + tuple(adaptive_budget.reason_codes if adaptive_budget is not None else ()),
+            total_latency_ms=elapsed_ms(execution_start_ns, time.perf_counter_ns()),
+        ).as_dict()
+        assert_privacy_safe_telemetry(telemetry)
+        result = {
+            "status_code": "M27_RUNTIME_COMPOSED"
+            if terminal_reason == "VERIFIED_CITED_ANSWER"
+            else "M27_RUNTIME_SAFE_TERMINAL",
+            "workspace_id": workspace_id.value,
+            "rounds": tuple(rounds),
+            "evidence_identities": tuple(
+                {
+                    "evidence_id": item["evidence_id"],
+                    "passage_id": item["evidence_id"],
+                    "source_identity": item["source_identity"],
+                    "locator_id": item["locator_id"],
+                    "evidence_type": item.get("evidence_type", "passage"),
+                    "release_id": item.get("release_id", ""),
+                    "artifact_sha256": item.get("artifact_sha256", ""),
+                    "provenance_record_sha256": item.get("provenance_record_sha256", ""),
+                }
+                for item in gathered.values()
+            ),
+            "tool_records": tuple(records),
+            "verification": verification,
+            "answer": answer if terminal_reason == "VERIFIED_CITED_ANSWER" else {},
+            "provider_calls": provider.calls,
+            "terminal_reason": terminal_reason,
+            "evidence_authority": authority_label,
+            "production_touched": False,
+            "telemetry": telemetry,
+        }
+        store.write_json_artifact(
+            workspace_id=workspace_id,
+            kind=WorkspaceArtifactKind.DIAGNOSTIC,
+            relative_path="runtime/execution_summary.json",
+            payload={
+                "status_code": result["status_code"],
+                "rounds": rounds,
+                "terminal_reason": terminal_reason,
+                "tool_calls": len(records),
+                "provider_calls": provider.calls,
+                "production_touched": False,
+                "evidence_authority": authority_label,
+                "telemetry_schema_version": telemetry["schema_version"],
+            },
+        )
+        store.write_json_artifact(
+            workspace_id=workspace_id,
+            kind=WorkspaceArtifactKind.DIAGNOSTIC,
+            relative_path="runtime/telemetry.json",
+            payload=telemetry,
+        )
+        return result
+============================== 2 failed in 0.17s ===============================

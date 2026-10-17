@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/Users/huaihsuanhuang/.pyenv/versions/3.11.15/bin/python",
+    "-B",
+    "tools/c02_run_fixture_client_receipts.py",
+    "--output",
+    "evidence/d01/c02_fixture_client"
+  ],
+  "cwd": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01",
+  "duration_ms": 418.548,
+  "ended_wall_epoch_ns": 1792206217015918000,
+  "exit_code": 0,
+  "name": "c02_fixture_client_receipts",
+  "pid": 81892,
+  "schema": "m27.c02.command-receipt/v1",
+  "started_wall_epoch_ns": 1792206216597367000,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 125,
+  "stdout_sha256": "e32ac846a88cafb4f1efb1cb96a5e08de3247e0a6383b2e465ae952db0da7c61"
+}

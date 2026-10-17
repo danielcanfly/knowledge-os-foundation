@@ -1,0 +1,76 @@
+{
+  "cases": [
+    {
+      "client_receipt": {
+        "client_id": "c02-independent-os-fixture-client",
+        "client_process_pid": 81895,
+        "event_sha256": "dbf0b75f16bd5279b4da4cc027eadf37abafa954c0eb411059458dbae61e8b3f",
+        "qualification_class": "DETERMINISTIC_FIXTURE",
+        "received_at_epoch_ns": 1792206216935390000,
+        "request_id": "client-valid",
+        "run_id": "client-valid-run",
+        "schema_version": "m27.c02.client-ack/v1",
+        "signature": "ztgSxQa7WdWXpa/iMq738vI48lumGFfJOWqB7r6msmAhknhS6wcdynun+VjOX97cmNwSGw5PFiu7OeRTjvI6CQ=="
+      },
+      "event_types": [
+        "sources_bound",
+        "generated_claim_candidate",
+        "semantic_verification",
+        "verified_answer_text",
+        "terminal"
+      ],
+      "mode": "valid",
+      "native_composer_admitted": false,
+      "process": [
+        {
+          "exit_code": 0,
+          "pid": 81895,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "b9089bda1fd056fcf5987b6c94b111a057188ba9798a30b9c89c3babf2ef6ce9"
+        }
+      ],
+      "publishable": true,
+      "status": "FIXTURE_ONLY",
+      "terminal_reason": "NONQUALIFYING_FIXTURE_DELIVERY"
+    },
+    {
+      "client_receipt": {
+        "client_id": "c02-independent-os-fixture-client",
+        "client_process_pid": 81896,
+        "event_sha256": "f1dbc37df2e56b044e2a9547ebcfa49560b03e47400a7a8dff398d60bffc204b",
+        "qualification_class": "DETERMINISTIC_FIXTURE",
+        "received_at_epoch_ns": 1792206216985685000,
+        "request_id": "client-forged",
+        "run_id": "client-forged-run",
+        "schema_version": "m27.c02.client-ack/v1",
+        "signature": "Zm9yZ2VkLWFjaw=="
+      },
+      "event_types": [
+        "sources_bound",
+        "generated_claim_candidate",
+        "semantic_verification",
+        "safe_terminal"
+      ],
+      "mode": "forged",
+      "native_composer_admitted": false,
+      "process": [
+        {
+          "exit_code": 0,
+          "pid": 81896,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "cf57d69992b13bd5234d85a7ee648a50780089f2100bf6a7032636bdb975f16f"
+        }
+      ],
+      "publishable": false,
+      "status": "SAFE_TERMINAL",
+      "terminal_reason": "CLIENT_ACK_INVALID"
+    }
+  ],
+  "native_composer_admitted": false,
+  "private_key_persisted": false,
+  "provider_qualification_proven": false,
+  "public_key_sha256": "1c41b81956f3dcf98e97e6434edc2e46774843f2cee636123d9bafb8a37066d3",
+  "qualification_class": "DETERMINISTIC_FIXTURE",
+  "schema": "m27.c02.independent-client-fixture-receipts/v1",
+  "status": "PASS_FIXTURE_TRANSPORT_ONLY"
+}

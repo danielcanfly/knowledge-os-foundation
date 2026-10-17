@@ -1,0 +1,1 @@
+After an unknown external effect, automatic retry is denied until reconciliation.

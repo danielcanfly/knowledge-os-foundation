@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/Users/huaihsuanhuang/.pyenv/versions/3.11.15/bin/python",
+    "-m",
+    "pytest",
+    "-p",
+    "no:cacheprovider",
+    "-vv",
+    "tests/test_a01_fast_public_contract_v2.py::test_v2_invalid_outputs_fail_closed_with_bounded_attempts[missing_citation]",
+    "tests/test_a01_fast_public_contract_v2.py::test_v2_invalid_outputs_fail_closed_with_bounded_attempts[private_leak]",
+    "tests/test_a01_fast_public_contract_v2.py::test_v2_explicit_single_attempt_cap_never_retries",
+    "tests/test_a01_fast_public_contract_v2.py::test_v2_unknown_effect_prohibits_retry",
+    "tests/test_a01_fast_public_contract_v2.py::test_v2_cost_cap_rejects_publication"
+  ],
+  "cwd": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01",
+  "duration_ms": 1622.508,
+  "ended_wall_epoch_ns": 1792206167795144000,
+  "exit_code": 0,
+  "name": "c01_recovered_5",
+  "pid": 76463,
+  "schema": "m27.c02.command-receipt/v1",
+  "started_wall_epoch_ns": 1792206166172633000,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 1162,
+  "stdout_sha256": "2b2b396d326d257f9a2736977186dbcdf4d55ddf133180de629995f3a1f18a0d"
+}

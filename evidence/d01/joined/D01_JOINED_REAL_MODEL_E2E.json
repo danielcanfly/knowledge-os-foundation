@@ -1,0 +1,416 @@
+{
+  "actual_local_model_generations": 2,
+  "billable_provider_calls": 0,
+  "c28": false,
+  "cases": [
+    {
+      "case_id": "valid-ack",
+      "client_mode": "valid",
+      "client_processes": [
+        {
+          "exit_code": 0,
+          "pid": 79457,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "2da02f353367a484c486bea89d71e26975861db361c8cf6dc4cdd5f44c43a3fe"
+        }
+      ],
+      "generated_text": "Kubernetes automatically restarts failed services to restore the desired state.",
+      "generated_text_sha256": "219a23eee1278e392cf7f50f6f5d64adc877dcf32759f0ea1f2fd1178a28e8f7",
+      "generation_duration_ms": 2240.593,
+      "model_exit_code": 0,
+      "model_pid": 79454,
+      "model_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "model_stdout_sha256": "b016ab6a26a6bff7a91fe448af47c0d1a060d4930f74b83232bba6bccabf3aef",
+      "model_timed_out": false,
+      "outcome": {
+        "c02_semantic_admission": false,
+        "c28": false,
+        "composer_result": {
+          "citations": [
+            {
+              "byte_end": 66,
+              "byte_start": 0,
+              "excerpt_sha256": "8831538efbd51ea1b025e5c513ac80bf586b5aee684db4e2a89d7be096107e9c",
+              "license_id": "D01_PUBLIC_NONSECRET_TEST_SOURCE",
+              "memory_citation_authority": false,
+              "revision": "2026-10-17",
+              "source_id": "d01-source-valid-ack",
+              "source_sha256": "8831538efbd51ea1b025e5c513ac80bf586b5aee684db4e2a89d7be096107e9c",
+              "title": "D01 public Nonprod source valid-ack"
+            }
+          ],
+          "client_receipt": {
+            "client_id": "c02-independent-os-fixture-client",
+            "client_process_pid": 79457,
+            "event_sha256": "158579cd353d9f757c12dbcaa8f499f7b8781e4727bb6953ed0f10e57ee39e37",
+            "qualification_class": "DETERMINISTIC_FIXTURE",
+            "received_at_epoch_ns": 1792206198244104000,
+            "request_id": "d01-valid-ack",
+            "run_id": "d01-joined-1",
+            "schema_version": "m27.c02.client-ack/v1",
+            "signature": "LlmLJ5E8LFhyav7/rwdIGJU/0CtU914u4AUVkyhGIpMxY94QBeiO/o5abbInvUVy4kN0KfOkHTJ8EiHUeMFiAQ=="
+          },
+          "events": [
+            {
+              "event_ms": 0.0,
+              "sequence": 1,
+              "source_ids": [
+                "d01-source-valid-ack"
+              ],
+              "source_sha256": [
+                "8831538efbd51ea1b025e5c513ac80bf586b5aee684db4e2a89d7be096107e9c"
+              ],
+              "type": "sources_bound"
+            },
+            {
+              "actual_model_output": true,
+              "event_ms": 0.017,
+              "generator_model_identity": "Qwen2.5-0.5B-Instruct-Q4_K_M",
+              "generator_model_version": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+              "sequence": 2,
+              "text_sha256": "219a23eee1278e392cf7f50f6f5d64adc877dcf32759f0ea1f2fd1178a28e8f7",
+              "type": "generated_claim_candidate"
+            },
+            {
+              "admission_eligible": false,
+              "decision": "ENTAILED",
+              "event_ms": 0.473,
+              "provider_id": "d01-deterministic-fixture-provider",
+              "sequence": 3,
+              "type": "semantic_verification",
+              "verified": true
+            },
+            {
+              "citations": [
+                {
+                  "byte_end": 66,
+                  "byte_start": 0,
+                  "excerpt_sha256": "8831538efbd51ea1b025e5c513ac80bf586b5aee684db4e2a89d7be096107e9c",
+                  "license_id": "D01_PUBLIC_NONSECRET_TEST_SOURCE",
+                  "memory_citation_authority": false,
+                  "revision": "2026-10-17",
+                  "source_id": "d01-source-valid-ack",
+                  "source_sha256": "8831538efbd51ea1b025e5c513ac80bf586b5aee684db4e2a89d7be096107e9c",
+                  "title": "D01 public Nonprod source valid-ack"
+                }
+              ],
+              "event_ms": 0.715,
+              "formal_admission_eligible": false,
+              "qualification_class": "DETERMINISTIC_FIXTURE",
+              "request_id": "d01-valid-ack",
+              "run_id": "d01-joined-1",
+              "sequence": 4,
+              "text": "Kubernetes automatically restarts failed services to restore the desired state.",
+              "text_sha256": "219a23eee1278e392cf7f50f6f5d64adc877dcf32759f0ea1f2fd1178a28e8f7",
+              "type": "verified_answer_text"
+            },
+            {
+              "event_ms": 132.356,
+              "sequence": 5,
+              "status": "FIXTURE_ONLY",
+              "type": "terminal"
+            }
+          ],
+          "native_composer_admitted": false,
+          "provider_qualification_proven": false,
+          "provider_receipt": {
+            "accepted": true,
+            "admission_eligible": false,
+            "attempts": 1,
+            "attestation_id": "d01-fixture-attestation-1",
+            "confidence": 0.99,
+            "cost_units": 0.0,
+            "decision": "ENTAILED",
+            "duration_ms": 0.473,
+            "evidence_class": "DETERMINISTIC_FIXTURE",
+            "model_identity": "d01-fixture-nli",
+            "model_version": "1",
+            "provider_id": "d01-deterministic-fixture-provider",
+            "qualification_receipt_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "request_id": "d01-valid-ack",
+            "request_sha256": "4154721a68d991d92e99bc9a5fac4c844935c69bd111be3386e4e1395a03e491",
+            "run_id": "d01-joined-1",
+            "schema_version": "m27.c02.source-bound-semantic-provider/v1",
+            "supporting_source_ids": [
+              "d01-source-valid-ack"
+            ]
+          },
+          "publishable": true,
+          "status": "FIXTURE_ONLY",
+          "terminal_reason": "NONQUALIFYING_FIXTURE_DELIVERY",
+          "timings_ms": {
+            "generation": 0.017,
+            "total": 132.356,
+            "verification": 0.473
+          }
+        },
+        "cost": {
+          "external_billable_calls": 0,
+          "local_compute_cost_claimed_zero": false,
+          "provider_cost_units": 0.0
+        },
+        "f35": false,
+        "fixture_transport_delivery": true,
+        "formal_product_go": false,
+        "native_composer_admission": false,
+        "official_client_publication": false,
+        "production": "NO_GO",
+        "rel01": false,
+        "request_id": "d01-valid-ack",
+        "run_id": "d01-joined-1",
+        "schema_version": "m27.d01.nonprod-source-verifier-client-outcome/v1",
+        "source_receipt": {
+          "sources": [
+            {
+              "allowed_principals": [
+                "d01-integrator"
+              ],
+              "byte_end": 66,
+              "byte_start": 0,
+              "excerpt_sha256": "8831538efbd51ea1b025e5c513ac80bf586b5aee684db4e2a89d7be096107e9c",
+              "license_id": "D01_PUBLIC_NONSECRET_TEST_SOURCE",
+              "path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01/evidence/d01/joined/valid-ack/source.txt",
+              "revision": "2026-10-17",
+              "rights_grant_id": "OWNER_D01_NONPROD_DISPATCH",
+              "rights_valid_until_epoch_s": 1792209798.119793,
+              "source_id": "d01-source-valid-ack",
+              "source_sha256": "8831538efbd51ea1b025e5c513ac80bf586b5aee684db4e2a89d7be096107e9c",
+              "tenant_id": "d01-nonprod",
+              "title": "D01 public Nonprod source valid-ack"
+            }
+          ]
+        },
+        "stage_timings": {
+          "client": {
+            "duration_ms": 130.136,
+            "ended_monotonic_ns": 308725879134208,
+            "ended_wall_epoch_ns": 1792206198251098000,
+            "started_monotonic_ns": 308725748998708,
+            "started_wall_epoch_ns": 1792206198120962000
+          },
+          "generator": {
+            "duration_ms": 0.015,
+            "ended_monotonic_ns": 308725748283000,
+            "ended_wall_epoch_ns": 1792206198120246000,
+            "started_monotonic_ns": 308725748268166,
+            "started_wall_epoch_ns": 1792206198120231000
+          },
+          "source_retrieval": {
+            "duration_ms": 0.339,
+            "ended_monotonic_ns": 308725748225041,
+            "ended_wall_epoch_ns": 1792206198120188000,
+            "started_monotonic_ns": 308725747886000,
+            "started_wall_epoch_ns": 1792206198119849000
+          },
+          "verifier": {
+            "duration_ms": 0.527,
+            "ended_monotonic_ns": 308725748961416,
+            "ended_wall_epoch_ns": 1792206198120924000,
+            "started_monotonic_ns": 308725748434208,
+            "started_wall_epoch_ns": 1792206198120397000
+          }
+        },
+        "status": "FIXTURE_ONLY",
+        "terminal_reason": "NONQUALIFYING_FIXTURE_DELIVERY"
+      }
+    },
+    {
+      "case_id": "forged-ack",
+      "client_mode": "forged",
+      "client_processes": [
+        {
+          "exit_code": 0,
+          "pid": 79459,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "280e0620267b261547abf68aef738567431cd0a646c83c43e06e25c3125ec1c6"
+        }
+      ],
+      "generated_text": "After an unknown external effect, automatic retry is denied until reconciliation is completed.",
+      "generated_text_sha256": "ed61bdb4d0b3a8c5bcdfccde35bfffdda5b7f719b3f235e2e67e19ef6db0972d",
+      "generation_duration_ms": 921.447,
+      "model_exit_code": 0,
+      "model_pid": 79458,
+      "model_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "model_stdout_sha256": "d3919085b7e97823ca47c811d2bb4f62278e0d3c04dc105c7ad879a4583d2087",
+      "model_timed_out": false,
+      "outcome": {
+        "c02_semantic_admission": false,
+        "c28": false,
+        "composer_result": {
+          "citations": [],
+          "client_receipt": {
+            "client_id": "c02-independent-os-fixture-client",
+            "client_process_pid": 79459,
+            "event_sha256": "7df07737ba1023310fed7f5d60f8f0b2da85546b88fec3954625217bb4d5818a",
+            "qualification_class": "DETERMINISTIC_FIXTURE",
+            "received_at_epoch_ns": 1792206199227373000,
+            "request_id": "d01-forged-ack",
+            "run_id": "d01-joined-2",
+            "schema_version": "m27.c02.client-ack/v1",
+            "signature": "Zm9yZ2VkLWFjaw=="
+          },
+          "events": [
+            {
+              "event_ms": 0.0,
+              "sequence": 1,
+              "source_ids": [
+                "d01-source-forged-ack"
+              ],
+              "source_sha256": [
+                "83c9ee26b75e355d8a189bd08002be2efd99501a82f20add518de3156eef3fdd"
+              ],
+              "type": "sources_bound"
+            },
+            {
+              "actual_model_output": true,
+              "event_ms": 0.005,
+              "generator_model_identity": "Qwen2.5-0.5B-Instruct-Q4_K_M",
+              "generator_model_version": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+              "sequence": 2,
+              "text_sha256": "ed61bdb4d0b3a8c5bcdfccde35bfffdda5b7f719b3f235e2e67e19ef6db0972d",
+              "type": "generated_claim_candidate"
+            },
+            {
+              "admission_eligible": false,
+              "decision": "ENTAILED",
+              "event_ms": 0.224,
+              "provider_id": "d01-deterministic-fixture-provider",
+              "sequence": 3,
+              "type": "semantic_verification",
+              "verified": true
+            },
+            {
+              "event_ms": 57.79,
+              "reason": "CLIENT_ACK_INVALID",
+              "sequence": 4,
+              "type": "safe_terminal"
+            }
+          ],
+          "native_composer_admitted": false,
+          "provider_qualification_proven": false,
+          "provider_receipt": {
+            "accepted": true,
+            "admission_eligible": false,
+            "attempts": 1,
+            "attestation_id": "d01-fixture-attestation-2",
+            "confidence": 0.99,
+            "cost_units": 0.0,
+            "decision": "ENTAILED",
+            "duration_ms": 0.224,
+            "evidence_class": "DETERMINISTIC_FIXTURE",
+            "model_identity": "d01-fixture-nli",
+            "model_version": "1",
+            "provider_id": "d01-deterministic-fixture-provider",
+            "qualification_receipt_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "request_id": "d01-forged-ack",
+            "request_sha256": "087c402a0d11819d77ef53499b7a8753c2d616e654cbeaa8e010067d3e0b0356",
+            "run_id": "d01-joined-2",
+            "schema_version": "m27.c02.source-bound-semantic-provider/v1",
+            "supporting_source_ids": [
+              "d01-source-forged-ack"
+            ]
+          },
+          "publishable": false,
+          "status": "SAFE_TERMINAL",
+          "terminal_reason": "CLIENT_ACK_INVALID",
+          "timings_ms": {
+            "total": 57.79
+          }
+        },
+        "cost": {
+          "external_billable_calls": 0,
+          "local_compute_cost_claimed_zero": false,
+          "provider_cost_units": 0.0
+        },
+        "f35": false,
+        "fixture_transport_delivery": false,
+        "formal_product_go": false,
+        "native_composer_admission": false,
+        "official_client_publication": false,
+        "production": "NO_GO",
+        "rel01": false,
+        "request_id": "d01-forged-ack",
+        "run_id": "d01-joined-2",
+        "schema_version": "m27.d01.nonprod-source-verifier-client-outcome/v1",
+        "source_receipt": {
+          "sources": [
+            {
+              "allowed_principals": [
+                "d01-integrator"
+              ],
+              "byte_end": 82,
+              "byte_start": 0,
+              "excerpt_sha256": "83c9ee26b75e355d8a189bd08002be2efd99501a82f20add518de3156eef3fdd",
+              "license_id": "D01_PUBLIC_NONSECRET_TEST_SOURCE",
+              "path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01/evidence/d01/joined/forged-ack/source.txt",
+              "revision": "2026-10-17",
+              "rights_grant_id": "OWNER_D01_NONPROD_DISPATCH",
+              "rights_valid_until_epoch_s": 1792209799.175503,
+              "source_id": "d01-source-forged-ack",
+              "source_sha256": "83c9ee26b75e355d8a189bd08002be2efd99501a82f20add518de3156eef3fdd",
+              "tenant_id": "d01-nonprod",
+              "title": "D01 public Nonprod source forged-ack"
+            }
+          ]
+        },
+        "stage_timings": {
+          "client": {
+            "duration_ms": 57.331,
+            "ended_monotonic_ns": 308726861416750,
+            "ended_wall_epoch_ns": 1792206199233393000,
+            "started_monotonic_ns": 308726804086000,
+            "started_wall_epoch_ns": 1792206199176061000
+          },
+          "generator": {
+            "duration_ms": 0.004,
+            "ended_monotonic_ns": 308726803772666,
+            "ended_wall_epoch_ns": 1792206199175748000,
+            "started_monotonic_ns": 308726803769041,
+            "started_wall_epoch_ns": 1792206199175745000
+          },
+          "source_retrieval": {
+            "duration_ms": 0.207,
+            "ended_monotonic_ns": 308726803748875,
+            "ended_wall_epoch_ns": 1792206199175724000,
+            "started_monotonic_ns": 308726803542000,
+            "started_wall_epoch_ns": 1792206199175517000
+          },
+          "verifier": {
+            "duration_ms": 0.243,
+            "ended_monotonic_ns": 308726804057000,
+            "ended_wall_epoch_ns": 1792206199176032000,
+            "started_monotonic_ns": 308726803814041,
+            "started_wall_epoch_ns": 1792206199175790000
+          }
+        },
+        "status": "SAFE_TERMINAL",
+        "terminal_reason": "CLIENT_ACK_INVALID"
+      }
+    }
+  ],
+  "duration_ms": 3357.839,
+  "ended_wall_epoch_ns": 1792206199234141000,
+  "ephemeral_client_private_key_persisted": false,
+  "ephemeral_client_public_key_sha256": "3965b879bc975e262a48cfec064dec649f30b63addf5eae17e088225cd382ee0",
+  "external_provider_calls": 0,
+  "f35": false,
+  "fixed_denominator": 2,
+  "fixture_transport_deliveries": 1,
+  "forged_ack_denials": 1,
+  "formal_product_go": false,
+  "generation_latency_denominator": 2,
+  "generation_latency_mean_ms": 1581.02,
+  "generation_latency_p95_ms": 2240.593,
+  "llama_cli_sha256": "cf4f088f32507af619a1d65516d235ef7644db8c81ff1d3e175ff640dab75ab7",
+  "local_compute_cost_claimed_zero": false,
+  "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+  "native_composer_admission": false,
+  "official_client_publications": 0,
+  "production": "NO_GO",
+  "provider_qualification_proven": false,
+  "rel01": false,
+  "runtime_stage_receipt_sha256": "98d2019bacaadc27896ffdfece7ea3ca4a28d09a80311799885d165501c6d374",
+  "schema": "m27.d01.joined-real-model-e2e/v1",
+  "started_wall_epoch_ns": 1792206195876460000,
+  "status": "PASS_LOCAL_CANDIDATE_ONLY"
+}

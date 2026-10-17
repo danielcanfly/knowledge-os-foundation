@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/Users/huaihsuanhuang/.pyenv/versions/3.11.15/bin/python",
+    "-B",
+    "tools/c02_run_real_model_candidates.py",
+    "--runtime",
+    "/private/tmp/m27-c02-model-runtime-20261017",
+    "--output",
+    "evidence/d01/model_candidates"
+  ],
+  "cwd": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01",
+  "duration_ms": 4851.029,
+  "ended_wall_epoch_ns": 1792206209871784000,
+  "exit_code": 0,
+  "name": "c02_real_model_candidates_4",
+  "pid": 81227,
+  "schema": "m27.c02.command-receipt/v1",
+  "started_wall_epoch_ns": 1792206205020714000,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 220,
+  "stdout_sha256": "9e6daa0e6d65e40ae54691812cf2782d2fe044e31d63e15a456bf2b7ece89ddf"
+}

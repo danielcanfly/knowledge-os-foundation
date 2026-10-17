@@ -1,0 +1,41 @@
+
+
+Loading model... 
+
+▄▄ ▄▄
+██ ██
+██ ██  ▀▀█▄ ███▄███▄  ▀▀█▄    ▄████ ████▄ ████▄
+██ ██ ▄█▀██ ██ ██ ██ ▄█▀██    ██    ██ ██ ██ ██
+██ ██ ▀█▄██ ██ ██ ██ ▀█▄██ ██ ▀████ ████▀ ████▀
+                                    ██    ██
+                                    ▀▀    ▀▀
+
+build      : b11425-e117148a4
+model      : /private/tmp/m27-c02-model-runtime-20261017/qwen2.5-0.5b-instruct-q4_k_m.gguf
+ftype      : Q4_K - Medium
+modalities : text
+
+available commands:
+  /exit or Ctrl+C     stop or exit
+  /regen              regenerate the last response
+  /clear              clear the chat history
+  /read <file>        add a text file
+  /glob <pattern>     add text files using globbing pattern
+
+
+
+> <|im_start|>system
+Answer the question in one concise sentence using only the supplied evidence. Do not add facts, do not quote the evidence verbatim, and provide no preface.
+<|im_end|>
+<|im_start|>user
+Question: 語意驗證失敗時系統應如何處理？
+Evidence: 語意驗證結果不明時，系統必須停止發布並回傳安全終止狀態。
+<|im_end|>
+<|im_start|>assistant
+
+在語意驗證結果不明時，系統應停止發布並回傳安全終止狀態。
+
+[ Prompt: 1373.4 t/s | Generation: 114.0 t/s ]
+
+
+Exiting...

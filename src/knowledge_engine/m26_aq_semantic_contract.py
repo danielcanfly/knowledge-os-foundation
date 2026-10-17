@@ -57,6 +57,22 @@ DenseChannel = legacy.DenseChannel
 ProviderClient = legacy.ProviderClient
 SemanticRequirement = runtime.SemanticRequirement
 
+_DEFAULT_PRODUCTION_ANSWER_BUNDLE_LOADER = load_production_answer_bundle
+
+
+def _resolve_production_answer_bundle(
+    answer_bundle: ProductionAnswerBundle | None,
+) -> ProductionAnswerBundle:
+    """Honor both canonical and pre-convergence read-only injection seams."""
+    if answer_bundle is not None:
+        return answer_bundle
+    if load_production_answer_bundle is not _DEFAULT_PRODUCTION_ANSWER_BUNDLE_LOADER:
+        return load_production_answer_bundle()
+    legacy_loader = legacy.load_production_answer_bundle
+    if legacy_loader is not _DEFAULT_PRODUCTION_ANSWER_BUNDLE_LOADER:
+        return legacy_loader()
+    return _DEFAULT_PRODUCTION_ANSWER_BUNDLE_LOADER()
+
 _GRAPH_WRAPPER_PREFIXES = (
     "A true graph fact says ",
     "The true graph fact says ",
@@ -6174,7 +6190,7 @@ def run_owner_arbitrary_query(
     legacy._emit_runtime_event(event_sink, "stage.started", stage="retrieval")
     # Keep bundle injection on the canonical module so bounded qualification
     # fixtures can replace the loader without reintroducing a legacy runtime edge.
-    bundle = answer_bundle or load_production_answer_bundle()
+    bundle = _resolve_production_answer_bundle(answer_bundle)
     _assert_canonical_answer_bundle(bundle)
     retrieval_question = legacy._fast_retrieval_query(normalized_question)
     lexical, dense = legacy._run_lexical_primary_retrieval(

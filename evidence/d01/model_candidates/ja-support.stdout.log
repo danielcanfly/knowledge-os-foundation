@@ -1,0 +1,41 @@
+
+
+Loading model... 
+
+▄▄ ▄▄
+██ ██
+██ ██  ▀▀█▄ ███▄███▄  ▀▀█▄    ▄████ ████▄ ████▄
+██ ██ ▄█▀██ ██ ██ ██ ▄█▀██    ██    ██ ██ ██ ██
+██ ██ ▀█▄██ ██ ██ ██ ▀█▄██ ██ ▀████ ████▀ ████▀
+                                    ██    ██
+                                    ▀▀    ▀▀
+
+build      : b11425-e117148a4
+model      : /private/tmp/m27-c02-model-runtime-20261017/qwen2.5-0.5b-instruct-q4_k_m.gguf
+ftype      : Q4_K - Medium
+modalities : text
+
+available commands:
+  /exit or Ctrl+C     stop or exit
+  /regen              regenerate the last response
+  /clear              clear the chat history
+  /read <file>        add a text file
+  /glob <pattern>     add text files using globbing pattern
+
+
+
+> <|im_start|>system
+Answer the question in one concise sentence using only the supplied evidence. Do not add facts, do not quote the evidence verbatim, and provide no preface.
+<|im_end|>
+<|im_start|>user
+Question: Kubernetes は障害時に何をしますか？
+Evidence: Kubernetes は障害が発生したサービスを再起動し、望ましい状態へ復旧します。
+<|im_end|>
+<|im_start|>assistant
+
+Kubernetes は障害時にサービスを再起動し、望ましい状態へ復旧します。
+
+[ Prompt: 1309.8 t/s | Generation: 111.5 t/s ]
+
+
+Exiting...

@@ -1805,6 +1805,15 @@ def run_owner_arbitrary_query(
     """
     from .m26_aq_semantic_contract import run_owner_arbitrary_query as canonical_run
 
+    # Resolve the bundle through the public compatibility module before
+    # delegating. Existing callers inject a read-only bundle at this boundary;
+    # dropping that injection makes the canonical runtime fall through to the
+    # environment-backed production store even though the caller supplied the
+    # exact candidate under test.
+    resolved_answer_bundle = (
+        answer_bundle if answer_bundle is not None else load_production_answer_bundle()
+    )
+
     return canonical_run(
         root=root,
         gate=gate,
@@ -1817,7 +1826,7 @@ def run_owner_arbitrary_query(
         require_remote_dense=require_remote_dense,
         max_provider_calls=max_provider_calls,
         max_cost=max_cost,
-        answer_bundle=answer_bundle,
+        answer_bundle=resolved_answer_bundle,
         event_sink=event_sink,
     )
 

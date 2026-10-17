@@ -1,0 +1,40 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-8.4.2, pluggy-1.6.0 -- /Users/huaihsuanhuang/.pyenv/versions/3.11.15/bin/python
+rootdir: /Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01
+configfile: pyproject.toml
+plugins: anyio-4.14.1, cov-6.3.0, langsmith-0.11.1
+collecting ... collected 31 items
+
+tests/test_m27_d01_nonprod_integration.py::test_joined_source_verifier_client_outcome_keeps_fixture_nonformal PASSED [  3%]
+tests/test_m27_d01_nonprod_integration.py::test_optional_module_requires_explicit_nonprod_opt_in PASSED [  6%]
+tests/test_m27_d01_nonprod_integration.py::test_c01_compatibility_bundle_cannot_bypass_c02_provider_gate PASSED [  9%]
+tests/test_m27_d01_nonprod_integration.py::test_optional_modules_are_not_imported_by_default_product_runtime PASSED [ 12%]
+tests/test_m27_d01_nonprod_integration.py::test_source_identity_rights_and_acl_fail_before_generation[source_change0-run_change0-TENANT_MISMATCH] PASSED [ 16%]
+tests/test_m27_d01_nonprod_integration.py::test_source_identity_rights_and_acl_fail_before_generation[source_change1-run_change1-ACL_DENIED] PASSED [ 19%]
+tests/test_m27_d01_nonprod_integration.py::test_source_identity_rights_and_acl_fail_before_generation[source_change2-run_change2-SOURCE_DATA_SHA_MISMATCH] PASSED [ 22%]
+tests/test_m27_d01_nonprod_integration.py::test_source_identity_rights_and_acl_fail_before_generation[source_change3-run_change3-SOURCE_REVISION_MISMATCH] PASSED [ 25%]
+tests/test_m27_d01_nonprod_integration.py::test_source_identity_rights_and_acl_fail_before_generation[source_change4-run_change4-SOURCE_EXCERPT_SHA_MISMATCH] PASSED [ 29%]
+tests/test_m27_d01_nonprod_integration.py::test_source_identity_rights_and_acl_fail_before_generation[source_change5-run_change5-SOURCE_SPAN_INVALID] PASSED [ 32%]
+tests/test_m27_d01_nonprod_integration.py::test_source_identity_rights_and_acl_fail_before_generation[source_change6-run_change6-SOURCE_REVOKED] PASSED [ 35%]
+tests/test_m27_d01_nonprod_integration.py::test_source_identity_rights_and_acl_fail_before_generation[source_change7-run_change7-SOURCE_RIGHTS_REVOKED] PASSED [ 38%]
+tests/test_m27_d01_nonprod_integration.py::test_source_identity_rights_and_acl_fail_before_generation[source_change8-run_change8-SOURCE_RIGHTS_STALE] PASSED [ 41%]
+tests/test_m27_d01_nonprod_integration.py::test_source_identity_rights_and_acl_fail_before_generation[source_change9-run_change9-TENANT_MISMATCH] PASSED [ 45%]
+tests/test_m27_d01_nonprod_integration.py::test_source_identity_rights_and_acl_fail_before_generation[source_change10-run_change10-ACL_DENIED] PASSED [ 48%]
+tests/test_m27_d01_nonprod_integration.py::test_provider_authority_and_budget_fail_closed[auth_change0-PROVIDER_AUTHORITY_EXPIRED] PASSED [ 51%]
+tests/test_m27_d01_nonprod_integration.py::test_provider_authority_and_budget_fail_closed[auth_change1-PROVIDER_POLICY_REVOKED] PASSED [ 54%]
+tests/test_m27_d01_nonprod_integration.py::test_provider_authority_and_budget_fail_closed[auth_change2-PROVIDER_PRINCIPAL_DENIED] PASSED [ 58%]
+tests/test_m27_d01_nonprod_integration.py::test_provider_authority_and_budget_fail_closed[auth_change3-PROVIDER_BUDGET_DENIED] PASSED [ 61%]
+tests/test_m27_d01_nonprod_integration.py::test_provider_authority_and_budget_fail_closed[auth_change4-PROVIDER_OR_MODEL_IDENTITY_MISMATCH] PASSED [ 64%]
+tests/test_m27_d01_nonprod_integration.py::test_response_identity_schema_replay_and_unknown_fail_closed[response_change0-PROVIDER_SIGNER_MISMATCH] PASSED [ 67%]
+tests/test_m27_d01_nonprod_integration.py::test_response_identity_schema_replay_and_unknown_fail_closed[response_change1-CROSS_RUN_OR_NONCE_REPLAY] PASSED [ 70%]
+tests/test_m27_d01_nonprod_integration.py::test_response_identity_schema_replay_and_unknown_fail_closed[response_change2-CROSS_RUN_OR_NONCE_REPLAY] PASSED [ 74%]
+tests/test_m27_d01_nonprod_integration.py::test_response_identity_schema_replay_and_unknown_fail_closed[response_change3-CROSS_RUN_OR_NONCE_REPLAY] PASSED [ 77%]
+tests/test_m27_d01_nonprod_integration.py::test_response_identity_schema_replay_and_unknown_fail_closed[response_change4-PROVIDER_DECISION_UNKNOWN] PASSED [ 80%]
+tests/test_m27_d01_nonprod_integration.py::test_response_identity_schema_replay_and_unknown_fail_closed[response_change5-fixture transport support only] PASSED [ 83%]
+tests/test_m27_d01_nonprod_integration.py::test_malformed_semantic_response_missing_field_is_denied PASSED [ 87%]
+tests/test_m27_d01_nonprod_integration.py::test_timeout_and_cancellation_never_reach_client PASSED [ 90%]
+tests/test_m27_d01_nonprod_integration.py::test_rejected_verdict_emits_no_substantive_text PASSED [ 93%]
+tests/test_m27_d01_nonprod_integration.py::test_provider_attestation_replay_and_client_ack_spoof_are_denied PASSED [ 96%]
+tests/test_m27_d01_nonprod_integration.py::test_external_qualification_shape_cannot_self_promote_without_d01_authority PASSED [100%]
+
+============================== 31 passed in 0.21s ==============================

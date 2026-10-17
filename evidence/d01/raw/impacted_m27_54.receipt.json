@@ -1,0 +1,30 @@
+{
+  "command": [
+    "/Users/huaihsuanhuang/.pyenv/versions/3.11.15/bin/python",
+    "-m",
+    "pytest",
+    "-p",
+    "no:cacheprovider",
+    "-vv",
+    "tests/test_m27_stage30c_extractive_support.py",
+    "tests/test_m27_stage30d_provider_boundary.py",
+    "tests/test_m27_stage30e_literal_calibration.py",
+    "tests/test_m27_stage30f_provider_schema.py",
+    "tests/test_m27_stage30g_publication.py",
+    "tests/test_m27_stage30i_question_obligations.py",
+    "tests/test_q33_publication_distinct_claims.py",
+    "tests/test_m27_runtime_finalization.py"
+  ],
+  "cwd": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01",
+  "duration_ms": 1992.846,
+  "ended_wall_epoch_ns": 1792206117575623000,
+  "exit_code": 0,
+  "name": "impacted_m27_54",
+  "pid": 73318,
+  "schema": "m27.c02.command-receipt/v1",
+  "started_wall_epoch_ns": 1792206115582764000,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 6376,
+  "stdout_sha256": "b728c7aa36a4e75eb5f21403e13c45ba6b80c8bd54dccfcabe4c580eb5483fe9"
+}

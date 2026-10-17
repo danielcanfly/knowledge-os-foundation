@@ -1,0 +1,153 @@
+{
+  "baseline": {
+    "head": "f857622be0e07a3979e65275a4b4c402c5ec7e8b",
+    "tree": "962cbc34a2a0bfe0e921912312b9e9a1713a202b"
+  },
+  "baseline_change_reason": "accepted C01 loader-injection compatibility repair only",
+  "baseline_files_changed": [
+    "src/knowledge_engine/m26_aq_semantic_contract.py",
+    "src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py"
+  ],
+  "branch": "codex/d01-exclusive-nonprod-integration-20261017",
+  "c02_default_registration": false,
+  "d01_authored": [
+    {
+      "bytes": 11611,
+      "path": "src/knowledge_engine/m27_d01_nonprod_integration.py",
+      "sha256": "fe8035472b24e34d12b2941b666367ad6909fa79c1cc2302999095e969e0b168"
+    },
+    {
+      "bytes": 13642,
+      "path": "tests/test_m27_d01_nonprod_integration.py",
+      "sha256": "07a25254f11d8e962dc7a9389b892f17a87302dece938a16ac90bf8234a74a23"
+    },
+    {
+      "bytes": 15445,
+      "path": "tools/d01_run_joined_e2e.py",
+      "sha256": "475c4e7c8a6f2b107214a9e817fe0a3dc45a0c548cd2bd4164ba110c046b643f"
+    },
+    {
+      "bytes": 13557,
+      "path": "tools/d01_build_artifacts.py",
+      "sha256": "f84e3e88aa58600230d37d9920487e47a02f12729867fa64458ec5362b96d1fe"
+    },
+    {
+      "bytes": 6222,
+      "path": "tools/d01_verify_integration_evidence.py",
+      "sha256": "5a92673ae93bf33242c6ed6d3a774fb9f890bde476d6338114eb7feb94dc8cf6"
+    }
+  ],
+  "excluded": [
+    "C01 Worker raw history and sealed evidence",
+    "C02 Worker raw history and sealed evidence",
+    "all default Product registration and release pointers"
+  ],
+  "imported": [
+    {
+      "changed_after_selective_import": false,
+      "git_blob_sha1": "1571df50e69749d6e275dd92be4190723cec5dc0",
+      "path": "scripts/c01_run_residual_cases.py",
+      "source": "C01",
+      "source_commit": "b3724656bb6f3e237ca5d755ce9ecc1c5768c0af",
+      "source_tree": "264c2acf68af44a37b74339f9f97720c07cb9dc3"
+    },
+    {
+      "changed_after_selective_import": false,
+      "git_blob_sha1": "e3776895e55559d263fbcd9aa9bb3f2a9ad2b2fe",
+      "path": "src/knowledge_engine/c01_canonical_contract_gate.py",
+      "source": "C01",
+      "source_commit": "b3724656bb6f3e237ca5d755ce9ecc1c5768c0af",
+      "source_tree": "264c2acf68af44a37b74339f9f97720c07cb9dc3"
+    },
+    {
+      "changed_after_selective_import": false,
+      "git_blob_sha1": "158b1b9c3ba11f43c400ca83c99b2bf12957a9fa",
+      "path": "src/knowledge_engine/m26_aq_semantic_contract.py",
+      "source": "C01",
+      "source_commit": "b3724656bb6f3e237ca5d755ce9ecc1c5768c0af",
+      "source_tree": "264c2acf68af44a37b74339f9f97720c07cb9dc3"
+    },
+    {
+      "changed_after_selective_import": false,
+      "git_blob_sha1": "ce59e05a6e2869f3fc296135e943c8351a3fd1aa",
+      "path": "src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py",
+      "source": "C01",
+      "source_commit": "b3724656bb6f3e237ca5d755ce9ecc1c5768c0af",
+      "source_tree": "264c2acf68af44a37b74339f9f97720c07cb9dc3"
+    },
+    {
+      "changed_after_selective_import": false,
+      "git_blob_sha1": "b1a5c2a549f69565de01bcbf687e696104cf2393",
+      "path": "tests/test_c01_canonical_contract_gate.py",
+      "source": "C01",
+      "source_commit": "b3724656bb6f3e237ca5d755ce9ecc1c5768c0af",
+      "source_tree": "264c2acf68af44a37b74339f9f97720c07cb9dc3"
+    },
+    {
+      "changed_after_selective_import": false,
+      "git_blob_sha1": "553bb5ae79d0aa82d865bb4009c603ca30397f5d",
+      "path": "tests/test_c01_legacy_canonical_bundle_bridge.py",
+      "source": "C01",
+      "source_commit": "b3724656bb6f3e237ca5d755ce9ecc1c5768c0af",
+      "source_tree": "264c2acf68af44a37b74339f9f97720c07cb9dc3"
+    },
+    {
+      "changed_after_selective_import": false,
+      "git_blob_sha1": "377cf1cc383e8f24c14325f07c80e66d034c1ecd",
+      "path": "src/knowledge_engine/m27_c02_native_composer.py",
+      "source": "C02",
+      "source_commit": "ad16177209ffb9e573235b398e4ce3838ed8a421",
+      "source_tree": "a2c97f017309d7b7778e9c689087ee601c8f4ec7"
+    },
+    {
+      "changed_after_selective_import": false,
+      "git_blob_sha1": "a2ff4f62b1f9f71cdfaeec5720e83e46c0f46e52",
+      "path": "src/knowledge_engine/m27_c02_semantic_provider.py",
+      "source": "C02",
+      "source_commit": "ad16177209ffb9e573235b398e4ce3838ed8a421",
+      "source_tree": "a2c97f017309d7b7778e9c689087ee601c8f4ec7"
+    },
+    {
+      "changed_after_selective_import": false,
+      "git_blob_sha1": "828f1f39b3d9e578ee3fc88890336bb0987cb69b",
+      "path": "tests/test_m27_c02_semantic_provider_native_composer.py",
+      "source": "C02",
+      "source_commit": "ad16177209ffb9e573235b398e4ce3838ed8a421",
+      "source_tree": "a2c97f017309d7b7778e9c689087ee601c8f4ec7"
+    },
+    {
+      "changed_after_selective_import": false,
+      "git_blob_sha1": "210d4f3da21cbf6c6f7ce64de9922ef3029363d2",
+      "path": "tools/c02_capture_command.py",
+      "source": "C02",
+      "source_commit": "ad16177209ffb9e573235b398e4ce3838ed8a421",
+      "source_tree": "a2c97f017309d7b7778e9c689087ee601c8f4ec7"
+    },
+    {
+      "changed_after_selective_import": false,
+      "git_blob_sha1": "8a3ac030eedddcd97572f38f31e3b1f9c66af7c1",
+      "path": "tools/c02_fixture_client.py",
+      "source": "C02",
+      "source_commit": "ad16177209ffb9e573235b398e4ce3838ed8a421",
+      "source_tree": "a2c97f017309d7b7778e9c689087ee601c8f4ec7"
+    },
+    {
+      "changed_after_selective_import": false,
+      "git_blob_sha1": "7379aad53cd93006d28942066f104157142f703b",
+      "path": "tools/c02_run_fixture_client_receipts.py",
+      "source": "C02",
+      "source_commit": "ad16177209ffb9e573235b398e4ce3838ed8a421",
+      "source_tree": "a2c97f017309d7b7778e9c689087ee601c8f4ec7"
+    },
+    {
+      "changed_after_selective_import": false,
+      "git_blob_sha1": "00e5cab9bfb0d4a0983c5ca1180a8865393ba0a9",
+      "path": "tools/c02_run_real_model_candidates.py",
+      "source": "C02",
+      "source_commit": "ad16177209ffb9e573235b398e4ce3838ed8a421",
+      "source_tree": "a2c97f017309d7b7778e9c689087ee601c8f4ec7"
+    }
+  ],
+  "method": "SELECTIVE_PATH_IMPORT_NOT_WHOLE_EVIDENCE_COMMIT",
+  "schema": "m27.d01.merge-provenance/v1"
+}

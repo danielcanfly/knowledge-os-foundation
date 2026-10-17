@@ -1,0 +1,9 @@
+{
+  "attempt": 1,
+  "classification": "RUNNER_CONSTRUCTION_ERROR",
+  "exit_code": 1,
+  "pytest_started": false,
+  "reason": "PARAMETRIZED_NODE_ID_WAS_NOT_SHELL_QUOTED",
+  "retained": true,
+  "schema": "m27.d01.failed-attempt-receipt/v1"
+}

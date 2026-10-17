@@ -1,0 +1,39 @@
+
+
+Loading model... 
+
+▄▄ ▄▄
+██ ██
+██ ██  ▀▀█▄ ███▄███▄  ▀▀█▄    ▄████ ████▄ ████▄
+██ ██ ▄█▀██ ██ ██ ██ ▄█▀██    ██    ██ ██ ██ ██
+██ ██ ▀█▄██ ██ ██ ██ ▀█▄██ ██ ▀████ ████▀ ████▀
+                                    ██    ██
+                                    ▀▀    ▀▀
+
+build      : b11425-e117148a4
+model      : /private/tmp/m27-c02-model-runtime-20261017/qwen2.5-0.5b-instruct-q4_k_m.gguf
+ftype      : Q4_K - Medium
+modalities : text
+
+available commands:
+  /exit or Ctrl+C     stop or exit
+  /regen              regenerate the last response
+  /clear              clear the chat history
+  /read <file>        add a text file
+  /glob <pattern>     add text files using globbing pattern
+
+
+
+> <|im_start|>system
+Answer in one short sentence using only the supplied evidence. Add no facts and no preface.<|im_end|>
+<|im_start|>user
+Question: How does Kubernetes recover a failed service?
+Evidence: Kubernetes restarts failed services to restore the desired state.<|im_end|>
+<|im_start|>assistant
+
+Kubernetes automatically restarts failed services to restore the desired state.
+
+[ Prompt: 1113.2 t/s | Generation: 106.8 t/s ]
+
+
+Exiting...

@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/Users/huaihsuanhuang/.pyenv/versions/3.11.15/bin/python",
+    "-B",
+    "tools/d01_run_joined_e2e.py",
+    "--runtime",
+    "/private/tmp/m27-c02-model-runtime-20261017",
+    "--output",
+    "evidence/d01/joined"
+  ],
+  "cwd": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01",
+  "duration_ms": 4864.804,
+  "ended_wall_epoch_ns": 1792206199268381000,
+  "exit_code": 0,
+  "name": "d01_joined_real_model_e2e",
+  "pid": 79453,
+  "schema": "m27.c02.command-receipt/v1",
+  "started_wall_epoch_ns": 1792206194403530000,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 302,
+  "stdout_sha256": "2fa4dabb8867c96f90dd8dac60b40c5d9ccaf03239bc956e872ed79816a6ccb5"
+}

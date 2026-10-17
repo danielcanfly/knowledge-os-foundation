@@ -1,0 +1,24 @@
+{
+  "command": [
+    "git",
+    "diff",
+    "--check",
+    "--",
+    "src",
+    "scripts",
+    "tests",
+    "tools"
+  ],
+  "cwd": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01",
+  "duration_ms": 74.994,
+  "ended_wall_epoch_ns": 1792206440173325000,
+  "exit_code": 0,
+  "name": "d01_diff_check_precommit",
+  "pid": 94239,
+  "schema": "m27.c02.command-receipt/v1",
+  "started_wall_epoch_ns": 1792206440098333000,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

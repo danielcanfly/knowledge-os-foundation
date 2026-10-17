@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/Users/huaihsuanhuang/.pyenv/versions/3.11.15/bin/python",
+    "-m",
+    "pytest",
+    "-p",
+    "no:cacheprovider",
+    "-vv",
+    "tests/test_m27_2027_agent_product_runtime.py"
+  ],
+  "cwd": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01",
+  "duration_ms": 1355.11,
+  "ended_wall_epoch_ns": 1792206132973831000,
+  "exit_code": 1,
+  "name": "c02_original_file_8",
+  "pid": 74657,
+  "schema": "m27.c02.command-receipt/v1",
+  "started_wall_epoch_ns": 1792206131618720000,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 163796,
+  "stdout_sha256": "77a879d196af4868d121a7573a9aad0923184b8af6ed53811bbb0f711518e84e"
+}

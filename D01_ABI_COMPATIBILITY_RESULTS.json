@@ -1,0 +1,102 @@
+{
+  "full_8990_reproduction": "NOT_RERUN_NOT_CLAIMED",
+  "historical_8990_breakdown_not_current_score": "8935/53/0/2",
+  "joined_e2e": {
+    "actual_local_model_generations": 2,
+    "fixed_denominator": 2,
+    "fixture_transport_deliveries": 1,
+    "forged_ack_denials": 1,
+    "official_client_publications": 0,
+    "receipt": "evidence/d01/joined/D01_JOINED_REAL_MODEL_E2E.json"
+  },
+  "original_53": {
+    "c01": {
+      "errors": 0,
+      "failed": 46,
+      "failures": 46,
+      "passed": 5,
+      "skipped": 0,
+      "tests": 51
+    },
+    "c02": {
+      "errors": 0,
+      "failed": 2,
+      "failures": 2,
+      "passed": 0,
+      "skipped": 0,
+      "tests": 2
+    },
+    "denominator": 53,
+    "failed": 48,
+    "passed": 5,
+    "targeted_remaining": 48
+  },
+  "recovered_original_five": {
+    "exit_code": 0,
+    "failed": 0,
+    "name": "c01_recovered_5",
+    "passed": 5,
+    "receipt": "evidence/d01/raw/c01_recovered_5.receipt.json",
+    "total": 5
+  },
+  "schema": "m27.d01.abi-compatibility-results/v1",
+  "status": "PASS_AUTHORIZED_NONPROD_INTEGRATION",
+  "suites": {
+    "c01_contract": {
+      "exit_code": 0,
+      "failed": 0,
+      "name": "c01_contract_23",
+      "passed": 23,
+      "receipt": "evidence/d01/raw/c01_contract_23.receipt.json",
+      "total": 23
+    },
+    "c01_related": {
+      "exit_code": 0,
+      "failed": 0,
+      "name": "c01_related_34",
+      "passed": 34,
+      "receipt": "evidence/d01/raw/c01_related_34.receipt.json",
+      "total": 34
+    },
+    "c02_contract": {
+      "exit_code": 0,
+      "failed": 0,
+      "name": "c02_contract_46",
+      "passed": 46,
+      "receipt": "evidence/d01/raw/c02_contract_46.receipt.json",
+      "total": 46
+    },
+    "d01_integration": {
+      "exit_code": 0,
+      "failed": 0,
+      "name": "d01_integration_31",
+      "passed": 31,
+      "receipt": "evidence/d01/raw/d01_integration_31.receipt.json",
+      "total": 31
+    },
+    "impacted_m27": {
+      "exit_code": 0,
+      "failed": 0,
+      "name": "impacted_m27_54",
+      "passed": 54,
+      "receipt": "evidence/d01/raw/impacted_m27_54.receipt.json",
+      "total": 54
+    },
+    "m26_mature": {
+      "exit_code": 0,
+      "failed": 0,
+      "name": "m26_mature_154",
+      "passed": 154,
+      "receipt": "evidence/d01/raw/m26_mature_154.receipt.json",
+      "total": 154
+    },
+    "targeted_api_translation_legacy_tenant_citation": {
+      "exit_code": 0,
+      "failed": 0,
+      "name": "targeted_api_translation_legacy_tenant_citation_34",
+      "passed": 34,
+      "receipt": "evidence/d01/raw/targeted_api_translation_legacy_tenant_citation_34.receipt.json",
+      "total": 34
+    }
+  }
+}

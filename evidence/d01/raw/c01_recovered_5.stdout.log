@@ -1,0 +1,14 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-8.4.2, pluggy-1.6.0 -- /Users/huaihsuanhuang/.pyenv/versions/3.11.15/bin/python
+rootdir: /Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01
+configfile: pyproject.toml
+plugins: anyio-4.14.1, cov-6.3.0, langsmith-0.11.1
+collecting ... collected 5 items
+
+tests/test_a01_fast_public_contract_v2.py::test_v2_invalid_outputs_fail_closed_with_bounded_attempts[missing_citation] PASSED [ 20%]
+tests/test_a01_fast_public_contract_v2.py::test_v2_invalid_outputs_fail_closed_with_bounded_attempts[private_leak] PASSED [ 40%]
+tests/test_a01_fast_public_contract_v2.py::test_v2_explicit_single_attempt_cap_never_retries PASSED [ 60%]
+tests/test_a01_fast_public_contract_v2.py::test_v2_unknown_effect_prohibits_retry PASSED [ 80%]
+tests/test_a01_fast_public_contract_v2.py::test_v2_cost_cap_rejects_publication PASSED [100%]
+
+============================== 5 passed in 0.50s ===============================

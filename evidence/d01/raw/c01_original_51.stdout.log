@@ -1,0 +1,1928 @@
+F.....FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF                      [100%]
+=================================== FAILURES ===================================
+___________ test_v2_positive_retains_semantic_proof_and_single_call ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b59fbd0>
+
+    def test_v2_positive_retains_semantic_proof_and_single_call(monkeypatch):
+        provider = FastAnswerProvider(
+            answer_text="A skill is a method an agent follows for a class of task.",
+            citation_ids=["ev_skill"],
+        )
+        response = _execute(monkeypatch, provider)
+>       assert provider.calls == response["provider_call_count"] == 1
+E       assert 2 == 0
+E        +  where 2 = <tests.test_m26_pa_7_fast_public_path.FastAnswerProvider object at 0x10a672110>.calls
+
+tests/test_a01_fast_public_contract_v2.py:48: AssertionError
+___________ test_correct_false_premise_answer_need_not_begin_with_no ___________
+
+tmp_path = PosixPath('/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAK..._VNEXT_20261014/D01/.tmp/d01/formal/c01_original_51/pytest-of-huaihsuanhuang/pytest-0/test_correct_false_premise_ans0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10ad50150>
+
+    def test_correct_false_premise_answer_need_not_begin_with_no(
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        module = _load_module(name="m26_aq_final_closure_contract")
+        monkeypatch.setattr(module, "_validate_visible_semantics", lambda row: [])
+    
+        rows = []
+        for index in range(1, 13):
+            case_id = f"R3-Q{index:02d}"
+            if case_id in {"R3-Q10", "R3-Q11"}:
+                rows.append(_abstention_row(module, case_id))
+            else:
+                rows.append(_answered_row(module, case_id))
+    
+        artifact = {
+            "collection": {"status": "complete", "failure": None},
+            "health": {
+                "http_status": 200,
+                "status": "ok",
+                "build_sha": "sha",
+                "entrypoint": module.CANONICAL_RUNTIME_ENTRYPOINT,
+                "semantic_contract_fingerprint": module.semantic_contract_fingerprint(),
+            },
+            "graph": {
+                "http_status": 200,
+                "status": "ok",
+                "graph_scope": "full_current_production_relation_graph",
+                "release_id": module.EXPECTED_RELEASE_ID,
+                "graph_v2_sha256": module.EXPECTED_GRAPH_SHA256,
+                "node_count": module.EXPECTED_NODE_COUNT,
+                "edge_count": module.EXPECTED_EDGE_COUNT,
+            },
+            "rows": rows,
+            "privacy": {
+                "raw_backend_token_recorded": False,
+                "raw_owner_hash_recorded": False,
+                "provider_secret_recorded": False,
+            },
+        }
+        gate = {"production_identities": {"public_traffic_percent": 0}}
+        artifact_path = tmp_path / "artifact.json"
+        gate_path = tmp_path / "gate.json"
+        artifact_path.write_text(json.dumps(artifact), encoding="utf-8")
+        gate_path.write_text(json.dumps(gate), encoding="utf-8")
+    
+>       module.validate(
+            input_path=artifact_path,
+            gate_path=gate_path,
+            expected_sha="sha",
+        )
+
+tests/test_m26_aq_simplified_product_contract.py:160: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def validate(*, input_path: Path, gate_path: Path, expected_sha: str) -> None:
+        artifact = json.loads(input_path.read_text(encoding="utf-8"))
+        failures: list[str] = []
+        expected_fingerprint = semantic_contract_fingerprint()
+        collection = artifact.get("collection", {})
+        if isinstance(collection, dict):
+            if collection.get("status") != "complete":
+                failures.append("collection_not_complete")
+            if collection.get("failure"):
+                failures.append("collection_failure_recorded")
+        else:
+            failures.append("collection_metadata_missing")
+        health = artifact.get("health", {})
+        graph = artifact.get("graph", {})
+        if health.get("http_status") != 200 or health.get("status") != "ok":
+            failures.append("health_not_ok")
+        if health.get("build_sha") != expected_sha:
+            failures.append("health_build_sha_mismatch")
+        if health.get("entrypoint") != CANONICAL_RUNTIME_ENTRYPOINT:
+            failures.append("wrong_production_entrypoint")
+        if health.get("semantic_contract_fingerprint") != expected_fingerprint:
+            failures.append("health_semantic_fingerprint_mismatch")
+        if graph.get("http_status") != 200 or graph.get("status") != "ok":
+            failures.append("graph_not_ok")
+        if graph.get("graph_scope") != "full_current_production_relation_graph":
+            failures.append("graph_scope_mismatch")
+        if graph.get("release_id") != EXPECTED_RELEASE_ID:
+            failures.append("graph_release_mismatch")
+        if graph.get("graph_v2_sha256") != EXPECTED_GRAPH_SHA256:
+            failures.append("graph_sha_mismatch")
+        if graph.get("node_count") != EXPECTED_NODE_COUNT or graph.get("edge_count") != EXPECTED_EDGE_COUNT:
+            failures.append("graph_population_mismatch")
+        gate = json.loads(gate_path.read_text(encoding="utf-8"))
+        identities = gate.get("production_identities", {})
+        if identities.get("public_traffic_percent") != 0:
+            failures.append("public_traffic_not_zero")
+    
+        rows = artifact.get("rows", [])
+        if not isinstance(rows, list) or len(rows) != 12:
+            failures.append("r3_population_not_12")
+            rows = rows if isinstance(rows, list) else []
+        by_id = {str(row.get("case_id")): row for row in rows if isinstance(row, dict)}
+        abstain_ids = {"R3-Q10", "R3-Q11"}
+        for case_id in [f"R3-Q{index:02d}" for index in range(1, 13)]:
+            row = by_id.get(case_id)
+            if row is None:
+                failures.append(f"{case_id}:missing")
+                continue
+            if row.get("http_status") != 200:
+                failures.append(f"{case_id}:http")
+                continue
+            for identity_failure in _validate_canonical_identity(row, expected_sha):
+                failures.append(f"{case_id}:{identity_failure}")
+            collector = row.get("collector", {})
+            if isinstance(collector, dict):
+                if collector.get("deadline_exceeded"):
+                    failures.append(f"{case_id}:collector_deadline_exceeded")
+                if collector.get("timeout_converted_to_answer") is not False:
+                    failures.append(f"{case_id}:timeout_converted_to_answer")
+            accounting = row.get("accounting", {}) if isinstance(row.get("accounting"), dict) else {}
+            provider_calls = int(accounting.get("provider_call_count", 0))
+            if case_id in abstain_ids:
+                if not row.get("safe_abstention") or row.get("status") != "owner_only_safe_abstention":
+                    failures.append(f"{case_id}:expected_safe_abstention")
+                if provider_calls != 0:
+                    failures.append(f"{case_id}:provider_calls_not_zero")
+                continue
+            if row.get("safe_abstention") or row.get("status") != "owner_only_cited_answer":
+                failures.append(f"{case_id}:not_answered")
+            if row.get("answer_source") not in ACCEPTED_ANSWER_SOURCES:
+                failures.append(f"{case_id}:wrong_answer_source")
+            if not str(row.get("answer_text", "")).strip():
+                failures.append(f"{case_id}:empty_answer")
+            if provider_calls < 1 or provider_calls > MAX_SEMANTIC_CLOSURE_PROVIDER_CALLS:
+                failures.append(f"{case_id}:provider_call_count")
+            if not row.get("citations"):
+                failures.append(f"{case_id}:missing_citations")
+            integrity = row.get("integrity", {}) if isinstance(row.get("integrity"), dict) else {}
+            if int(integrity.get("unsupported_accepted_claims", 0)) != 0:
+                failures.append(f"{case_id}:unsupported_claims")
+            if not integrity.get("material_claim_support_verified", False):
+                failures.append(f"{case_id}:material_support_not_verified")
+            if not integrity.get("citation_locator_valid", False):
+                failures.append(f"{case_id}:citation_locator_invalid")
+            if not _zero_mutations(row.get("mutations", {})):
+                failures.append(f"{case_id}:protected_mutation")
+            closure = row.get("semantic_closure", {}) if isinstance(row.get("semantic_closure"), dict) else {}
+            if closure.get("failures"):
+                failures.append(f"{case_id}:semantic_closure_failures")
+            if closure.get("broad_deterministic_fallback_used") is not False:
+                failures.append(f"{case_id}:deterministic_fallback")
+            for telemetry in _provider_telemetry(row):
+                if not isinstance(telemetry, dict):
+                    failures.append(f"{case_id}:invalid_provider_telemetry")
+                    continue
+                if str(telemetry.get("stop_reason", "")).casefold() in {"max_tokens", "length"}:
+                    failures.append(f"{case_id}:provider_max_tokens")
+                parse = telemetry.get("parse_telemetry", {})
+                if not isinstance(parse, dict) or not parse.get("parse_ok", False):
+                    failures.append(f"{case_id}:provider_parse_failure")
+            # Historical visible-pattern checks are diagnostics only. Semantic truth is
+            # enforced by the claim-local semantic reviewer plus finite citation guards.
+            if case_id in {"R3-Q05", "R3-Q09"}:
+                endpoint = closure.get("endpoint_proof", {}) if isinstance(closure, dict) else {}
+                if not endpoint.get("matched"):
+                    failures.append(f"{case_id}:endpoint_not_matched")
+                if endpoint.get("edge_id") != EXPECTED_GRAPH_EDGE:
+                    failures.append(f"{case_id}:wrong_graph_edge")
+                if endpoint.get("relation_type") != "precedes":
+                    failures.append(f"{case_id}:wrong_graph_relation")
+    
+        privacy = artifact.get("privacy", {})
+        if privacy.get("raw_backend_token_recorded") is not False:
+            failures.append("privacy_token_recorded")
+        if privacy.get("raw_owner_hash_recorded") is not False:
+            failures.append("privacy_owner_hash_recorded")
+        if privacy.get("provider_secret_recorded") is not False:
+            failures.append("privacy_provider_secret_recorded")
+        if failures:
+            print(json.dumps({"status": "FAIL", "failures": sorted(set(failures))}, indent=2))
+>           raise SystemExit(1)
+E           SystemExit: 1
+
+scripts/m26_aq_final_closure.py:669: SystemExit
+----------------------------- Captured stdout call -----------------------------
+{
+  "status": "FAIL",
+  "failures": [
+    "R3-Q01:downstream_contract_fingerprint_mismatch",
+    "R3-Q01:downstream_stage_identity_mismatch",
+    "R3-Q01:runtime_contract_fingerprint_mismatch",
+    "R3-Q02:downstream_contract_fingerprint_mismatch",
+    "R3-Q02:downstream_stage_identity_mismatch",
+    "R3-Q02:runtime_contract_fingerprint_mismatch",
+    "R3-Q03:downstream_contract_fingerprint_mismatch",
+    "R3-Q03:downstream_stage_identity_mismatch",
+    "R3-Q03:runtime_contract_fingerprint_mismatch",
+    "R3-Q04:downstream_contract_fingerprint_mismatch",
+    "R3-Q04:downstream_stage_identity_mismatch",
+    "R3-Q04:runtime_contract_fingerprint_mismatch",
+    "R3-Q05:downstream_contract_fingerprint_mismatch",
+    "R3-Q05:downstream_stage_identity_mismatch",
+    "R3-Q05:runtime_contract_fingerprint_mismatch",
+    "R3-Q06:downstream_contract_fingerprint_mismatch",
+    "R3-Q06:downstream_stage_identity_mismatch",
+    "R3-Q06:runtime_contract_fingerprint_mismatch",
+    "R3-Q07:downstream_contract_fingerprint_mismatch",
+    "R3-Q07:downstream_stage_identity_mismatch",
+    "R3-Q07:runtime_contract_fingerprint_mismatch",
+    "R3-Q08:downstream_contract_fingerprint_mismatch",
+    "R3-Q08:downstream_stage_identity_mismatch",
+    "R3-Q08:runtime_contract_fingerprint_mismatch",
+    "R3-Q09:downstream_contract_fingerprint_mismatch",
+    "R3-Q09:downstream_stage_identity_mismatch",
+    "R3-Q09:runtime_contract_fingerprint_mismatch",
+    "R3-Q10:downstream_contract_fingerprint_mismatch",
+    "R3-Q10:downstream_stage_identity_mismatch",
+    "R3-Q10:runtime_contract_fingerprint_mismatch",
+    "R3-Q11:downstream_contract_fingerprint_mismatch",
+    "R3-Q11:downstream_stage_identity_mismatch",
+    "R3-Q11:runtime_contract_fingerprint_mismatch",
+    "R3-Q12:downstream_contract_fingerprint_mismatch",
+    "R3-Q12:downstream_stage_identity_mismatch",
+    "R3-Q12:runtime_contract_fingerprint_mismatch"
+  ]
+}
+__________ test_blackbox_false_premise_answer_need_not_begin_with_no ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10ca54190>
+
+    def test_blackbox_false_premise_answer_need_not_begin_with_no(
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        module = _load_generalized_module()
+        monkeypatch.setattr(module, "_validate_visible_semantics", lambda row: [])
+        failures: list[str] = []
+        row = {
+            "case_id": "GPT-E-BB09",
+            "class": "grounded_but_irrelevant_adversarial",
+            "safe_abstention": False,
+            "status": "owner_only_cited_answer",
+            "answer_source": module.ANSWER_SOURCE,
+            "answer_text": (
+                "The precedes edge records ordering or navigation. "
+                "It does not establish dependency."
+            ),
+            "citations": [{"citation_id": "c1"}],
+            "accounting": {"provider_call_count": 1},
+            "integrity": {
+                "unsupported_accepted_claims": 0,
+                "material_claim_support_verified": True,
+                "citation_locator_valid": True,
+            },
+            "canonical_runtime": _canonical_runtime(module),
+            "semantic_closure": {
+                "failures": [],
+                "broad_deterministic_fallback_used": False,
+                "semantic_contract": _semantic_contract(module),
+            },
+            "multi_evidence_verification": {},
+        }
+        module._validate_answer_row(row, failures, "sha")
+>       assert failures == []
+E       AssertionError: assert ['GPT-E-BB09:...ity_mismatch'] == []
+E         
+E         Left contains 3 more items, first extra item: 'GPT-E-BB09:runtime_contract_fingerprint_mismatch'
+E         Use -v to get more diff
+
+tests/test_m26_aq_simplified_product_contract.py:199: AssertionError
+________ test_answer_row_accepts_full_semantic_closure_provider_budget _________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10cda7790>
+
+    def test_answer_row_accepts_full_semantic_closure_provider_budget(
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        module = _load_generalized_module()
+        monkeypatch.setattr(module, "_validate_visible_semantics", lambda row: [])
+        failures: list[str] = []
+        row = _answered_row(module, "GPT-E-BB09")
+        row["accounting"] = {"provider_call_count": 4}
+    
+        module._validate_answer_row(row, failures, "sha")
+    
+>       assert failures == []
+E       AssertionError: assert ['GPT-E-BB09:...ity_mismatch'] == []
+E         
+E         Left contains 3 more items, first extra item: 'GPT-E-BB09:runtime_contract_fingerprint_mismatch'
+E         Use -v to get more diff
+
+tests/test_m26_aq_simplified_product_contract.py:213: AssertionError
+_______ test_blackbox_safe_abstention_may_use_one_bounded_provider_call ________
+
+    def test_blackbox_safe_abstention_may_use_one_bounded_provider_call() -> None:
+        module = _load_generalized_module()
+        failures: list[str] = []
+        row = {
+            "case_id": "GPT-E-BB18",
+            "safe_abstention": True,
+            "status": "owner_only_safe_abstention",
+            "answer_text": "",
+            "citations": [],
+            "accounting": {"provider_call_count": 1},
+            "canonical_runtime": _canonical_runtime(module),
+            "semantic_closure": {"semantic_contract": _semantic_contract(module)},
+        }
+        module._validate_abstention_row(row, failures, "sha")
+>       assert failures == []
+E       AssertionError: assert ['GPT-E-BB18:...ity_mismatch'] == []
+E         
+E         Left contains 3 more items, first extra item: 'GPT-E-BB18:runtime_contract_fingerprint_mismatch'
+E         Use -v to get more diff
+
+tests/test_m26_aq_simplified_product_contract.py:230: AssertionError
+_________ test_final_validator_accepts_supported_partial_answer_source _________
+
+tmp_path = PosixPath('/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAK..._VNEXT_20261014/D01/.tmp/d01/formal/c01_original_51/pytest-of-huaihsuanhuang/pytest-0/test_final_validator_accepts_s0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10cdf6a90>
+
+    def test_final_validator_accepts_supported_partial_answer_source(
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        module = _load_module(name="m26_aq_final_closure_partial_contract")
+        monkeypatch.setattr(module, "_validate_visible_semantics", lambda row: [])
+    
+        rows = []
+        for index in range(1, 13):
+            case_id = f"R3-Q{index:02d}"
+            if case_id in {"R3-Q10", "R3-Q11"}:
+                rows.append(_abstention_row(module, case_id))
+            else:
+                row = _answered_row(module, case_id)
+                if case_id == "R3-Q04":
+                    row["answer_source"] = module.PARTIAL_ANSWER_SOURCE
+                    row["semantic_closure"]["partial_answer"] = True
+                rows.append(row)
+    
+        artifact = {
+            "collection": {"status": "complete", "failure": None},
+            "health": {
+                "http_status": 200,
+                "status": "ok",
+                "build_sha": "sha",
+                "entrypoint": module.CANONICAL_RUNTIME_ENTRYPOINT,
+                "semantic_contract_fingerprint": module.semantic_contract_fingerprint(),
+            },
+            "graph": {
+                "http_status": 200,
+                "status": "ok",
+                "graph_scope": "full_current_production_relation_graph",
+                "release_id": module.EXPECTED_RELEASE_ID,
+                "graph_v2_sha256": module.EXPECTED_GRAPH_SHA256,
+                "node_count": module.EXPECTED_NODE_COUNT,
+                "edge_count": module.EXPECTED_EDGE_COUNT,
+            },
+            "rows": rows,
+            "privacy": {
+                "raw_backend_token_recorded": False,
+                "raw_owner_hash_recorded": False,
+                "provider_secret_recorded": False,
+            },
+        }
+        gate = {"production_identities": {"public_traffic_percent": 0}}
+        artifact_path = tmp_path / "artifact.json"
+        gate_path = tmp_path / "gate.json"
+        artifact_path.write_text(json.dumps(artifact), encoding="utf-8")
+        gate_path.write_text(json.dumps(gate), encoding="utf-8")
+    
+>       module.validate(
+            input_path=artifact_path,
+            gate_path=gate_path,
+            expected_sha="sha",
+        )
+
+tests/test_m26_aq_simplified_product_contract.py:283: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def validate(*, input_path: Path, gate_path: Path, expected_sha: str) -> None:
+        artifact = json.loads(input_path.read_text(encoding="utf-8"))
+        failures: list[str] = []
+        expected_fingerprint = semantic_contract_fingerprint()
+        collection = artifact.get("collection", {})
+        if isinstance(collection, dict):
+            if collection.get("status") != "complete":
+                failures.append("collection_not_complete")
+            if collection.get("failure"):
+                failures.append("collection_failure_recorded")
+        else:
+            failures.append("collection_metadata_missing")
+        health = artifact.get("health", {})
+        graph = artifact.get("graph", {})
+        if health.get("http_status") != 200 or health.get("status") != "ok":
+            failures.append("health_not_ok")
+        if health.get("build_sha") != expected_sha:
+            failures.append("health_build_sha_mismatch")
+        if health.get("entrypoint") != CANONICAL_RUNTIME_ENTRYPOINT:
+            failures.append("wrong_production_entrypoint")
+        if health.get("semantic_contract_fingerprint") != expected_fingerprint:
+            failures.append("health_semantic_fingerprint_mismatch")
+        if graph.get("http_status") != 200 or graph.get("status") != "ok":
+            failures.append("graph_not_ok")
+        if graph.get("graph_scope") != "full_current_production_relation_graph":
+            failures.append("graph_scope_mismatch")
+        if graph.get("release_id") != EXPECTED_RELEASE_ID:
+            failures.append("graph_release_mismatch")
+        if graph.get("graph_v2_sha256") != EXPECTED_GRAPH_SHA256:
+            failures.append("graph_sha_mismatch")
+        if graph.get("node_count") != EXPECTED_NODE_COUNT or graph.get("edge_count") != EXPECTED_EDGE_COUNT:
+            failures.append("graph_population_mismatch")
+        gate = json.loads(gate_path.read_text(encoding="utf-8"))
+        identities = gate.get("production_identities", {})
+        if identities.get("public_traffic_percent") != 0:
+            failures.append("public_traffic_not_zero")
+    
+        rows = artifact.get("rows", [])
+        if not isinstance(rows, list) or len(rows) != 12:
+            failures.append("r3_population_not_12")
+            rows = rows if isinstance(rows, list) else []
+        by_id = {str(row.get("case_id")): row for row in rows if isinstance(row, dict)}
+        abstain_ids = {"R3-Q10", "R3-Q11"}
+        for case_id in [f"R3-Q{index:02d}" for index in range(1, 13)]:
+            row = by_id.get(case_id)
+            if row is None:
+                failures.append(f"{case_id}:missing")
+                continue
+            if row.get("http_status") != 200:
+                failures.append(f"{case_id}:http")
+                continue
+            for identity_failure in _validate_canonical_identity(row, expected_sha):
+                failures.append(f"{case_id}:{identity_failure}")
+            collector = row.get("collector", {})
+            if isinstance(collector, dict):
+                if collector.get("deadline_exceeded"):
+                    failures.append(f"{case_id}:collector_deadline_exceeded")
+                if collector.get("timeout_converted_to_answer") is not False:
+                    failures.append(f"{case_id}:timeout_converted_to_answer")
+            accounting = row.get("accounting", {}) if isinstance(row.get("accounting"), dict) else {}
+            provider_calls = int(accounting.get("provider_call_count", 0))
+            if case_id in abstain_ids:
+                if not row.get("safe_abstention") or row.get("status") != "owner_only_safe_abstention":
+                    failures.append(f"{case_id}:expected_safe_abstention")
+                if provider_calls != 0:
+                    failures.append(f"{case_id}:provider_calls_not_zero")
+                continue
+            if row.get("safe_abstention") or row.get("status") != "owner_only_cited_answer":
+                failures.append(f"{case_id}:not_answered")
+            if row.get("answer_source") not in ACCEPTED_ANSWER_SOURCES:
+                failures.append(f"{case_id}:wrong_answer_source")
+            if not str(row.get("answer_text", "")).strip():
+                failures.append(f"{case_id}:empty_answer")
+            if provider_calls < 1 or provider_calls > MAX_SEMANTIC_CLOSURE_PROVIDER_CALLS:
+                failures.append(f"{case_id}:provider_call_count")
+            if not row.get("citations"):
+                failures.append(f"{case_id}:missing_citations")
+            integrity = row.get("integrity", {}) if isinstance(row.get("integrity"), dict) else {}
+            if int(integrity.get("unsupported_accepted_claims", 0)) != 0:
+                failures.append(f"{case_id}:unsupported_claims")
+            if not integrity.get("material_claim_support_verified", False):
+                failures.append(f"{case_id}:material_support_not_verified")
+            if not integrity.get("citation_locator_valid", False):
+                failures.append(f"{case_id}:citation_locator_invalid")
+            if not _zero_mutations(row.get("mutations", {})):
+                failures.append(f"{case_id}:protected_mutation")
+            closure = row.get("semantic_closure", {}) if isinstance(row.get("semantic_closure"), dict) else {}
+            if closure.get("failures"):
+                failures.append(f"{case_id}:semantic_closure_failures")
+            if closure.get("broad_deterministic_fallback_used") is not False:
+                failures.append(f"{case_id}:deterministic_fallback")
+            for telemetry in _provider_telemetry(row):
+                if not isinstance(telemetry, dict):
+                    failures.append(f"{case_id}:invalid_provider_telemetry")
+                    continue
+                if str(telemetry.get("stop_reason", "")).casefold() in {"max_tokens", "length"}:
+                    failures.append(f"{case_id}:provider_max_tokens")
+                parse = telemetry.get("parse_telemetry", {})
+                if not isinstance(parse, dict) or not parse.get("parse_ok", False):
+                    failures.append(f"{case_id}:provider_parse_failure")
+            # Historical visible-pattern checks are diagnostics only. Semantic truth is
+            # enforced by the claim-local semantic reviewer plus finite citation guards.
+            if case_id in {"R3-Q05", "R3-Q09"}:
+                endpoint = closure.get("endpoint_proof", {}) if isinstance(closure, dict) else {}
+                if not endpoint.get("matched"):
+                    failures.append(f"{case_id}:endpoint_not_matched")
+                if endpoint.get("edge_id") != EXPECTED_GRAPH_EDGE:
+                    failures.append(f"{case_id}:wrong_graph_edge")
+                if endpoint.get("relation_type") != "precedes":
+                    failures.append(f"{case_id}:wrong_graph_relation")
+    
+        privacy = artifact.get("privacy", {})
+        if privacy.get("raw_backend_token_recorded") is not False:
+            failures.append("privacy_token_recorded")
+        if privacy.get("raw_owner_hash_recorded") is not False:
+            failures.append("privacy_owner_hash_recorded")
+        if privacy.get("provider_secret_recorded") is not False:
+            failures.append("privacy_provider_secret_recorded")
+        if failures:
+            print(json.dumps({"status": "FAIL", "failures": sorted(set(failures))}, indent=2))
+>           raise SystemExit(1)
+E           SystemExit: 1
+
+scripts/m26_aq_final_closure.py:669: SystemExit
+----------------------------- Captured stdout call -----------------------------
+{
+  "status": "FAIL",
+  "failures": [
+    "R3-Q01:downstream_contract_fingerprint_mismatch",
+    "R3-Q01:downstream_stage_identity_mismatch",
+    "R3-Q01:runtime_contract_fingerprint_mismatch",
+    "R3-Q02:downstream_contract_fingerprint_mismatch",
+    "R3-Q02:downstream_stage_identity_mismatch",
+    "R3-Q02:runtime_contract_fingerprint_mismatch",
+    "R3-Q03:downstream_contract_fingerprint_mismatch",
+    "R3-Q03:downstream_stage_identity_mismatch",
+    "R3-Q03:runtime_contract_fingerprint_mismatch",
+    "R3-Q04:downstream_contract_fingerprint_mismatch",
+    "R3-Q04:downstream_stage_identity_mismatch",
+    "R3-Q04:runtime_contract_fingerprint_mismatch",
+    "R3-Q05:downstream_contract_fingerprint_mismatch",
+    "R3-Q05:downstream_stage_identity_mismatch",
+    "R3-Q05:runtime_contract_fingerprint_mismatch",
+    "R3-Q06:downstream_contract_fingerprint_mismatch",
+    "R3-Q06:downstream_stage_identity_mismatch",
+    "R3-Q06:runtime_contract_fingerprint_mismatch",
+    "R3-Q07:downstream_contract_fingerprint_mismatch",
+    "R3-Q07:downstream_stage_identity_mismatch",
+    "R3-Q07:runtime_contract_fingerprint_mismatch",
+    "R3-Q08:downstream_contract_fingerprint_mismatch",
+    "R3-Q08:downstream_stage_identity_mismatch",
+    "R3-Q08:runtime_contract_fingerprint_mismatch",
+    "R3-Q09:downstream_contract_fingerprint_mismatch",
+    "R3-Q09:downstream_stage_identity_mismatch",
+    "R3-Q09:runtime_contract_fingerprint_mismatch",
+    "R3-Q10:downstream_contract_fingerprint_mismatch",
+    "R3-Q10:downstream_stage_identity_mismatch",
+    "R3-Q10:runtime_contract_fingerprint_mismatch",
+    "R3-Q11:downstream_contract_fingerprint_mismatch",
+    "R3-Q11:downstream_stage_identity_mismatch",
+    "R3-Q11:runtime_contract_fingerprint_mismatch",
+    "R3-Q12:downstream_contract_fingerprint_mismatch",
+    "R3-Q12:downstream_stage_identity_mismatch",
+    "R3-Q12:runtime_contract_fingerprint_mismatch"
+  ]
+}
+________________ test_fast_seed_rejects_ambiguous_facet_binding ________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10cdd4450>
+
+    def test_fast_seed_rejects_ambiguous_facet_binding(
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        monkeypatch.setattr(
+            runtime,
+            "_facet_support_classification",
+            lambda **_kwargs: [
+                {
+                    "facet_id": "facet-a",
+                    "support_state": "SUPPORTED",
+                    "supporting_evidence_ids": ["ev-1"],
+                },
+                {
+                    "facet_id": "facet-b",
+                    "support_state": "SUPPORTED",
+                    "supporting_evidence_ids": ["ev-1"],
+                },
+            ],
+        )
+    
+>       assert contract._fast_recovery_seed(
+            envelope=_envelope("ev-1"),
+            question="What does the runtime record?",
+            intent_class="direct_grounded_knowledge",
+            evidence=[_evidence("ev-1")],
+            requirements=[],
+        ) is None
+E       AssertionError: assert FastRecoverySeed(answer_text='The bounded runtime records durable state.', citation_ids=('ev-1',), facet_ids=('facet-a', 'facet-b'), support_refs=({'evidence_id': 'ev-1', 'locator_id': 'loc-ev-1'},)) is None
+E        +  where FastRecoverySeed(answer_text='The bounded runtime records durable state.', citation_ids=('ev-1',), facet_ids=('facet-a', 'facet-b'), support_refs=({'evidence_id': 'ev-1', 'locator_id': 'loc-ev-1'},)) = <function _fast_recovery_seed at 0x10b0318a0>(envelope=FastAttemptEnvelope(publication={'answer_text': 'The bounded runtime records durable state.', 'citation_ids': ['ev-1']...-1'}]}, rejection_reason_codes=('QUESTION_ALIGNMENT_FAILED',), routing_decision='SEMANTIC_CLOSURE', routing_trace=None), question='What does the runtime record?', intent_class='direct_grounded_knowledge', evidence=[{'evidence_id': 'ev-1', 'locator_id': 'loc-ev-1', 'passage_text': 'A bounded runtime records durable state.', 'source_identity': 'source'}], requirements=[])
+E        +    where <function _fast_recovery_seed at 0x10b0318a0> = contract._fast_recovery_seed
+E        +    and   FastAttemptEnvelope(publication={'answer_text': 'The bounded runtime records durable state.', 'citation_ids': ['ev-1']...-1'}]}, rejection_reason_codes=('QUESTION_ALIGNMENT_FAILED',), routing_decision='SEMANTIC_CLOSURE', routing_trace=None) = _envelope('ev-1')
+
+tests/test_m26_bp5c_r2_fast_seed.py:66: AssertionError
+____ test_final_web_product_readiness_fixture_receipt_satisfies_a26_to_a53 _____
+
+tmp_path = PosixPath('/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAK..._VNEXT_20261014/D01/.tmp/d01/formal/c01_original_51/pytest-of-huaihsuanhuang/pytest-0/test_final_web_product_readine0')
+
+    def test_final_web_product_readiness_fixture_receipt_satisfies_a26_to_a53(
+        tmp_path: Path,
+    ) -> None:
+        provider = ExactSpanProvider()
+        receipt = run_final_web_product_readiness(
+            root=ROOT,
+            gate=load_json(PILOT / "m26-pa-7-corrected-resolved-production-gate.json"),
+            owner_decision=load_json(PILOT / "m26-pa-7-owner-final-decision.json"),
+            promotion_trigger=load_json(PILOT / "m26-pa-7-corrected-promotion-trigger.json"),
+            formal_manifest=load_json(PILOT / "m26-pa-7-final-web-formal-test-manifest.json"),
+            evidence_dir=tmp_path,
+            browser_evidence=_browser_evidence(),
+            provider_client=provider,
+            dense_channel=LocalDenseProjectionChannel(),
+            require_remote_dense=False,
+            test_fixture_only=True,
+        )
+    
+        assert (
+            _schema_errors("m26-pa-7-final-web-product-readiness-receipt-v1.schema.json", receipt)
+            == []
+        )
+        verify_self_digest(receipt, "final web readiness receipt")
+        assert receipt["schema_version"] == FINAL_WEB_READINESS_RECEIPT_SCHEMA
+        assert receipt["status"] == "test_fixture_only_final_web_readiness_receipt"
+>       assert receipt["slo_pass"] is True
+E       assert False is True
+
+tests/test_m26_pa7_final_web_readiness.py:481: AssertionError
+________ test_arbitrary_non_m26_question_reaches_retrieval_and_provider ________
+
+    def test_arbitrary_non_m26_question_reaches_retrieval_and_provider() -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="What should a router define for permission-first controls?",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=ExactSpanProvider(),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+        assert _schema_errors("m26-pa-7-arbitrary-owner-query-response-v1.schema.json", response) == []
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:487: AssertionError
+______________ test_varied_questions_are_not_keyword_whitelisted _______________
+
+    def test_varied_questions_are_not_keyword_whitelisted() -> None:
+        questions = [
+            "Explain how state machines make legal transitions explicit.",
+            "Where does the harness terminal acceptance component appear?",
+            "Which structure models dependencies and joins?",
+            "How should adaptive planning react to invalidated assumptions?",
+        ]
+        for question in questions:
+            response = run_owner_arbitrary_query(
+                root=ROOT,
+                gate=load_json(GATE_PATH),
+                question=question,
+                owner_subject_hash=OWNER_SUBJECT_HASH,
+                provider_client=ExactSpanProvider(),
+                dense_channel=LocalDenseProjectionChannel(),
+            )
+            assert response["question_sha256"]
+            assert response["provider_invoked"] is True
+>           assert response["status"] == "owner_only_cited_answer"
+E           AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E             
+E             - owner_only_cited_answer
+E             + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:519: AssertionError
+______ test_ordinary_explanatory_query_stays_lean_without_graph_expansion ______
+
+    def test_ordinary_explanatory_query_stays_lean_without_graph_expansion() -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="Explain how harness acceptance components support permission-first execution.",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=FastAnswerProvider(
+                "Harness acceptance components support permission-first execution [claim_1_ref_1]."
+            ),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:534: AssertionError
+_ test_runtime_binds_full_production_graph_and_cites_outside_old_20_graph_evidence _
+
+    def test_runtime_binds_full_production_graph_and_cites_outside_old_20_graph_evidence() -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="Explain outside old twenty production retrieval neighbour hydration.",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=GraphExpandedCitationProvider(),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+        old_m24 = load_json(ROOT / "pilot/m24/canonical-release/artifacts/graph-v2.json")
+        old_concepts = {node["concept_id"] for node in old_m24["nodes"]}
+        cited_concepts = {
+            citation["concept_id"]
+            for citation in response["citations"]
+            if citation["evidence_type"] == "passage"
+        }
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:564: AssertionError
+___ test_provider_natural_cited_prose_is_preserved_after_claim_verification ____
+
+    def test_provider_natural_cited_prose_is_preserved_after_claim_verification() -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="What should a router define for permission-first controls?",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=NaturalProseProvider(),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:595: AssertionError
+_______________ test_partial_candidate_is_verified_and_preserved _______________
+
+    def test_partial_candidate_is_verified_and_preserved() -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="What should a router define for permission-first controls?",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=PartialCandidateProvider(),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:611: AssertionError
+______ test_uncited_provider_prose_survives_when_structured_claims_verify ______
+
+    def test_uncited_provider_prose_survives_when_structured_claims_verify() -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="What should a router define for permission-first controls?",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=NaturalProseProvider(uncited_answer_text=True),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:627: AssertionError
+_ test_dense_transient_failures_degrade_without_blocking_lexical_primary_path[exc0-None] _
+
+exc = ReadTimeout('dense timed out'), expected_http_status = None
+
+    @pytest.mark.parametrize(
+        ("exc", "expected_http_status"),
+        [
+            (
+                httpx.ReadTimeout(
+                    "dense timed out",
+                    request=httpx.Request("GET", "https://dense.invalid/search"),
+                ),
+                None,
+            ),
+            (
+                httpx.ConnectError(
+                    "dense network down",
+                    request=httpx.Request("GET", "https://dense.invalid/search"),
+                ),
+                None,
+            ),
+            (_http_status_error(429), 429),
+            (_http_status_error(503), 503),
+        ],
+    )
+    def test_dense_transient_failures_degrade_without_blocking_lexical_primary_path(
+        exc: Exception,
+        expected_http_status: int | None,
+    ) -> None:
+        events: list[dict[str, Any]] = []
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="What should a router define for permission-first controls?",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=ExactSpanProvider(),
+            dense_channel=FailingDense(exc),
+            event_sink=events.append,
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:670: AssertionError
+_ test_dense_transient_failures_degrade_without_blocking_lexical_primary_path[exc1-None] _
+
+exc = ConnectError('dense network down'), expected_http_status = None
+
+    @pytest.mark.parametrize(
+        ("exc", "expected_http_status"),
+        [
+            (
+                httpx.ReadTimeout(
+                    "dense timed out",
+                    request=httpx.Request("GET", "https://dense.invalid/search"),
+                ),
+                None,
+            ),
+            (
+                httpx.ConnectError(
+                    "dense network down",
+                    request=httpx.Request("GET", "https://dense.invalid/search"),
+                ),
+                None,
+            ),
+            (_http_status_error(429), 429),
+            (_http_status_error(503), 503),
+        ],
+    )
+    def test_dense_transient_failures_degrade_without_blocking_lexical_primary_path(
+        exc: Exception,
+        expected_http_status: int | None,
+    ) -> None:
+        events: list[dict[str, Any]] = []
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="What should a router define for permission-first controls?",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=ExactSpanProvider(),
+            dense_channel=FailingDense(exc),
+            event_sink=events.append,
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:670: AssertionError
+_ test_dense_transient_failures_degrade_without_blocking_lexical_primary_path[exc2-429] _
+
+exc = HTTPStatusError('429 from dense backend'), expected_http_status = 429
+
+    @pytest.mark.parametrize(
+        ("exc", "expected_http_status"),
+        [
+            (
+                httpx.ReadTimeout(
+                    "dense timed out",
+                    request=httpx.Request("GET", "https://dense.invalid/search"),
+                ),
+                None,
+            ),
+            (
+                httpx.ConnectError(
+                    "dense network down",
+                    request=httpx.Request("GET", "https://dense.invalid/search"),
+                ),
+                None,
+            ),
+            (_http_status_error(429), 429),
+            (_http_status_error(503), 503),
+        ],
+    )
+    def test_dense_transient_failures_degrade_without_blocking_lexical_primary_path(
+        exc: Exception,
+        expected_http_status: int | None,
+    ) -> None:
+        events: list[dict[str, Any]] = []
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="What should a router define for permission-first controls?",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=ExactSpanProvider(),
+            dense_channel=FailingDense(exc),
+            event_sink=events.append,
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:670: AssertionError
+_ test_dense_transient_failures_degrade_without_blocking_lexical_primary_path[exc3-503] _
+
+exc = HTTPStatusError('503 from dense backend'), expected_http_status = 503
+
+    @pytest.mark.parametrize(
+        ("exc", "expected_http_status"),
+        [
+            (
+                httpx.ReadTimeout(
+                    "dense timed out",
+                    request=httpx.Request("GET", "https://dense.invalid/search"),
+                ),
+                None,
+            ),
+            (
+                httpx.ConnectError(
+                    "dense network down",
+                    request=httpx.Request("GET", "https://dense.invalid/search"),
+                ),
+                None,
+            ),
+            (_http_status_error(429), 429),
+            (_http_status_error(503), 503),
+        ],
+    )
+    def test_dense_transient_failures_degrade_without_blocking_lexical_primary_path(
+        exc: Exception,
+        expected_http_status: int | None,
+    ) -> None:
+        events: list[dict[str, Any]] = []
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="What should a router define for permission-first controls?",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=ExactSpanProvider(),
+            dense_channel=FailingDense(exc),
+            event_sink=events.append,
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:670: AssertionError
+______ test_dense_deadline_degrades_without_blocking_lexical_primary_path ______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10ec3e710>
+
+    def test_dense_deadline_degrades_without_blocking_lexical_primary_path(
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        monkeypatch.setenv("M26_DENSE_SEARCH_DEADLINE_SECONDS", "0.01")
+        events: list[dict[str, Any]] = []
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="What should a router define for permission-first controls?",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=ExactSpanProvider(),
+            dense_channel=SlowDense(0.2),
+            event_sink=events.append,
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:705: AssertionError
+___________ test_bounded_repair_converts_unsupported_provider_claim ____________
+
+    def test_bounded_repair_converts_unsupported_provider_claim() -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="Explain direct execution paths.",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=ExactSpanProvider(fail_first=True),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:1505: AssertionError
+_____ test_direct_repair_exhaustion_uses_deterministic_evidence_synthesis ______
+
+    def test_direct_repair_exhaustion_uses_deterministic_evidence_synthesis() -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="What should a router define for permission-first controls?",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=InvalidMultiEvidenceProvider("one_source_comparison"),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:1521: AssertionError
+_ test_answerable_provider_abstention_is_narrowly_constrained[How do routers and directed acyclic graphs complement each other for permission-first execution?-complementary_synthesis-required_citation_types0-2-True] _
+
+question = 'How do routers and directed acyclic graphs complement each other for permission-first execution?'
+expected_intent = 'complementary_synthesis'
+required_citation_types = {'passage'}, minimum_support_refs = 2
+expect_deterministic = True
+
+    @pytest.mark.parametrize(
+        (
+            "question",
+            "expected_intent",
+            "required_citation_types",
+            "minimum_support_refs",
+            "expect_deterministic",
+        ),
+        [
+            (
+                "How do routers and directed acyclic graphs complement each other "
+                "for permission-first execution?",
+                "complementary_synthesis",
+                {"passage"},
+                2,
+                True,
+            ),
+            (
+                "Which provenance source supports router abstention controls?",
+                "provenance_source_trace",
+                {"passage", "provenance"},
+                2,
+                True,
+            ),
+            (
+                "What changed between source records about request boundary and steering controls?",
+                "temporal_conflict",
+                {"temporal_record"},
+                2,
+                True,
+            ),
+        ],
+    )
+    def test_answerable_provider_abstention_is_narrowly_constrained(
+        question: str,
+        expected_intent: str,
+        required_citation_types: set[str],
+        minimum_support_refs: int,
+        expect_deterministic: bool,
+    ) -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question=question,
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=AbstainingProvider(),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+        assert response["intent_class"] == expected_intent
+>       assert response["provider_call_count"] == 1
+E       assert 0 == 1
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:1581: AssertionError
+_ test_answerable_provider_abstention_is_narrowly_constrained[Which provenance source supports router abstention controls?-provenance_source_trace-required_citation_types1-2-True] _
+
+question = 'Which provenance source supports router abstention controls?'
+expected_intent = 'provenance_source_trace'
+required_citation_types = {'passage', 'provenance'}, minimum_support_refs = 2
+expect_deterministic = True
+
+    @pytest.mark.parametrize(
+        (
+            "question",
+            "expected_intent",
+            "required_citation_types",
+            "minimum_support_refs",
+            "expect_deterministic",
+        ),
+        [
+            (
+                "How do routers and directed acyclic graphs complement each other "
+                "for permission-first execution?",
+                "complementary_synthesis",
+                {"passage"},
+                2,
+                True,
+            ),
+            (
+                "Which provenance source supports router abstention controls?",
+                "provenance_source_trace",
+                {"passage", "provenance"},
+                2,
+                True,
+            ),
+            (
+                "What changed between source records about request boundary and steering controls?",
+                "temporal_conflict",
+                {"temporal_record"},
+                2,
+                True,
+            ),
+        ],
+    )
+    def test_answerable_provider_abstention_is_narrowly_constrained(
+        question: str,
+        expected_intent: str,
+        required_citation_types: set[str],
+        minimum_support_refs: int,
+        expect_deterministic: bool,
+    ) -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question=question,
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=AbstainingProvider(),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+        assert response["intent_class"] == expected_intent
+>       assert response["provider_call_count"] == 1
+E       assert 0 == 1
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:1581: AssertionError
+_ test_answerable_provider_abstention_is_narrowly_constrained[What changed between source records about request boundary and steering controls?-temporal_conflict-required_citation_types2-2-True] _
+
+question = 'What changed between source records about request boundary and steering controls?'
+expected_intent = 'temporal_conflict'
+required_citation_types = {'temporal_record'}, minimum_support_refs = 2
+expect_deterministic = True
+
+    @pytest.mark.parametrize(
+        (
+            "question",
+            "expected_intent",
+            "required_citation_types",
+            "minimum_support_refs",
+            "expect_deterministic",
+        ),
+        [
+            (
+                "How do routers and directed acyclic graphs complement each other "
+                "for permission-first execution?",
+                "complementary_synthesis",
+                {"passage"},
+                2,
+                True,
+            ),
+            (
+                "Which provenance source supports router abstention controls?",
+                "provenance_source_trace",
+                {"passage", "provenance"},
+                2,
+                True,
+            ),
+            (
+                "What changed between source records about request boundary and steering controls?",
+                "temporal_conflict",
+                {"temporal_record"},
+                2,
+                True,
+            ),
+        ],
+    )
+    def test_answerable_provider_abstention_is_narrowly_constrained(
+        question: str,
+        expected_intent: str,
+        required_citation_types: set[str],
+        minimum_support_refs: int,
+        expect_deterministic: bool,
+    ) -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question=question,
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=AbstainingProvider(),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+        assert response["intent_class"] == expected_intent
+>       assert response["provider_call_count"] == 1
+E       assert 0 == 1
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:1581: AssertionError
+___________ test_cross_document_answer_requires_two_distinct_sources ___________
+
+    def test_cross_document_answer_requires_two_distinct_sources() -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="Compare routers and adaptive planning for permission-first controls.",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=ExactSpanProvider(),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:1614: AssertionError
+____________ test_graph_relationship_binds_edge_and_both_endpoints _____________
+
+    def test_graph_relationship_binds_edge_and_both_endpoints() -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="What graph relationship connects harness and headless harness service?",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=ExactSpanProvider(),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:1633: AssertionError
+_______ test_provenance_and_temporal_intents_use_required_evidence_types _______
+
+    def test_provenance_and_temporal_intents_use_required_evidence_types() -> None:
+        provenance = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="Which provenance source supports router abstention controls?",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=ExactSpanProvider(),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+>       assert provenance["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:1695: AssertionError
+_ test_invalid_complex_multi_evidence_provider_outputs_abstain_after_bounded_repair[invented_id-Compare routers and adaptive planning for permission-first controls.] _
+
+mode = 'invented_id'
+question = 'Compare routers and adaptive planning for permission-first controls.'
+
+    @pytest.mark.parametrize(
+        ("mode", "question"),
+        [
+            ("invented_id", "Compare routers and adaptive planning for permission-first controls."),
+            ("wrong_locator", "Compare routers and adaptive planning for permission-first controls."),
+            ("quote_drift", "Compare routers and adaptive planning for permission-first controls."),
+            (
+                "one_source_comparison",
+                "Compare routers and adaptive planning for permission-first controls.",
+            ),
+            (
+                "missing_graph_edge",
+                "What graph relationship connects harness and headless harness service?",
+            ),
+        ],
+    )
+    def test_invalid_complex_multi_evidence_provider_outputs_abstain_after_bounded_repair(
+        mode: str,
+        question: str,
+    ) -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question=question,
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=InvalidMultiEvidenceProvider(mode),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:1746: AssertionError
+_ test_invalid_complex_multi_evidence_provider_outputs_abstain_after_bounded_repair[wrong_locator-Compare routers and adaptive planning for permission-first controls.] _
+
+mode = 'wrong_locator'
+question = 'Compare routers and adaptive planning for permission-first controls.'
+
+    @pytest.mark.parametrize(
+        ("mode", "question"),
+        [
+            ("invented_id", "Compare routers and adaptive planning for permission-first controls."),
+            ("wrong_locator", "Compare routers and adaptive planning for permission-first controls."),
+            ("quote_drift", "Compare routers and adaptive planning for permission-first controls."),
+            (
+                "one_source_comparison",
+                "Compare routers and adaptive planning for permission-first controls.",
+            ),
+            (
+                "missing_graph_edge",
+                "What graph relationship connects harness and headless harness service?",
+            ),
+        ],
+    )
+    def test_invalid_complex_multi_evidence_provider_outputs_abstain_after_bounded_repair(
+        mode: str,
+        question: str,
+    ) -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question=question,
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=InvalidMultiEvidenceProvider(mode),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:1746: AssertionError
+_ test_invalid_complex_multi_evidence_provider_outputs_abstain_after_bounded_repair[quote_drift-Compare routers and adaptive planning for permission-first controls.] _
+
+mode = 'quote_drift'
+question = 'Compare routers and adaptive planning for permission-first controls.'
+
+    @pytest.mark.parametrize(
+        ("mode", "question"),
+        [
+            ("invented_id", "Compare routers and adaptive planning for permission-first controls."),
+            ("wrong_locator", "Compare routers and adaptive planning for permission-first controls."),
+            ("quote_drift", "Compare routers and adaptive planning for permission-first controls."),
+            (
+                "one_source_comparison",
+                "Compare routers and adaptive planning for permission-first controls.",
+            ),
+            (
+                "missing_graph_edge",
+                "What graph relationship connects harness and headless harness service?",
+            ),
+        ],
+    )
+    def test_invalid_complex_multi_evidence_provider_outputs_abstain_after_bounded_repair(
+        mode: str,
+        question: str,
+    ) -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question=question,
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=InvalidMultiEvidenceProvider(mode),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:1746: AssertionError
+_ test_invalid_complex_multi_evidence_provider_outputs_abstain_after_bounded_repair[one_source_comparison-Compare routers and adaptive planning for permission-first controls.] _
+
+mode = 'one_source_comparison'
+question = 'Compare routers and adaptive planning for permission-first controls.'
+
+    @pytest.mark.parametrize(
+        ("mode", "question"),
+        [
+            ("invented_id", "Compare routers and adaptive planning for permission-first controls."),
+            ("wrong_locator", "Compare routers and adaptive planning for permission-first controls."),
+            ("quote_drift", "Compare routers and adaptive planning for permission-first controls."),
+            (
+                "one_source_comparison",
+                "Compare routers and adaptive planning for permission-first controls.",
+            ),
+            (
+                "missing_graph_edge",
+                "What graph relationship connects harness and headless harness service?",
+            ),
+        ],
+    )
+    def test_invalid_complex_multi_evidence_provider_outputs_abstain_after_bounded_repair(
+        mode: str,
+        question: str,
+    ) -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question=question,
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=InvalidMultiEvidenceProvider(mode),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:1746: AssertionError
+_ test_invalid_complex_multi_evidence_provider_outputs_abstain_after_bounded_repair[missing_graph_edge-What graph relationship connects harness and headless harness service?] _
+
+mode = 'missing_graph_edge'
+question = 'What graph relationship connects harness and headless harness service?'
+
+    @pytest.mark.parametrize(
+        ("mode", "question"),
+        [
+            ("invented_id", "Compare routers and adaptive planning for permission-first controls."),
+            ("wrong_locator", "Compare routers and adaptive planning for permission-first controls."),
+            ("quote_drift", "Compare routers and adaptive planning for permission-first controls."),
+            (
+                "one_source_comparison",
+                "Compare routers and adaptive planning for permission-first controls.",
+            ),
+            (
+                "missing_graph_edge",
+                "What graph relationship connects harness and headless harness service?",
+            ),
+        ],
+    )
+    def test_invalid_complex_multi_evidence_provider_outputs_abstain_after_bounded_repair(
+        mode: str,
+        question: str,
+    ) -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question=question,
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=InvalidMultiEvidenceProvider(mode),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+>       assert response["status"] == "owner_only_cited_answer"
+E       AssertionError: assert 'owner_only_safe_abstention' == 'owner_only_cited_answer'
+E         
+E         - owner_only_cited_answer
+E         + owner_only_safe_abstention
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:1746: AssertionError
+_______________ test_fas5_api_citation_shape_remains_compatible ________________
+
+    def test_fas5_api_citation_shape_remains_compatible() -> None:
+        response = run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="What should a router define for permission-first controls?",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=FastAnswerProvider(
+                "A router should define permission-first controls before execution [claim_1_ref_1]."
+            ),
+            dense_channel=LocalDenseProjectionChannel(),
+        )
+    
+        assert _schema_errors("m26-pa-7-arbitrary-owner-query-response-v1.schema.json", response) == []
+>       citation = response["citations"][0]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:2499: IndexError
+______________ test_provider_evidence_item_is_compact_and_stable _______________
+
+    def test_provider_evidence_item_is_compact_and_stable() -> None:
+        evidence = runtime_module._provider_evidence_item(_direct_semantic_evidence())
+    
+>       assert set(evidence) == {
+            "evidence_id",
+            "evidence_type",
+            "locator_id",
+            "source_id",
+            "source_identity",
+            "section_id",
+            "concept_id",
+            "text",
+            "text_sha256",
+            "text_role",
+            "channels",
+            "strong_required_facet_id",
+        }
+E       AssertionError: assert {'channels', ...tion_id', ...} == {'channels', ...tion_id', ...}
+E         
+E         Extra items in the left set:
+E         'source_title_hint'
+E         Use -v to get more diff
+
+tests/test_m26_pa_7_arbitrary_query_runtime.py:2509: AssertionError
+_________ test_corrective_artifacts_validate_and_bind_authority_chain __________
+
+    def test_corrective_artifacts_validate_and_bind_authority_chain() -> None:
+        owner_decision = load_json(PILOT / "m26-pa-7-owner-final-decision.json")
+        owner_authority = load_json(PILOT / "m26-pa-7-corrective-owner-authority.json")
+        contract = load_json(PILOT / "m26-pa-7-corrective-formal-test-contract.json")
+        manifest = load_json(PILOT / "m26-pa-7-corrective-formal-test-manifest.json")
+        gate = load_json(PILOT / "m26-pa-7-corrected-resolved-production-gate.json")
+        trigger = load_json(PILOT / "m26-pa-7-corrected-promotion-trigger.json")
+    
+        assert (
+            _schema_errors("m26-pa-7-corrective-owner-authority-v1.schema.json", owner_authority)
+            == []
+        )
+        assert (
+            _schema_errors(
+                "m26-pa-7-corrective-formal-test-contract-v1.schema.json",
+                contract,
+            )
+            == []
+        )
+        assert (
+            _schema_errors("m26-pa-7-corrective-formal-test-manifest-v1.schema.json", manifest)
+            == []
+        )
+        assert (
+            _schema_errors("m26-pa-7-corrective-resolved-production-gate-v1.schema.json", gate)
+            == []
+        )
+        assert (
+            _schema_errors("m26-pa-7-corrective-promotion-trigger-v1.schema.json", trigger)
+            == []
+        )
+    
+        verify_self_digest(owner_authority, "corrective owner authority")
+        verify_self_digest(contract, "corrective formal test contract")
+        verify_self_digest(manifest, "corrective formal test manifest")
+        verify_self_digest(gate, "corrected resolved gate")
+        verify_self_digest(trigger, "corrected promotion trigger")
+    
+        assert owner_authority["self_sha256"] == CORRECTIVE_OWNER_AUTHORITY_SELF_SHA256
+        assert contract["self_sha256"] == CORRECTIVE_FORMAL_TEST_CONTRACT_SELF_SHA256
+        assert manifest["self_sha256"] == FORMAL_MANIFEST_SELF_SHA256
+        assert gate["self_sha256"] == CORRECTED_GATE_SELF_SHA256
+        assert trigger["self_sha256"] == CORRECTED_TRIGGER_SELF_SHA256
+        assert gate["corrective_reopen_self_sha256"] == CORRECTIVE_REOPEN_SELF_SHA256
+>       assert gate["formal_test_manifest_self_sha256"] == manifest["self_sha256"]
+E       AssertionError: assert '62c14a407623...93bf1e6e073b9' == '2d0fbd3a837a...ba3ad8ac07396'
+E         
+E         - 2d0fbd3a837aab9f09996ba75000bf577e14db4dc01e483cc2aba3ad8ac07396
+E         + 62c14a4076238fd9f6c7424f5eccd555248616866caac5f2ea293bf1e6e073b9
+
+tests/test_m26_pa_7_corrective_formal_product_readiness.py:208: AssertionError
+_____ test_corrective_formal_fixture_receipt_satisfies_a01_to_a34_evidence _____
+
+tmp_path = PosixPath('/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAK..._VNEXT_20261014/D01/.tmp/d01/formal/c01_original_51/pytest-of-huaihsuanhuang/pytest-0/test_corrective_formal_fixture0')
+
+    def test_corrective_formal_fixture_receipt_satisfies_a01_to_a34_evidence(tmp_path: Path) -> None:
+        owner_decision = load_json(PILOT / "m26-pa-7-owner-final-decision.json")
+        manifest = load_json(PILOT / "m26-pa-7-corrective-formal-test-manifest.json")
+        gate = load_json(PILOT / "m26-pa-7-corrected-resolved-production-gate.json")
+        trigger = load_json(PILOT / "m26-pa-7-corrected-promotion-trigger.json")
+        provider = ExactSpanProvider()
+    
+        receipt = run_corrective_formal_product_readiness(
+            root=ROOT,
+            gate=gate,
+            owner_decision=owner_decision,
+            promotion_trigger=trigger,
+            formal_manifest=manifest,
+            evidence_dir=tmp_path,
+            provider_client=provider,
+            dense_channel=LocalDenseProjectionChannel(),
+            require_remote_dense=False,
+            test_fixture_only=True,
+        )
+    
+>       assert _schema_errors("m26-pa-7-corrective-formal-receipt-v1.schema.json", receipt) == []
+E       assert ["'62c14a4076...was expected"] == []
+E         
+E         Left contains one more item: "'62c14a4076238fd9f6c7424f5eccd555248616866caac5f2ea293bf1e6e073b9' was expected"
+E         Use -v to get more diff
+
+tests/test_m26_pa_7_corrective_formal_product_readiness.py:279: AssertionError
+______________ test_fast_public_path_publishes_single_call_answer ______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10ee568d0>
+fast_path_bundle = (ProductionAnswerBundle(manifest={'schema_version': 'knowledge-engine-release/v1', 'release_id': 'm25blog-5250f8422f4f... []}, 'lexical': {'backend_identity': {'backend': 'lex'}, 'results': [{'section_id': 'concepts/prod-0000#overview'}]}})
+
+    def test_fast_public_path_publishes_single_call_answer(
+        monkeypatch: pytest.MonkeyPatch,
+        fast_path_bundle: tuple[Any, dict[str, Any], dict[str, Any]],
+    ) -> None:
+        bundle, evidence, retrieval = fast_path_bundle
+        provider = FastAnswerProvider(
+            answer_text="A skill is a method an agent follows for a class of task.",
+            citation_ids=["ev_skill"],
+        )
+    
+        monkeypatch.setattr(runtime, "load_production_answer_bundle", lambda: bundle)
+        monkeypatch.setattr(runtime, "_run_lexical_primary_retrieval", lambda **_kwargs: (retrieval["lexical"], retrieval["dense"]))
+        monkeypatch.setattr(runtime, "_select_evidence", lambda **_kwargs: [evidence])
+        monkeypatch.setattr(runtime, "_has_meaningful_overlap", lambda _question, _evidence: True)
+    
+        response = runtime.run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="What is a skill in an AI agent architecture?",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=provider,
+        )
+    
+>       assert provider.calls == 1
+E       assert 2 == 1
+E        +  where 2 = <tests.test_m26_pa_7_fast_public_path.FastAnswerProvider object at 0x10ee56550>.calls
+
+tests/test_m26_pa_7_fast_public_path.py:124: AssertionError
+_ test_fast_public_path_abstains_without_semantic_retry[<lambda>-PROVIDER_OUTPUT_INVALID0] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10ee55cd0>
+fast_path_bundle = (ProductionAnswerBundle(manifest={'schema_version': 'knowledge-engine-release/v1', 'release_id': 'm25blog-5250f8422f4f... []}, 'lexical': {'backend_identity': {'backend': 'lex'}, 'results': [{'section_id': 'concepts/prod-0000#overview'}]}})
+provider_factory = <function <lambda> at 0x10aee9300>
+expected_reason = 'PROVIDER_OUTPUT_INVALID'
+
+    @pytest.mark.parametrize(
+        ("provider_factory", "expected_reason"),
+        [
+            (lambda: FastAnswerProvider(answer_text="Fine answer", citation_ids=["missing"]), "PROVIDER_OUTPUT_INVALID"),
+            (lambda: LeakyProvider(answer_text="The definition head is hidden here.", citation_ids=["ev_skill"]), "PROVIDER_OUTPUT_INVALID"),
+        ],
+    )
+    def test_fast_public_path_abstains_without_semantic_retry(
+        monkeypatch: pytest.MonkeyPatch,
+        fast_path_bundle: tuple[Any, dict[str, Any], dict[str, Any]],
+        provider_factory: Any,
+        expected_reason: str,
+    ) -> None:
+        bundle, evidence, retrieval = fast_path_bundle
+        provider = provider_factory()
+    
+        monkeypatch.setattr(runtime, "load_production_answer_bundle", lambda: bundle)
+        monkeypatch.setattr(runtime, "_run_lexical_primary_retrieval", lambda **_kwargs: (retrieval["lexical"], retrieval["dense"]))
+        monkeypatch.setattr(runtime, "_select_evidence", lambda **_kwargs: [evidence])
+        monkeypatch.setattr(runtime, "_has_meaningful_overlap", lambda _question, _evidence: True)
+    
+        response = runtime.run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="What is a skill in an AI agent architecture?",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=provider,
+        )
+    
+>       assert provider.calls == 1
+E       assert 2 == 1
+E        +  where 2 = <tests.test_m26_pa_7_fast_public_path.FastAnswerProvider object at 0x10ee55e90>.calls
+
+tests/test_m26_pa_7_fast_public_path.py:165: AssertionError
+_ test_fast_public_path_abstains_without_semantic_retry[<lambda>-PROVIDER_OUTPUT_INVALID1] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10ee3ffd0>
+fast_path_bundle = (ProductionAnswerBundle(manifest={'schema_version': 'knowledge-engine-release/v1', 'release_id': 'm25blog-5250f8422f4f... []}, 'lexical': {'backend_identity': {'backend': 'lex'}, 'results': [{'section_id': 'concepts/prod-0000#overview'}]}})
+provider_factory = <function <lambda> at 0x10aee93a0>
+expected_reason = 'PROVIDER_OUTPUT_INVALID'
+
+    @pytest.mark.parametrize(
+        ("provider_factory", "expected_reason"),
+        [
+            (lambda: FastAnswerProvider(answer_text="Fine answer", citation_ids=["missing"]), "PROVIDER_OUTPUT_INVALID"),
+            (lambda: LeakyProvider(answer_text="The definition head is hidden here.", citation_ids=["ev_skill"]), "PROVIDER_OUTPUT_INVALID"),
+        ],
+    )
+    def test_fast_public_path_abstains_without_semantic_retry(
+        monkeypatch: pytest.MonkeyPatch,
+        fast_path_bundle: tuple[Any, dict[str, Any], dict[str, Any]],
+        provider_factory: Any,
+        expected_reason: str,
+    ) -> None:
+        bundle, evidence, retrieval = fast_path_bundle
+        provider = provider_factory()
+    
+        monkeypatch.setattr(runtime, "load_production_answer_bundle", lambda: bundle)
+        monkeypatch.setattr(runtime, "_run_lexical_primary_retrieval", lambda **_kwargs: (retrieval["lexical"], retrieval["dense"]))
+        monkeypatch.setattr(runtime, "_select_evidence", lambda **_kwargs: [evidence])
+        monkeypatch.setattr(runtime, "_has_meaningful_overlap", lambda _question, _evidence: True)
+    
+        response = runtime.run_owner_arbitrary_query(
+            root=ROOT,
+            gate=load_json(GATE_PATH),
+            question="What is a skill in an AI agent architecture?",
+            owner_subject_hash=OWNER_SUBJECT_HASH,
+            provider_client=provider,
+        )
+    
+>       assert provider.calls == 1
+E       assert 2 == 1
+E        +  where 2 = <tests.test_m26_pa_7_fast_public_path.LeakyProvider object at 0x10ee3d5d0>.calls
+
+tests/test_m26_pa_7_fast_public_path.py:165: AssertionError
+______ test_corrected_pa7_acceptance_schema_self_digest_and_live_evidence ______
+
+    def test_corrected_pa7_acceptance_schema_self_digest_and_live_evidence() -> None:
+        acceptance = load(PILOT / "m26-pa-7-acceptance.json")
+        assert schema_errors("m26-pa-7-corrected-acceptance-v2.schema.json", acceptance) == []
+        verify_self_digest(acceptance, "corrected pa7 acceptance")
+        assert acceptance["self_sha256"] == ACCEPTANCE_SELF_SHA256
+        assert acceptance["accepted"] is True
+        assert acceptance["status"] == ACCEPTED_STATUS
+        assert acceptance["schema_version"] == "knowledge-engine-m26-pa-7-corrected-acceptance/v2"
+        assert acceptance["stage_id"] == "M26.PA.7"
+        assert acceptance["owner_decision"]["self_sha256"] == OWNER_DECISION_SELF_SHA256
+>       assert acceptance["corrective_authority"] == {
+            "corrective_reopen_path": "pilot/m26/m26-pa-7-corrective-reopen.json",
+            "corrective_reopen_self_sha256": CORRECTIVE_REOPEN_SELF_SHA256,
+            "formal_test_contract_path": "pilot/m26/m26-pa-7-corrective-formal-test-contract.json",
+            "formal_test_contract_self_sha256": CORRECTIVE_FORMAL_TEST_CONTRACT_SELF_SHA256,
+            "formal_test_manifest_path": "pilot/m26/m26-pa-7-corrective-formal-test-manifest.json",
+            "formal_test_manifest_self_sha256": FORMAL_MANIFEST_SELF_SHA256,
+            "owner_authority_path": "pilot/m26/m26-pa-7-corrective-owner-authority.json",
+            "owner_authority_self_sha256": CORRECTIVE_OWNER_AUTHORITY_SELF_SHA256,
+        }
+E       AssertionError: assert {'corrective_...3fc5b51', ...} == {'corrective_...3fc5b51', ...}
+E         
+E         Omitting 7 identical items, use -vv to show
+E         Differing items:
+E         {'formal_test_manifest_self_sha256': '62c14a4076238fd9f6c7424f5eccd555248616866caac5f2ea293bf1e6e073b9'} != {'formal_test_manifest_self_sha256': '2d0fbd3a837aab9f09996ba75000bf577e14db4dc01e483cc2aba3ad8ac07396'}
+E         Use -v to get more diff
+
+tests/test_m26_pa_7_reconciliation.py:104: AssertionError
+____________ test_corrected_formal_metrics_bound_product_readiness _____________
+
+    def test_corrected_formal_metrics_bound_product_readiness() -> None:
+        acceptance = load(PILOT / "m26-pa-7-acceptance.json")
+        evidence = acceptance["live_evidence"]
+        metrics = evidence["metrics"]
+    
+        assert evidence["calibration"] == {"provider_calls": 4, "query_count": 4, "slo_pass": True}
+        assert evidence["formal"]["query_count"] == 8
+        assert evidence["formal"]["answerable_count"] == 6
+        assert evidence["formal"]["answerable_provider_invoked_count"] == 6
+>       assert evidence["formal"]["runtime_path"] == (
+            "knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query"
+        )
+E       AssertionError: assert 'knowledge_en...bitrary_query' == 'knowledge_en...bitrary_query'
+E         
+E         - knowledge_engine.m26_aq_semantic_contract.run_owner_arbitrary_query
+E         ?                         ^^^^   ^^^^^^^^^^
+E         + knowledge_engine.m26_pa7_arbitrary_query_runtime.run_owner_arbitrary_query
+E         ?                      + ++++++++++++ ++++ ^^   ^^
+
+tests/test_m26_pa_7_reconciliation.py:213: AssertionError
+____________________ test_i25_source_path_no_untracked_m24 _____________________
+
+worktree = PosixPath('/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01')
+
+    def test_i25_source_path_no_untracked_m24(worktree):
+>       assert not (worktree / "src/knowledge_engine/"
+                    "m27_w5_m24_m16_admission_boundary_v1_experimental.py").exists()
+E       AssertionError: assert not True
+E        +  where True = exists()
+E        +    where exists = (PosixPath('/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01') / 'src/knowledge_engine/m27_w5_m24_m16_admission_boundary_v1_experimental.py').exists
+
+tests/test_m27_w5_i25_four_lane_staging_v1_experimental.py:182: AssertionError
+________________ test_clean_i23_head_and_pins_on_real_worktree _________________
+
+    def test_clean_i23_head_and_pins_on_real_worktree():
+>       identity = m.inspect_candidate(ROOT)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_m27_w5_m24_m16_admission_boundary_v1_experimental.py:229: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+worktree = PosixPath('/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01')
+
+    def inspect_candidate(worktree: Path) -> CandidateIdentity:
+        """Real read-only Git/physical checks; tolerates ONLY our three owned files."""
+        root = worktree.resolve(strict=True)
+        if not (root / ".git").exists():
+            raise ValueError("NOT_A_GIT_WORKTREE")
+        object_format = _git(root, "rev-parse", "--show-object-format")
+        expected_oid = GIT_OBJECT_IDS.get(object_format)
+        if expected_oid is None:
+            raise ValueError("UNSUPPORTED_GIT_OBJECT_FORMAT")
+        head, tree = _git(root, "rev-parse", "HEAD", "HEAD^{tree}").splitlines()
+        if not expected_oid.fullmatch(head) or not expected_oid.fullmatch(tree):
+            raise ValueError("INVALID_GIT_OBJECT_ID")
+        base_tree = _git(root, "rev-parse", BASE_COMMIT + "^{tree}")
+        if not expected_oid.fullmatch(BASE_COMMIT) or not expected_oid.fullmatch(base_tree):
+            raise ValueError("BASELINE_GIT_OBJECT_FORMAT_MISMATCH")
+        if base_tree != BASE_TREE:
+            raise ValueError("WRONG_I23_TREE")
+        if head != BASE_COMMIT and _git(root, "rev-parse", "HEAD^") != BASE_COMMIT:
+>           raise ValueError("WRONG_CANDIDATE_PARENT")
+E           ValueError: WRONG_CANDIDATE_PARENT
+
+src/knowledge_engine/m27_w5_m24_m16_admission_boundary_v1_experimental.py:172: ValueError
+____________ test_negative_manifest_reconciliation[wrong_candidate] ____________
+
+tmp_path = PosixPath('/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAK..._VNEXT_20261014/D01/.tmp/d01/formal/c01_original_51/pytest-of-huaihsuanhuang/pytest-0/test_negative_manifest_reconci0')
+name = 'wrong_candidate', reason = 'RUN_HOST_OR_EXECUTED_IMAGE_LINEAGE_MISMATCH'
+
+    @pytest.mark.parametrize(
+        "name,reason", MANIFEST_FAULTS, ids=[x[0] for x in MANIFEST_FAULTS]
+    )
+    def test_negative_manifest_reconciliation(tmp_path: Path, name, reason):
+        entries = _files(tmp_path)
+        if name == "duplicate_kind":
+            entries.append(dict(entries[0], path="other.json", sha256="f" * 64))
+        elif name == "duplicate_path":
+            entries.append(dict(entries[0], kind="provider_invoice", sha256="e" * 64))
+        elif name == "duplicate_digest":
+            entries.append(dict(entries[0], kind="provider_invoice", path="other.json"))
+        elif name == "grant_mismatch":
+            entries[0]["grant_id"] = "other01"
+        elif name == "subject_mismatch":
+            entries[0]["subject"] = "other01"
+        elif name == "hash_mismatch":
+            entries[0]["sha256"] = "0" * 64
+        elif name == "missing_file":
+            entries[0]["path"] = "absent.json"
+        elif name == "rights_lapsed":
+            entries[0]["consent_until_ms"] = 1
+        elif name == "revocation":
+            entries[0]["revoked"] = True
+        elif name == "bogus_issuer":
+            entries[0]["issuer_id"] = "bad issuer"
+        elif name == "unpermitted_scope":
+            entries[0]["scope"] = "PRODUCTION"
+        elif name == "wrong_run":
+            entries[0]["run_id"] = "fakeRun01"
+        elif name == "wrong_host":
+            entries[0]["host_id"] = "otherHost01"
+        elif name == "wrong_candidate":
+            entries[0]["candidate_image_sha256"] = "f" * 64,
+        result = _denials(tmp_path, entries)
+>       assert reason in result["denial_reasons"]
+E       AssertionError: assert 'RUN_HOST_OR_EXECUTED_IMAGE_LINEAGE_MISMATCH' in ['AR09_PHASE_B_TYPED_PROVENANCE_NOT_ADMITTED', 'EXECUTED_IMAGE_LINEAGE_INVALID', 'EXTERNAL_ROOT_AUTHORITY_NOT_INDEPEND...EPENDENT_TRUST_REGISTRY_NOT_PROVISIONED', 'MISSING_REQUIRED_BUILD_ATTESTATION', 'MISSING_REQUIRED_CITATION_SPANS', ...]
+
+tests/test_m27_w5_p16_external_evidence_ingress_v1_experimental.py:197: AssertionError
+_______________ test_positive_cli_missing_manifest_fails_closed ________________
+
+tmp_path = PosixPath('/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAK..._VNEXT_20261014/D01/.tmp/d01/formal/c01_original_51/pytest-of-huaihsuanhuang/pytest-0/test_positive_cli_missing_mani0')
+capsys = <_pytest.capture.CaptureFixture object at 0x10e6a1e10>
+
+    def test_positive_cli_missing_manifest_fails_closed(tmp_path, capsys):
+        scratch = tmp_path / "scratch"
+        code = p16.main(["inspect", "--ingress-root", str(tmp_path),
+                         "--manifest", "missing.json", "--scratch", str(scratch)])
+>       assert code == 0
+E       assert 20 == 0
+
+tests/test_m27_w5_p16_external_evidence_ingress_v1_experimental.py:309: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"ar09_phase_b": "AR09_PHASE_B_BLOCKED", "classification": "EXTERNAL_ARTIFACTS_ABSENT", "decision": "DENIED", "denial_reasons": ["ARTIFACT_OPEN_OR_RACE_DENIED", "EXTERNAL_ARTIFACTS_ABSENT"], "may_execute_official_evaluation": false, "official_cited_gate_pass": false, "original523": "ORIGINAL523_EVIDENCE_NOT_ADMITTED", "receipt_path": "/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01/.tmp/d01/formal/c01_original_51/pytest-of-huaihsuanhuang/pytest-0/test_positive_cli_missing_mani0/scratch/P16_REQUEST_RECEIPT.json", "receipt_sha256": "0735d9108fe12a458146c176dd85efcdf2b80f730dfd9efa1531f6957e94309c", "receipt_written": true, "schema": "m27-p17-ingress-cli-denial-v1", "transport_ok": true}
+- generated xml file: /Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01/evidence/d01/original_53/c01_original_51.junit.xml -
+=========================== short test summary info ============================
+FAILED tests/test_a01_fast_public_contract_v2.py::test_v2_positive_retains_semantic_proof_and_single_call
+FAILED tests/test_m26_aq_simplified_product_contract.py::test_correct_false_premise_answer_need_not_begin_with_no
+FAILED tests/test_m26_aq_simplified_product_contract.py::test_blackbox_false_premise_answer_need_not_begin_with_no
+FAILED tests/test_m26_aq_simplified_product_contract.py::test_answer_row_accepts_full_semantic_closure_provider_budget
+FAILED tests/test_m26_aq_simplified_product_contract.py::test_blackbox_safe_abstention_may_use_one_bounded_provider_call
+FAILED tests/test_m26_aq_simplified_product_contract.py::test_final_validator_accepts_supported_partial_answer_source
+FAILED tests/test_m26_bp5c_r2_fast_seed.py::test_fast_seed_rejects_ambiguous_facet_binding
+FAILED tests/test_m26_pa7_final_web_readiness.py::test_final_web_product_readiness_fixture_receipt_satisfies_a26_to_a53
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_arbitrary_non_m26_question_reaches_retrieval_and_provider
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_varied_questions_are_not_keyword_whitelisted
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_ordinary_explanatory_query_stays_lean_without_graph_expansion
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_runtime_binds_full_production_graph_and_cites_outside_old_20_graph_evidence
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_provider_natural_cited_prose_is_preserved_after_claim_verification
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_partial_candidate_is_verified_and_preserved
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_uncited_provider_prose_survives_when_structured_claims_verify
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_dense_transient_failures_degrade_without_blocking_lexical_primary_path[exc0-None]
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_dense_transient_failures_degrade_without_blocking_lexical_primary_path[exc1-None]
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_dense_transient_failures_degrade_without_blocking_lexical_primary_path[exc2-429]
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_dense_transient_failures_degrade_without_blocking_lexical_primary_path[exc3-503]
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_dense_deadline_degrades_without_blocking_lexical_primary_path
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_bounded_repair_converts_unsupported_provider_claim
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_direct_repair_exhaustion_uses_deterministic_evidence_synthesis
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_answerable_provider_abstention_is_narrowly_constrained[How do routers and directed acyclic graphs complement each other for permission-first execution?-complementary_synthesis-required_citation_types0-2-True]
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_answerable_provider_abstention_is_narrowly_constrained[Which provenance source supports router abstention controls?-provenance_source_trace-required_citation_types1-2-True]
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_answerable_provider_abstention_is_narrowly_constrained[What changed between source records about request boundary and steering controls?-temporal_conflict-required_citation_types2-2-True]
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_cross_document_answer_requires_two_distinct_sources
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_graph_relationship_binds_edge_and_both_endpoints
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_provenance_and_temporal_intents_use_required_evidence_types
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_invalid_complex_multi_evidence_provider_outputs_abstain_after_bounded_repair[invented_id-Compare routers and adaptive planning for permission-first controls.]
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_invalid_complex_multi_evidence_provider_outputs_abstain_after_bounded_repair[wrong_locator-Compare routers and adaptive planning for permission-first controls.]
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_invalid_complex_multi_evidence_provider_outputs_abstain_after_bounded_repair[quote_drift-Compare routers and adaptive planning for permission-first controls.]
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_invalid_complex_multi_evidence_provider_outputs_abstain_after_bounded_repair[one_source_comparison-Compare routers and adaptive planning for permission-first controls.]
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_invalid_complex_multi_evidence_provider_outputs_abstain_after_bounded_repair[missing_graph_edge-What graph relationship connects harness and headless harness service?]
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_fas5_api_citation_shape_remains_compatible
+FAILED tests/test_m26_pa_7_arbitrary_query_runtime.py::test_provider_evidence_item_is_compact_and_stable
+FAILED tests/test_m26_pa_7_corrective_formal_product_readiness.py::test_corrective_artifacts_validate_and_bind_authority_chain
+FAILED tests/test_m26_pa_7_corrective_formal_product_readiness.py::test_corrective_formal_fixture_receipt_satisfies_a01_to_a34_evidence
+FAILED tests/test_m26_pa_7_fast_public_path.py::test_fast_public_path_publishes_single_call_answer
+FAILED tests/test_m26_pa_7_fast_public_path.py::test_fast_public_path_abstains_without_semantic_retry[<lambda>-PROVIDER_OUTPUT_INVALID0]
+FAILED tests/test_m26_pa_7_fast_public_path.py::test_fast_public_path_abstains_without_semantic_retry[<lambda>-PROVIDER_OUTPUT_INVALID1]
+FAILED tests/test_m26_pa_7_reconciliation.py::test_corrected_pa7_acceptance_schema_self_digest_and_live_evidence
+FAILED tests/test_m26_pa_7_reconciliation.py::test_corrected_formal_metrics_bound_product_readiness
+FAILED tests/test_m27_w5_i25_four_lane_staging_v1_experimental.py::test_i25_source_path_no_untracked_m24
+FAILED tests/test_m27_w5_m24_m16_admission_boundary_v1_experimental.py::test_clean_i23_head_and_pins_on_real_worktree
+FAILED tests/test_m27_w5_p16_external_evidence_ingress_v1_experimental.py::test_negative_manifest_reconciliation[wrong_candidate]
+FAILED tests/test_m27_w5_p16_external_evidence_ingress_v1_experimental.py::test_positive_cli_missing_manifest_fails_closed
+46 failed, 5 passed in 16.25s

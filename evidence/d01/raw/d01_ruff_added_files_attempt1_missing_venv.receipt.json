@@ -1,0 +1,14 @@
+{
+  "attempt": 1,
+  "capture_process_exit_code": 1,
+  "classification": "RUNNER_EXECUTABLE_RESOLUTION_ERROR",
+  "command_executable": ".venv/bin/ruff",
+  "monotonic_timestamps_available": false,
+  "pytest_started": false,
+  "reason": "REQUESTED_WORKTREE_LOCAL_RUFF_DID_NOT_EXIST",
+  "requested_child_pid": null,
+  "retained": true,
+  "schema": "m27.d01.failed-attempt-receipt/v1",
+  "subsequent_resolution": "/Users/huaihsuanhuang/.pyenv/shims/ruff",
+  "wall_timestamps_available": false
+}

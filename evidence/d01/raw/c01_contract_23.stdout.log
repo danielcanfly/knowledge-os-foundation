@@ -1,0 +1,32 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-8.4.2, pluggy-1.6.0 -- /Users/huaihsuanhuang/.pyenv/versions/3.11.15/bin/python
+rootdir: /Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/PARALLEL_VNEXT_20261014/D01
+configfile: pyproject.toml
+plugins: anyio-4.14.1, cov-6.3.0, langsmith-0.11.1
+collecting ... collected 23 items
+
+tests/test_c01_canonical_contract_gate.py::test_complete_external_approval_contract_is_admissible PASSED [  4%]
+tests/test_c01_canonical_contract_gate.py::test_version_aware_buckets_keep_historic_and_current_outcomes_separate[case0-False-CURRENT_CANONICAL_ACTUALLY_PASSED] PASSED [  8%]
+tests/test_c01_canonical_contract_gate.py::test_version_aware_buckets_keep_historic_and_current_outcomes_separate[case1-False-LEGACY_UNMODIFIED_STILL_FAILING] PASSED [ 13%]
+tests/test_c01_canonical_contract_gate.py::test_version_aware_buckets_keep_historic_and_current_outcomes_separate[case2-False-SUPERSEDED_PROPOSED_NOT_APPROVED] PASSED [ 17%]
+tests/test_c01_canonical_contract_gate.py::test_version_aware_buckets_keep_historic_and_current_outcomes_separate[case3-True-OWNER_ADR_FORMALLY_ACCEPTED] PASSED [ 21%]
+tests/test_c01_canonical_contract_gate.py::test_version_aware_buckets_keep_historic_and_current_outcomes_separate[case4-False-C02_EXTERNAL_CAPABILITY_HOLD] PASSED [ 26%]
+tests/test_c01_canonical_contract_gate.py::test_case_receipt_tamper_fails_closed PASSED [ 30%]
+tests/test_c01_canonical_contract_gate.py::test_owner_adr_fail_closed_negatives[WRONG_SOURCE_LINEAGE-<lambda>] PASSED [ 34%]
+tests/test_c01_canonical_contract_gate.py::test_owner_adr_fail_closed_negatives[WRONG_SOURCE_TREE-<lambda>] PASSED [ 39%]
+tests/test_c01_canonical_contract_gate.py::test_owner_adr_fail_closed_negatives[UNTRUSTED_ISSUER-<lambda>] PASSED [ 43%]
+tests/test_c01_canonical_contract_gate.py::test_owner_adr_fail_closed_negatives[FORGED_OR_UNVERIFIED_ADR-<lambda>] PASSED [ 47%]
+tests/test_c01_canonical_contract_gate.py::test_owner_adr_fail_closed_negatives[MISSING_ORIGINAL_TEST_SHA256-<lambda>] PASSED [ 52%]
+tests/test_c01_canonical_contract_gate.py::test_owner_adr_fail_closed_negatives[STALE_OR_ROLLBACK_CONTRACT_VERSION-<lambda>] PASSED [ 56%]
+tests/test_c01_canonical_contract_gate.py::test_owner_adr_fail_closed_negatives[LEGACY_FRESH_SCOPE_AMBIGUOUS-<lambda>] PASSED [ 60%]
+tests/test_c01_canonical_contract_gate.py::test_owner_adr_fail_closed_negatives[SOURCE_TAMPER-<lambda>] PASSED [ 65%]
+tests/test_c01_canonical_contract_gate.py::test_owner_adr_fail_closed_negatives[ADR_EXPIRED-<lambda>] PASSED [ 69%]
+tests/test_c01_canonical_contract_gate.py::test_owner_adr_fail_closed_negatives[SEMANTIC_PROOF_DENIED-<lambda>] PASSED [ 73%]
+tests/test_c01_legacy_canonical_bundle_bridge.py::test_legacy_entrypoint_forwards_compatibility_loader_bundle PASSED [ 78%]
+tests/test_c01_legacy_canonical_bundle_bridge.py::test_explicit_bundle_does_not_touch_environment_loader PASSED [ 82%]
+tests/test_c01_legacy_canonical_bundle_bridge.py::test_compatibility_loader_failure_remains_fail_closed PASSED [ 86%]
+tests/test_c01_legacy_canonical_bundle_bridge.py::test_canonical_resolver_honors_pre_convergence_read_only_loader PASSED [ 91%]
+tests/test_c01_legacy_canonical_bundle_bridge.py::test_canonical_resolver_prefers_explicit_bundle PASSED [ 95%]
+tests/test_c01_legacy_canonical_bundle_bridge.py::test_canonical_resolver_prefers_current_injected_loader PASSED [100%]
+
+============================== 23 passed in 0.22s ==============================

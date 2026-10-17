@@ -1,0 +1,42 @@
+{
+  "billable_provider_calls": 0,
+  "cases": [
+    {
+      "case_id": "valid-ack",
+      "client_pid": 79457,
+      "fixture_transport_delivery": true,
+      "generated_text_sha256": "219a23eee1278e392cf7f50f6f5d64adc877dcf32759f0ea1f2fd1178a28e8f7",
+      "model_exit_code": 0,
+      "model_pid": 79454,
+      "official_client_publication": false,
+      "source_sha256": "8831538efbd51ea1b025e5c513ac80bf586b5aee684db4e2a89d7be096107e9c",
+      "status": "FIXTURE_ONLY",
+      "terminal_reason": "NONQUALIFYING_FIXTURE_DELIVERY"
+    },
+    {
+      "case_id": "forged-ack",
+      "client_pid": 79459,
+      "fixture_transport_delivery": false,
+      "generated_text_sha256": "ed61bdb4d0b3a8c5bcdfccde35bfffdda5b7f719b3f235e2e67e19ef6db0972d",
+      "model_exit_code": 0,
+      "model_pid": 79458,
+      "official_client_publication": false,
+      "source_sha256": "83c9ee26b75e355d8a189bd08002be2efd99501a82f20add518de3156eef3fdd",
+      "status": "SAFE_TERMINAL",
+      "terminal_reason": "CLIENT_ACK_INVALID"
+    }
+  ],
+  "external_provider_calls": 0,
+  "fixed_denominator": 2,
+  "generation_latency_ms": {
+    "denominator": 2,
+    "mean": 1581.02,
+    "p95": 2240.593
+  },
+  "llama_cli_sha256": "cf4f088f32507af619a1d65516d235ef7644db8c81ff1d3e175ff640dab75ab7",
+  "local_compute_cost_claimed_zero": false,
+  "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+  "schema": "m27.d01.joined-positive-negative-results/v1",
+  "source_generator_verifier_client_timings_present": true,
+  "status": "PASS_LOCAL_CANDIDATE_ONLY"
+}

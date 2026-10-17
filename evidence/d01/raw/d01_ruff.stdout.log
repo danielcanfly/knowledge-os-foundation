@@ -1,0 +1,502 @@
+F841 Local variable `focus_phrase` is assigned to but never used
+    --> src/knowledge_engine/m26_aq_semantic_contract.py:4212:9
+     |
+4210 |             focus_phrase = ", ".join(focus_terms[:-1]) + f", and {focus_terms[-1]}"
+4211 |     else:
+4212 |         focus_phrase = "the question's core topic"
+     |         ^^^^^^^^^^^^
+4213 |     q = question.casefold()
+4214 |     if "mvp" in q and ("startup" in q or "venture" in q):
+     |
+help: Remove assignment to unused variable `focus_phrase`
+
+F601 Dictionary key literal `"codex_parallel_subagent_coding"` repeated
+   --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:414:5
+    |
+412 |         ("dynamically direct their own processes", "dynamically direct their own process"),
+413 |     ),
+414 |     "codex_parallel_subagent_coding": (
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+415 |         (
+416 |             "openai codex supports parallel subagent workflows",
+    |
+help: Remove repeated key literal `"codex_parallel_subagent_coding"`
+
+F841 Local variable `preferred_sources` is assigned to but never used
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:3752:5
+     |
+3750 |         and _deterministic_support_ref(item) is not None
+3751 |     ]
+3752 |     preferred_sources = (
+     |     ^^^^^^^^^^^^^^^^^
+3753 |         "after-the-pause-05",
+3754 |         "after-the-pause-06",
+     |
+help: Remove assignment to unused variable `preferred_sources`
+
+E702 Multiple statements on one line (semicolon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:3897:23
+     |
+3895 |         for i in passages:
+3896 |             if src in str(i.get("source_identity") or i.get("source_id") or ""):
+3897 |                 add(i); break
+     |                       ^
+3898 |         if len(selected) >= 3: break
+3899 |     if len(selected) < 2:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:3898:30
+     |
+3896 |             if src in str(i.get("source_identity") or i.get("source_id") or ""):
+3897 |                 add(i); break
+3898 |         if len(selected) >= 3: break
+     |                              ^
+3899 |     if len(selected) < 2:
+3900 |         for i in passages:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:3904:34
+     |
+3902 |             if any(x in t for x in ("permission", "sandbox", "approval", "authority", "least privilege", "blast radius", "allowed")):
+3903 |                 add(i)
+3904 |             if len(selected) >= 3: break
+     |                                  ^
+3905 |     if len(selected) < 2: return None
+3906 |     citation_ids = [str(i["evidence_id"]) for i in selected]
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:3905:25
+     |
+3903 |                 add(i)
+3904 |             if len(selected) >= 3: break
+3905 |     if len(selected) < 2: return None
+     |                         ^
+3906 |     citation_ids = [str(i["evidence_id"]) for i in selected]
+3907 |     answer_text = ("Permissions make agents safer by turning broad capability into bounded authority. "
+     |
+
+E702 Multiple statements on one line (semicolon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5320:23
+     |
+5318 |         for i in passages:
+5319 |             if src in str(i.get("source_identity") or i.get("source_id") or ""):
+5320 |                 add(i); break
+     |                       ^
+5321 |         if len(selected) >= 3: break
+5322 |     if len(selected) < 2:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5321:30
+     |
+5319 |             if src in str(i.get("source_identity") or i.get("source_id") or ""):
+5320 |                 add(i); break
+5321 |         if len(selected) >= 3: break
+     |                              ^
+5322 |     if len(selected) < 2:
+5323 |         for i in passages:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5327:34
+     |
+5325 |             if any(x in t for x in ("comfyui", "model", "workflow", "sdxl", "flux", "controlnet", "lora", "mac")):
+5326 |                 add(i)
+5327 |             if len(selected) >= 3: break
+     |                                  ^
+5328 |     if len(selected) < 2: return None
+5329 |     citation_ids = [str(i["evidence_id"]) for i in selected]
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5328:25
+     |
+5326 |                 add(i)
+5327 |             if len(selected) >= 3: break
+5328 |     if len(selected) < 2: return None
+     |                         ^
+5329 |     citation_ids = [str(i["evidence_id"]) for i in selected]
+5330 |     answer_text = ("In ComfyUI, choose tools and models from the workflow you want to run, not from the newest model name alone. "
+     |
+
+E702 Multiple statements on one line (semicolon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5349:23
+     |
+5347 |         for i in passages:
+5348 |             if src in str(i.get("source_identity") or i.get("source_id") or ""):
+5349 |                 add(i); break
+     |                       ^
+5350 |         if len(selected) >= 3: break
+5351 |     if len(selected) < 2:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5350:30
+     |
+5348 |             if src in str(i.get("source_identity") or i.get("source_id") or ""):
+5349 |                 add(i); break
+5350 |         if len(selected) >= 3: break
+     |                              ^
+5351 |     if len(selected) < 2:
+5352 |         for i in passages:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5356:34
+     |
+5354 |             if any(x in t for x in ("checkpoint", "lora", "vae", "clip", "t5xxl", "gguf", "fp8")):
+5355 |                 add(i)
+5356 |             if len(selected) >= 3: break
+     |                                  ^
+5357 |     if len(selected) < 2: return None
+5358 |     citation_ids = [str(i["evidence_id"]) for i in selected]
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5357:25
+     |
+5355 |                 add(i)
+5356 |             if len(selected) >= 3: break
+5357 |     if len(selected) < 2: return None
+     |                         ^
+5358 |     citation_ids = [str(i["evidence_id"]) for i in selected]
+5359 |     answer_text = ("Beginners should treat these files as different layers of the image pipeline, not as interchangeable magic files…
+     |
+
+E702 Multiple statements on one line (semicolon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5378:23
+     |
+5376 |         for i in passages:
+5377 |             if src in str(i.get("source_identity") or i.get("source_id") or ""):
+5378 |                 add(i); break
+     |                       ^
+5379 |         if len(selected) >= 3: break
+5380 |     if len(selected) < 2:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5379:30
+     |
+5377 |             if src in str(i.get("source_identity") or i.get("source_id") or ""):
+5378 |                 add(i); break
+5379 |         if len(selected) >= 3: break
+     |                              ^
+5380 |     if len(selected) < 2:
+5381 |         for i in passages:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5385:34
+     |
+5383 |             if any(x in t for x in ("dataset", "tokenizer", "optimizer", "lora", "checkpoint", "precision", "batch", "training")):
+5384 |                 add(i)
+5385 |             if len(selected) >= 3: break
+     |                                  ^
+5386 |     if len(selected) < 2: return None
+5387 |     citation_ids = [str(i["evidence_id"]) for i in selected]
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5386:25
+     |
+5384 |                 add(i)
+5385 |             if len(selected) >= 3: break
+5386 |     if len(selected) < 2: return None
+     |                         ^
+5387 |     citation_ids = [str(i["evidence_id"]) for i in selected]
+5388 |     answer_text = ("Before modifying local LLM training scripts, read them as an experiment contract rather than as random code. "
+     |
+
+E702 Multiple statements on one line (semicolon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5486:26
+     |
+5484 |         for item in passages:
+5485 |             if src in str(item.get("source_identity") or item.get("source_id") or ""):
+5486 |                 add(item); break
+     |                          ^
+5487 |         if len(selected) >= 2: break
+5488 |     if not selected:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5487:30
+     |
+5485 |             if src in str(item.get("source_identity") or item.get("source_id") or ""):
+5486 |                 add(item); break
+5487 |         if len(selected) >= 2: break
+     |                              ^
+5488 |     if not selected:
+5489 |         for item in passages:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5493:34
+     |
+5491 |             if any(tok in t for tok in ("parameter memory", "context steering", "fine-tuning", "weights", "context", "adapter", "pre…
+5492 |                 add(item)
+5493 |             if len(selected) >= 2: break
+     |                                  ^
+5494 |     if not selected:
+5495 |         return None
+     |
+
+E702 Multiple statements on one line (semicolon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5518:26
+     |
+5516 |         for item in passages:
+5517 |             if src in str(item.get("source_identity") or item.get("source_id") or ""):
+5518 |                 add(item); break
+     |                          ^
+5519 |         if len(selected) >= 2: break
+5520 |     if not selected:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5519:30
+     |
+5517 |             if src in str(item.get("source_identity") or item.get("source_id") or ""):
+5518 |                 add(item); break
+5519 |         if len(selected) >= 2: break
+     |                              ^
+5520 |     if not selected:
+5521 |         for item in passages:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5525:34
+     |
+5523 |             if any(tok in t for tok in ("analysis", "synthesis", "thematic", "affinity", "pattern", "insight", "evidence")):
+5524 |                 add(item)
+5525 |             if len(selected) >= 2: break
+     |                                  ^
+5526 |     if not selected:
+5527 |         return None
+     |
+
+E702 Multiple statements on one line (semicolon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5553:26
+     |
+5551 |         for item in passages:
+5552 |             if src in str(item.get("source_identity") or item.get("source_id") or ""):
+5553 |                 add(item); break
+     |                          ^
+5554 |         if len(selected) >= 2: break
+5555 |     if not selected:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5554:30
+     |
+5552 |             if src in str(item.get("source_identity") or item.get("source_id") or ""):
+5553 |                 add(item); break
+5554 |         if len(selected) >= 2: break
+     |                              ^
+5555 |     if not selected:
+5556 |         for item in passages:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5560:34
+     |
+5558 |             if any(tok in t for tok in ("loi", "letter of intent", "switch", "current state", "competitor", "adopt", "pilot", "paid"…
+5559 |                 add(item)
+5560 |             if len(selected) >= 2: break
+     |                                  ^
+5561 |     if not selected:
+5562 |         return None
+     |
+
+E702 Multiple statements on one line (semicolon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5596:26
+     |
+5594 |         for item in passages:
+5595 |             if src in str(item.get("source_identity") or item.get("source_id") or ""):
+5596 |                 add(item); break
+     |                          ^
+5597 |         if len(selected) >= 2: break
+5598 |     if not selected:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5597:30
+     |
+5595 |             if src in str(item.get("source_identity") or item.get("source_id") or ""):
+5596 |                 add(item); break
+5597 |         if len(selected) >= 2: break
+     |                              ^
+5598 |     if not selected:
+5599 |         for item in passages:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5603:34
+     |
+5601 |             if any(tok in t for tok in ("invisible web3", "x402", "payment", "crypto", "product experience", "friction", "value mome…
+5602 |                 add(item)
+5603 |             if len(selected) >= 2: break
+     |                                  ^
+5604 |     if not selected:
+5605 |         return None
+     |
+
+E702 Multiple statements on one line (semicolon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5636:26
+     |
+5634 |         for item in passages:
+5635 |             if src in str(item.get("source_identity") or item.get("source_id") or ""):
+5636 |                 add(item); break
+     |                          ^
+5637 |         if len(selected) >= 2: break
+5638 |     if not selected:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5637:30
+     |
+5635 |             if src in str(item.get("source_identity") or item.get("source_id") or ""):
+5636 |                 add(item); break
+5637 |         if len(selected) >= 2: break
+     |                              ^
+5638 |     if not selected:
+5639 |         for item in passages:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5643:34
+     |
+5641 |             if any(tok in t for tok in ("pivot", "lighter", "fragile", "startup", "problem", "customer", "market", "pause")):
+5642 |                 add(item)
+5643 |             if len(selected) >= 2: break
+     |                                  ^
+5644 |     if not selected:
+5645 |         return None
+     |
+
+E702 Multiple statements on one line (semicolon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5668:26
+     |
+5666 |         for item in passages:
+5667 |             if src in str(item.get("source_identity") or item.get("source_id") or ""):
+5668 |                 add(item); break
+     |                          ^
+5669 |         if len(selected) >= 2: break
+5670 |     if not selected:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5669:30
+     |
+5667 |             if src in str(item.get("source_identity") or item.get("source_id") or ""):
+5668 |                 add(item); break
+5669 |         if len(selected) >= 2: break
+     |                              ^
+5670 |     if not selected:
+5671 |         for item in passages:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5675:34
+     |
+5673 |             if any(tok in t for tok in ("switch value", "switching", "feature advantage", "current state", "adoption", "workflow", "…
+5674 |                 add(item)
+5675 |             if len(selected) >= 2: break
+     |                                  ^
+5676 |     if len(selected) < 1:
+5677 |         return None
+     |
+
+E702 Multiple statements on one line (semicolon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5700:26
+     |
+5698 |         for item in passages:
+5699 |             if src in str(item.get("source_identity") or item.get("source_id") or ""):
+5700 |                 add(item); break
+     |                          ^
+5701 |         if len(selected) >= 2: break
+5702 |     if not selected:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5701:30
+     |
+5699 |             if src in str(item.get("source_identity") or item.get("source_id") or ""):
+5700 |                 add(item); break
+5701 |         if len(selected) >= 2: break
+     |                              ^
+5702 |     if not selected:
+5703 |         for item in passages:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5707:34
+     |
+5705 |             if any(tok in t for tok in ("direct operation", "direct call", "agent pattern", "simple", "deterministic", "workflow", "…
+5706 |                 add(item)
+5707 |             if len(selected) >= 2: break
+     |                                  ^
+5708 |     if len(selected) < 1:
+5709 |         return None
+     |
+
+E702 Multiple statements on one line (semicolon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5732:26
+     |
+5730 |         for item in passages:
+5731 |             if src in str(item.get("source_identity") or item.get("source_id") or ""):
+5732 |                 add(item); break
+     |                          ^
+5733 |         if len(selected) >= 2: break
+5734 |     if not selected:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5733:30
+     |
+5731 |             if src in str(item.get("source_identity") or item.get("source_id") or ""):
+5732 |                 add(item); break
+5733 |         if len(selected) >= 2: break
+     |                              ^
+5734 |     if not selected:
+5735 |         for item in passages:
+     |
+
+E701 Multiple statements on one line (colon)
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5739:34
+     |
+5737 |             if any(tok in t for tok in ("cold email", "cold inviting", "first yes", "cost of deciding", "trust", "decision", "outrea…
+5738 |                 add(item)
+5739 |             if len(selected) >= 2: break
+     |                                  ^
+5740 |     if len(selected) < 1:
+5741 |         return None
+     |
+
+SIM102 Use a single `if` statement instead of nested `if` statements
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:5780:5
+     |
+5778 |       # mention of Daniel is not evidence of his taste.
+5779 |       has_supported_archive_topic = any(term in q for term in ("mcp", "rag", "harness", "localbridge", "codex", "jev")) or ("n8n" in q…
+5780 | /     if not has_supported_archive_topic and "daniel" in q and "coffee" in q and any(term in q for term in ("like", "likes", "prefer",…
+5781 | |         if not has_any("coffee", "latte", "espresso", "americano", "cappuccino"):
+     | |_________________________________________________________________________________^
+5782 |               return "NO_AUTHORIZED_PRODUCTION_EVIDENCE"
+     |
+help: Combine `if` statements using `and`
+
+F841 Local variable `focus_overlap` is assigned to but never used
+    --> src/knowledge_engine/m26_pa7_arbitrary_query_runtime.py:7025:5
+     |
+7023 |     question_terms = _coverage_terms(question)
+7024 |     answer_terms = _meaningful_terms(answer_text)
+7025 |     focus_overlap = question_terms & answer_terms
+     |     ^^^^^^^^^^^^^
+7026 |     bridge = _full523_focus_synthesis_tail(question, answer_text)
+7027 |     if bridge and bridge not in answer_text:
+     |
+help: Remove assignment to unused variable `focus_overlap`
+
+Found 45 errors.
+No fixes available (3 hidden fixes can be enabled with the `--unsafe-fixes` option).

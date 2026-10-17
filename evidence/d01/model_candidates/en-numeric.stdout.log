@@ -1,0 +1,41 @@
+
+
+Loading model... 
+
+▄▄ ▄▄
+██ ██
+██ ██  ▀▀█▄ ███▄███▄  ▀▀█▄    ▄████ ████▄ ████▄
+██ ██ ▄█▀██ ██ ██ ██ ▄█▀██    ██    ██ ██ ██ ██
+██ ██ ▀█▄██ ██ ██ ██ ▀█▄██ ██ ▀████ ████▀ ████▀
+                                    ██    ██
+                                    ▀▀    ▀▀
+
+build      : b11425-e117148a4
+model      : /private/tmp/m27-c02-model-runtime-20261017/qwen2.5-0.5b-instruct-q4_k_m.gguf
+ftype      : Q4_K - Medium
+modalities : text
+
+available commands:
+  /exit or Ctrl+C     stop or exit
+  /regen              regenerate the last response
+  /clear              clear the chat history
+  /read <file>        add a text file
+  /glob <pattern>     add text files using globbing pattern
+
+
+
+> <|im_start|>system
+Answer the question in one concise sentence using only the supplied evidence. Do not add facts, do not quote the evidence verbatim, and provide no preface.
+<|im_end|>
+<|im_start|>user
+Question: How many retries are allowed after an unknown external effect?
+Evidence: After an unknown external effect, the action policy allows zero automatic retries until reconciliation.
+<|im_end|>
+<|im_start|>assistant
+
+Zero retries are allowed after an unknown external effect.
+
+[ Prompt: 1211.6 t/s | Generation: 104.8 t/s ]
+
+
+Exiting...
