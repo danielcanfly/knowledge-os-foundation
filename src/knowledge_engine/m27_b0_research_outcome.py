@@ -15,7 +15,10 @@ from pathlib import Path
 import sqlite3
 import time
 
-from m27_task_contracts_v1 import task_contract
+if __package__:
+    from .m27_task_contracts_v1 import task_contract
+else:  # Direct sandbox CLI avoids loading unrelated M26 provider integrations.
+    from m27_task_contracts_v1 import task_contract
 
 ANCHORS = {
     "charter": (
