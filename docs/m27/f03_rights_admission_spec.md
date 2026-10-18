@@ -1,0 +1,44 @@
+# F03 | Actual owner-worktree source-read admission (nonproduct candidate)
+
+## Bounded real source and provenance
+
+F03 reads the actual OS-backed Git-tracked markdown bytes at B3-05 frozen H02 parent `7966e9c766a38a22cd91432edb5dbf2115eff305`, not the CACHE06 fixture. Two allowlisted sources:
+
+- `docs/m27/b3_h02_gateway_routing_successor_nonprod.md`, Git blob `cd847c8dc0139bb26058a2b9c17b1c3e9d4771b2`, raw SHA256 `b69f76d5317ab72793f43f545847ce29384b1c29a2639a8dce5addb3ec6f1b40`.
+- `docs/m27/b1_cache03_rights_integration.md`, Git blob `334058a4142faef8bcda584d8159af6dcdd62b7c`, raw SHA256 `32ad8679276998e63932a82ab323714b4dc79cd49072ae7afc7ef6eb2a41d44f`.
+
+These are project-controlled *engineering documents*, read via the existing authorized local macOS project checkout. Git provenance, OS filesystem access and row digests are verifiable. A legal source license, formal corpus release, external content controller, Product IdP and independent H01 rights issuer are **NOT established**. Do not assert otherwise. Never admit third-party content based only on an accessible file or repository.
+
+## Trust and lifecycle
+
+- Rights evidence is **outside** this module. A caller provides an OS-local (UID-owned mode 0600) source-scoped lease plus separate local monotone revocation fence. The module never generates an issuer, authenticates a Product principal, or provisions rights.
+- Local lease is pinned to source path, parent commit, exact raw SHA, UID-backed principal, logical nonprod tenant, ACTIVE state, TTL <=3600 sec, retention window, epoch and approved LOCAL scope. These only prove a bounded local read, **not a signed legal right**.
+- Every source read checks lease/fence before I/O and again after, compares source bytes with pinned Git blob and disk reread. Claim citation binding additionally repeats source/rights revalidation immediately before candidate return.
+- Revoke before/during/after, stale lease restored after fence advances, permission escalation, changed revision/SHA, revoked/expired consent, forged principal, tenant and cross-source citation all fail closed. A common-disaster restore rolling both local files back cannot be excluded; real Product requires remote epoch/immutable signed ledger enforcement.
+- Retention proof is bounded to this memory-only read. The module does not copy original source bytes to a cache, DB, vector store or release artifact. External durable-deletion claims remain HOLD.
+- Native retrieval is bounded deterministic exact row evidence, no model or Qdrant. Numeric/negation/obligations protect obvious literal mismatches but do not constitute genuine semantic entailment, multilingual quality or Product Answer Obligations verification. No general/generated answer publication.
+
+## H02 integrator handoff
+
+Standalone candidate-only module: `knowledge_engine.m27_f03_source_rights_admission.LocalFirstPartySourceReader`. All results have `product_authenticated=false`, `product_admitted=false`, `verified_final=false`, `answer_cache_enabled=false`, `answer_cache_hit=false`, `answer_cache_write=false` and no independent issuer. Successful exact-source citations expose a `source` projection with fields matching CACHE01 `_parse_source`: `corpus_id`, `corpus_revision`, `corpus_sha256`, `source_manifest_sha256`, `acl_sha256`, `rights_sha256`, `source_ids`. `policy.revocation_epoch` and `cache_mode=BYPASS` are provided as **untrusted candidate metadata**, not a parsed Product internal request. No fabricated `identity.authenticated=true`, no signature, no qualified verifier and no actual Cache05 write gate. Every Product operation calls `product_source_admission` and denies without a verified external trust root.
+
+Single future exclusive H02 integrator must provide authenticated Product IdP principal from a server-owned context, independently verified rights grant for each source/version, legal retention proof, remote revocation and restore fencing, actual semantic/context verifier, qualified source/claim obligations, and native Client result/ACK. Only after H01 formal 9/9 signed ABI and a coherent current authorized Product image may cache activation be reconsidered. Source Candidate and syntactic citation shape are **not** a real verified HIT.
+
+## Negative boundary and regressions
+
+Tests use two real tracked first-party engineering files and separately spawned OS process readback, while **ephemeral fixture lease/fence metadata are explicitly synthetic and nonauthoritative**. Baseline B3-06 26-file SHA report remains untouched; original protected 523/unseen200, Gateway live credentials, Production, D01, Q34, Qdrant deployment and sibling worktrees untouched. Run only new tests under Python3.11 / 3.14 with the source module dynamically loaded; this avoids invoking unrelated inherited Product package initialization. No local LLM or provider.
+
+
+## F03 follow-up: admitted **real A05 first-party corpus** (distinct from fixture)
+
+The original F03 two tracked engineering documents are now supplemented by a pre-existing **Owner-declared first-party A05 corpus** at \`wave_b01/components/a05/source\`. This corpus is an actual frozen owner-authored Q34 architecture-source snapshot containing **11 distinct version- and SHA-bound original source documents and 21 exact byte-range evidence spans**, not a newly fabricated fixture document, a generic website, or the B3-06 Cache06 synthetic text.
+
+- Git base: exact H02 accepted B3-05 \`7966e9c766a38a22cd91432edb5dbf2115eff305\`. Owner corpus \`corpus.json\` raw digest \`7835ec95cee639722f89a0520336283f7e226358ad7be003a2a906635d1200e3\`. Source revision \`89f1d7be1623cd6926a69e38871544eefe39e584\`. Scope: \`FIRST_PARTY_OWNER_WRITTEN_ARCHITECTURE_DOCS_ONLY\`, explicitly no third-party licensed corpus, no official original523 or blind200 exposure.
+- Frozen A05 release \`a05context-7835ec95cee63972\`; \`tenant_acl={"owner-internal":["internal"]}\`; snapshot \`2026-10-13\` and release expires \`2027-01-11\`. The same release explicitly declares \`real_idp_authorized=false\`, \`production_qualified=false\`, \`source_release_ci_signed=false\` and \`product_qdrant_ready=false\`. It is truthful Owner *declaration*, not independently signed Product rights.
+- F03 additive \`A05OwnerCorpusAdmission\` obtains all original source bytes from OS filesystem with exact B3-05 Git blob equality, verifies every document SHA/length, all 21 passage byte offsets and quote SHAs, full corpus and release SHA pins. It actually invokes the **unchanged, inherited A05 \`ContextIndex.search\`** for BM25 plus non-neural distributional re-ranking. This is genuine local content-backed retrieval, not a stub, local LLM or fabricated model/vector similarity.
+- Mandatory F03 local epoch fence is separate OS UID-owned mode 0600 metadata. It gates original A05 mutable \`revocations.json\` before read and again after source retrieval, with source bytes/release pinned on both sides. Stale revocation restore fails on epoch mismatch; revocation before read filters source; revocation between retrieval and delivery denies the candidate. All mutation scenarios use disposable copies under OS temp; the original A05 release, H02 and revocation original are not modified.
+- The call requires the OS UID principal, \`owner-internal\` tenant, one or more exact answer-obligation substrings, fresh release and bounded TTL. It deliberately denies numeric and negated queries lacking an independent entailment reviewer, any unsupported obligations, other tenants, stale release/version, invalid or missing epoch fence, tampered source manifest/citation content. **This is not a Product ACL or an authenticated principal claim**; it is an OS-local source policy enforced in test code.
+- Source-backed local candidate returns CACHE01-compatible source metadata, citation SHA, source revision and revocation epoch, always \`cache_mode=BYPASS\`. \`answer_generated=false\`, \`verified_final=false\`, \`answer_cache_enabled=false\`, \`answer_cache_hit=false\`, \`answer_cache_write=false\`, \`product_admitted=false\`; direct Product admission still refuses. This code does NOT claim full semantic entailment, production Qdrant, H01 formal 9/9, signed source grant, distributed non-rollback epoch or native authenticated Client.
+- **Accepted Scoped PASS criterion:** genuinely accessible Owner A05 first-party on-disk read, 11/11 SHA-pinned source and 21/21 quote bytes, actual inherited real local context retrieval, distinct OS child-process readback, expiry/tenant/OS-principal and adversarial revoked/restore/source tampering protections, Product cache off/fail closed. **Separate Product qualification remains HOLD** and requires a new independent, current IdP/issuer/source grant and the sole future H02 integrator.
+
+The stale old project-doc-only \`PARTIAL\` result is preserved as historical, not silently overwritten. Separate F03 follow-up test and source evidence are required before asserting a scoped PASS.
