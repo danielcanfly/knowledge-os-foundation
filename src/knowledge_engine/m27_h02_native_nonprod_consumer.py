@@ -7,6 +7,7 @@ This loopback nonprod app never changes Q34, native Product API, or cache.
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
@@ -21,10 +22,12 @@ import time
 
 if __package__:
     from . import m27_f03_source_rights_admission as f03
+    from . import m27_f03_client_restore_boundary as delivery
     from . import m27_g01_qa_outcome as g01
     from . import m27_task_contracts_v1 as tc
 else:
     import m27_f03_source_rights_admission as f03
+    import m27_f03_client_restore_boundary as delivery
     import m27_g01_qa_outcome as g01
     import m27_task_contracts_v1 as tc
 
@@ -165,6 +168,26 @@ class Consumer:
               "INDEPENDENT_OS_VERIFIER_DENIED")
         return result
 
+    def _delivery_guard(self, source: dict, *, context: dict,
+                        issued_at: dt.datetime, epoch_floor: int) -> dict:
+        """Local provenance recheck only; never authenticates a remote client.
+
+        The floor is the original local epoch, NOT an independent Store witness.
+        Nonprod source-candidate status and Cache OFF always remain enforced.
+        """
+        result = delivery.check_local_candidate_delivery(
+            self.reader, source, origin=context, recipient=context,
+            issued_at=issued_at, delivered_at=dt.datetime.now(dt.timezone.utc),
+            lease_ttl_seconds=120, independent_epoch_floor=epoch_floor)
+        guard(result.get("decision") ==
+              "LOCAL_DELIVERY_CONTEXT_BOUND_SOURCE_CANDIDATE_ONLY" and
+              result.get("product_admitted") is False and
+              result.get("candidate_only") is True and
+              result.get("answer_cache_hit") is False and
+              result.get("answer_cache_write") is False,
+              "F03_LOCAL_DELIVERY_BOUNDARY_DENIED")
+        return result
+
     def _current(self, entry: dict) -> None:
         again = self._source(entry["question"])
         guard(again["revocation_sha256"] == entry["rights_sha"] and
@@ -172,6 +195,9 @@ class Consumer:
               again["release_sha256"] == entry["release_sha"] and
               again["sources"] == entry["citations"],
               "SOURCE_REVOKED_STALE_OR_CHANGED")
+        self._delivery_guard(
+            again, context=entry["local_context"],
+            issued_at=entry["local_issued_at"], epoch_floor=entry["epoch"])
 
     def start(self, question: str, *, tenant: str = "owner-internal",
               principal: str | None = None, issuer: str | None = None) -> dict:
@@ -184,6 +210,16 @@ class Consumer:
                   "BOUNDED_QUERY_ONLY")
             task = local_task(question, self.principal)
             data = self._source(question)
+            sid = secrets.token_hex(24)
+            issued_at = dt.datetime.now(dt.timezone.utc)
+            context = {"client_id": "h02-os-local-source",
+                       "session_nonce": sid, "tenant": "owner-internal",
+                       "principal": self.principal,
+                       "channel": "owner-os-local-nonprod"}
+            # This is an internally scoped challenge, not remote client IdP.
+            self._delivery_guard(
+                data, context=context, issued_at=issued_at,
+                epoch_floor=data["rights_epoch"])
             # New positive: two distinct exact source clauses, not generated claims.
             source = next((i for i, excerpt in enumerate(data["candidate_excerpts"])
                            if "Responsible for deterministic enforcement." in excerpt
@@ -204,8 +240,8 @@ class Consumer:
                                    "proof_sha256": digest(json.dumps(proof, sort_keys=True).encode()),
                                    "challenge": secrets.token_hex(24),
                                    "model_generated": False})
-            sid = secrets.token_hex(24)
-            entry = {"question": question, "task_sha": tc.sha256(task),
+            entry = {"local_context": context, "local_issued_at": issued_at,
+                     "question": question, "task_sha": tc.sha256(task),
                      "citations": data["sources"], "epoch": data["rights_epoch"],
                      "rights_sha": data["revocation_sha256"],
                      "release_sha": data["release_sha256"],
