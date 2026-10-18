@@ -1,0 +1,17 @@
+# H02 Owner-direct bounded A05 multi-topic source review | 2026-10-18
+
+## Actual engineering purpose
+Move the existing single `PolicyEngine` static Nonprod source-only Consumer closer to the general Task/Outcome-native Charter, **without modifying the denied Q34/Product generation route**. New `m27_h02_multitopic_local_source_review.py` implements a distinct firstparty-only source review with 5 explicitly admitted topics: PolicyEngine, Context Planner, Context Compiler, Workspace Memory, and Compute Policy. These topics were checked against the current 11 genuine A05 firstparty docs and source SHA; any unsupported, negated or number-bearing topic is denied, not sent to an LLM.
+
+The TaskContract is validated through `m27_task_contracts_v1` for each admissible topic. Real A05 BM25/affinity retrieval and F03 authenticated-local-only source-version/ACL/TTL/epoch/alias rights checks run for each source and every ACK/terminal. OS subprocess verifier independently checks exact citation bytes, source doc SHA, manifest version and excerpt SHA. Claims are always exact short source lines; **no semantic entailment or generated user answer can be claimed**. Local preterminal Client challenge SHA ACK is required for every selected source line; crash/resume cannot replay sessions or create Product effects. Loopback-only JSON HTTP endpoints are under `/nonprod/source-review/*`, with strict request shape/size and `no-store`, and can be exercised by a real independent OS process.
+
+## Security and scope
+- This feature does not import an external Provider SDK, call models, read protected 523/unseen200, alter Q34/D01, change Product ACL/IdP/Cloudflare custom Gateway, enable cache HIT/WRITE, allow Action Effect or make owner-local identity into external trust.
+- The local loopback HTTP service is explicitly **NOT authenticated for remote Product callers**; binding is exactly 127.0.0.1, and must never be opened to nonlocal interfaces or Production. Source availability in this owner-local process should not be construed as a Product API authorization.
+- A05 11-doc release is immutable firstparty owner data with live rights/revocation; no answer paraphrase allowed, no independent semantic issuer is present. Local `terminal` means **source review ACK complete**, not verified answer success.
+- Performance and success must be evaluated independently on same fully qualified Product version under strict Owner 2026-10-18 AND gates: actual 523 answer success >95% (at least 497/523), external independent Suggested Questions rubric quality >85/100 and complete answer p95 <15.000s. Current tests never attempt those product gates.
+
+## Test requirements and remaining items
+Test the 5 positive topics with exact sources, OS byte verifier, F03 delivery, real Client ACK+Terminal. Test unsupported topic, wrong principal/tenant/issuer, wrong nonce/SHA, absent/duplicate ACK, terminal replay, crash/restart, changed source after start, revoked epoch after start, expired local lease, OS verifier denial. Actual separate OS Client (subprocess) must pass local loopback positive and negative without a model or Product effect. Old H02 and F03 tests must continue passing on frozen source.
+
+This is a **scoped Nonprod product-capability increment** only. Full P0 remains blocked by E01/E02/F01/G03 and Product IdP/G04/G05 independent authorities. P1 still lacks actual signed Product native model generation, F04 matching final signed OCI and genuine H01 9/9. Nothing in this file authorizes bypass of prior Q34-equivalent platform refusal.
