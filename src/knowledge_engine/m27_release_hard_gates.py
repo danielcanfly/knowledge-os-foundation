@@ -218,13 +218,34 @@ def evaluate_streaming_hard_gate(
         reasons.append("FIRST_MATERIAL_TEXT_EVENT_MISSING")
     if not final_indices:
         reasons.append("FINAL_ANSWER_DONE_MISSING")
-    if material_indices and final_indices and min(material_indices) >= final_indices[-1]:
+    if len(final_indices) > 1:
+        reasons.append("DUPLICATE_FINAL_ANSWER_DONE")
+    if material_indices and final_indices and min(material_indices) >= final_indices[0]:
         reasons.append("MATERIAL_TEXT_NOT_BEFORE_FINAL_COMPLETION")
+    if material_indices and final_indices and any(
+        index >= final_indices[0] for index in material_indices
+    ):
+        reasons.append("MATERIAL_TEXT_AFTER_FINAL_COMPLETION")
+
+    # A final answer may arrive in multiple cited pieces. Validate the exact
+    # ordered concatenation rather than only the last piece (which previously
+    # rejected valid streams and silently ignored earlier injected content).
     cited_segments = [event for event in events if event.get("event") == "cited_segment_ready"]
-    if final_answer_text is not None:
-        segment_text = str(cited_segments[-1].get("text", "")) if cited_segments else ""
-        if segment_text != final_answer_text:
-            reasons.append("FINAL_ANSWER_PARITY_MISMATCH")
+    if not cited_segments:
+        reasons.append("CITED_SEGMENT_TEXT_MISSING")
+    pieces: list[str] = []
+    for segment in cited_segments:
+        value = segment.get("text")
+        if not isinstance(value, str):
+            reasons.append("INVALID_CITED_SEGMENT_TEXT")
+        elif not value:
+            reasons.append("EMPTY_CITED_SEGMENT_TEXT")
+        else:
+            pieces.append(value)
+    if final_answer_text is None or not isinstance(final_answer_text, str):
+        reasons.append("FINAL_ANSWER_PARITY_UNPROVEN")
+    elif "".join(pieces) != final_answer_text:
+        reasons.append("FINAL_ANSWER_PARITY_MISMATCH")
     for event in events:
         if event.get("event") in {"verified_claim_ready", "cited_segment_ready"}:
             citations = event.get("citations")
