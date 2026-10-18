@@ -35,9 +35,10 @@ class RealLocalClientTransport(unittest.TestCase):
         client = r'''
 import json,sys,urllib.request,urllib.error
 base, topic = sys.argv[1:]
+token=sys.stdin.read().strip()
 def post(url, data):
     b=json.dumps(data).encode()
-    request=urllib.request.Request(base+url,b,{"Content-Type":"application/json"},
+    request=urllib.request.Request(base+url,b,{"Content-Type":"application/json","Authorization":"Bearer "+token},
                                   method="POST")
     try:
         with urllib.request.urlopen(request,timeout=6) as x:
@@ -65,7 +66,7 @@ else:
                       "independent_os_source_verified":source["independent_os_source_verified"]}))
 '''
         p=subprocess.run([sys.executable,"-c",client,self.endpoint,topic],
-                         cwd=ROOT,capture_output=True,text=True,timeout=35)
+                         cwd=ROOT,input=self.server.client_auth_token,capture_output=True,text=True,timeout=35)
         self.assertEqual(p.returncode,0, p.stderr + p.stdout)
         return json.loads(p.stdout)
 

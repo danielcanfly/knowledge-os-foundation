@@ -272,6 +272,18 @@ class LocalSourceReviewHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         if self.client_address[0] not in ("127.0.0.1", "::1"):
             return self._reply({"status": "DENY_REMOTE_NETWORK"}, 403)
+        # Loopback alone is not a Client authorization boundary: another local
+        # process can otherwise read the firstparty corpus. This one process
+        # bootstrap secret never claims to be remote Product IdP/tenant rights.
+        expected_host = "127.0.0.1:" + str(self.server.server_address[1])
+        if self.headers.get("Host") != expected_host:
+            return self._reply({"status": "DENY_HOST"}, 403)
+        if self.headers.get("Origin") is not None:
+            return self._reply({"status": "DENY_CROSS_ORIGIN"}, 403)
+        token = self.headers.get("Authorization")
+        if not isinstance(token, str) or not secrets.compare_digest(
+                token, "Bearer " + self.server.client_auth_token):
+            return self._reply({"status": "DENY_LOCAL_CLIENT_AUTH"}, 403)
         if self.headers.get("Content-Type") != "application/json":
             return self._reply({"status": "DENY_CONTENT_TYPE"}, 415)
         length = self.headers.get("Content-Length")
@@ -315,3 +327,4 @@ class LocalSourceReviewServer(ThreadingHTTPServer):
     def __init__(self, review: SourceReview, *, port: int = 0):
         super().__init__(("127.0.0.1", port), LocalSourceReviewHandler)
         self.review = review
+        self.client_auth_token = secrets.token_urlsafe(48)
