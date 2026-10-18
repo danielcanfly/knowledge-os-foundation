@@ -32,6 +32,10 @@ TOPIC_OBLIGATIONS = {
     "Compute Policy": "Compute Policy",
 }
 ABI = "m27.h02.local-multitopic-source-review/nonprod.v1"
+# Bounded Owner-local resources. Not final Product user quotas.
+MAX_PENDING_SOURCE_REVIEWS = 8
+MAX_REPLAY_TOMBSTONES = 128
+SESSION_LEASE_SECONDS = 120
 
 
 def _sha_text(value: str) -> str:
@@ -58,6 +62,37 @@ class SourceReview:
         self.principal = self.inner.principal
         self.entries: dict[str, dict] = {}
         self.lock = threading.RLock()
+
+    @staticmethod
+    def _drop_sensitive(entry: dict) -> None:
+        # Preserve only failclosed replay state; erase source content, nonce,
+        # challenges and rights-bearing context after terminal or expiry.
+        for key in ("topic", "obligation", "context", "issued_at",
+                    "release_sha", "revocation_sha", "epoch",
+                    "sources", "excerpts", "claims", "acked"):
+            entry.pop(key, None)
+
+    def _prune_tombstones(self) -> None:
+        terminal_ids = [sid for sid, entry in self.entries.items()
+                        if entry["state"] != "AWAITING_ACK"]
+        for sid in terminal_ids[:-MAX_REPLAY_TOMBSTONES]:
+            del self.entries[sid]
+
+    def _expire_entry(self, sid: str, entry: dict) -> None:
+        entry["state"] = "EXPIRED_NO_REPLAY"
+        self._drop_sensitive(entry)
+        self.inner.journal.record({
+            "event": "terminal", "sid": sid, "status": "EXPIRED_NO_REPLAY",
+            "when_ns": time.monotonic_ns(),
+        })
+
+    def _expire_pending(self) -> None:
+        now = dt.datetime.now(dt.timezone.utc)
+        for sid, entry in list(self.entries.items()):
+            if entry["state"] == "AWAITING_ACK" and (
+                    now - entry["issued_at"]).total_seconds() >= SESSION_LEASE_SECONDS:
+                self._expire_entry(sid, entry)
+        self._prune_tombstones()
 
     def _retrieve(self, topic: str, obligation: str) -> dict:
         result = self.inner.reader.source_retrieval(
@@ -102,6 +137,12 @@ class SourceReview:
             )
             h02.guard(type(topic) is str and topic in TOPIC_OBLIGATIONS,
                       "TOPIC_NOT_IN_BOUNDED_FIRSTPARTY_SCOPE")
+            self._expire_pending()
+            h02.guard(
+                sum(entry["state"] == "AWAITING_ACK"
+                    for entry in self.entries.values()) < MAX_PENDING_SOURCE_REVIEWS,
+                "MAX_ACTIVE_SOURCE_REVIEWS",
+            )
             obligation = TOPIC_OBLIGATIONS[topic]
             data = self._retrieve(topic, obligation)
             task = h02.local_task(topic, self.principal)
@@ -192,7 +233,14 @@ class SourceReview:
     def _entry(self, sid: str) -> dict:
         h02.guard(type(sid) is str and sid in self.entries,
                   "UNKNOWN_SESSION_NO_REPLAY")
-        return self.entries[sid]
+        entry = self.entries[sid]
+        if entry["state"] == "AWAITING_ACK" and (
+                dt.datetime.now(dt.timezone.utc) - entry["issued_at"]
+                ).total_seconds() >= SESSION_LEASE_SECONDS:
+            self._expire_entry(sid, entry)
+            self._prune_tombstones()
+            raise h02.Denied("F03_LOCAL_DELIVERY_BOUNDARY_DENIED")
+        return entry
 
     def ack(self, sid: str, claim_id: str, challenge: str, text_sha256: str) -> dict:
         with self.lock:
@@ -231,6 +279,8 @@ class SourceReview:
                 "status": "LOCAL_SOURCE_REVIEW_ACKED_NOT_PRODUCT",
                 "when_ns": time.monotonic_ns(),
             })
+            self._drop_sensitive(entry)
+            self._prune_tombstones()
             return {**h02.fail("LOCAL_SOURCE_REVIEW_ACKED_NOT_PRODUCT"),
                     "obligations_locally_fulfilled": True,
                     "product_pass": False,
@@ -245,6 +295,8 @@ class SourceReview:
                 "event": "terminal", "sid": sid, "status": "CANCELLED_NO_REPLAY",
                 "when_ns": time.monotonic_ns(),
             })
+            self._drop_sensitive(entry)
+            self._prune_tombstones()
             return h02.fail("CANCELLED_NO_REPLAY")
 
 
