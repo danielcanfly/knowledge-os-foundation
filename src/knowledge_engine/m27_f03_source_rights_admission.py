@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import threading
 from typing import Any, Callable
 
 BASE_H02 = "7966e9c766a38a22cd91432edb5dbf2115eff305"
@@ -315,6 +316,11 @@ class A05OwnerCorpusAdmission:
         self.fence = Path(fence) if fence else None
         self.uid = os.geteuid()
         self.isolated_test_copy = isolated_test_copy
+        # Immutable commit-bound Git object baseline only. Live Source/ACL,
+        # revocation, release and citation bytes are re-read every request.
+        # This is NOT a response, retrieval-result or Product answer cache.
+        self._pinned_blob_cache: dict[str, bytes] = {}
+        self._pinned_blob_lock = threading.RLock()
         self.original_root = (self.repo / A05_SOURCE).resolve(strict=True)
         if self.source_root != self.original_root:
             check(isolated_test_copy and
@@ -324,11 +330,18 @@ class A05OwnerCorpusAdmission:
     def _pinned(self, relative: str) -> bytes:
         check(not relative.startswith("/") and ".." not in Path(relative).parts,
               "INVALID_GIT_RELATIVE_PATH")
-        result = subprocess.run(
-            ["git", "-C", str(self.repo), "cat-file", "blob", BASE_H02 + ":" + relative],
-            capture_output=True, check=False, timeout=5)
-        check(result.returncode == 0, "MISSING_PINNED_SOURCE")
-        return result.stdout
+        # Git's exact BASE_H02:path blob is immutable content-addressed
+        # provenance. Avoid spawning ~27 identical git processes per query.
+        # Never memoize live file bytes or mutable revocation authority here.
+        with self._pinned_blob_lock:
+            if relative not in self._pinned_blob_cache:
+                result = subprocess.run(
+                    ["git", "-C", str(self.repo), "cat-file", "blob",
+                     BASE_H02 + ":" + relative],
+                    capture_output=True, check=False, timeout=5)
+                check(result.returncode == 0, "MISSING_PINNED_SOURCE")
+                self._pinned_blob_cache[relative] = result.stdout
+            return self._pinned_blob_cache[relative]
 
     def _read(self, filename: str) -> bytes:
         check(filename == Path(filename).name and
