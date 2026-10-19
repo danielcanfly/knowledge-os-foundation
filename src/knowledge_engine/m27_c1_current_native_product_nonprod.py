@@ -14,8 +14,11 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import os
 from pathlib import Path
+import re
+import secrets
 import stat
 import subprocess
+import time
 
 import m27_h02_native_nonprod_consumer as h02
 import m27_f02_current_native_model_events as f02
@@ -171,6 +174,8 @@ class Handler(BaseHTTPRequestHandler):
                                "product_pass": False}, 403)
         if self.path not in (SOURCE_PATH, ACK_PATH, TERMINAL_PATH):
             return self.reply({"status": "UNKNOWN_ROUTE"}, 404)
+        started_ns = time.monotonic_ns()
+        local_request_id = secrets.token_hex(8)
         try:
             size = int(self.headers.get("Content-Length", "-1"))
             check(0 < size <= MAX_BODY, "REQUEST_BODY_TOO_LARGE")
@@ -181,13 +186,35 @@ class Handler(BaseHTTPRequestHandler):
                 response = self.candidate.ack(data)
             else:
                 response = self.candidate.terminal(data)
-            self.reply(response)
+            self.reply({**response, "local_request_id": local_request_id,
+                        "listener_pid": os.getpid(),
+                        "duration_ms": (time.monotonic_ns() - started_ns) // 1000000})
         except (AdmissionDenied, h02.Denied, ValueError, TypeError, KeyError) as exc:
-            self.reply({"status": str(exc) if isinstance(exc, AdmissionDenied)
-                        else "INVALID_OR_UNQUALIFIED_REQUEST",
+            if isinstance(exc, AdmissionDenied):
+                reason = str(exc)
+            elif isinstance(exc, h02.Denied):
+                # Only a bounded code-like token; never raw source text, headers,
+                # rights artifacts, transport exception or bearer capability.
+                word = str(exc)
+                reason = (word if len(word) <= 110 and
+                          re.fullmatch(r"[A-Z0-9_]{3,110}", word)
+                          else "UPSTREAM_SOURCE_RIGHTS_DENIED")
+            else:
+                reason = "INVALID_REQUEST_SHAPE"
+            self.reply({"status": (str(exc) if isinstance(exc, AdmissionDenied)
+                                   else "INVALID_OR_UNQUALIFIED_REQUEST"),
+                        "nonsecret_denial_code": reason,
+                        "local_request_id": local_request_id,
+                        "listener_pid": os.getpid(),
+                        "duration_ms": (time.monotonic_ns() - started_ns) // 1000000,
                         "product_pass": False}, 403)
         except Exception:
-            self.reply({"status": "INTERNAL_FAIL_CLOSED", "product_pass": False}, 503)
+            self.reply({"status": "INTERNAL_FAIL_CLOSED",
+                        "nonsecret_denial_code": "UNEXPECTED_RUNTIME_FAILURE",
+                        "local_request_id": local_request_id,
+                        "listener_pid": os.getpid(),
+                        "duration_ms": (time.monotonic_ns() - started_ns) // 1000000,
+                        "product_pass": False}, 503)
 
 
 def serve(*, repo: Path, fence: Path, journal: Path, token_file: Path,
