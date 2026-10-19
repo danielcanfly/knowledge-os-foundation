@@ -251,6 +251,13 @@ def native_unix_peer_uid(connection) -> int | None:
                                         struct.calcsize("3i"))
             _pid, uid, _gid = struct.unpack("3i", raw)
             return uid
+        if hasattr(socket, "LOCAL_PEERCRED") and os.uname().sysname == "Darwin":
+            # Darwin kernel XUCRED: version=u32(0), cr_uid=u32 at offset 4.
+            # SOL_LOCAL is 0 on Darwin and is absent from some Python builds.
+            raw = connection.getsockopt(getattr(socket, "SOL_LOCAL", 0),
+                                        socket.LOCAL_PEERCRED, 128)
+            if len(raw) >= 12 and struct.unpack_from("=I", raw, 0)[0] == 0:
+                return struct.unpack_from("=I", raw, 4)[0]
     except (OSError, AttributeError, struct.error):
         return None
     return None
