@@ -28,10 +28,12 @@ import m27_f03_source_rights_admission as f03
 import m27_h02_native_nonprod_consumer as h02
 import m27_g01_current_native_consumer as g01
 import m27_task_contracts_v1 as tc
+import m27_c1_formal_workers_ai_sse as cf_sse
 
 ABI = "m27.c1.native-live-generation-governed/v1"
 CLIENT_ABI = "m27.c1.native-verified-text-ack/v1"
 PROVIDER_ABI = "m27.c1.provider-new-delta/v1"
+PROVIDER_SSE_ABI = cf_sse.ABI  # Available only with separately signed Provider Controller grant.
 TRUST_ROOT_MANIFEST_SHA256 = None  # Deliberate HOLD: no independent current root has been admitted.
 OBLIGATIONS = tuple(x[0] for x in g01.OBLIGATIONS)
 ROLES = ("provider_controller", "source_controller", "semantic_issuer", "client_idp")
@@ -625,8 +627,12 @@ class NativeLiveProduct:
                    "upper_bound_output_micro_per_1k", "wire_protocol"},
                   "UNKNOWN_EXTERNAL_GRANT_BUNDLE")
             nonce = grant["nonce"]
-            check(grant["wire_protocol"] == PROVIDER_ABI,
+            check(grant["wire_protocol"] in (PROVIDER_ABI, PROVIDER_SSE_ABI),
                   "PROVIDER_WIRE_CONTRACT_NOT_VERIFIED")
+            if grant["wire_protocol"] == PROVIDER_SSE_ABI:
+                check(cf_sse.approved_direct_url(grant["url"]) and
+                      grant["model"] == cf_sse.MODEL,
+                      "DIRECT_SSE_SIGNED_PROVIDER_ROUTE_UNQUALIFIED")
             check(nonce == pending["nonce"] and
                   type(grant["url"]) is str and type(grant["model"]) is str and
                   type(grant["client_principal"]) is str and
@@ -656,17 +662,28 @@ class NativeLiveProduct:
                 "max_request_cost_microusd": expected_cost,
                 "upper_bound_input_micro_per_1k": grant["upper_bound_input_micro_per_1k"],
                 "upper_bound_output_micro_per_1k": grant["upper_bound_output_micro_per_1k"],
-                "wire_protocol": PROVIDER_ABI,
+                "wire_protocol": grant["wire_protocol"],
                 "fallback_allowed": False}
             authority.receipt("provider_controller", grant["provider"],
                               provider_scope, nonce=nonce)
             authority.receipt("client_idp", grant["client"],
                               {**context, "client_principal": grant["client_principal"],
                                "client_abi": CLIENT_ABI}, nonce=nonce)
-            wire = BoundedProviderWire(
-                url=grant["url"], model=grant["model"],
-                token_path=Path(grant["token_file"]),
-                approved_origin=grant["url"], approved_model=grant["model"])
+            if grant["wire_protocol"] == PROVIDER_SSE_ABI:
+                wire = cf_sse.DirectWorkersAISSE(
+                    url=grant["url"], model=grant["model"],
+                    token_path=Path(grant["token_file"]),
+                    private_file=private_file,
+                    max_wall_seconds=MAX_WALL_SECONDS,
+                    audit=lambda record: self.journal.record(
+                        {"event":"external_provider_original_sse_provenance",
+                         "request_id":pending["request_id"],
+                         "task_sha256":pending["task_sha"], **record}))
+            else:
+                wire = BoundedProviderWire(
+                    url=grant["url"], model=grant["model"],
+                    token_path=Path(grant["token_file"]),
+                    approved_origin=grant["url"], approved_model=grant["model"])
             req_id = pending["request_id"]
             sess = GeneratedSession(
                 task_sha=pending["task_sha"], request_id=req_id,
@@ -682,7 +699,7 @@ class NativeLiveProduct:
                 "source_proof_sha256": pending["source_proofs_sha256"],
                 "rights_epoch": context["rights_epoch"],
                 "provider_route_pinned": True,
-                "wire_protocol": PROVIDER_ABI,
+                "wire_protocol": grant["wire_protocol"],
                 "model": grant["model"], "request_id": req_id,
                 "controller_signed_cost_upper_microusd": expected_cost})
             worker = threading.Thread(target=self._run_one,
@@ -755,7 +772,8 @@ class NativeLiveProduct:
 
     def admission_status(self):
         return {"native_generation_abi": ABI, "native_client_abi": CLIENT_ABI,
-                "provider_abi": PROVIDER_ABI, "cache": "OFF",
+                "provider_abi": PROVIDER_ABI,
+                "provider_signed_sse_abi": PROVIDER_SSE_ABI, "cache": "OFF",
                 "product_pass": False, "provider_called": False,
                 "qualified_source_issuer": False, "qualified_semantic_issuer": False,
                 "qualified_idp": False,
