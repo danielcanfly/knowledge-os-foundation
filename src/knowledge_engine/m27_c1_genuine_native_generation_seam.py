@@ -257,6 +257,7 @@ class GeneratedSession:
         self.provider_done_ns = None
         self.first_verified_text_ns = None
         self.first_client_ack_ns = None
+        self.first_verified_client_delivery_ns = None
         self.started = time.monotonic_ns()
         self.lock = threading.RLock()
 
@@ -274,7 +275,11 @@ class GeneratedSession:
                   type(raw) is bytes and len(raw) <= MAX_DELTA * 4 and
                   type(event) is dict and event.get("kind") in ("delta", "done"),
                   "INVALID_PROVIDER_WIRE")
-            check(json.loads(raw) == event, "RAW_PROVIDER_EVENT_BYTES_MISMATCH")
+            check(json.loads(raw) == event and
+                  set(event) == {"kind", "text", "model", "request_id"} and
+                  event["request_id"] == self.request_id and
+                  event["model"] == self.model,
+                  "RAW_PROVIDER_IDENTITY_OR_EVENT_BYTES_MISMATCH")
             if event["kind"] == "done":
                 check(event.get("text") == "", "DONE_MUST_NOT_CONTAIN_TEXT")
                 self.provider_done = True
@@ -323,11 +328,48 @@ class GeneratedSession:
             self.verified[cid] = {"claim_id": cid, "text": text,
                                   "text_sha256": expected["text_sha256"],
                                   "challenge": challenge, "verified_at_ns": now_ns,
-                                  "citation": citations[cid]}
+                                  "citation": citations[cid],
+                                  "client_delivered_at_ns": None}
             self.journal.record({"event": "independent_semantic_verified",
                                  "claim_id": cid, "sha256": expected["text_sha256"]})
             return {"status": "VERIFIED_NEW_MODEL_TEXT_READY",
                     "client_abi": CLIENT_ABI, **self.verified[cid]}
+
+    def pull_verified(self, *, cid: str):
+        """True Native Client transport reads independently verified new text.
+
+        This GET is a real Client delivery gate, not issuer POST completion,
+        progress SSE, source-only span, or provider buffer consumption. Exact
+        separately signed Client IdP ACK is still required afterwards.
+        """
+        with self.lock:
+            self.current()
+            check(cid in self.verified and cid not in self.acked and
+                  cid == OBLIGATIONS[len(self.acked)],
+                  "VERIFIED_CLIENT_TEXT_NOT_READY_OR_REPLAY")
+            claim = self.verified[cid]
+            check(not self.provider_done and self.provider_done_ns is None,
+                  "VERIFIED_TEXT_DELIVERY_MUST_PRECEDE_PROVIDER_DONE")
+            check(claim["client_delivered_at_ns"] is None,
+                  "VERIFIED_CLIENT_DELIVERY_REPLAY_DENIED")
+            when = time.monotonic_ns()
+            claim["client_delivered_at_ns"] = when
+            if cid == OBLIGATIONS[0]:
+                self.first_verified_client_delivery_ns = when
+            self.journal.record({
+                "event": "verified_new_model_text_delivered_to_native_client",
+                "claim_id": cid, "text_sha256": claim["text_sha256"],
+                "when_ns": when, "provider_done": False})
+            return {"status": "VERIFIED_SUBSTANTIVE_MODEL_TEXT_DELIVERED_PRETERMINAL",
+                    "client_abi": CLIENT_ABI,
+                    "request_id": self.request_id,
+                    "claim_id": cid, "text": claim["text"],
+                    "text_sha256": claim["text_sha256"],
+                    "challenge": claim["challenge"],
+                    "citation": claim["citation"],
+                    "source_proof_sha256": self.pins["source_proof_sha256"],
+                    "provider_done": False, "cache": "OFF",
+                    "product_pass": False}
 
     def ack(self, *, cid: str, challenge: str, text_sha256: str,
             client_signature: dict):
@@ -337,6 +379,9 @@ class GeneratedSession:
                   cid == OBLIGATIONS[len(self.acked)],
                   "CLIENT_ACK_REPLAY_OR_WRONG_ORDER")
             claim = self.verified[cid]
+            check(type(claim.get("client_delivered_at_ns")) is int and
+                  claim["client_delivered_at_ns"] < time.monotonic_ns(),
+                  "CLIENT_ACK_BEFORE_ACTUAL_TEXT_DELIVERY_DENIED")
             check(hmac.compare_digest(challenge, claim["challenge"]) and
                   hmac.compare_digest(text_sha256, claim["text_sha256"]),
                   "CLIENT_ACK_NONCE_OR_DIGEST_INVALID")
@@ -366,6 +411,13 @@ class GeneratedSession:
             assert_preterminal_verified_client_text(
                 self.first_verified_text_ns,
                 self.first_client_ack_ns, self.provider_done_ns)
+            check(type(self.first_verified_client_delivery_ns) is int and
+                  self.first_verified_text_ns <
+                  self.first_verified_client_delivery_ns <
+                  self.first_client_ack_ns and
+                  all(type(self.verified[k].get("client_delivered_at_ns")) is int
+                      for k in OBLIGATIONS),
+                  "NATIVE_FIRST_VERIFIED_TEXT_NOT_ACTUALLY_DELIVERED")
             self.current()
             text = " ".join(self.verified[k]["text"] for k in OBLIGATIONS)
             check(all(self.verified[k]["text"] in self.full_text for k in OBLIGATIONS),
@@ -382,6 +434,7 @@ class GeneratedSession:
                     "actual_preterminal_client_ack": True,
                     "first_substantive_text_before_provider_done": True,
                     "first_client_ack_before_provider_done": True,
+                    "first_verified_model_text_native_delivery_confirmed": True,
                     "first_verified_text_ms": round(
                         (self.first_verified_text_ns - self.started) / 1e6, 3),
                     "actual_complete_answer_ms": round(
@@ -511,6 +564,15 @@ class NativeLiveProduct:
                     "rights_epoch": proofs[0]["rights_epoch"],
                     "request_id": request_id, "nonce": nonce,
                     "prepared_source_count": len(proofs),
+                    # Cryptographic source hashes from the SAME TaskContract,
+                    # not a second H02 task or an independently signed proof.
+                    "source_binding_sha256": sha(canonical([
+                        {"obligation_id": p["obligation_id"],
+                         "document_sha256": p["document_sha256"],
+                         "excerpt_sha256": p["excerpt_sha256"],
+                         "citation": p["citation"]} for p in proofs])),
+                    "source_obligation_ids": [p["obligation_id"]
+                                              for p in proofs],
                     "source_byte_verified_local": True,
                     "independent_product_rights_verified": False,
                     "independent_semantic_issuer_verified": False,
@@ -649,6 +711,9 @@ class NativeLiveProduct:
         return self.session(body["request_id"]).verified_claim(
             obligation=body["obligation"], text=body["text"],
             signed=body["signed_semantic_receipt"])
+
+    def pull_verified(self, *, request_id: str, claim_id: str):
+        return self.session(request_id).pull_verified(cid=claim_id)
 
     def ack(self, body: dict):
         check(type(body) is dict and set(body) ==

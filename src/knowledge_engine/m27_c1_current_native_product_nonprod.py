@@ -23,6 +23,7 @@ import subprocess
 import time
 import socket
 import socketserver
+from urllib.parse import urlsplit, parse_qs
 from contextlib import contextmanager
 import m27_c1_gitless_source_proof as gitless
 
@@ -43,6 +44,7 @@ LIVE_VERIFY = MODEL_PATH + "/verified-claim"
 LIVE_ACK = MODEL_PATH + "/ack"
 LIVE_TERMINAL = MODEL_PATH + "/terminal"
 LIVE_CANCEL = MODEL_PATH + "/cancel"
+LIVE_VERIFIED_NEXT = MODEL_PATH + "/next-verified-text"
 LIVE_ROUTES = (LIVE_PREPARE, MODEL_PATH, LIVE_VERIFY, LIVE_ACK,
                LIVE_TERMINAL, LIVE_CANCEL)
 CACHE = "OFF"
@@ -308,8 +310,38 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == STATUS_PATH:
             return self.reply({"status": "BOOTED_SOURCE_CLIENT_CANDIDATE_NOT_PRODUCT",
                                "version": self.candidate.version,
-                               "cache": CACHE, "provider_called": False,
+                               "cache": CACHE, "provider_called":
+                                   bool(self.candidate.native_live.provider_invocations),
                                "native_live": self.candidate.native_live.admission_status()})
+        # The semantic issuer's verification POST is not a Native Client
+        # delivery. Separately authorized Unix/loopback Client MUST GET the
+        # actual source-cited generated text while Provider remains running,
+        # then return the independently signed challenge/hash ACK.
+        if self.path.startswith(LIVE_VERIFIED_NEXT):
+            try:
+                check(len(self.path) < 512, "CLIENT_PULL_REQUEST_TOO_LONG")
+                uri = urlsplit(self.path)
+                check(uri.path == LIVE_VERIFIED_NEXT and uri.fragment == "",
+                      "VERIFIED_CLIENT_ROUTE_DENIED")
+                params = parse_qs(uri.query, strict_parsing=True)
+                check(set(params) == {"request_id", "claim_id"} and
+                      all(len(v) == 1 for v in params.values()),
+                      "VERIFIED_CLIENT_PULL_PARAMS_INVALID")
+                request_id, claim_id = params["request_id"][0], params["claim_id"][0]
+                check(re.fullmatch("[0-9a-f]{48}", request_id) is not None and
+                      claim_id in native_live.OBLIGATIONS,
+                      "VERIFIED_CLIENT_PULL_SCOPE_INVALID")
+                return self.reply(self.candidate.native_live.pull_verified(
+                    request_id=request_id, claim_id=claim_id))
+            except (AdmissionDenied, native_live.NotQualified):
+                return self.reply({
+                    "status": "VERIFIED_CLIENT_TEXT_NOT_ADMITTED",
+                    "answer_text": None, "provider_called":
+                        bool(self.candidate.native_live.provider_invocations),
+                    "product_pass": False}, 403)
+            except (TypeError, ValueError):
+                return self.reply({"status": "VERIFIED_CLIENT_PULL_INVALID",
+                                   "product_pass": False}, 403)
         self.reply({"status": "UNKNOWN_ROUTE"}, 404)
 
     def do_POST(self):
