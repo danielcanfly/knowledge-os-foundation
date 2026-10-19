@@ -173,7 +173,7 @@ class C1NativeApp(unittest.TestCase):
         code, denied = self.request(base + c1.MODEL_PATH, "POST",
                                     {"model": "cloudflare-custom"})
         self.assertEqual(code, 403)
-        self.assertEqual(denied["status"], "LIVE_NATIVE_PROVIDER_AND_ISSUER_NOT_QUALIFIED")
+        self.assertEqual(denied["status"], "LIVE_TASKCONTRACT_SHAPE_DENIED")
         self.assertFalse(denied["provider_called"])
         self.assertFalse(denied["fallback_called"])
         self.assertFalse(self.journal.exists())

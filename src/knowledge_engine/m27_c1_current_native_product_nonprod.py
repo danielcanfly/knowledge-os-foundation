@@ -25,6 +25,7 @@ import m27_h02_native_nonprod_consumer as h02
 import m27_f02_current_native_model_events as f02
 import m27_g01_current_native_consumer as g01
 import m27_task_contracts_v1 as contract
+import m27_c1_genuine_native_generation_seam as native_live
 
 ABI = "m27.c1.native-app-source-client-candidate/v1"
 STATUS_PATH = "/nonprod/c1/status"
@@ -32,6 +33,11 @@ SOURCE_PATH = "/nonprod/c1/task"
 ACK_PATH = "/nonprod/c1/ack"
 TERMINAL_PATH = "/nonprod/c1/terminal"
 MODEL_PATH = "/nonprod/c1/model-generation"
+LIVE_VERIFY = MODEL_PATH + "/verified-claim"
+LIVE_ACK = MODEL_PATH + "/ack"
+LIVE_TERMINAL = MODEL_PATH + "/terminal"
+LIVE_CANCEL = MODEL_PATH + "/cancel"
+LIVE_ROUTES = (MODEL_PATH, LIVE_VERIFY, LIVE_ACK, LIVE_TERMINAL, LIVE_CANCEL)
 CACHE = "OFF"
 MAX_BODY = 2048
 
@@ -129,6 +135,8 @@ class Candidate:
                                      expected_tree=expected_tree)
         self.token = read_client_capability(token_file)
         self.reader = h02.Consumer(repo=repo, fence=fence, journal=journal)
+        self.native_live = native_live.NativeLiveProduct(
+            repo=repo, fence=fence, journal=Path(str(journal) + ".native-live.jsonl"))
         self.contract_instances: dict[str, dict] = {}
         check(self.reader.recovery in ("EMPTY", "PREVIOUS_TERMINAL_NO_REPLAY"),
               "INCOMPLETE_PREVIOUS_TASK_NO_REPLAY")
@@ -227,16 +235,45 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == STATUS_PATH:
             return self.reply({"status": "BOOTED_SOURCE_CLIENT_CANDIDATE_NOT_PRODUCT",
                                "version": self.candidate.version,
-                               "cache": CACHE, "provider_called": False})
+                               "cache": CACHE, "provider_called": False,
+                               "native_live": self.candidate.native_live.admission_status()})
         self.reply({"status": "UNKNOWN_ROUTE"}, 404)
 
     def do_POST(self):
         if not self.authorized():
             return self.reply({"status": "CLIENT_AUTH_DENIED"}, 403)
-        if self.path == MODEL_PATH:
-            return self.reply({"status": "LIVE_NATIVE_PROVIDER_AND_ISSUER_NOT_QUALIFIED",
-                               "provider_called": False, "fallback_called": False,
-                               "product_pass": False}, 403)
+        if self.path in LIVE_ROUTES:
+            try:
+                size = int(self.headers.get("Content-Length", "-1"))
+                check(0 < size <= MAX_BODY, "REQUEST_BODY_TOO_LARGE")
+                data = json.loads(self.rfile.read(size))
+                live = self.candidate.native_live
+                if self.path == MODEL_PATH:
+                    result = live.start(data)
+                elif self.path == LIVE_VERIFY:
+                    result = live.verify_claim(data)
+                elif self.path == LIVE_ACK:
+                    result = live.ack(data)
+                elif self.path == LIVE_TERMINAL:
+                    result = live.terminal(data)
+                else:
+                    result = live.cancel(data)
+                return self.reply(result, 200)
+            except (native_live.NotQualified, AdmissionDenied) as exc:
+                reason = str(exc)
+                safe_code = (len(reason) <= 120 and
+                             re.fullmatch(r"[A-Z0-9_]+", reason) is not None)
+                return self.reply({
+                    "status": reason if safe_code else "LIVE_AUTHORITY_NOT_QUALIFIED",
+                    "provider_called": False, "fallback_called": False,
+                    "product_pass": False, "cache": "OFF"}, 403)
+            except (ValueError, TypeError, KeyError, UnicodeError):
+                return self.reply({"status": "BAD_NATIVE_REQUEST",
+                                   "provider_called": False,
+                                   "product_pass": False}, 403)
+            except Exception:
+                return self.reply({"status": "NATIVE_UNKNOWN_FAIL_CLOSED",
+                                   "product_pass": False}, 503)
         if self.path not in (SOURCE_PATH, ACK_PATH, TERMINAL_PATH):
             return self.reply({"status": "UNKNOWN_ROUTE"}, 404)
         started_ns = time.monotonic_ns()
