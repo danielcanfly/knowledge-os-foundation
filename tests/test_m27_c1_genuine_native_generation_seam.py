@@ -237,5 +237,20 @@ class LiveSeamNegative(unittest.TestCase):
         self.assertFalse(unissued["product_pass"])
 
 
+    def test_09_preterminal_substantive_verified_model_text_and_ack_required(self):
+        """No fake signer or provider data: only validate temporal safety proof."""
+        with self.assertRaisesRegex(s.NotQualified, "NOT_PRETERMINAL"):
+            s.assert_preterminal_verified_client_text(None, None, None)
+        with self.assertRaisesRegex(s.NotQualified, "NOT_PRETERMINAL"):
+            s.assert_preterminal_verified_client_text(20, 30, 25)
+        with self.assertRaisesRegex(s.NotQualified, "NOT_PRETERMINAL"):
+            s.assert_preterminal_verified_client_text(20, 35, 30)
+        with self.assertRaisesRegex(s.NotQualified, "NOT_PRETERMINAL"):
+            s.assert_preterminal_verified_client_text(40, 40, 70)
+        # This is only a pure timing invariant, NEVER evidence that an external
+        # model, verifier or client did anything or signed a real receipt.
+        self.assertIsNone(s.assert_preterminal_verified_client_text(10, 20, 30))
+
+
 if __name__ == "__main__":
     unittest.main()

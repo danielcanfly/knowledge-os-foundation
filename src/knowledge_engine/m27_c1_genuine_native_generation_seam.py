@@ -214,6 +214,20 @@ class BoundedProviderWire:
             raw_token = b""
 
 
+def assert_preterminal_verified_client_text(
+        first_verified_ns: int | None, first_ack_ns: int | None,
+        provider_done_ns: int | None) -> None:
+    """Real timing evidence: BOTH claim and independent client ACK precede done.
+
+    Never infer a preterminal substantive first-text delivery from a progress
+    event, a source-only extract, or a first verified response after completion.
+    """
+    check(type(first_verified_ns) is int and
+          type(first_ack_ns) is int and type(provider_done_ns) is int and
+          0 < first_verified_ns < first_ack_ns < provider_done_ns,
+          "VERIFIED_SUBSTANTIVE_FIRST_TEXT_CLIENT_ACK_NOT_PRETERMINAL")
+
+
 class GeneratedSession:
     """Unpublishable until independent semantic receipt and physical client ACK.
 
@@ -240,6 +254,9 @@ class GeneratedSession:
         self.verified = {}
         self.acked = []
         self.provider_done = False
+        self.provider_done_ns = None
+        self.first_verified_text_ns = None
+        self.first_client_ack_ns = None
         self.started = time.monotonic_ns()
         self.lock = threading.RLock()
 
@@ -257,9 +274,11 @@ class GeneratedSession:
                   type(raw) is bytes and len(raw) <= MAX_DELTA * 4 and
                   type(event) is dict and event.get("kind") in ("delta", "done"),
                   "INVALID_PROVIDER_WIRE")
+            check(json.loads(raw) == event, "RAW_PROVIDER_EVENT_BYTES_MISMATCH")
             if event["kind"] == "done":
                 check(event.get("text") == "", "DONE_MUST_NOT_CONTAIN_TEXT")
                 self.provider_done = True
+                self.provider_done_ns = time.monotonic_ns()
                 return
             part = event.get("text")
             check(type(part) is str and 0 < len(part) <= MAX_DELTA and
@@ -281,6 +300,9 @@ class GeneratedSession:
                   type(text) is str and 16 <= len(text) <= 600 and
                   text in self.full_text and self.raw_deltas,
                   "GENERATED_CLAIM_NOT_IN_RAW_DELTAS")
+            if obligation == OBLIGATIONS[0]:
+                check(not self.provider_done and self.provider_done_ns is None,
+                      "FIRST_VERIFIED_TEXT_MUST_PRECEDE_PROVIDER_DONE")
             expected = {"task_sha256": self.task_sha,
                         "request_id": self.request_id,
                         "source_proof_sha256": self.pins["source_proof_sha256"],
@@ -292,9 +314,16 @@ class GeneratedSession:
                                    nonce=self.nonce)
             cid = obligation
             challenge = secrets.token_hex(24)
+            now_ns = time.monotonic_ns()
+            if cid == OBLIGATIONS[0]:
+                self.first_verified_text_ns = now_ns
+            citations = self.pins.get("citations")
+            check(type(citations) is dict and cid in citations,
+                  "NO_SOURCE_BOUND_CITATION_FOR_LIVE_CLAIM")
             self.verified[cid] = {"claim_id": cid, "text": text,
                                   "text_sha256": expected["text_sha256"],
-                                  "challenge": challenge, "verified_at_ns": time.monotonic_ns()}
+                                  "challenge": challenge, "verified_at_ns": now_ns,
+                                  "citation": citations[cid]}
             self.journal.record({"event": "independent_semantic_verified",
                                  "claim_id": cid, "sha256": expected["text_sha256"]})
             return {"status": "VERIFIED_NEW_MODEL_TEXT_READY",
@@ -319,6 +348,10 @@ class GeneratedSession:
                         "client_abi": CLIENT_ABI}
             self.authority.receipt("client_idp", client_signature, expected,
                                    nonce=self.nonce)
+            if cid == OBLIGATIONS[0]:
+                check(not self.provider_done and self.provider_done_ns is None,
+                      "FIRST_CLIENT_ACK_MUST_PRECEDE_PROVIDER_DONE")
+                self.first_client_ack_ns = time.monotonic_ns()
             self.acked.append(cid)
             self.journal.record({"event": "external_client_ack",
                                  "claim_id": cid, "text_sha256": text_sha256,
@@ -330,6 +363,9 @@ class GeneratedSession:
             check(self.provider_done and tuple(self.acked) == OBLIGATIONS and
                   tuple(self.verified) == OBLIGATIONS and self.raw_deltas,
                   "TERMINAL_BEFORE_LIVE_PROVIDER_DONE_SEMANTIC_AND_ACK")
+            assert_preterminal_verified_client_text(
+                self.first_verified_text_ns,
+                self.first_client_ack_ns, self.provider_done_ns)
             self.current()
             text = " ".join(self.verified[k]["text"] for k in OBLIGATIONS)
             check(all(self.verified[k]["text"] in self.full_text for k in OBLIGATIONS),
@@ -340,8 +376,17 @@ class GeneratedSession:
                                  "when_ns": time.monotonic_ns()})
             return {"status": "NEW_MODEL_VERIFIED_CLIENT_ACKED",
                     "answer_text": text, "answer_sha256": sha(text.encode()),
+                    "citations": {oid: self.verified[oid]["citation"]
+                                  for oid in OBLIGATIONS},
                     "source_proof_sha256": self.pins["source_proof_sha256"],
                     "actual_preterminal_client_ack": True,
+                    "first_substantive_text_before_provider_done": True,
+                    "first_client_ack_before_provider_done": True,
+                    "first_verified_text_ms": round(
+                        (self.first_verified_text_ns - self.started) / 1e6, 3),
+                    "actual_complete_answer_ms": round(
+                        (time.monotonic_ns() - self.started) / 1e6, 3),
+                    "actual_usage": None,
                     "cache_mode": "OFF"}
 
     def cancel(self):
@@ -445,7 +490,8 @@ class NativeLiveProduct:
                 "source_manifest_sha256": f03.A05_SOURCE_PIN,
                 "rights_epoch": proofs[0]["rights_epoch"],
                 "tenant": "owner-internal"}
-            pins = {**context, "source_rights_sha256": proofs[0]["rights_sha256"]}
+            pins = {**context, "source_rights_sha256": proofs[0]["rights_sha256"],
+                    "citations": {p["obligation_id"]: p["citation"] for p in proofs}}
             self.pending = {
                 "task": task, "task_sha": task_sha, "body": body.copy(),
                 "nonce": nonce, "request_id": request_id, "context": context,
@@ -497,9 +543,11 @@ class NativeLiveProduct:
                   {"provider", "source", "client", "nonce", "url", "model",
                    "token_file", "client_principal",
                    "upper_bound_input_micro_per_1k",
-                   "upper_bound_output_micro_per_1k"},
+                   "upper_bound_output_micro_per_1k", "wire_protocol"},
                   "UNKNOWN_EXTERNAL_GRANT_BUNDLE")
             nonce = grant["nonce"]
+            check(grant["wire_protocol"] == PROVIDER_ABI,
+                  "PROVIDER_WIRE_CONTRACT_NOT_VERIFIED")
             check(nonce == pending["nonce"] and
                   type(grant["url"]) is str and type(grant["model"]) is str and
                   type(grant["client_principal"]) is str and
@@ -529,6 +577,7 @@ class NativeLiveProduct:
                 "max_request_cost_microusd": expected_cost,
                 "upper_bound_input_micro_per_1k": grant["upper_bound_input_micro_per_1k"],
                 "upper_bound_output_micro_per_1k": grant["upper_bound_output_micro_per_1k"],
+                "wire_protocol": PROVIDER_ABI,
                 "fallback_allowed": False}
             authority.receipt("provider_controller", grant["provider"],
                               provider_scope, nonce=nonce)
@@ -554,6 +603,7 @@ class NativeLiveProduct:
                 "source_proof_sha256": pending["source_proofs_sha256"],
                 "rights_epoch": context["rights_epoch"],
                 "provider_route_pinned": True,
+                "wire_protocol": PROVIDER_ABI,
                 "model": grant["model"], "request_id": req_id,
                 "controller_signed_cost_upper_microusd": expected_cost})
             worker = threading.Thread(target=self._run_one,
