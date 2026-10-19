@@ -389,7 +389,8 @@ class NativeLiveProduct:
               "A05_REAL_SOURCE_PROOF_OR_EPOCH_INVALID")
         return proofs
 
-    def start(self, body: dict) -> dict:
+    @staticmethod
+    def _bounded_task_request(body: dict):
         check(type(body) is dict and set(body) ==
               {"question", "tenant", "cache_mode", "max_tokens",
                "deadline_seconds", "fallback_consent"},
@@ -403,61 +404,132 @@ class NativeLiveProduct:
               0 < body["deadline_seconds"] <= MAX_WALL_SECONDS and
               body["fallback_consent"] is False,
               "LIVE_TASK_RIGHTS_BUDGET_OR_FALLBACK_DENIED")
-        # Hard-stop FIRST; no source/caller/transport effects before this gate.
-        authority = IndependentAuthority(root_path=self.trust_root)
+
+    def prepare(self, body: dict) -> dict:
+        """Stage 1: only OS-local A05 + original TaskContract. NEVER invoke model.
+
+        Allows genuine distinct Controllers to see the actual immutable task/source
+        SHA and sign their own bounded authority before Stage 2. No circular
+        'sign a timestamp-generated SHA you have not seen yet' protocol.
+        """
+        self._bounded_task_request(body)
         with self.lock:
-            check(not self.sessions and self.journal.recover() == "EMPTY",
+            check(not self.sessions and not getattr(self, "pending", None) and
+                  self.journal.recover() == "EMPTY",
                   "LIVE_SESSION_RESTART_OR_REPLAY_DENIED")
-            check(self.qualification_bundle is not None,
-                  "EXTERNAL_SCOPED_GRANTS_NOT_PRESENT")
-            grant = json.loads(private_file(self.qualification_bundle))
-            check(type(grant) is dict and set(grant) ==
-                  {"provider", "source", "client", "nonce", "url", "model",
-                   "token_file", "client_principal"}, "UNKNOWN_EXTERNAL_GRANT_BUNDLE")
-            nonce = grant["nonce"]
-            check(type(nonce) is str and re.fullmatch("[0-9a-f]{48}", nonce)
-                  and type(grant["url"]) is str and type(grant["model"]) is str
-                  and type(grant["client_principal"]) is str,
-                  "UNSCOPED_EXTERNAL_GRANT")
             proofs = self._source()
             source_hash = sha(canonical(proofs))
             principal = "os-uid:" + str(os.geteuid())
             task = h02.local_task(g01.QUESTION, principal)
             task["constraints"] = [
-                "Exactly 2 actual independently source-proved A05 material obligations",
-                "Generation only after genuine scoped external Controller grants",
-                "Independent semantic issuer before ANY new answer_text",
-                "Separate cryptographic Product Client ACK before Terminal",
-                "No cache, no fallback, no action, no unverified publication"]
+                "Actual two A05 OS independently byte-proved source obligations",
+                "New Provider generation only with separately signed Controller grant",
+                "Genuine separate Semantic Issuer before publishing any new model text",
+                "Separate cryptographic Client ACK before Terminal",
+                "Cache OFF, no fallback, no effects, fail-closed revocation"]
             task["definition_of_done"]["predicate_refs"] = [
                 "independent_idp", "independent_source_rights", "live_provider_delta",
-                "semantic_verifier_two_claims", "two_signed_preterminal_client_acks",
-                "final_source_revocation_recheck", "no_cache_no_fallback"]
+                "independent_semantic_two_obligations",
+                "two_signed_client_acks_preterminal",
+                "source_revocation_recheck", "cache_off"]
             task["budget"]["max_tokens"] = body["max_tokens"]
             task["budget"]["max_wall_ms"] = body["deadline_seconds"] * 1000
             task["budget"]["max_cost_microunits"] = MAX_BUDGET_MICROUSD
             task = tc.task_contract(task)
-            task_hash = tc.sha256(task)
-            pins = {"source_proof_sha256": source_hash,
+            task_sha = tc.sha256(task)
+            nonce, request_id = secrets.token_hex(24), secrets.token_hex(24)
+            context = {
+                "task_sha256": task_sha,
+                "request_id": request_id,
+                "source_proof_sha256": source_hash,
+                "source_manifest_sha256": f03.A05_SOURCE_PIN,
+                "rights_epoch": proofs[0]["rights_epoch"],
+                "tenant": "owner-internal"}
+            pins = {**context, "source_rights_sha256": proofs[0]["rights_sha256"]}
+            self.pending = {
+                "task": task, "task_sha": task_sha, "body": body.copy(),
+                "nonce": nonce, "request_id": request_id, "context": context,
+                "pins": pins, "source_proofs_sha256": source_hash,
+                "prepared_ns": time.monotonic_ns()}
+            self.journal.record({
+                "event": "real_a05_source_and_task_prepared_NOT_PROVIDER",
+                "task_sha256": task_sha, "source_proof_sha256": source_hash,
+                "rights_epoch": proofs[0]["rights_epoch"],
+                "request_id": request_id,
+                "provider_called": False, "product_qualified": False})
+            return {"status": "CURRENT_TASK_SOURCE_PREPARED_AWAIT_EXTERNAL_GRANTS",
+                    "native_abi": ABI, "client_abi": CLIENT_ABI,
+                    "task_contract_sha256": task_sha,
                     "source_manifest_sha256": f03.A05_SOURCE_PIN,
-                    "source_rights_epoch": proofs[0]["rights_epoch"],
-                    "source_rights_sha256": proofs[0]["rights_sha256"],
-                    "task_contract_sha256": task_hash,
-                    "task_template": "G01_2_OBLIGATIONS_CURRENT_NONPROD"}
-            req_id = secrets.token_hex(24)
-            context = {"task_sha256": task_hash,
-                       "source_proof_sha256": source_hash,
-                       "source_manifest_sha256": f03.A05_SOURCE_PIN,
-                       "rights_epoch": proofs[0]["rights_epoch"],
-                       "tenant": "owner-internal"}
-            # Independently signed Controller/Client admission BEFORE any network.
+                    "source_proof_sha256": source_hash,
+                    "rights_epoch": proofs[0]["rights_epoch"],
+                    "request_id": request_id, "nonce": nonce,
+                    "prepared_source_count": len(proofs),
+                    "source_byte_verified_local": True,
+                    "independent_product_rights_verified": False,
+                    "independent_semantic_issuer_verified": False,
+                    "provider_called": False, "actual_usage": None,
+                    "cache": "OFF", "answer_text": None,
+                    "product_pass": False}
+
+    def start(self, body: dict) -> dict:
+        """Stage 2: requires distinct external signed source/provider/idp receipts.
+
+        No general Owner permission or installed Provider credential can replace
+        these externally verified, current-source, nonce-bound grants.
+        """
+        check(type(body) is dict and set(body) == {"request_id"} and
+              type(body["request_id"]) is str,
+              "LIVE_START_REQUIRES_FROZEN_TASK_ID")
+        # Mandatory compile-time pinned external public trust root. Currently NONE.
+        authority = IndependentAuthority(root_path=self.trust_root)
+        with self.lock:
+            pending = getattr(self, "pending", None)
+            check(type(pending) is dict and
+                  pending["request_id"] == body["request_id"] and
+                  not self.sessions, "NO_SUCH_PENDING_UNREPLAYED_TASK")
+            check(time.monotonic_ns() - pending["prepared_ns"] < 120 * 10**9,
+                  "PENDING_EXTERNAL_GRANT_EXPIRED")
+            check(self.qualification_bundle is not None,
+                  "EXTERNAL_SCOPED_GRANTS_NOT_PRESENT")
+            grant = json.loads(private_file(self.qualification_bundle))
+            check(type(grant) is dict and set(grant) ==
+                  {"provider", "source", "client", "nonce", "url", "model",
+                   "token_file", "client_principal",
+                   "upper_bound_input_micro_per_1k",
+                   "upper_bound_output_micro_per_1k"},
+                  "UNKNOWN_EXTERNAL_GRANT_BUNDLE")
+            nonce = grant["nonce"]
+            check(nonce == pending["nonce"] and
+                  type(grant["url"]) is str and type(grant["model"]) is str and
+                  type(grant["client_principal"]) is str and
+                  re.fullmatch(r"[a-zA-Z0-9._:-]{3,128}", grant["client_principal"]) and
+                  type(grant["upper_bound_input_micro_per_1k"]) is int and
+                  type(grant["upper_bound_output_micro_per_1k"]) is int and
+                  0 <= grant["upper_bound_input_micro_per_1k"] <= 100000000 and
+                  0 <= grant["upper_bound_output_micro_per_1k"] <= 100000000,
+                  "UNSCOPED_EXTERNAL_GRANT")
+            body_orig = pending["body"]
+            # Conservative input byte-count ceiling; this is a provider-controller
+            # signed PRICE UPPER BOUND, not fabricated invoice/actual usage.
+            expected_cost = (
+                len(g01.QUESTION.encode()) * grant["upper_bound_input_micro_per_1k"] +
+                body_orig["max_tokens"] * grant["upper_bound_output_micro_per_1k"]
+                + 999) // 1000
+            check(expected_cost <= MAX_BUDGET_MICROUSD,
+                  "SIGNED_PROVIDER_UPPER_BOUND_EXCEEDS_COST_CAP")
+            check(sha(canonical(self._source())) == pending["source_proofs_sha256"],
+                  "A05_SOURCE_REVOKED_SINCE_TASK_FREEZE")
+            context = pending["context"]
             authority.receipt("source_controller", grant["source"],
                               context, nonce=nonce)
             provider_scope = {**context, "url": grant["url"],
-                              "model": grant["model"],
-                              "max_tokens": body["max_tokens"],
-                              "deadline_seconds": body["deadline_seconds"],
-                              "fallback_allowed": False}
+                "model": grant["model"], "max_tokens": body_orig["max_tokens"],
+                "deadline_seconds": body_orig["deadline_seconds"],
+                "max_request_cost_microusd": expected_cost,
+                "upper_bound_input_micro_per_1k": grant["upper_bound_input_micro_per_1k"],
+                "upper_bound_output_micro_per_1k": grant["upper_bound_output_micro_per_1k"],
+                "fallback_allowed": False}
             authority.receipt("provider_controller", grant["provider"],
                               provider_scope, nonce=nonce)
             authority.receipt("client_idp", grant["client"],
@@ -467,23 +539,32 @@ class NativeLiveProduct:
                 url=grant["url"], model=grant["model"],
                 token_path=Path(grant["token_file"]),
                 approved_origin=grant["url"], approved_model=grant["model"])
-            sess = GeneratedSession(task_sha=task_hash, request_id=req_id,
-                pins=pins, source_recheck=lambda: sha(canonical(self._source())),
+            req_id = pending["request_id"]
+            sess = GeneratedSession(
+                task_sha=pending["task_sha"], request_id=req_id,
+                pins=pending["pins"],
+                source_recheck=lambda: sha(canonical(self._source())),
                 journal=self.journal, authority=authority, model=grant["model"])
             sess.nonce = nonce
             self.sessions[req_id] = sess
-            self.journal.record({"event": "independently_admitted_before_provider",
-                "task_sha256": task_hash, "source_proof_sha256": source_hash,
-                "rights_epoch": pins["source_rights_epoch"],
-                "provider": "CLOUDFLARE_CUSTOM_WORKER_EXACT_SCOPED",
-                "model": grant["model"], "request_id": req_id})
-            thread = threading.Thread(target=self._run_one,
-                args=(sess, wire, body["max_tokens"]), daemon=True,
+            self.pending = None
+            self.journal.record({
+                "event": "distinct_controller_verified_live_admission",
+                "task_sha256": pending["task_sha"],
+                "source_proof_sha256": pending["source_proofs_sha256"],
+                "rights_epoch": context["rights_epoch"],
+                "provider_route_pinned": True,
+                "model": grant["model"], "request_id": req_id,
+                "controller_signed_cost_upper_microusd": expected_cost})
+            worker = threading.Thread(target=self._run_one,
+                args=(sess, wire, body_orig["max_tokens"]), daemon=True,
                 name="c1-one-bounded-native-provider-" + req_id[:8])
-            thread.start()
+            worker.start()
             return {"status": "SIGNED_LIVE_ADMISSION_PROVIDER_STARTING",
-                    "request_id": req_id, "task_contract_sha256": task_hash,
-                    "source_proof_sha256": source_hash,
+                    "request_id": req_id,
+                    "task_contract_sha256": pending["task_sha"],
+                    "source_proof_sha256": pending["source_proofs_sha256"],
+                    "max_signed_cost_microusd": expected_cost,
                     "cache": "OFF", "client_abi": CLIENT_ABI,
                     "answer_text": None, "actual_client_ack": False,
                     "product_pass": False}

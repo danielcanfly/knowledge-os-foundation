@@ -48,7 +48,7 @@ class LiveSeamNegative(unittest.TestCase):
         seam = s.NativeLiveProduct(repo=ROOT, fence=self.fence,
                                    journal=self.root / "live.jsonl")
         with self.assertRaisesRegex(s.NotQualified, "INDEPENDENT_TRUST_ROOT_NOT_ADMITTED"):
-            seam.start(self.permitted_request())
+            seam.start({"request_id": "not_prepared"})
         self.assertEqual(seam.provider_invocations, 0)
         self.assertFalse((self.root / "live.jsonl").exists())
         self.assertIsNone(s.TRUST_ROOT_MANIFEST_SHA256)
@@ -67,9 +67,9 @@ class LiveSeamNegative(unittest.TestCase):
             ({"question": "invent answer"}, "LIVE_TASK_RIGHTS_BUDGET")]:
             with self.subTest(change=change):
                 with self.assertRaisesRegex(s.NotQualified, expected):
-                    seam.start({**self.permitted_request(), **change})
+                    seam.prepare({**self.permitted_request(), **change})
         with self.assertRaisesRegex(s.NotQualified, "LIVE_TASKCONTRACT_SHAPE"):
-            seam.start({**self.permitted_request(), "signed_issuer": "self"})
+            seam.prepare({**self.permitted_request(), "signed_issuer": "self"})
         self.assertEqual(seam.provider_invocations, 0)
 
     def test_03_external_signature_is_not_self_declared_or_bypassable(self):
@@ -161,7 +161,19 @@ class LiveSeamNegative(unittest.TestCase):
         self.assertEqual(data["native_live"]["native_generation_abi"], s.ABI)
         self.assertEqual(data["native_live"]["provider_called"], False)
         self.assertIsNone(data["native_live"]["trust_root_sha256"])
-        code, response = self.call(base + c1.MODEL_PATH, self.permitted_request())
+        code, prepared = self.call(base + c1.LIVE_PREPARE, self.permitted_request())
+        self.assertEqual(code, 200)
+        self.assertEqual(prepared["status"],
+                         "CURRENT_TASK_SOURCE_PREPARED_AWAIT_EXTERNAL_GRANTS")
+        self.assertEqual(prepared["prepared_source_count"], 2)
+        self.assertEqual(len(prepared["task_contract_sha256"]), 64)
+        self.assertEqual(len(prepared["source_proof_sha256"]), 64)
+        self.assertTrue(prepared["source_byte_verified_local"])
+        self.assertFalse(prepared["provider_called"])
+        self.assertFalse(prepared["product_pass"])
+        self.assertIsNone(prepared["answer_text"])
+        code, response = self.call(base + c1.MODEL_PATH,
+                                   {"request_id": prepared["request_id"]})
         self.assertEqual(code, 403)
         self.assertEqual(response["status"], "INDEPENDENT_TRUST_ROOT_NOT_ADMITTED")
         self.assertFalse(response["provider_called"])
@@ -179,7 +191,7 @@ class LiveSeamNegative(unittest.TestCase):
                                                        "tenant": "another"})
         self.assertEqual(code, 403)
         self.assertFalse(bad["product_pass"])
-        code, bad = self.call(base + c1.MODEL_PATH,
+        code, bad = self.call(base + c1.LIVE_PREPARE,
                               {**self.permitted_request(), "cache_mode": "HIT"})
         self.assertEqual(code, 403)
         self.assertEqual(bad["status"], "LIVE_TASK_RIGHTS_BUDGET_OR_FALLBACK_DENIED")

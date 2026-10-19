@@ -173,7 +173,7 @@ class C1NativeApp(unittest.TestCase):
         code, denied = self.request(base + c1.MODEL_PATH, "POST",
                                     {"model": "cloudflare-custom"})
         self.assertEqual(code, 403)
-        self.assertEqual(denied["status"], "LIVE_TASKCONTRACT_SHAPE_DENIED")
+        self.assertEqual(denied["status"], "LIVE_START_REQUIRES_FROZEN_TASK_ID")
         self.assertFalse(denied["provider_called"])
         self.assertFalse(denied["fallback_called"])
         self.assertFalse(self.journal.exists())

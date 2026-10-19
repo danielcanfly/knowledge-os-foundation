@@ -33,11 +33,13 @@ SOURCE_PATH = "/nonprod/c1/task"
 ACK_PATH = "/nonprod/c1/ack"
 TERMINAL_PATH = "/nonprod/c1/terminal"
 MODEL_PATH = "/nonprod/c1/model-generation"
+LIVE_PREPARE = MODEL_PATH + "/prepare"
 LIVE_VERIFY = MODEL_PATH + "/verified-claim"
 LIVE_ACK = MODEL_PATH + "/ack"
 LIVE_TERMINAL = MODEL_PATH + "/terminal"
 LIVE_CANCEL = MODEL_PATH + "/cancel"
-LIVE_ROUTES = (MODEL_PATH, LIVE_VERIFY, LIVE_ACK, LIVE_TERMINAL, LIVE_CANCEL)
+LIVE_ROUTES = (LIVE_PREPARE, MODEL_PATH, LIVE_VERIFY, LIVE_ACK,
+               LIVE_TERMINAL, LIVE_CANCEL)
 CACHE = "OFF"
 MAX_BODY = 2048
 
@@ -248,7 +250,9 @@ class Handler(BaseHTTPRequestHandler):
                 check(0 < size <= MAX_BODY, "REQUEST_BODY_TOO_LARGE")
                 data = json.loads(self.rfile.read(size))
                 live = self.candidate.native_live
-                if self.path == MODEL_PATH:
+                if self.path == LIVE_PREPARE:
+                    result = live.prepare(data)
+                elif self.path == MODEL_PATH:
                     result = live.start(data)
                 elif self.path == LIVE_VERIFY:
                     result = live.verify_claim(data)
