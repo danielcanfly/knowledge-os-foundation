@@ -168,15 +168,22 @@ class Candidate:
     def __init__(self, *, repo: Path, fence: Path, journal: Path,
                  token_file: Path, expected_head: str, expected_tree: str,
                  signed_gitless_manifest: Path | None = None,
-                 gitless_public_root: Path | None = None):
+                 gitless_public_root: Path | None = None,
+                 trust_root_file: Path | None = None,
+                 qualification_bundle_file: Path | None = None):
         self.version = source_vector(
             repo, expected_head=expected_head, expected_tree=expected_tree,
             signed_gitless_manifest=signed_gitless_manifest,
             gitless_public_root=gitless_public_root)
         self.token = read_client_capability(token_file)
         self.reader = h02.Consumer(repo=repo, fence=fence, journal=journal)
+        # These are externally supplied, independently release-pinned inputs.
+        # Passing paths cannot create or approve keys and never bypasses the
+        # mandatory compile-time trust-root SHA256 / signed-receipt checks.
         self.native_live = native_live.NativeLiveProduct(
-            repo=repo, fence=fence, journal=Path(str(journal) + ".native-live.jsonl"))
+            repo=repo, fence=fence, journal=Path(str(journal) + ".native-live.jsonl"),
+            trust_root=trust_root_file,
+            qualification_bundle=qualification_bundle_file)
         self.contract_instances: dict[str, dict] = {}
         check(self.reader.recovery in ("EMPTY", "PREVIOUS_TERMINAL_NO_REPLAY"),
               "INCOMPLETE_PREVIOUS_TASK_NO_REPLAY")
@@ -430,13 +437,17 @@ def serve(*, repo: Path, fence: Path, journal: Path, token_file: Path,
           expected_head: str, expected_tree: str, port: int, ready_file: Path,
           unix_socket: Path | None = None,
           signed_gitless_manifest: Path | None = None,
-          gitless_public_root: Path | None = None):
+          gitless_public_root: Path | None = None,
+          trust_root_file: Path | None = None,
+          qualification_bundle_file: Path | None = None):
     candidate = Candidate(
         repo=repo, fence=fence, journal=journal,
         token_file=token_file, expected_head=expected_head,
         expected_tree=expected_tree,
         signed_gitless_manifest=signed_gitless_manifest,
-        gitless_public_root=gitless_public_root)
+        gitless_public_root=gitless_public_root,
+        trust_root_file=trust_root_file,
+        qualification_bundle_file=qualification_bundle_file)
     class NativeHandler(Handler):
         pass
     NativeHandler.candidate = candidate
@@ -482,6 +493,8 @@ def main():
     parser.add_argument("--unix-socket")
     parser.add_argument("--signed-gitless-manifest")
     parser.add_argument("--gitless-public-root")
+    parser.add_argument("--trust-root-file")
+    parser.add_argument("--qualification-bundle-file")
     args = parser.parse_args()
     serve(repo=Path(args.repo), fence=Path(args.fence), journal=Path(args.journal),
           token_file=Path(args.token_file), expected_head=args.expected_head,
@@ -491,7 +504,11 @@ def main():
           signed_gitless_manifest=Path(args.signed_gitless_manifest)
               if args.signed_gitless_manifest else None,
           gitless_public_root=Path(args.gitless_public_root)
-              if args.gitless_public_root else None)
+              if args.gitless_public_root else None,
+          trust_root_file=Path(args.trust_root_file)
+              if args.trust_root_file else None,
+          qualification_bundle_file=Path(args.qualification_bundle_file)
+              if args.qualification_bundle_file else None)
 
 
 if __name__ == "__main__":
