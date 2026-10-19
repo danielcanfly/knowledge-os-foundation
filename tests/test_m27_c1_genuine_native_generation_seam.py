@@ -204,5 +204,38 @@ class LiveSeamNegative(unittest.TestCase):
         self.assertEqual(bad["status"], "LIVE_TASK_RIGHTS_BUDGET_OR_FALLBACK_DENIED")
 
 
+    def test_07_revoked_a05_epoch_rejects_real_two_source_preflight(self):
+        # Mutate ONLY the isolated nonprod OS fence, not the approved A05 corpus.
+        self.fence.write_text(json.dumps({
+            "release_id": c1.h02.f03.A05_RELEASE_ID, "minimum_epoch": 2}))
+        self.fence.chmod(0o600)
+        seam = s.NativeLiveProduct(
+            repo=ROOT, fence=self.fence,
+            journal=self.root / "revoked-not-a-provider.jsonl")
+        with self.assertRaises(c1.h02.Denied):
+            seam.prepare(self.permitted_request())
+        self.assertEqual(seam.provider_invocations, 0)
+        self.assertFalse((self.root / "revoked-not-a-provider.jsonl").exists())
+
+    def test_08_unsigned_semantic_and_ack_no_session_no_publish(self):
+        base = self.server()
+        code, unissued = self.call(base + c1.LIVE_VERIFY, {
+            "request_id": "not-issued", "obligation": s.OBLIGATIONS[0],
+            "text": "fake answer is not independently verified",
+            "signed_semantic_receipt": {"payload": {}, "signature_b64": "fake"}})
+        self.assertEqual(code, 403)
+        self.assertEqual(unissued["status"], "UNKNOWN_OR_REPLAYED_LIVE_TASK")
+        code, unissued = self.call(base + c1.LIVE_ACK, {
+            "request_id": "not-issued", "claim_id": s.OBLIGATIONS[0],
+            "challenge": "not-issued", "text_sha256": "0" * 64,
+            "signed_client_ack": {"payload": {}, "signature_b64": "fake"}})
+        self.assertEqual(code, 403)
+        code, unissued = self.call(base + c1.LIVE_TERMINAL, {
+            "request_id": "not-issued"})
+        self.assertEqual(code, 403)
+        self.assertEqual(unissued["status"], "UNKNOWN_OR_REPLAYED_LIVE_TASK")
+        self.assertFalse(unissued["product_pass"])
+
+
 if __name__ == "__main__":
     unittest.main()
