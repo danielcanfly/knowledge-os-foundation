@@ -201,8 +201,8 @@ class C1NativeApp(unittest.TestCase):
 
     def test_08_old_clock_boundary_is_actual_causal_red_and_template_green(self):
         original = c1.h02.g01.task_contract
-        a = dt.datetime(2026, 10, 19, 1, 0, 1, tzinfo=dt.timezone.utc)
-        b = dt.datetime(2026, 10, 19, 1, 0, 3, tzinfo=dt.timezone.utc)
+        a = dt.datetime.now(dt.timezone.utc) + dt.timedelta(seconds=5)
+        b = a + dt.timedelta(seconds=2)
         # H02 still validates each admitted full live TaskContract. Only the
         # comparison across distinct instants changes to stable policy template.
         with mock.patch.object(c1.h02.g01, "task_contract", side_effect=lambda: original(when=a)):
