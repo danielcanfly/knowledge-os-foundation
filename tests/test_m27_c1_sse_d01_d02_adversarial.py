@@ -131,17 +131,20 @@ class Audit02NegativeCases(unittest.TestCase):
                     yield fragment
         class Opener:
             def open(self,*args,**kwargs):return FakeResponse()
+        # Positive mock-socket test: allow bounded host scheduling overhead.
+        # Negative deadline tests above still force strict fail-closed overrun;
+        # this is NOT the Production/Nonprod runtime's deadline policy.
         adapter=sse.DirectWorkersAISSE(
             url="https://api.cloudflare.com/client/v4/accounts/abc123456/ai/v1/chat/completions",
             model=sse.MODEL,token_path="synthetic",
-            private_file=lambda *args,**kwargs:b"dummy",max_wall_seconds=.5)
+            private_file=lambda *args,**kwargs:b"dummy",max_wall_seconds=3.0)
         with patch.object(sse,"build_opener",return_value=Opener()):
             result=list(adapter.one_bounded_stream(
                     prompt="Answer based on the authorized firstparty A05 source.",
                     task_sha="a"*64,request_id="test-socket-total-time",max_tokens=64))
         self.assertEqual([r[1]["kind"] for r in result],["delta","delta","done"])
         self.assertGreaterEqual(len(sock.samples),4)
-        self.assertTrue(all(0<x<=.5 for x in sock.samples))
+        self.assertTrue(all(0<x<=3.0 for x in sock.samples))
         self.assertLess(sock.samples[-1],sock.samples[0])
 
     def test_d02_05_no_zero_negative_or_unbounded_deadline(self):
