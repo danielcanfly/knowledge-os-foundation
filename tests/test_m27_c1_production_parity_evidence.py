@@ -71,7 +71,12 @@ class ParityEvidenceRejectsForgedOutcomes(unittest.TestCase):
           "C1_INDEPENDENT_OS_NATIVE_CLIENT_RECEIPTS.json":
               json.dumps(self.client),
           "C1_DEV_REAL_PROVIDER_AND_CLIENT.jsonl":
-              "\n".join(json.dumps(ev) for ev in self.events)+"\n"}
+              "\n".join(json.dumps(ev) for ev in self.events)+"\n",
+          "C1_REAL_TASK_JOURNAL.jsonl":json.dumps({
+              "event":"real_a05_source_and_task_prepared_NOT_PROVIDER",
+              "request_id":RID,"task_sha256":TASK,
+              "source_proof_sha256":SOURCE,
+              "provider_called":False,"product_qualified":False})+"\n"}
         for name,data in payloads.items():
             p=self.path/name
             p.write_text(data);p.chmod(0o600)
@@ -143,5 +148,12 @@ class ParityEvidenceRejectsForgedOutcomes(unittest.TestCase):
         self.run["formal_product_pass"]=True
         with self.assertRaisesRegex(v.Rejected,"AUTHENTIC_CLOUDFLARE"):
             self.check()
-
+    def test_13_source_journal_is_bound_to_same_task(self):
+        self.write()
+        source=self.path/"C1_REAL_TASK_JOURNAL.jsonl"
+        item=json.loads(source.read_text())
+        item["task_sha256"]="0"*64
+        source.write_text(json.dumps(item)+"\n")
+        with self.assertRaisesRegex(v.Rejected,"SOURCE_TASK_JOURNAL_MISMATCH"):
+            v.evaluate(self.path,head=HEAD,tree=TREE)
 if __name__=="__main__":unittest.main()

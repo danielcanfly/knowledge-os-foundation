@@ -54,6 +54,7 @@ def evaluate(evidence_dir, *, head, tree, real_run=True,
     run=parse_json(e/"C1_REAL_MINIMAX_DEV_RUN_RESULT.json")
     c=parse_json(e/"C1_INDEPENDENT_OS_NATIVE_CLIENT_RECEIPTS.json")
     log=parse_jsonl(e/"C1_DEV_REAL_PROVIDER_AND_CLIENT.jsonl")
+    source_journal=parse_jsonl(e/"C1_REAL_TASK_JOURNAL.jsonl")
     prepared=run.get("source_prepared")
     check(type(prepared) is dict and
           prepared.get("prepared_source_count")==2 and
@@ -67,6 +68,17 @@ def evaluate(evidence_dir, *, head, tree, real_run=True,
     check(type(request) is str and
           re.fullmatch("[0-9a-f]{48}",request),
           "M26_SINGLE_TASK_REQUEST_ID_INVALID")
+    check(len(source_journal)==1 and
+          source_journal[0].get("event")==
+              "real_a05_source_and_task_prepared_NOT_PROVIDER" and
+          source_journal[0].get("request_id")==request and
+          source_journal[0].get("task_sha256")==
+              prepared["task_contract_sha256"] and
+          source_journal[0].get("source_proof_sha256")==
+              prepared["source_proof_sha256"] and
+          source_journal[0].get("provider_called") is False and
+          source_journal[0].get("product_qualified") is False,
+          "M26_REAL_SOURCE_TASK_JOURNAL_MISMATCH")
     # Genuine scoped PASS can only be issued *inside* the actual server's
     # running OS process, not by opening a file copied from a prior task.
     # Synthetic unit tests use an explicit TEST_ONLY mode, which never PASSes.
@@ -182,5 +194,6 @@ def evaluate(evidence_dir, *, head, tree, real_run=True,
             name:digest(owned_private(e/name)) for name in
             ("C1_REAL_MINIMAX_DEV_RUN_RESULT.json",
              "C1_INDEPENDENT_OS_NATIVE_CLIENT_RECEIPTS.json",
-             "C1_DEV_REAL_PROVIDER_AND_CLIENT.jsonl")},
+             "C1_DEV_REAL_PROVIDER_AND_CLIENT.jsonl",
+             "C1_REAL_TASK_JOURNAL.jsonl")},
         "not_a_523_case_benchmark":True}
