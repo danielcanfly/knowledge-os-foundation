@@ -14,6 +14,7 @@ import re
 import socket
 import time
 from urllib.parse import urlsplit
+from urllib.response import addinfourl
 from urllib.request import Request, ProxyHandler, HTTPSHandler, HTTPRedirectHandler, build_opener
 from typing import Callable, Iterable, Iterator
 
@@ -220,11 +221,23 @@ class DirectWorkersAISSE:
                     # the monotonic pre/post next() checks still reject them.
                     require(remaining is not None and remaining>0,
                             "C1_SSE_TOTAL_DEADLINE_EXCEEDED")
-                    fp=getattr(stream,"fp",None)
-                    raw=getattr(fp,"raw",None)
-                    sock=getattr(raw,"_sock",None)
-                    if isinstance(stream,http.client.HTTPResponse):
-                        require(sock is not None,
+                    # urllib HTTPSHandler wraps the actual HTTPResponse in
+                    # addinfourl; the real socket is typically at
+                    # response.fp.fp.raw._sock, not response.fp.raw._sock.
+                    sock=None
+                    node=stream
+                    for _ in range(5):
+                        raw=getattr(node,"raw",None)
+                        candidate=getattr(raw,"_sock",None)
+                        if candidate is not None:
+                            sock=candidate
+                            break
+                        node=getattr(node,"fp",None)
+                        if node is None:
+                            break
+                    if isinstance(stream,(http.client.HTTPResponse,addinfourl)):
+                        require(sock is not None and
+                                hasattr(sock,"settimeout"),
                                 "C1_SSE_PHYSICAL_SOCKET_DEADLINE_UNAVAILABLE")
                     if sock is not None:
                         sock.settimeout(remaining)

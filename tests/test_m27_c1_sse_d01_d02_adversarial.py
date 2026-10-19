@@ -153,5 +153,61 @@ class Audit02NegativeCases(unittest.TestCase):
                         model=sse.MODEL,token_path="synthetic",
                         private_file=lambda *args,**kwargs:b"dummy",max_wall_seconds=n)
 
+    def test_d02_06_urllib_wrapped_tls_socket_gets_true_remaining_budget(self):
+        class PhysicalSocket:
+            def __init__(self):self.timeouts=[]
+            def settimeout(self,t):self.timeouts.append(t)
+        sock=PhysicalSocket()
+        class SSLReader:
+            raw=type("SocketIO",(),{"_sock":sock})()
+        class HTTPResponse:
+            fp=SSLReader()
+        class WrappedResponse:
+            fp=HTTPResponse()
+            status=200
+            headers={"Content-Type":"text/event-stream"}
+            def __enter__(self):return self
+            def __exit__(self,*a):pass
+            def __iter__(self):
+                for raw in complete():
+                    time.sleep(.002)
+                    yield raw
+        class Opener:
+            def open(self,*a,**kw):return WrappedResponse()
+        adapter=sse.DirectWorkersAISSE(
+            url="https://api.cloudflare.com/client/v4/accounts/abc123456/ai/v1/chat/completions",
+            model=sse.MODEL,token_path="test-only",
+            private_file=lambda *a,**kw:b"dummy",max_wall_seconds=.2)
+        with patch.object(sse,"build_opener",return_value=Opener()):
+            output=list(adapter.one_bounded_stream(
+              prompt="Answer only from Owner A05 primary authorized source.",
+              task_sha="5"*64,request_id="SSE-WRAPPED-RESP-01",max_tokens=64))
+        self.assertEqual([x[1]["kind"] for x in output],["delta","delta","done"])
+        self.assertGreaterEqual(len(sock.timeouts),5)
+        self.assertLess(sock.timeouts[-1],sock.timeouts[0])
+        self.assertTrue(all(0<t<=.2 for t in sock.timeouts))
+
+    def test_d02_07_missing_physical_socket_from_real_urllib_response_fails_closed(self):
+        from urllib.response import addinfourl
+        class Source:
+            closed=False
+            def read(self,*a):return b""
+            def close(self):pass
+            def __iter__(self):return iter(complete())
+        real_wrapper=addinfourl(Source(),{"Content-Type":"text/event-stream"},
+                               "https://api.cloudflare.com",code=200)
+        class Opener:
+            def open(self,*a,**kw):return real_wrapper
+        adapter=sse.DirectWorkersAISSE(
+            url="https://api.cloudflare.com/client/v4/accounts/abc123456/ai/v1/chat/completions",
+            model=sse.MODEL,token_path="test-only",
+            private_file=lambda *a,**kw:b"dummy",max_wall_seconds=.2)
+        with patch.object(sse,"build_opener",return_value=Opener()):
+            with self.assertRaisesRegex(sse.WireRejected,"PHYSICAL_SOCKET_DEADLINE_UNAVAILABLE"):
+                list(adapter.one_bounded_stream(
+                  prompt="Answer only from Owner A05 primary authorized source.",
+                  task_sha="6"*64,request_id="SSE-WRAPPED-NOSOCK-01",max_tokens=64))
+
 if __name__=="__main__":unittest.main()
+
 
