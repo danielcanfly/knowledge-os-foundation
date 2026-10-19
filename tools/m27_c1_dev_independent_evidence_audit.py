@@ -69,8 +69,25 @@ def main():
     acknowledged=[x for x in journal if x["event"]=="native_client_local_ack"]
     demand(len(starts)==len(ids)==len(heads)==len(done)==len(end_seen)==1,
            "PROVIDER_IDENTITY_START_DONE_NOT_UNIQUE")
-    demand(ids[0]["model"]=="MiniMax-M3" and heads[0]["status"]==200,
-           "REAL_MINIMAX_MODEL_HTTP_IDENTITY_MISMATCH")
+    observed_model=ids[0].get("model")
+    expected_mode=run.get("provider_mode","minimax-dev")
+    expected_model=("@cf/openai/gpt-oss-120b" if
+        expected_mode=="m26-parity-direct" else "MiniMax-M3")
+    demand(observed_model==expected_model and
+           starts[0].get("provider")==expected_model and
+           heads[0]["status"]==200,
+           "REAL_MODEL_HTTP_IDENTITY_MISMATCH")
+    if expected_mode=="m26-parity-direct":
+        diag=[x for x in journal
+              if x["event"]=="cloudflare_stream_completion_evidence"]
+        demand(len(diag)==1 and diag[0].get("done_frame") is True and
+               diag[0].get("finish_stop") is True and
+               diag[0].get("model_attested") is True and
+               diag[0]["delta_count"]==len(deltas),
+               "CLOUDFLARE_PRIMARY_SSE_NOT_COMPLETE")
+        demand(not any(x["event"]=="authenticated_infrastructure_fallback"
+                       for x in journal),
+               "UNEXPECTED_MINIMAX_FALLBACK_ON_SUCCESS")
     demand(len(deltas)>0 and len(deltas)<=350 and
            [d["sequence"] for d in deltas]==list(range(1,len(deltas)+1)),
            "RAW_PROVIDER_DELTA_SEQUENCE_GAP_OR_REPLAY")
@@ -118,10 +135,17 @@ def main():
     s0=acknowledged[0]["at_ns"]
     d0=end_seen[0]["at_ns"]
     result={
-      "verdict":"C1_FIRSTPARTY_DEV_REAL_MINIMAX_A05_UNIX_E2E_SCOPED_PASS",
+      "verdict":("F03_C1_REAL_NONPROD_E2E_PASS_CLOUDFLARE_PRIMARY_DEV_SCOPE"
+                 if expected_mode=="m26-parity-direct"
+                 else "C1_FIRSTPARTY_DEV_REAL_MINIMAX_A05_UNIX_E2E_SCOPED_PASS"),
       "formal_C1_product_qualified":False,
       "source_scope":"OWNER_FIRSTPARTY_A05_NONPROD_OS_LOCAL_ONLY",
-      "real_model":"MiniMax-M3",
+      "real_model":observed_model,
+      "provider_mode":expected_mode,
+      "primary_route_qualified_for_owner_firstparty_nonprod":
+         expected_mode=="m26-parity-direct" and
+         observed_model=="@cf/openai/gpt-oss-120b",
+      "fallback_used":False,
       "new_genuine_model_calls":1,
       "actual_raw_delta_events":len(deltas),
       "raw_provider_concat_sha256":sha(raw.encode()),
@@ -152,6 +176,7 @@ def main():
     out.write_text(json.dumps(result,indent=2,sort_keys=True)+"\n")
     os.chmod(out,0o600)
     print(json.dumps({"verdict":result["verdict"],
+      "verified_provider_model":observed_model,
       "model_calls":1,"first_client_ack_lead_ms":
          result["first_client_ack_lead_to_provider_done_observed_ms"],
       "client_acks":2,"source_cited_answer":True,

@@ -122,15 +122,26 @@ def verify_child():
 
 class Server(socketserver.ThreadingMixIn,socketserver.UnixStreamServer):
     daemon_threads=True
-    def __init__(self, path, *, repo, fence, token_file, evidence, vendor):
+    def __init__(self, path, *, repo, fence, token_file, evidence, vendor,
+                 provider_mode="minimax-dev"):
         self.repo=repo;self.fence=fence;self.evidence=evidence
         self.capability=c1.read_client_capability(token_file)
-        self.generator=vendor_generator(vendor)
+        must(provider_mode in ("minimax-dev","m26-parity-direct"),
+             "UNKNOWN_PROVIDER_MODE")
+        self.provider_mode=provider_mode
+        if provider_mode=="m26-parity-direct":
+            import m27_c1_m26_provider_parity_nonprod as parity
+            self.generator=lambda: parity.cloudflare_first_with_minimax_backup(
+                prompt=PROMPT,vendor=vendor)
+        else:
+            self.generator=vendor_generator(vendor)
         self.live=c1live.NativeLiveProduct(repo=repo,fence=fence,
                journal=evidence/"C1_REAL_TASK_JOURNAL.jsonl")
         self.prepared=self.live.prepare({
             "question":g01.QUESTION,"tenant":"owner-internal",
-            "cache_mode":"OFF","max_tokens":128,"deadline_seconds":30,
+            "cache_mode":"OFF","max_tokens":
+                192 if provider_mode=="m26-parity-direct" else 128,
+            "deadline_seconds":30,
             "fallback_consent":False})
         self.once=False;self.done=False;self.provider_calls=0
         self.first_preterminal_ack=False
@@ -214,6 +225,9 @@ class Handler(BaseHTTPRequestHandler):
               "source_proof_sha256":s.prepared["source_proof_sha256"],
               "source_release_sha256":f03.A05_SOURCE_PIN,
               "source_count":s.prepared["prepared_source_count"],
+              "selected_primary":"@cf/openai/gpt-oss-120b"
+                  if s.provider_mode=="m26-parity-direct" else MODEL,
+              "fallback":"MiniMax-M3" if s.provider_mode=="m26-parity-direct" else "NOT_ENABLED",
               "provider_calls":s.provider_calls,
               "product_pass":False,"formal_model_stream_admitted":False,
               "development_only":True})
@@ -226,30 +240,73 @@ class Handler(BaseHTTPRequestHandler):
         rid=s.prepared["request_id"];claims=[]
         task=s.prepared["task_contract_sha256"]
         model_verified=False;provider_done=False;stream_end=False
+        active_model=None;active_route=None;failover_granted=False
         count=0;buf=""
         try:
             s.current()
             self.frame("request_start",{"request_id":rid,"task_sha256":task,
-                "model":MODEL,"abi":ABI,"source_proof_sha256":s.prepared["source_proof_sha256"]})
-            s.provider_calls+=1
+                "model":"@cf/openai/gpt-oss-120b" if s.provider_mode=="m26-parity-direct" else MODEL,
+                "abi":ABI,"source_proof_sha256":s.prepared["source_proof_sha256"]})
             for event in s.generator():
                 must(time.monotonic_ns()<s.deadline_ns,
                      "C1_ONE_TASK_30_SECOND_DEADLINE")
                 kind=event.get("event")
                 if kind=="request_start":
-                    must(event.get("model")==MODEL and
-                         event.get("route")=="VM_OWNER_CANARY_NONPROD",
-                         "PROVIDER_ROUTE_MISMATCH")
-                    s.audit({"event":"actual_provider_started","provider":MODEL,
+                    candidate=event.get("model")
+                    route=event.get("route")
+                    valid=((candidate==MODEL and route=="VM_OWNER_CANARY_NONPROD") or
+                           (s.provider_mode=="m26-parity-direct" and
+                            candidate=="@cf/openai/gpt-oss-120b" and
+                            route=="M26_DIRECT_WORKERS_AI_OWNER_CANARY_NONPROD"))
+                    must(valid and s.provider_calls<2 and
+                         (s.provider_calls==0 or failover_granted),
+                         "PROVIDER_ROUTE_MISMATCH_OR_UNAUTH_FALLBACK")
+                    s.provider_calls+=1
+                    active_model=candidate;active_route=route
+                    model_verified=False;failover_granted=False
+                    s.audit({"event":"actual_provider_started",
+                             "provider":candidate,"route":route,
                              "request_id":rid})
                 elif kind=="response_headers":
-                    must(event.get("status")==200,"PROVIDER_HTTP_NOT_200")
+                    must(type(event.get("status")) is int and
+                         100<=event["status"]<=599,
+                         "PROVIDER_STATUS_MALFORMED")
                     s.audit({"event":"provider_response_headers",
-                             "status":event["status"]})
+                             "status":event["status"],"provider":active_model})
+                    # A rejected Cloudflare initial request is not valid output;
+                    # the parity router alone may authorize an M26-classified
+                    # infrastructure fallback from the real returned error.
+                    if event["status"]!=200:
+                        must(s.provider_mode=="m26-parity-direct" and
+                             active_model=="@cf/openai/gpt-oss-120b" and
+                             count==0,"PROVIDER_HTTP_NOT_200")
+                elif kind=="stream_diagnostic":
+                    must(s.provider_mode=="m26-parity-direct" and
+                         active_model=="@cf/openai/gpt-oss-120b" and
+                         type(event.get("delta_count")) is int,
+                         "UNQUALIFIED_CLOUDFLARE_DIAGNOSTIC")
+                    s.audit({"event":"cloudflare_stream_completion_evidence",
+                             "model_attested":event.get("model_attested"),
+                             "done_frame":event.get("done_frame"),
+                             "finish_stop":event.get("finish_stop"),
+                             "delta_count":event.get("delta_count")})
+                elif kind=="failover":
+                    import m27_c1_m26_provider_parity_nonprod as parity
+                    must(s.provider_mode=="m26-parity-direct" and
+                         active_model=="@cf/openai/gpt-oss-120b" and
+                         count==0 and
+                         event.get("reason") in parity.FALLBACK_ELIGIBLE and
+                         event.get("provider")==MODEL,
+                         "UNAUTHORIZED_PROVIDER_FALLBACK")
+                    failover_granted=True
+                    s.audit({"event":"authenticated_infrastructure_fallback",
+                             "reason":event["reason"],"provider":MODEL,
+                             "fallback_after_generated_text":False})
                 elif kind=="model_identity":
-                    model_verified=event.get("model")==MODEL and event.get("model_match") is True
+                    model_verified=(event.get("model")==active_model and
+                                   event.get("model_match") is True)
                     must(model_verified,"PROVIDER_REAL_MODEL_IDENTITY_DENIED")
-                    s.audit({"event":"real_provider_identity","model":MODEL})
+                    s.audit({"event":"real_provider_identity","model":active_model})
                 elif kind=="delta":
                     must(model_verified and not provider_done and count<MAX_EVENTS,
                          "UNQUALIFIED_MODEL_STREAM_OR_BUDGET")
@@ -386,7 +443,7 @@ class Handler(BaseHTTPRequestHandler):
             answer=" ".join(x["text"] for x in claims)
             self.frame("terminal",{"request_id":rid,"status":"SCOPED_NONPROD_REAL_MINIMAX_A05_ACK",
               "real_model_calls":s.provider_calls,
-              "provider_model":MODEL,"real_delta_count":count,
+              "provider_model":active_model,"real_delta_count":count,
               "task_sha256":task,
               "answer_sha256":digest(answer.encode()),"answer_text":answer,
               "citations":{x["claim_id"]:x["citation"] for x in claims},
@@ -477,6 +534,8 @@ def main():
     ap.add_argument("--fence")
     ap.add_argument("--evidence")
     ap.add_argument("--vendor")
+    ap.add_argument("--provider-mode",default="minimax-dev",
+                    choices=["minimax-dev","m26-parity-direct"])
     ap.add_argument("--token")
     ap.add_argument("--socket")
     args=ap.parse_args()
@@ -501,7 +560,8 @@ def main():
          apath.parent.stat().st_uid==os.geteuid() and
          not socketpath.exists(),"UNIX_SOCKET_OWNER_OR_REPLAY_DENIED")
     server=Server(socketpath,repo=repo,fence=fence,token_file=apath,
-                  evidence=evidence,vendor=Path(args.vendor))
+                  evidence=evidence,vendor=Path(args.vendor),
+                  provider_mode=args.provider_mode)
     runner=threading.Thread(target=server.serve_forever,daemon=True)
     runner.start()
     try:
@@ -517,7 +577,10 @@ def main():
           "real_provider_done_observed":server.done,
           "local_native_ack_count":len(server.acked),
           "formal_product_pass":False,
-          "provider":MODEL,"scope":"OWNER_FIRSTPARTY_DEV_DIAGNOSTIC",
+          "provider_mode":args.provider_mode,
+          "provider":"M26_CLOUDFLARE_PRIMARY_MINIMAX_FALLBACK"
+              if args.provider_mode=="m26-parity-direct" else MODEL,
+          "scope":"OWNER_FIRSTPARTY_DEV_DIAGNOSTIC",
           "billing_cost":"UNKNOWN"}
         record=evidence/"C1_REAL_MINIMAX_DEV_RUN_RESULT.json"
         record.write_text(json.dumps(outcome,indent=2,sort_keys=True))
