@@ -196,5 +196,22 @@ class SingleSessionActualNonprodOS(unittest.TestCase):
         self.assertFalse(denied["provider_called"])
 
 
+    def test_04_external_receipt_expiry_cannot_retroactively_authorize(self):
+        """Pure time-window policy; zero generated or self-signed issuer data."""
+        now=int(time.time())
+        good=live.valid_independent_receipt_window(now-5,now+60,now=now)
+        self.assertTrue(good)
+        for issued,expiry in (
+            (now-301,now+30),
+            (now+1,now+60),
+            (now-5,now+301),
+            (now-5,now-1),
+            (now-5,now+296),
+        ):
+            self.assertFalse(live.valid_independent_receipt_window(
+                issued,expiry,now=now))
+        self.assertIsNone(live.TRUST_ROOT_MANIFEST_SHA256)
+
+
 if __name__=="__main__":
     unittest.main()

@@ -80,6 +80,15 @@ def utc_epoch(value):
     return value
 
 
+def valid_independent_receipt_window(issued_at: int, expires_at: int,
+                                     *, now: int) -> bool:
+    """A signed grant cannot resurrect a stale issuer or extend its lifetime."""
+    return (type(issued_at) is int and type(expires_at) is int and
+            type(now) is int and 0 < issued_at <= now and
+            now - issued_at <= 300 and
+            now < expires_at <= issued_at + 300)
+
+
 def verify_ed25519(public_pem: bytes, payload: dict, signature_b64: str) -> None:
     """One-way public-key verification; NEVER sign or infer independent identity.
 
@@ -143,9 +152,9 @@ class IndependentAuthority:
         check(all(p[k] == v for k, v in expected.items()),
               "RECEIPT_CONTEXT_SOURCE_TASK_MISMATCH")
         now = int(time.time())
-        check(utc_epoch(p["issued_at"]) <= now and
-              now < utc_epoch(p["expires_at"]) <= now + 300,
-              "RECEIPT_EXPIRED_OR_UNBOUNDED")
+        check(valid_independent_receipt_window(
+                  utc_epoch(p["issued_at"]), utc_epoch(p["expires_at"]),
+                  now=now), "RECEIPT_EXPIRED_OR_UNBOUNDED")
         pem = self.roles[role]["public_key_pem"].encode("ascii")
         verify_ed25519(pem, p, signed["signature_b64"])
         return p
