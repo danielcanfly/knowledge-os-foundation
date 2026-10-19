@@ -45,10 +45,41 @@ def is_hex(value, length):
     return type(value) is str and re.fullmatch("[a-f0-9]{"+str(length)+"}",value) is not None
 
 
+def _read_no_follow(file: Path, root: Path) -> tuple[bytes, os.stat_result]:
+    """Read file through O_NOFOLLOW, fstat pinning, and non-symlink parents."""
+    current=file.parent
+    while current != root:
+        require(current != current.parent and not current.is_symlink(),
+                "GITLESS_SYMLINKED_PARENT_DENIED")
+        current=current.parent
+    flags=os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+    try:
+        fd=os.open(file,flags)
+        try:
+            before=os.fstat(fd)
+            require(stat.S_ISREG(before.st_mode) and before.st_nlink==1
+                    and before.st_size<=MAX_BYTES,
+                    "GITLESS_SOURCE_MODE_OR_SIZE_DENIED")
+            raw=os.read(fd,MAX_BYTES+1)
+            after=os.fstat(fd)
+            require(len(raw)==before.st_size and len(raw)<=MAX_BYTES and
+                    after.st_size==before.st_size and
+                    after.st_mtime_ns==before.st_mtime_ns and
+                    after.st_ino==before.st_ino,
+                    "GITLESS_SOURCE_MUTATED_WHILE_READ")
+            return raw,before
+        finally:
+            os.close(fd)
+    except OSError as exc:
+        raise GitlessDenied("GITLESS_NOFOLLOW_FILE_OPEN_DENIED") from exc
+
+
 def inspect_exact_bundle(root: Path, payload: dict, *, expected_head: str,
                          expected_tree: str) -> dict:
     """Pre-signature structural inspection only. Positive != source admission."""
-    root = Path(root).resolve(strict=True)
+    root=Path(root)
+    require(not root.is_symlink(),"GITLESS_SOURCE_ROOT_SYMLINK_DENIED")
+    root = root.resolve(strict=True)
     require(type(payload) is dict and
             set(payload)=={"schema","head","tree","source_controller","expires_at",
                            "files","tenant","source_release_id"}, "GITLESS_MANIFEST_SCHEMA_DENIED")
@@ -80,9 +111,11 @@ def inspect_exact_bundle(root: Path, payload: dict, *, expected_head: str,
                 and "\\" not in name and not name.startswith("/")
                 and not name.startswith(".") and
                 name == PurePosixPath(name).as_posix()
-                and all(p not in (".","..","") for p in name.split("/"))
-                and not any(segment in (".git",".env","__pycache__",
-                   ".pytest_cache","gold","Gold","pilot","benchmarks") for segment in name.split("/")),
+                and all(p not in (".","..","") and not p.startswith(".")
+                        for p in name.split("/"))
+                and not any(segment.casefold() in (".git",".env","__pycache__",
+                   ".pytest_cache","gold","pilot","benchmarks")
+                   for segment in name.split("/")),
                 "GITLESS_FORBIDDEN_SOURCE_PATH")
         require(name not in declared and entry["git_mode"] in ("100644","100755")
                 and is_hex(entry["sha256"],64)
@@ -96,12 +129,15 @@ def inspect_exact_bundle(root: Path, payload: dict, *, expected_head: str,
             raise GitlessDenied("GITLESS_MISSING_SOURCE_FILE") from exc
         require(stat.S_ISREG(st.st_mode) and not path.is_symlink()
                 and st.st_nlink == 1 and st.st_size <= MAX_BYTES
-                and bool(st.st_mode & stat.S_IXUSR)==(entry["git_mode"]=="100755"),
+                and stat.S_IMODE(st.st_mode) in (
+                    (0o755, 0o555) if entry["git_mode"]=="100755"
+                    else (0o644, 0o444)),
                 "GITLESS_SOURCE_MODE_OR_SYMLINK_DENIED")
         total+=st.st_size
         require(total<=MAX_BYTES,"GITLESS_SOURCE_SIZE_BUDGET")
-        raw=path.read_bytes()
-        require(len(raw)==st.st_size and digest(raw)==entry["sha256"],
+        raw,fd_stat=_read_no_follow(path,root)
+        require(fd_stat.st_ino==st.st_ino and len(raw)==st.st_size and
+                digest(raw)==entry["sha256"],
                 "GITLESS_SOURCE_SHA256_MISMATCH")
         oid=hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
         require(oid==entry["git_blob_oid"],"GITLESS_GIT_BLOB_OID_MISMATCH")

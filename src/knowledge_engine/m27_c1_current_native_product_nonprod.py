@@ -75,7 +75,9 @@ def source_vector(repo: Path, *, expected_head: str, expected_tree: str,
         check(signed_gitless_manifest is not None
               and gitless_public_root is not None,
               "GITLESS_SIGNED_SOURCE_MANIFEST_REQUIRED")
-        # An unsigned JSON manifest is NEVER a release/root replacement.
+        check(gitless.is_hex(gitless.C1_GITLESS_TRUST_ROOT_SHA256,64),
+              "GITLESS_EXTERNAL_SOURCE_SIGNER_NOT_ADMITTED")
+        # Reject before ANY manifest file read without a true external root.
         raw = Path(signed_gitless_manifest).read_bytes()
         check(len(raw) <= 250000, "GITLESS_MANIFEST_OVERSIZED")
         attestation = gitless.verify_signed_gitless_bundle(

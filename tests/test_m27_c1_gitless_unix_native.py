@@ -124,11 +124,24 @@ class C1GitlessUnix(unittest.TestCase):
         pub=self.dir/"unknown-public.pem"
         pub.write_text("not a trusted public root")
         pub.chmod(0o600)
-        with self.assertRaisesRegex(proof.GitlessDenied,"TRUST_ROOT_NOT_ADMITTED"):
+        with self.assertRaisesRegex(c1.AdmissionDenied,"EXTERNAL_SOURCE_SIGNER_NOT_ADMITTED"):
             c1.source_vector(bundle,expected_head=self.head,
                  expected_tree=self.tree,signed_gitless_manifest=sealed,
                  gitless_public_root=pub)
         self.assertFalse((bundle/".git").exists())
+
+    def test_06_gitless_group_writable_and_hidden_bytes_rejected(self):
+        bundle,m=self.manifest()
+        file=bundle/m["files"][0]["path"]
+        file.chmod(0o664)
+        with self.assertRaisesRegex(proof.GitlessDenied,"SOURCE_MODE_OR_SYMLINK_DENIED"):
+            proof.inspect_exact_bundle(bundle,m,expected_head=self.head,
+                                       expected_tree=self.tree)
+        file.chmod(0o644)
+        (bundle/".env.production").write_text("do-not-read")
+        with self.assertRaisesRegex(proof.GitlessDenied,"EXTRA_OR_MISSING"):
+            proof.inspect_exact_bundle(bundle,m,expected_head=self.head,
+                                       expected_tree=self.tree)
 
     def server(self):
         ready=self.dir/"ready.json"
