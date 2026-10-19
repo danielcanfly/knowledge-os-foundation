@@ -179,7 +179,14 @@ class LiveSeamNegative(unittest.TestCase):
         self.assertFalse(response["provider_called"])
         self.assertFalse(response["product_pass"])
         self.assertEqual(response["cache"], "OFF")
-        self.assertFalse((self.root / "source.jsonl.native-live.jsonl").exists())
+        audit = self.root / "source.jsonl.native-live.jsonl"
+        self.assertTrue(audit.exists())
+        events = [json.loads(line) for line in audit.read_text().splitlines()]
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0]["event"],
+                         "real_a05_source_and_task_prepared_NOT_PROVIDER")
+        self.assertFalse(events[0]["provider_called"])
+        self.assertFalse(events[0]["product_qualified"])
         code, response = self.call(base + c1.MODEL_PATH, self.permitted_request(),
                                    bearer=False)
         self.assertEqual(code, 403)
