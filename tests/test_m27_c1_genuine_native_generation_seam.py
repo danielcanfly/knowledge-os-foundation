@@ -75,7 +75,7 @@ class LiveSeamNegative(unittest.TestCase):
     def test_03_external_signature_is_not_self_declared_or_bypassable(self):
         with self.assertRaisesRegex(s.NotQualified, "INDEPENDENT_TRUST_ROOT_NOT_ADMITTED"):
             s.IndependentAuthority(root_path=self.root / "missing")
-        with self.assertRaisesRegex(s.NotQualified, "MISSING_SIGNED_BYTES"):
+        with self.assertRaisesRegex(s.NotQualified, "INVALID_EXTERNAL_SIGNATURE_OR_ROOT"):
             s.verify_ed25519(b"-----BEGIN PUBLIC KEY-----\n", {"a": 1}, "")
         with self.assertRaisesRegex(s.NotQualified, "INVALID_EXTERNAL_SIGNATURE_OR_ROOT"):
             s.verify_ed25519(b"NOT A PUBLIC KEY", {"a": 1},
