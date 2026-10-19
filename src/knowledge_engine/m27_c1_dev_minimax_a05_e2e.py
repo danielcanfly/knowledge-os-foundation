@@ -8,7 +8,7 @@ G01/F02 source with exact pinned Git SHA and module SHA.  VM credentials
 remain in the previously permitted owner-only Nonprod container.
 """
 from __future__ import annotations
-import argparse,hashlib,http.client,importlib.util,json,os,re,secrets,socket,socketserver
+import argparse,hashlib,hmac,http.client,importlib.util,json,os,re,secrets,socket,socketserver
 import stat,subprocess,sys,tempfile,threading,time
 from http.server import BaseHTTPRequestHandler
 from pathlib import Path
@@ -158,7 +158,9 @@ class Handler(BaseHTTPRequestHandler):
         server=self.server
         return (self.headers.get("Host")=="c1-dev-unix.local" and
           c1.native_unix_peer_uid(self.connection)==os.geteuid() and
-          self.headers.get("X-C1-Local-Capability","").encode()==server.capability)
+          hmac.compare_digest(
+              self.headers.get("X-C1-Local-Capability","").encode(),
+              server.capability))
     def reply(self,v,status=200):
         body=json.dumps(v,sort_keys=True).encode()
         self.send_response(status);self.send_header("Content-Type","application/json")
@@ -255,8 +257,13 @@ class Handler(BaseHTTPRequestHandler):
                     must(type(chunk) is str and chunk and len(chunk)<=4096,
                          "INVALID_NEW_REAL_PROVIDER_DELTA")
                     count+=1;buf+=chunk
-                    s.audit({"event":"actual_provider_raw_delta","sha256":digest(chunk.encode()),
-                             "sequence":count})
+                    # Preserve exact NEW provider text in owner-private 0600
+                    # evidence, enabling an independent reviewer to prove both
+                    # published claims came from these deltas. No credentials,
+                    # Authorization headers or remote private env are copied.
+                    s.audit({"event":"actual_provider_raw_delta",
+                             "sha256":digest(chunk.encode()),
+                             "sequence":count,"text":chunk})
                     while "\n" in buf and len(claims)<2:
                         line,buf=buf.split("\n",1)
                         line=line.strip()
@@ -417,8 +424,10 @@ def client_mode(path:Path,token:Path,evidence:Path):
             elif line=="" and name and body:
                 entry={"event":name,"at_ns":time.monotonic_ns(),
                        "request_id":body.get("request_id"),
+                       "task_sha256":body.get("task_sha256"),
                        "model_text_sha256":body.get("text_sha256"),
-                       "citation_count":len(body.get("citations",{})) if name=="terminal" else int(bool(body.get("citation")))}
+                       "citation_count":len(body.get("citations",{})) if name=="terminal" else int(bool(body.get("citation"))),
+                       "citation":body.get("citation") if name=="answer_text" else None}
                 if name=="answer_text":
                     # The FIRST material answer must be verified and ACKed
                     # before provider_done. The final material sentence may
@@ -428,6 +437,7 @@ def client_mode(path:Path,token:Path,evidence:Path):
                         must(body["provider_done_observed"] is False,
                              "FIRST_CLIENT_TEXT_NOT_PRETERMINAL")
                     entry["observed_before_provider_done"]=not body["provider_done_observed"]
+                    entry["source_verifier_os_pid"]=body.get("verified_by_separate_os_pid")
                     must(body["text_sha256"]==digest(body["text"].encode()),
                          "VERIFIED_MODEL_TEXT_SHA_MISMATCH")
                     ack={x:body[x] for x in ("request_id","claim_id","challenge","text_sha256")}
@@ -444,6 +454,7 @@ def client_mode(path:Path,token:Path,evidence:Path):
                     entry["status"]=body.get("status")
                     entry["real_model_calls"]=body.get("real_model_calls")
                     entry["answer_sha256"]=body.get("answer_sha256")
+                    entry["citations"]=body.get("citations")
                     entry["scope_product_pass"]=body.get("formal_product_pass")
                     entry["full_cited_final"]=bool(body.get("answer_text") and
                                                     len(body.get("citations",{}))==2)

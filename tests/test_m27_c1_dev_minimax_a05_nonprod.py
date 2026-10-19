@@ -47,4 +47,15 @@ class MiniMaxDevScopedContracts(unittest.TestCase):
         with self.assertRaises((ValueError,FileNotFoundError)):
             dev.vendor_generator(ROOT/"never-admitted-g01-vendor")
 
+    def test_05_authentic_g01_genuine_provider_adapter_pinned_readonly(self):
+        vendor=Path("/Users/huaihsuanhuang/Desktop/Chatgpt/M27/M27_VNEXT_MASTER_20261009/"
+          "07_MASTER_REBASE_20261010/08_MASTER_TAKEOVER_20261012/"
+          "09_MASTER_RESET_POST_V34_20261013/06_WORKSITES/"
+          "PARALLEL_VNEXT_20261014/REPLAN_EK_20261017/"
+          "G01_GENUINE_QA_20261018/tools/g01_vendor")
+        stream=dev.vendor_generator(vendor)
+        self.assertTrue(callable(stream))
+        self.assertIn("'max_tokens':128",stream.__globals__["b1"].VM_PROVIDER_SCRIPT)
+        self.assertNotIn("'max_tokens':650",stream.__globals__["b1"].VM_PROVIDER_SCRIPT)
+
 if __name__=="__main__":unittest.main()
