@@ -133,6 +133,7 @@ class Server(socketserver.ThreadingMixIn,socketserver.UnixStreamServer):
             "cache_mode":"OFF","max_tokens":128,"deadline_seconds":30,
             "fallback_consent":False})
         self.once=False;self.done=False;self.provider_calls=0
+        self.first_preterminal_ack=False
         self.deadline_ns=None
         self.ack_cond=threading.Condition();self.pending={};self.acked=[]
         self.journal=evidence/"C1_DEV_REAL_PROVIDER_AND_CLIENT.jsonl"
@@ -192,6 +193,8 @@ class Handler(BaseHTTPRequestHandler):
                 must(not s.done,"ACK_AFTER_PROVIDER_DONE_DENIED")
                 s.current()
                 s.acked.append(data["claim_id"])
+                if data["claim_id"]==c1live.OBLIGATIONS[0]:
+                    s.first_preterminal_ack=not s.done
                 s.audit({"event":"native_client_local_ack",
                   "claim_id":data["claim_id"],"request_id":data["request_id"],
                   "text_sha256":data["text_sha256"],
@@ -299,17 +302,77 @@ class Handler(BaseHTTPRequestHandler):
                                 s.ack_cond.wait(timeout=remaining)
                         claims.append(response)
                 elif kind=="provider_done":
-                    must(model_verified and len(claims)==2 and len(s.acked)==2,
-                         "PROVIDER_DONE_BEFORE_NATIVE_CLIENT_VERIFIED_ACKS")
+                    must(model_verified and len(claims)>=1 and
+                         s.first_preterminal_ack and
+                         s.acked[0]==c1live.OBLIGATIONS[0],
+                         "NO_ACTUAL_PRETERMINAL_VERIFIED_FIRST_CLIENT_ACK")
+                    # SSE transports may end the final sentence with a period,
+                    # without any final newline. Unlike a first answer, the
+                    # second claim may be verified/delivered after the real
+                    # provider_done event: only FIRST verified text/ACK has the
+                    # strict preterminal obligation. Do not invent provider
+                    # deltas or claim the second ACK was preterminal.
+                    s.audit({"event":"actual_provider_done_observed",
+                             "delta_count":count})
+                    if len(claims)==1 and buf.strip():
+                        line=buf.strip()
+                        must("\\n" not in line and len(line)<=350 and
+                             line.endswith("."),
+                             "MISSING_OR_UNTRUSTED_LAST_PROVIDER_SENTENCE")
+                        claim_id=c1live.OBLIGATIONS[1]
+                        try:
+                            v=real_os_semantic_verify(s.repo,s.fence,claim_id,line,
+                                      s.prepared["source_proof_sha256"])
+                        except Exception as exc:
+                            failed=s.evidence/"REJECTED_REAL_MODEL_TEXT_DIAGNOSTIC.json"
+                            failed.write_text(json.dumps({
+                                "rejected_claim_text":line,
+                                "text_sha256":digest(line.encode()),
+                                "obligation_id":claim_id,
+                                "error_type":type(exc).__name__,
+                                "error_code":str(exc)[:110],
+                                "product_pass":False},indent=2))
+                            os.chmod(failed,0o600)
+                            raise
+                        must(v["accepted"] and not v["signed_semantic_issuer"],
+                             "LAST_SENTENCE_SOURCE_NOT_VERIFIED")
+                        s.current()
+                        nonce=secrets.token_hex(20)
+                        textsha=digest(line.encode())
+                        s.pending[claim_id]={"request_id":rid,"challenge":nonce,
+                                            "text_sha256":textsha}
+                        response={"request_id":rid,"task_sha256":task,"seq":2,
+                            "claim_id":claim_id,"text":line,
+                            "text_sha256":textsha,"challenge":nonce,
+                            "citation":v["citation"],"real_model_generated":True,
+                            "verified_by_separate_os_pid":v["pid"],
+                            "verified_owner_source_not_independent_issuer":True,
+                            "provider_done_observed":True,"product_pass":False}
+                        self.frame("answer_text",response)
+                        with s.ack_cond:
+                            deadline=min(time.monotonic()+8,s.deadline_ns/1e9)
+                            while claim_id not in s.acked:
+                                remaining=deadline-time.monotonic()
+                                must(remaining>0,"LAST_VERIFIED_CLIENT_ACK_TIMEOUT")
+                                s.ack_cond.wait(timeout=remaining)
+                        claims.append(response)
+                        buf=""
+                    must(len(claims)==2 and len(s.acked)==2 and
+                         s.acked==list(c1live.OBLIGATIONS) and
+                         not buf.strip(),
+                         "PROVIDER_DONE_MISSING_TWO_SOURCE_BOUND_CLIENT_ACKS")
                     provider_done=True;s.done=True
-                    s.audit({"event":"actual_provider_done","delta_count":count})
+                    s.audit({"event":"actual_provider_done",
+                             "delta_count":count,
+                             "first_client_ack_before_done":s.first_preterminal_ack})
                 elif kind=="stream_end":
                     must(provider_done and event.get("provider_done") is True,
                          "REAL_PROVIDER_STREAM_END_DENIED")
                     stream_end=True
                 elif kind=="error":
                     raise ValueError("REAL_PROVIDER_ERROR_"+str(event.get("category","UNKNOWN"))[:64])
-            must(stream_end and provider_done and len(claims)==2 and not buf.strip() and
+            must(stream_end and provider_done and s.first_preterminal_ack and
+                 len(claims)==2 and not buf.strip() and
                  s.acked==list(c1live.OBLIGATIONS),
                  "REAL_PROVIDER_TERMINAL_OR_CLIENT_ACK_INCOMPLETE")
             s.current()
@@ -357,7 +420,14 @@ def client_mode(path:Path,token:Path,evidence:Path):
                        "model_text_sha256":body.get("text_sha256"),
                        "citation_count":len(body.get("citations",{})) if name=="terminal" else int(bool(body.get("citation")))}
                 if name=="answer_text":
-                    assert body["provider_done_observed"] is False
+                    # The FIRST material answer must be verified and ACKed
+                    # before provider_done. The final material sentence may
+                    # arrive as an unterminated tail with provider_done, and
+                    # then receive its second Client ACK after provider_done.
+                    if body["claim_id"]==c1live.OBLIGATIONS[0]:
+                        must(body["provider_done_observed"] is False,
+                             "FIRST_CLIENT_TEXT_NOT_PRETERMINAL")
+                    entry["observed_before_provider_done"]=not body["provider_done_observed"]
                     must(body["text_sha256"]==digest(body["text"].encode()),
                          "VERIFIED_MODEL_TEXT_SHA_MISMATCH")
                     ack={x:body[x] for x in ("request_id","claim_id","challenge","text_sha256")}
