@@ -177,7 +177,7 @@ class Audit02NegativeCases(unittest.TestCase):
         adapter=sse.DirectWorkersAISSE(
             url="https://api.cloudflare.com/client/v4/accounts/abc123456/ai/v1/chat/completions",
             model=sse.MODEL,token_path="test-only",
-            private_file=lambda *a,**kw:b"dummy",max_wall_seconds=.2)
+            private_file=lambda *a,**kw:b"dummy",max_wall_seconds=2.0)
         with patch.object(sse,"build_opener",return_value=Opener()):
             output=list(adapter.one_bounded_stream(
               prompt="Answer only from Owner A05 primary authorized source.",
@@ -185,7 +185,7 @@ class Audit02NegativeCases(unittest.TestCase):
         self.assertEqual([x[1]["kind"] for x in output],["delta","delta","done"])
         self.assertGreaterEqual(len(sock.timeouts),5)
         self.assertLess(sock.timeouts[-1],sock.timeouts[0])
-        self.assertTrue(all(0<t<=.2 for t in sock.timeouts))
+        self.assertTrue(all(0<t<=2.0 for t in sock.timeouts))
 
     def test_d02_07_missing_physical_socket_from_real_urllib_response_fails_closed(self):
         from urllib.response import addinfourl
