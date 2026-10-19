@@ -212,7 +212,7 @@ class LiveSeamNegative(unittest.TestCase):
         seam = s.NativeLiveProduct(
             repo=ROOT, fence=self.fence,
             journal=self.root / "revoked-not-a-provider.jsonl")
-        with self.assertRaises(c1.h02.Denied):
+        with self.assertRaisesRegex(ValueError, "A05_SOURCE_RIGHTS_OR_RETRIEVAL_DENIED"):
             seam.prepare(self.permitted_request())
         self.assertEqual(seam.provider_invocations, 0)
         self.assertFalse((self.root / "revoked-not-a-provider.jsonl").exists())
