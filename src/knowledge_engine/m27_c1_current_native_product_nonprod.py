@@ -17,10 +17,10 @@ from pathlib import Path
 import stat
 import subprocess
 
-from knowledge_engine import m27_h02_native_nonprod_consumer as h02
-from knowledge_engine import m27_f02_current_native_model_events as f02
-from knowledge_engine import m27_g01_current_native_consumer as g01
-from knowledge_engine import m27_task_contracts_v1 as contract
+import m27_h02_native_nonprod_consumer as h02
+import m27_f02_current_native_model_events as f02
+import m27_g01_current_native_consumer as g01
+import m27_task_contracts_v1 as contract
 
 ABI = "m27.c1.native-app-source-client-candidate/v1"
 STATUS_PATH = "/nonprod/c1/status"

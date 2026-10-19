@@ -12,9 +12,9 @@ from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT / "src/knowledge_engine"))
 
-from knowledge_engine import m27_c1_current_native_product_nonprod as c1
+import m27_c1_current_native_product_nonprod as c1
 
 
 class C1NativeApp(unittest.TestCase):
@@ -72,8 +72,8 @@ class C1NativeApp(unittest.TestCase):
 
     def server(self):
         ready = self.t / "ready.json"
-        cmd = [sys.executable, "-m",
-               "knowledge_engine.m27_c1_current_native_product_nonprod",
+        cmd = [sys.executable,
+               str(ROOT / "src/knowledge_engine/m27_c1_current_native_product_nonprod.py"),
                "--repo", str(ROOT), "--fence", str(self.fence),
                "--journal", str(self.journal), "--token-file", str(self.token_file),
                "--expected-head", self.head, "--expected-tree", self.tree,
