@@ -4,6 +4,8 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import datetime as dt
+from unittest import mock
 import sys
 import tempfile
 import time
@@ -46,7 +48,11 @@ class C1NativeApp(unittest.TestCase):
         self.assertEqual(vector["h02_abi"], c1.h02.ABI)
         self.assertEqual(vector["f02_abi"], c1.f02.ABI)
         self.assertEqual(vector["g01_abi"], c1.g01.ABI)
-        self.assertEqual(len(vector["task_contract_sha256"]), 64)
+        self.assertIsNone(vector["task_contract_sha256"])
+        self.assertEqual(vector["task_contract_sha256_kind"],
+                         "PER_ADMITTED_SESSION_ONLY")
+        self.assertEqual(vector["task_contract_template_sha256"],
+                         c1.current_task_template("os-uid:" + str(os.geteuid())))
         self.assertEqual(vector["cache"], "OFF")
         self.assertFalse(vector["product_pass"])
         self.assertIsNone(vector["current_signed_image"])
@@ -131,7 +137,10 @@ class C1NativeApp(unittest.TestCase):
         self.assertEqual(code, 200)
         self.assertEqual(started["candidate_abi"], c1.ABI)
         self.assertEqual(started["task_sha256"],
-                         state["version"]["task_contract_sha256"])
+                         started["pinned_task_contract_sha256"])
+        self.assertEqual(started["task_contract_template_sha256"],
+                         state["version"]["task_contract_template_sha256"])
+        self.assertEqual(len(started["task_sha256"]), 64)
         self.assertTrue(started["independent_os_source_byte_verified"])
         self.assertFalse(started["generated_answer"])
         self.assertFalse(started["product_pass"])
@@ -189,6 +198,57 @@ class C1NativeApp(unittest.TestCase):
             c1.Candidate(repo=ROOT, fence=self.fence, journal=self.journal,
                          token_file=self.token_file,
                          expected_head=self.head, expected_tree=self.tree)
+
+    def test_08_old_clock_boundary_is_actual_causal_red_and_template_green(self):
+        original = c1.h02.g01.task_contract
+        a = dt.datetime(2026, 10, 19, 1, 0, 1, tzinfo=dt.timezone.utc)
+        b = dt.datetime(2026, 10, 19, 1, 0, 3, tzinfo=dt.timezone.utc)
+        # H02 still validates each admitted full live TaskContract. Only the
+        # comparison across distinct instants changes to stable policy template.
+        with mock.patch.object(c1.h02.g01, "task_contract", side_effect=lambda: original(when=a)):
+            old = c1.h02.local_task("PolicyEngine", "os-uid:" + str(os.geteuid()))
+        with mock.patch.object(c1.h02.g01, "task_contract", side_effect=lambda: original(when=b)):
+            later = c1.h02.local_task("PolicyEngine", "os-uid:" + str(os.geteuid()))
+        self.assertNotEqual(c1.contract.sha256(old), c1.contract.sha256(later),
+                            "PREVIOUS_BOOT_SHA_EQUIVALENCE_MUST_FAIL_ACROSS_CLOCK")
+        self.assertEqual(c1.contract_template_sha256(old),
+                         c1.contract_template_sha256(later),
+                         "SOURCE_POLICY_TEMPLATE_MUST_BE_TIMESTAMP_INDEPENDENT")
+        self.assertEqual(old["tenant_id"], later["tenant_id"])
+        self.assertEqual(old["authority"], later["authority"])
+        self.assertEqual(old["context_scopes"], later["context_scopes"])
+
+    def test_09_real_os_http_delayed_clock_boundary_no_403(self):
+        base = self.server()
+        code, state = self.request(base + c1.STATUS_PATH)
+        self.assertEqual(code, 200)
+        time.sleep(1.20)
+        code, started = self.request(base + c1.SOURCE_PATH, "POST",
+                                     {"question": "PolicyEngine",
+                                      "tenant": "owner-internal"})
+        self.assertEqual(code, 200, "TASK_SHA_CANNOT_BE_FIXED_AT_APP_BOOT")
+        self.assertEqual(started["task_contract_template_sha256"],
+                         state["version"]["task_contract_template_sha256"])
+        self.assertEqual(len(started["task_sha256"]), 64)
+        self.assertFalse(started["product_pass"])
+
+    def test_10_per_run_sha_and_rights_still_fail_closed(self):
+        candidate = c1.Candidate(repo=ROOT, fence=self.fence, journal=self.journal,
+                                 token_file=self.token_file, expected_head=self.head,
+                                 expected_tree=self.tree)
+        result = candidate.begin({"question": "PolicyEngine",
+                                  "tenant": "owner-internal"})
+        sid = result["session_id"]
+        self.assertEqual(candidate.contract_instances[sid]["task_sha256"],
+                         result["task_sha256"])
+        candidate.contract_instances[sid]["task_sha256"] = "0" * 64
+        with self.assertRaisesRegex(c1.AdmissionDenied, "ADMITTED_TASK_OR_RIGHTS_PIN_INVALID"):
+            candidate.ack({"session_id": sid,
+                           "claim_id": result["claims"][0]["claim_id"],
+                           "challenge": result["claims"][0]["challenge"],
+                           "text_sha256": result["claims"][0]["text_sha256"]})
+        with self.assertRaisesRegex(c1.AdmissionDenied, "ADMITTED_TASK_OR_RIGHTS_PIN_INVALID"):
+            candidate.terminal({"session_id": sid})
 
 
 if __name__ == "__main__":

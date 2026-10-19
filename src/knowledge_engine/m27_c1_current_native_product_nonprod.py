@@ -8,6 +8,7 @@ Does not modify Q34/D01, shared API, legacy source or prior F02/G01 adapters.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import hmac
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -66,7 +67,11 @@ def source_vector(repo: Path, *, expected_head: str, expected_tree: str) -> dict
     return {
         "abi": ABI, "head": head, "tree": tree,
         "parent": git_field(repo, "HEAD^"),
-        "task_contract_sha256": contract.sha256(task),
+        # Actual instance SHA exists only when H02 admits that particular task.
+        # Pre-boot timestamp snapshot was NOT an ABI freeze and caused 403s.
+        "task_contract_sha256": None,
+        "task_contract_sha256_kind": "PER_ADMITTED_SESSION_ONLY",
+        "task_contract_template_sha256": contract_template_sha256(task),
         "task_contract_schema": task.get("schema_version", "task-contract-v1"),
         "h02_abi": h02.ABI, "f02_abi": f02.ABI, "g01_abi": g01.ABI,
         "source_manifest_sha256": h02.f03.A05_SOURCE_PIN,
@@ -80,6 +85,28 @@ def source_vector(repo: Path, *, expected_head: str, expected_tree: str) -> dict
         "provider_fallback": "MINIMAX_DIAGNOSTIC_NOT_RUN",
         "cache": CACHE, "current_signed_image": None, "product_pass": False,
     }
+
+
+def contract_template_sha256(task: dict) -> str:
+    """Time-independent, exact contract policy profile, never a run's Task SHA.
+
+    The three removed UTC fields remain mandatory and independently validated
+    by the original H02/TaskContract admission on EACH new task. No auth TTL is
+    enlarged or skipped by this cross-request pin.
+    """
+    normalized = copy.deepcopy(task)
+    normalized.pop("created_at")
+    normalized.pop("deadline_at")
+    normalized["actor"].pop("auth_expires_at")
+    return hashlib.sha256(contract.canonical({
+        "schema": "m27.c1.task-template/v1",
+        "contract_without_per_run_utc_timestamps": normalized,
+    })).hexdigest()
+
+
+def current_task_template(principal: str) -> str:
+    live = h02.local_task("PolicyEngine", principal)
+    return contract_template_sha256(live)
 
 
 def read_client_capability(path: Path) -> bytes:
@@ -102,6 +129,7 @@ class Candidate:
                                      expected_tree=expected_tree)
         self.token = read_client_capability(token_file)
         self.reader = h02.Consumer(repo=repo, fence=fence, journal=journal)
+        self.contract_instances: dict[str, dict] = {}
         check(self.reader.recovery in ("EMPTY", "PREVIOUS_TERMINAL_NO_REPLAY"),
               "INCOMPLETE_PREVIOUS_TASK_NO_REPLAY")
 
@@ -110,19 +138,53 @@ class Candidate:
               "TASK_CONTRACT_FIELDS_DENIED")
         check(data["question"] == "PolicyEngine"
               and data["tenant"] == "owner-internal", "TASK_TENANT_OR_SCOPE_DENIED")
+        # The upstream H02 contract has created_at/deadline_at/auth_expires_at
+        # created per task with second-resolution UTC; comparing its SHA with a
+        # boot-time instance nondeterministically denied valid clients.
+        check(current_task_template(self.reader.principal) ==
+              self.version["task_contract_template_sha256"],
+              "TASK_TEMPLATE_POLICY_DRIFT")
         receipt = self.reader.start(data["question"], tenant=data["tenant"])
-        check(receipt["task_sha256"] == self.version["task_contract_sha256"],
-              "TASKCONTRACT_VERSION_DRIFT")
+        sid = receipt["session_id"]
+        admitted = self.reader.entries.get(sid)
+        check(type(admitted) is dict and
+              type(receipt["task_sha256"]) is str and
+              re.fullmatch("[0-9a-f]{64}", receipt["task_sha256"]) is not None and
+              admitted["task_sha"] == receipt["task_sha256"],
+              "ACTUAL_TASKCONTRACT_NOT_JOURNALED")
         check(receipt["source_manifest_sha256"] ==
-              self.version["source_manifest_sha256"], "SOURCE_MANIFEST_DRIFT")
+              self.version["source_manifest_sha256"] and
+              receipt["source_release_id"] == self.version["source_release_id"] and
+              receipt["source_version"] == self.version["source_revision"] and
+              admitted["epoch"] == receipt["rights_epoch"],
+              "SOURCE_MANIFEST_OR_RIGHTS_DRIFT")
+        self.contract_instances[sid] = {
+            "task_sha256": receipt["task_sha256"],
+            "source_manifest_sha256": receipt["source_manifest_sha256"],
+            "rights_epoch": receipt["rights_epoch"],
+        }
         return {**receipt, "candidate_abi": ABI,
+                "task_contract_template_sha256":
+                    self.version["task_contract_template_sha256"],
+                "pinned_task_contract_sha256": receipt["task_sha256"],
                 "client_authentication": "LOCAL_CAPABILITY_NOT_IDP",
                 "generated_answer": False, "product_pass": False}
+
+    def _require_pinned_task(self, sid: str) -> None:
+        pin = self.contract_instances.get(sid)
+        entry = self.reader.entries.get(sid)
+        check(type(pin) is dict and type(entry) is dict and
+              pin["task_sha256"] == entry["task_sha"] and
+              pin["rights_epoch"] == entry["epoch"] and
+              pin["source_manifest_sha256"] ==
+              self.version["source_manifest_sha256"],
+              "ADMITTED_TASK_OR_RIGHTS_PIN_INVALID")
 
     def ack(self, data: dict) -> dict:
         check(type(data) is dict and set(data) ==
               {"session_id", "claim_id", "challenge", "text_sha256"},
               "ACK_CONTRACT_FIELDS_DENIED")
+        self._require_pinned_task(data["session_id"])
         return self.reader.ack(**{
             "sid": data["session_id"], "claim_id": data["claim_id"],
             "challenge": data["challenge"], "text_sha256": data["text_sha256"]})
@@ -130,7 +192,10 @@ class Candidate:
     def terminal(self, data: dict) -> dict:
         check(type(data) is dict and set(data) == {"session_id"},
               "TERMINAL_CONTRACT_FIELDS_DENIED")
-        return self.reader.terminal(data["session_id"])
+        self._require_pinned_task(data["session_id"])
+        result = self.reader.terminal(data["session_id"])
+        self.contract_instances.pop(data["session_id"], None)
+        return result
 
 
 class Handler(BaseHTTPRequestHandler):
