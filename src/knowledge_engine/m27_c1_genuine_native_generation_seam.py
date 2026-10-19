@@ -332,8 +332,16 @@ class GeneratedSession:
                                   "client_delivered_at_ns": None}
             self.journal.record({"event": "independent_semantic_verified",
                                  "claim_id": cid, "sha256": expected["text_sha256"]})
-            return {"status": "VERIFIED_NEW_MODEL_TEXT_READY",
-                    "client_abi": CLIENT_ABI, **self.verified[cid]}
+            # The semantic issuer's POST response must NEVER supply the
+            # Client-only challenge or pretend model text was delivered to a
+            # Native Client. Only the authenticated separate GET can expose
+            # verified substantive text/challenge for signed Client ACK.
+            return {"status": "INDEPENDENT_SEMANTIC_RECEIPT_VERIFIED_NOT_CLIENT_DELIVERED",
+                    "client_abi": CLIENT_ABI, "claim_id": cid,
+                    "text_sha256": expected["text_sha256"],
+                    "request_id": self.request_id,
+                    "native_client_get_required": True,
+                    "actual_client_delivery": False}
 
     def pull_verified(self, *, cid: str):
         """True Native Client transport reads independently verified new text.
