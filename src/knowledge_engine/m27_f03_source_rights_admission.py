@@ -55,6 +55,240 @@ def check(condition: bool, message: str) -> None:
         raise Rejected(message)
 
 
+# Gitless F03 authority is a distinct externally signed SOURCE Controller lane.
+# No locally generated key can serve as a trusted Product Source/IdP principal.
+F03_GITLESS_ABI = "m27.f03.a05-gitless-external-immutable-source/v1"
+F03_EXTERNAL_SOURCE_ROOT_SHA256 = None  # Actual independent custodian has not signed.
+F03_GITLESS_ALLOWED_A05 = frozenset({
+    "wave_b01/components/a05/adapter/a05_retrieval.py",
+    "wave_b01/components/a05/source/corpus.json",
+    "wave_b01/components/a05/source/release.json",
+    *("wave_b01/components/a05/source/" + str(i).zfill(2) + "_" + name
+      for i, name in enumerate((
+          "m27_architecture_overview.md", "contracts.md", "request_flow.md",
+          "context_planner.md", "context_compiler.md", "compute_policy.md",
+          "tool_and_capability_registry.md", "skill_runtime.md",
+          "workspace_and_memory.md", "governance_eval_release.md",
+          "migration_plan.md")))
+})
+F03_GITLESS_ALLOWED_LOCAL = ALLOWED_SOURCES
+F03_GITLESS_MAX_TOTAL_BYTES = 500_000
+
+
+def _f03_git_blob_oid(raw: bytes) -> str:
+    return hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") +
+                        b"\0" + raw).hexdigest()
+
+
+def _f03_nofollow_bytes(root: Path, relative: str) -> bytes:
+    check(type(relative) is str and relative and
+          not relative.startswith("/") and
+          all(part and part not in (".", "..") and
+              not part.startswith(".") for part in relative.split("/")) and
+          "\\" not in relative, "GITLESS_FORBIDDEN_RELATIVE_SOURCE")
+    current = root
+    for part in relative.split("/")[:-1]:
+        current = current / part
+        check(not current.is_symlink() and current.is_dir(),
+              "GITLESS_SYMLINKED_SOURCE_PARENT")
+    path = root / relative
+    check(not path.is_symlink(), "GITLESS_SOURCE_SYMLINK")
+    try:
+        fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+        try:
+            st = os.fstat(fd)
+            import stat
+            check(stat.S_ISREG(st.st_mode) and st.st_uid == os.geteuid() and
+                  st.st_nlink == 1 and st.st_size <= 262144 and
+                  not (st.st_mode & 0o022),
+                  "GITLESS_BLOB_OS_OWNER_MODE_OR_SIZE")
+            data = os.read(fd, 262145)
+            after = os.fstat(fd)
+            check(len(data) == st.st_size and
+                  st.st_ino == after.st_ino and
+                  st.st_mtime_ns == after.st_mtime_ns and
+                  st.st_size == after.st_size,
+                  "GITLESS_SOURCE_READ_RACE")
+            return data
+        finally:
+            os.close(fd)
+    except OSError as exc:
+        raise Rejected("GITLESS_SOURCE_OS_UNAVAILABLE") from exc
+
+
+def inspect_a05_gitless_bytes_unsigned(root: Path, payload: dict,
+                                      *, expected_head: str,
+                                      expected_tree: str,
+                                      kind: str = "a05",
+                                      expected_epoch: int | None = None) -> dict:
+    """Real on-disk hash/OID inspection, NOT Controller/source-rights admission.
+
+    Only immutable documents/release/adapter may be in the pinned manifest.
+    Mutable revocations.json is deliberately excluded and must still pass the
+    independent owner fence + epoch + two-time checks at read/delivery.
+    """
+    root = Path(root)
+    check(not root.is_symlink(), "GITLESS_ROOT_SYMLINK")
+    root = root.resolve(strict=True)
+    check(not any((root / name).exists() or (root / name).is_symlink()
+                  for name in (".git", ".env", "Gold", "gold", "pilot",
+                               "benchmarks")),
+          "GITLESS_PROTECTED_OR_GIT_BYTES_PRESENT")
+    allow = F03_GITLESS_ALLOWED_A05 if kind == "a05" else F03_GITLESS_ALLOWED_LOCAL
+    check(kind in ("a05", "local") and type(payload) is dict and
+          set(payload) == {"schema", "kind", "head", "tree", "base_h02",
+                           "a05_release_id", "a05_manifest_sha256", "a05_revision",
+                           "source_controller", "tenant", "principal", "epoch",
+                           "issued_at", "expires_at", "rights_scope", "files"},
+          "GITLESS_SIGNED_SCOPE_SCHEMA")
+    check(payload["schema"] == F03_GITLESS_ABI and
+          payload["kind"] == kind and
+          payload["head"] == expected_head and
+          payload["tree"] == expected_tree and
+          payload["base_h02"] == BASE_H02 and
+          payload["a05_release_id"] == A05_RELEASE_ID and
+          payload["a05_manifest_sha256"] == A05_SOURCE_PIN and
+          payload["a05_revision"] == A05_REVISION and
+          payload["tenant"] == "owner-internal" and
+          payload["principal"] == "os-uid:" + str(os.geteuid()) and
+          payload["rights_scope"] == A05_LOCAL_SCOPE and
+          type(payload["source_controller"]) is str and
+          len(payload["source_controller"]) >= 3 and
+          type(payload["epoch"]) is int and payload["epoch"] >= 1 and
+          (expected_epoch is None or payload["epoch"] == expected_epoch),
+          "GITLESS_C1_A05_OR_RIGHTS_BINDING_DENIED")
+    now = int(dt.datetime.now(dt.timezone.utc).timestamp())
+    check(type(payload["issued_at"]) is int and
+          type(payload["expires_at"]) is int and
+          now - 300 <= payload["issued_at"] <= now and
+          now < payload["expires_at"] <= payload["issued_at"] + 3600,
+          "GITLESS_CONTROLLER_TTL_EXPIRED")
+    entries = payload["files"]
+    check(type(entries) is list and len(entries) == len(allow),
+          "GITLESS_A05_INCOMPLETE_IMMUTABLE_SET")
+    mapping = {}
+    total = 0
+    for entry in entries:
+        check(type(entry) is dict and
+              set(entry) == {"path", "sha256", "git_blob_oid", "git_mode"} and
+              type(entry["path"]) is str and
+              entry["path"] in allow and entry["path"] not in mapping and
+              entry["git_mode"] == "100644" and
+              type(entry["sha256"]) is str and
+              _HEX.fullmatch(entry["sha256"]) is not None and
+              type(entry["git_blob_oid"]) is str and
+              re.fullmatch("[0-9a-f]{40}", entry["git_blob_oid"]) is not None,
+              "GITLESS_A05_BLOB_ENTRY_DENIED")
+        raw = _f03_nofollow_bytes(root, entry["path"])
+        total += len(raw)
+        check(total <= F03_GITLESS_MAX_TOTAL_BYTES,
+              "GITLESS_A05_BYTES_BUDGET")
+        check(sha(raw) == entry["sha256"] and
+              _f03_git_blob_oid(raw) == entry["git_blob_oid"],
+              "GITLESS_A05_REAL_SOURCE_SHA_OR_GIT_OID_DRIFT")
+        mapping[entry["path"]] = entry
+    check(set(mapping) == allow, "GITLESS_A05_UNLISTED_SOURCE")
+    # The A05 published source directory may contain exactly the pinned
+    # immutable material and the separate mutable revocations.json. Nothing
+    # else (especially hidden metadata, symlink or protected fixtures).
+    if kind == "a05":
+        source_dir = root / A05_SOURCE
+        check(source_dir.is_dir() and not source_dir.is_symlink(),
+              "GITLESS_MISSING_A05_SOURCE_DIR")
+        physical = set()
+        for child in source_dir.iterdir():
+            check(child.is_file() and not child.is_symlink() and
+                  not child.name.startswith("."),
+                  "GITLESS_UNDECLARED_OR_UNSAFE_A05_FILE")
+            physical.add(A05_SOURCE + "/" + child.name)
+        check(physical == {x for x in allow if x.startswith(A05_SOURCE + "/")} |
+              {A05_SOURCE + "/revocations.json"},
+              "GITLESS_EXTRA_OR_MISSING_A05_FILES")
+        adapter_dir = root / "wave_b01/components/a05/adapter"
+        check(adapter_dir.is_dir() and not adapter_dir.is_symlink() and
+              {p.name for p in adapter_dir.iterdir()} == {"a05_retrieval.py"},
+              "GITLESS_EXTRA_OR_MISSING_A05_ADAPTER")
+    return {"decision": "UNSIGNED_REAL_GITLESS_BYTES_STRUCTURALLY_VERIFIED_ONLY",
+            "verified_immutable_files": len(mapping),
+            "inventory_sha256": sha(canonical(entries)),
+            "source_authorized": False, "product_admitted": False}
+
+
+class F03ExternalGitlessByteReader:
+    """Independent Controller-verified restrictive A05 byte-reader (public verify ONLY).
+
+    Source Controller must independently sign immutable blob inventory and
+    current release, bound to exact C1 HEAD/TREE, OS principal and A05 epoch.
+    The operator-supplied manifest/key is not an authority until a DISTINCT
+    immutable public-root SHA is admitted in reviewed F03 release code.
+    """
+    def __init__(self, root: Path, *, signed_manifest: Path,
+                 public_root: Path, expected_head: str, expected_tree: str,
+                 expected_epoch: int, kind: str = "a05"):
+        check(type(F03_EXTERNAL_SOURCE_ROOT_SHA256) is str and
+              _HEX.fullmatch(F03_EXTERNAL_SOURCE_ROOT_SHA256) is not None,
+              "SOURCE_CONTROLLER_READER_NOT_ADMITTED")
+        import stat
+        keypath = Path(public_root)
+        key_stat = keypath.lstat()
+        check(stat.S_ISREG(key_stat.st_mode) and not keypath.is_symlink() and
+              key_stat.st_uid == os.geteuid() and key_stat.st_size <= 4096 and
+              (key_stat.st_mode & 0o022) == 0,
+              "GITLESS_EXTERNAL_PUBLIC_ROOT_UNTRUSTED")
+        key = _f03_nofollow_bytes(keypath.parent.resolve(), keypath.name)
+        check(sha(key) == F03_EXTERNAL_SOURCE_ROOT_SHA256,
+              "GITLESS_EXTERNAL_CONTROLLER_ROOT_PIN_DRIFT")
+        record = json.loads(_f03_nofollow_bytes(
+            Path(signed_manifest).parent.resolve(), Path(signed_manifest).name))
+        check(type(record) is dict and
+              set(record) == {"payload", "signature_b64"},
+              "GITLESS_EXTERNAL_SIGNATURE_ENVELOPE")
+        import base64
+        try:
+            signature = base64.b64decode(record["signature_b64"], validate=True)
+        except (ValueError, TypeError) as exc:
+            raise Rejected("GITLESS_CONTROLLER_SIGNATURE_ENCODING") from exc
+        check(len(signature) == 64, "GITLESS_CONTROLLER_SIGNATURE_LENGTH")
+        with __import__("tempfile").TemporaryDirectory(prefix="f03-gitless-public-only-") as td:
+            temp = Path(td)
+            (temp / "root.pem").write_bytes(key)
+            (temp / "payload").write_bytes(canonical(record["payload"]))
+            (temp / "sig").write_bytes(signature)
+            result = subprocess.run(
+                ["openssl", "pkeyutl", "-verify", "-pubin", "-rawin",
+                 "-inkey", str(temp / "root.pem"),
+                 "-in", str(temp / "payload"), "-sigfile", str(temp / "sig")],
+                capture_output=True, check=False, timeout=5)
+        check(result.returncode == 0, "GITLESS_CONTROLLER_SIGNATURE_INVALID")
+        check(not Path(root).is_symlink(), "GITLESS_SOURCE_ROOT_SYMLINK")
+        self.root = Path(root).resolve(strict=True)
+        self.kind = kind
+        self.payload = record["payload"]
+        self.identity = (expected_head, expected_tree)
+        self.epoch = expected_epoch
+        check(self.payload.get("epoch") == expected_epoch,
+              "GITLESS_CONTROLLER_EPOCH_MISMATCH")
+        inspect_a05_gitless_bytes_unsigned(
+            self.root, self.payload,
+            expected_head=expected_head, expected_tree=expected_tree,
+            kind=kind, expected_epoch=expected_epoch)
+        self.allowed = {e["path"]: e for e in self.payload["files"]}
+
+    def read_pinned(self, relative: str, *, current_epoch: int) -> bytes:
+        check(current_epoch == self.epoch and
+              type(relative) is str and relative in self.allowed,
+              "SOURCE_CONTROLLER_EPOCH_OR_SCOPE_REVOKED")
+        now = int(dt.datetime.now(dt.timezone.utc).timestamp())
+        check(now < self.payload["expires_at"],
+              "SOURCE_CONTROLLER_READER_LEASE_EXPIRED")
+        raw = _f03_nofollow_bytes(self.root, relative)
+        pinned = self.allowed[relative]
+        check(sha(raw) == pinned["sha256"] and
+              _f03_git_blob_oid(raw) == pinned["git_blob_oid"],
+              "GITLESS_AUTHENTICATED_BLOB_CHANGED")
+        return raw
+
+
 class LocalFirstPartySourceReader:
     """Standalone candidate; caller's identity is not an IdP credential.
 
@@ -64,11 +298,18 @@ class LocalFirstPartySourceReader:
     """
 
     def __init__(self, repo: Path, registry: Path | None = None,
-                 revocation_fence: Path | None = None):
+                 revocation_fence: Path | None = None,
+                 gitless_reader: F03ExternalGitlessByteReader | None = None):
         self.repo = Path(repo).resolve(strict=True)
         self.registry = Path(registry) if registry else None
         self.fence = Path(revocation_fence) if revocation_fence else None
         self.uid = os.geteuid()
+        check(gitless_reader is None or (
+              isinstance(gitless_reader, F03ExternalGitlessByteReader)
+              and gitless_reader.kind == "local" and
+              gitless_reader.root == self.repo),
+              "SOURCE_CONTROLLER_READER_NOT_ADMITTED")
+        self.gitless_reader = gitless_reader
 
     def _read_private_json(self, path: Path | None) -> tuple[dict, str]:
         check(path is not None, "MISSING_LOCAL_RIGHTS_REGISTRY")
@@ -121,8 +362,12 @@ class LocalFirstPartySourceReader:
         check(lease["revision"] == BASE_H02, "STALE_SOURCE_REVISION")
         return lease, lease_digest, fence["minimum_epoch"]
 
-    def _git_base_bytes(self, source_id: str) -> bytes:
+    def _git_base_bytes(self, source_id: str, *, epoch: int) -> bytes:
         check(source_id in ALLOWED_SOURCES, "SOURCE_NOT_ALLOWLISTED")
+        if self.gitless_reader is not None:
+            return self.gitless_reader.read_pinned(source_id, current_epoch=epoch)
+        check((self.repo / ".git").exists(),
+              "SOURCE_CONTROLLER_READER_NOT_ADMITTED")
         r = subprocess.run(
             ["git", "-C", str(self.repo), "cat-file", "blob",
              BASE_H02 + ":" + source_id],
@@ -159,7 +404,7 @@ class LocalFirstPartySourceReader:
             check(type(now) is int, "INVALID_TIME")
             lease, before, epoch = self._snapshot(
                 tenant=tenant, principal=principal, source_id=source_id, now=now)
-            tracked = self._git_base_bytes(source_id)
+            tracked = self._git_base_bytes(source_id, epoch=epoch)
             check(sha(tracked) == lease["source_sha256"], "STALE_METADATA")
             disk = self._disk_source_bytes(source_id)
             check(disk == tracked, "DISK_SOURCE_VERSION_DRIFT")
@@ -309,8 +554,15 @@ class A05OwnerCorpusAdmission:
 
     def __init__(self, repo: Path, *, fence: Path | None = None,
                  source_root: Path | None = None,
-                 isolated_test_copy: bool = False):
+                 isolated_test_copy: bool = False,
+                 gitless_reader: F03ExternalGitlessByteReader | None = None):
         self.repo = Path(repo).resolve(strict=True)
+        check(gitless_reader is None or (
+              isinstance(gitless_reader, F03ExternalGitlessByteReader)
+              and gitless_reader.kind == "a05" and
+              gitless_reader.root == self.repo),
+              "SOURCE_CONTROLLER_READER_NOT_ADMITTED")
+        self.gitless_reader = gitless_reader
         self.source_root = (Path(source_root) if source_root is not None
                             else self.repo / A05_SOURCE).resolve(strict=True)
         self.fence = Path(fence) if fence else None
@@ -334,6 +586,11 @@ class A05OwnerCorpusAdmission:
         # provenance. Avoid spawning ~27 identical git processes per query.
         # Never memoize live file bytes or mutable revocation authority here.
         with self._pinned_blob_lock:
+            if self.gitless_reader is not None:
+                return self.gitless_reader.read_pinned(
+                    relative, current_epoch=self.gitless_reader.epoch)
+            check((self.repo / ".git").exists(),
+                  "SOURCE_CONTROLLER_READER_NOT_ADMITTED")
             if relative not in self._pinned_blob_cache:
                 result = subprocess.run(
                     ["git", "-C", str(self.repo), "cat-file", "blob",
@@ -454,6 +711,9 @@ class A05OwnerCorpusAdmission:
             type(rec["revoked_document_sha256"]) is list and
             all(type(x) is str and _HEX.fullmatch(x) for x in rec["revoked_document_sha256"]),
             "STALE_RESTORED_OR_INVALID_REVOCATION")
+        if self.gitless_reader is not None:
+            check(self.gitless_reader.epoch == rec["epoch"],
+                  "SOURCE_CONTROLLER_EPOCH_OR_SCOPE_REVOKED")
         return rec["epoch"], sha(raw), set(rec["revoked_document_sha256"])
 
     def source_retrieval(self, question: str, *, tenant: str, principal: str,
