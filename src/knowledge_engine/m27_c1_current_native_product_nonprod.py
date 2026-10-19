@@ -18,8 +18,13 @@ from pathlib import Path
 import re
 import secrets
 import stat
+import struct
 import subprocess
 import time
+import socket
+import socketserver
+from contextlib import contextmanager
+import m27_c1_gitless_source_proof as gitless
 
 import m27_h02_native_nonprod_consumer as h02
 import m27_f02_current_native_model_events as f02
@@ -59,22 +64,40 @@ def git_field(repo: Path, key: str) -> str:
     return result.stdout.strip()
 
 
-def source_vector(repo: Path, *, expected_head: str, expected_tree: str) -> dict:
+def source_vector(repo: Path, *, expected_head: str, expected_tree: str,
+                  signed_gitless_manifest: Path | None = None,
+                  gitless_public_root: Path | None = None) -> dict:
     """Exact commit and tree; dirty tracked/untracked source is NOT boot-eligible."""
     repo = Path(repo).resolve(strict=True)
     check(len(expected_head) == 40 and len(expected_tree) == 40,
           "UNPINNED_SOURCE_VECTOR")
-    head, tree = git_field(repo, "HEAD"), git_field(repo, "HEAD^{tree}")
-    check(head == expected_head and tree == expected_tree, "SOURCE_VERSION_MISMATCH")
-    status = subprocess.run(["git", "-C", str(repo), "status", "--porcelain",
-                             "--untracked-files=all"],
-                            capture_output=True, text=True, check=True, timeout=15)
-    # Runtime may only run from a clean exact checkout; journal must be OUTSIDE it.
-    check(not status.stdout.strip(), "DIRTY_CURRENT_SOURCE_NOT_FROZEN")
+    if not (repo / ".git").exists():
+        check(signed_gitless_manifest is not None
+              and gitless_public_root is not None,
+              "GITLESS_SIGNED_SOURCE_MANIFEST_REQUIRED")
+        # An unsigned JSON manifest is NEVER a release/root replacement.
+        raw = Path(signed_gitless_manifest).read_bytes()
+        check(len(raw) <= 250000, "GITLESS_MANIFEST_OVERSIZED")
+        attestation = gitless.verify_signed_gitless_bundle(
+            repo, json.loads(raw), expected_head=expected_head,
+            expected_tree=expected_tree, public_key_path=gitless_public_root)
+        check(attestation["signed_source_admitted"] is True,
+              "GITLESS_SOURCE_NOT_INDEPENDENTLY_ATTESTED")
+        head, tree = expected_head, expected_tree
+        parent = None  # Future signed manifest must bind a parent if required.
+    else:
+        head, tree = git_field(repo, "HEAD"), git_field(repo, "HEAD^{tree}")
+        check(head == expected_head and tree == expected_tree,
+              "SOURCE_VERSION_MISMATCH")
+        status = subprocess.run(["git", "-C", str(repo), "status", "--porcelain",
+                                 "--untracked-files=all"],
+                                capture_output=True, text=True, check=True, timeout=15)
+        check(not status.stdout.strip(), "DIRTY_CURRENT_SOURCE_NOT_FROZEN")
+        parent = git_field(repo, "HEAD^")
     task = h02.local_task("PolicyEngine", "os-uid:" + str(os.geteuid()))
     return {
         "abi": ABI, "head": head, "tree": tree,
-        "parent": git_field(repo, "HEAD^"),
+        "parent": parent,
         # Actual instance SHA exists only when H02 admits that particular task.
         # Pre-boot timestamp snapshot was NOT an ABI freeze and caused 403s.
         "task_contract_sha256": None,
@@ -132,9 +155,13 @@ def read_client_capability(path: Path) -> bytes:
 
 class Candidate:
     def __init__(self, *, repo: Path, fence: Path, journal: Path,
-                 token_file: Path, expected_head: str, expected_tree: str):
-        self.version = source_vector(repo, expected_head=expected_head,
-                                     expected_tree=expected_tree)
+                 token_file: Path, expected_head: str, expected_tree: str,
+                 signed_gitless_manifest: Path | None = None,
+                 gitless_public_root: Path | None = None):
+        self.version = source_vector(
+            repo, expected_head=expected_head, expected_tree=expected_tree,
+            signed_gitless_manifest=signed_gitless_manifest,
+            gitless_public_root=gitless_public_root)
         self.token = read_client_capability(token_file)
         self.reader = h02.Consumer(repo=repo, fence=fence, journal=journal)
         self.native_live = native_live.NativeLiveProduct(
@@ -208,6 +235,27 @@ class Candidate:
         return result
 
 
+class ThreadedC1UnixHTTPServer(socketserver.ThreadingMixIn,
+                               socketserver.UnixStreamServer):
+    daemon_threads = True
+    allow_reuse_address = False
+
+
+def native_unix_peer_uid(connection) -> int | None:
+    """Kernel peer identity, never a caller-provided header."""
+    try:
+        if hasattr(connection, "getpeereid"):
+            return connection.getpeereid()[0]
+        if hasattr(socket, "SO_PEERCRED"):
+            raw = connection.getsockopt(socket.SOL_SOCKET, socket.SO_PEERCRED,
+                                        struct.calcsize("3i"))
+            _pid, uid, _gid = struct.unpack("3i", raw)
+            return uid
+    except (OSError, AttributeError, struct.error):
+        return None
+    return None
+
+
 class Handler(BaseHTTPRequestHandler):
     candidate: Candidate
 
@@ -225,11 +273,18 @@ class Handler(BaseHTTPRequestHandler):
 
     def authorized(self) -> bool:
         host = self.headers.get("Host", "")
-        return (self.client_address[0] == "127.0.0.1"
-                and host in ("127.0.0.1", "127.0.0.1:" + str(self.server.server_port))
-                and hmac.compare_digest(
-                    self.headers.get("X-C1-Local-Capability", "").encode(),
-                    self.candidate.token))
+        if isinstance(self.server, ThreadedC1UnixHTTPServer):
+            # Same native OS namespace, kernel-enforced UID plus 0600 bearer.
+            # This is strictly LOCAL identity, NOT an independent Product IdP.
+            net_ok = (host == "c1-unix.local" and
+                      native_unix_peer_uid(self.connection) == os.geteuid())
+        else:
+            net_ok = (self.client_address[0] == "127.0.0.1" and
+                      host in ("127.0.0.1",
+                               "127.0.0.1:" + str(self.server.server_port)))
+        return (net_ok and hmac.compare_digest(
+            self.headers.get("X-C1-Local-Capability", "").encode(),
+            self.candidate.token))
 
     def do_GET(self):
         if not self.authorized():
@@ -324,21 +379,50 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def serve(*, repo: Path, fence: Path, journal: Path, token_file: Path,
-          expected_head: str, expected_tree: str, port: int, ready_file: Path):
-    candidate = Candidate(repo=repo, fence=fence, journal=journal,
-                          token_file=token_file, expected_head=expected_head,
-                          expected_tree=expected_tree)
+          expected_head: str, expected_tree: str, port: int, ready_file: Path,
+          unix_socket: Path | None = None,
+          signed_gitless_manifest: Path | None = None,
+          gitless_public_root: Path | None = None):
+    candidate = Candidate(
+        repo=repo, fence=fence, journal=journal,
+        token_file=token_file, expected_head=expected_head,
+        expected_tree=expected_tree,
+        signed_gitless_manifest=signed_gitless_manifest,
+        gitless_public_root=gitless_public_root)
     class NativeHandler(Handler):
         pass
     NativeHandler.candidate = candidate
-    server = ThreadingHTTPServer(("127.0.0.1", port), NativeHandler)
+    if unix_socket is not None:
+        unix_socket = Path(unix_socket)
+        parent = unix_socket.parent
+        pstat = parent.lstat()
+        check(stat.S_ISDIR(pstat.st_mode) and not parent.is_symlink()
+              and stat.S_IMODE(pstat.st_mode) == 0o700
+              and pstat.st_uid == os.geteuid()
+              and not unix_socket.exists() and not unix_socket.is_symlink(),
+              "UNIX_SOCKET_PARENT_OR_PREEXISTING_PATH_DENIED")
+        previous_umask = os.umask(0o177)
+        try:
+            server = ThreadedC1UnixHTTPServer(str(unix_socket), NativeHandler)
+        finally:
+            os.umask(previous_umask)
+        check(stat.S_IMODE(unix_socket.lstat().st_mode) == 0o600,
+              "UNIX_SOCKET_FILE_PERMISSIONS_DENIED")
+        endpoint = {"unix_socket": str(unix_socket),
+                    "peer_identity": "KERNEL_SAME_UID_LOCAL_ONLY_NOT_IDP"}
+    else:
+        server = ThreadingHTTPServer(("127.0.0.1", port), NativeHandler)
+        endpoint = {"port": server.server_port,
+                    "peer_identity": "OS_LOOPBACK_CAPABILITY_NOT_IDP"}
     try:
-        ready_file.write_text(json.dumps({"port": server.server_port,
-            "pid": os.getpid(), "source_head": expected_head,
-            "abi": ABI, "product_admitted": False}))
+        ready_file.write_text(json.dumps({
+            **endpoint, "pid": os.getpid(), "source_head": expected_head,
+            "abi": ABI, "product_admitted": False, "cache": "OFF"}))
         server.serve_forever(poll_interval=0.1)
     finally:
         server.server_close()
+        if unix_socket is not None and unix_socket.is_socket():
+            unix_socket.unlink()
 
 
 def main():
@@ -347,11 +431,19 @@ def main():
                 "expected-tree", "ready-file"):
         parser.add_argument("--" + arg, required=True)
     parser.add_argument("--port", type=int, default=0)
+    parser.add_argument("--unix-socket")
+    parser.add_argument("--signed-gitless-manifest")
+    parser.add_argument("--gitless-public-root")
     args = parser.parse_args()
     serve(repo=Path(args.repo), fence=Path(args.fence), journal=Path(args.journal),
           token_file=Path(args.token_file), expected_head=args.expected_head,
           expected_tree=args.expected_tree, port=args.port,
-          ready_file=Path(args.ready_file))
+          ready_file=Path(args.ready_file),
+          unix_socket=Path(args.unix_socket) if args.unix_socket else None,
+          signed_gitless_manifest=Path(args.signed_gitless_manifest)
+              if args.signed_gitless_manifest else None,
+          gitless_public_root=Path(args.gitless_public_root)
+              if args.gitless_public_root else None)
 
 
 if __name__ == "__main__":
