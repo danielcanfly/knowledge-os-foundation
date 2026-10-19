@@ -151,7 +151,8 @@ def inspect_a05_gitless_bytes_unsigned(root: Path, payload: dict,
           payload["a05_revision"] == A05_REVISION and
           payload["tenant"] == "owner-internal" and
           payload["principal"] == "os-uid:" + str(os.geteuid()) and
-          payload["rights_scope"] == A05_LOCAL_SCOPE and
+          payload["rights_scope"] == (
+              A05_LOCAL_SCOPE if kind == "a05" else SCOPE) and
           type(payload["source_controller"]) is str and
           len(payload["source_controller"]) >= 3 and
           type(payload["epoch"]) is int and payload["epoch"] >= 1 and

@@ -234,5 +234,52 @@ class RealGitlessA05Test(unittest.TestCase):
         self.assertFalse(f03.CACHE_ENABLED)
 
 
+    def test_09_legacy_local_source_gitless_path_also_gated(self):
+        # F03's second historical git cat-file line is a distinct local-lease
+        # reader. It can structurally inspect the real two BASE_H02 documents
+        # but cannot self-issue a Source Controller credential.
+        docs={}
+        for rel in sorted(f03.ALLOWED_SOURCES):
+            p=self.stage/rel
+            p.parent.mkdir(parents=True,exist_ok=True)
+            raw=(REPO/rel).read_bytes()
+            pinned=subprocess.run([
+                "git","-C",str(REPO),"cat-file","blob",f03.BASE_H02+":"+rel],
+                capture_output=True,check=True).stdout
+            self.assertEqual(raw,pinned)
+            p.write_bytes(raw)
+            p.chmod(0o644)
+            docs[rel]={"path":rel,"sha256":f03.sha(raw),
+                       "git_blob_oid":f03._f03_git_blob_oid(raw),
+                       "git_mode":"100644"}
+        packet={**self.payload,"kind":"local",
+                "rights_scope":f03.SCOPE,"files":list(docs.values())}
+        checked=f03.inspect_a05_gitless_bytes_unsigned(
+            self.stage,packet,expected_head=self.head,
+            expected_tree=self.tree,kind="local",expected_epoch=1)
+        self.assertEqual(checked["verified_immutable_files"],2)
+        self.assertFalse(checked["source_authorized"])
+        doc=sorted(f03.ALLOWED_SOURCES)[0]
+        registry=self.root/"local_lease.json"
+        local_fence=self.root/"local_revocation_fence.json"
+        now=int(time.time())
+        lease={"scope":f03.SCOPE,"tenant":"owner-nonprod",
+               "principal":"os-uid:"+str(os.geteuid()),
+               "source_id":doc,"source_sha256":f03.sha((self.stage/doc).read_bytes()),
+               "revision":f03.BASE_H02,"epoch":1,
+               "expires_at":now+900,"retention_seconds":60,
+               "status":"ACTIVE","rights_class":"owner-local-repo-read"}
+        registry.write_text(json.dumps(lease))
+        registry.chmod(0o600)
+        local_fence.write_text(json.dumps({"source_id":doc,"minimum_epoch":1}))
+        local_fence.chmod(0o600)
+        reader=f03.LocalFirstPartySourceReader(self.stage,registry,local_fence)
+        receipt=reader.read_source(doc,tenant="owner-nonprod",
+              principal="os-uid:"+str(os.geteuid()),now=now)
+        self.assertEqual(receipt["decision"],
+                         "DENY_SOURCE_CONTROLLER_READER_NOT_ADMITTED")
+        self.assertFalse(receipt["product_admitted"])
+
+
 if __name__=="__main__":
     unittest.main()
