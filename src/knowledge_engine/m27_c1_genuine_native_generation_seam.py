@@ -674,7 +674,8 @@ class NativeLiveProduct:
                     url=grant["url"], model=grant["model"],
                     token_path=Path(grant["token_file"]),
                     private_file=private_file,
-                    max_wall_seconds=MAX_WALL_SECONDS,
+                    max_wall_seconds=min(MAX_WALL_SECONDS,
+                                         body_orig["deadline_seconds"]),
                     audit=lambda record: self.journal.record(
                         {"event":"external_provider_original_sse_provenance",
                          "request_id":pending["request_id"],
