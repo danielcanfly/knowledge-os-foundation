@@ -80,16 +80,35 @@ try:
         if not response.headers.get('content-type','').lower().startswith('text/event-stream'):
             emit('error',category='CLOUDFLARE_STREAM_PROTOCOL_MISMATCH')
             sys.exit(0)
-        got_model=False;done=False;deltas=0;finish=False
+        got_model=False;done=False;deltas=0;finish=False;usage_seen=False
+        total_deadline=time.monotonic()+30
         for i,line in enumerate(response.iter_lines()):
+            if time.monotonic()>=total_deadline:
+                done=False
+                emit('error',category='CLOUDFLARE_STREAM_TOTAL_DEADLINE')
+                break
             if i>256:
+                done=False
                 emit('error',category='CLOUDFLARE_EVENT_BUDGET')
                 break
-            if not line.startswith('data:'):continue
+            if done:
+                if line.strip() and not line.lstrip().startswith(':'):
+                    done=False
+                    emit('error',category='CLOUDFLARE_FRAME_AFTER_DONE_DENIED')
+                    break
+                continue
+            if not line.startswith('data:'):
+                if line.strip() and not line.lstrip().startswith(':'):
+                    emit('error',category='CLOUDFLARE_UNKNOWN_SSE_METADATA')
+                    break
+                continue
             raw=line[5:].strip()
             if raw=='[DONE]':
+                if not finish or not got_model or deltas==0:
+                    emit('error',category='CLOUDFLARE_PREMATURE_DONE_DENIED')
+                    break
                 done=True
-                break
+                continue
             if len(raw)>32768:
                 emit('error',category='CLOUDFLARE_WIRE_TOO_LONG')
                 break
@@ -107,6 +126,22 @@ try:
                         emit('model_identity',model=model,model_match=True)
                         got_model=True
                 choices=part.get('choices')
+                if finish:
+                    # One standards-compliant, nonanswer usage-only SSE chunk
+                    # can occur after stop and before DONE, never new text.
+                    safe_fields={'id','object','created','model','choices',
+                                 'usage','system_fingerprint'}
+                    usage=part.get('usage')
+                    if (usage_seen or choices!=[] or
+                        not set(part).issubset(safe_fields) or
+                        not isinstance(usage,dict) or
+                        not all(type(usage.get(k)) is int and usage[k]>=0
+                          for k in ('prompt_tokens','completion_tokens',
+                                    'total_tokens'))):
+                        emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
+                        break
+                    usage_seen=True
+                    continue
                 if not isinstance(choices,list) or len(choices)!=1:
                     emit('error',category='CLOUDFLARE_CHOICES_INVALID')
                     break
@@ -121,15 +156,23 @@ try:
                         emit('error',category='CLOUDFLARE_MODEL_NOT_ATTESTED')
                         break
                     deltas+=1;emit('delta',text=content,chunk_index=deltas)
-                if choice.get('finish_reason')=='stop':
+                reason=choice.get('finish_reason')
+                if reason is not None:
+                    if reason!='stop':
+                        emit('error',category='CLOUDFLARE_NONSTOP_FINISH_DENIED')
+                        break
                     finish=True
             except (TypeError,ValueError,KeyError):
                 emit('error',category='CLOUDFLARE_INVALID_SSE_JSON')
                 break
         else:
-            emit('error',category='CLOUDFLARE_NO_DONE_FRAME')
+            if not done:
+                emit('error',category='CLOUDFLARE_NO_DONE_FRAME')
         emit('stream_diagnostic',model_attested=got_model,done_frame=done,
              finish_stop=finish,delta_count=deltas)
+        if time.monotonic()>=total_deadline:
+            done=False
+            emit('error',category='CLOUDFLARE_STREAM_TOTAL_DEADLINE')
         if done and got_model and finish and deltas:
             emit('provider_done')
             emit('stream_end',provider_done=True,delta_count=deltas)

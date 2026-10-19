@@ -569,7 +569,16 @@ def main():
           "--socket",str(socketpath),"--token",str(apath),
           "--evidence",str(evidence)]
         p=subprocess.run(command,capture_output=True,text=True,timeout=80,check=False)
-        outcome={"parent_native_server_pid":os.getpid(),
+        # Bind this actual owner-firstparty run to the exact clean source.
+        source_head=c1.git_field(repo,"HEAD")
+        source_tree=c1.git_field(repo,"HEAD^{tree}")
+        source_clean=(subprocess.run(["git","-C",str(repo),
+            "status","--porcelain"],capture_output=True,text=True,
+            check=True).stdout.strip()=="")
+        outcome={"current_source_head":source_head,
+          "current_source_tree":source_tree,
+          "source_clean_at_e2e_execution":source_clean,
+          "parent_native_server_pid":os.getpid(),
           "client_process_exit":p.returncode,
           "client_stdout_safe":p.stdout[:900],
           "source_prepared":server.prepared,
@@ -585,9 +594,32 @@ def main():
         record=evidence/"C1_REAL_MINIMAX_DEV_RUN_RESULT.json"
         record.write_text(json.dumps(outcome,indent=2,sort_keys=True))
         os.chmod(record,0o600)
+        # Separate owner-firstparty Product-parity acceptance from the
+        # stronger optional independent-signed formal Product ABI. Genuine
+        # firstparty model/source/physical Client evidence, not fixture.
+        parity_result={"status":"C1_PARITY_EVIDENCE_NOT_QUALIFIED",
+                       "formal_independently_signed_product_pass":False}
+        if args.provider_mode=="m26-parity-direct":
+            import m27_c1_production_parity_verifier as parity_check
+            try:
+                parity_result=parity_check.evaluate(evidence,
+                    head=source_head,tree=source_tree)
+            except (parity_check.Rejected, ValueError, KeyError,
+                    OSError, TypeError) as error:
+                parity_result={"status":"C1_M26_PARITY_FAIL_CLOSED",
+                    "safe_reason":str(error)[:110]
+                        if isinstance(error,parity_check.Rejected)
+                        else "UNTRUSTED_EVIDENCE_OR_IO",
+                    "formal_independently_signed_product_pass":False}
+            parity_file=evidence/"C1_CURRENT_PRODUCTION_PARITY_ADMISSION.json"
+            parity_file.write_text(json.dumps(parity_result,sort_keys=True,
+                                               indent=2))
+            os.chmod(parity_file,0o600)
         print(json.dumps({"native_server_pid":os.getpid(),"client_exit":p.returncode,
           "real_provider_calls":server.provider_calls,"provider_done":server.done,
           "native_acks":len(server.acked),"product_pass":False,
+          "m26_owner_firstparty_parity_status":parity_result["status"],
+          "formal_independently_signed_product_pass":False,
           "evidence_file":str(record)}))
     finally:
         server.shutdown();server.server_close()
