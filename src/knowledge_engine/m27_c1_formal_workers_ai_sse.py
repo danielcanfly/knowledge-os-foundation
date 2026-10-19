@@ -68,7 +68,7 @@ def decode_sse(lines:Iterable[bytes], *,
         return left
 
     total=0;events=0;deltas=0
-    attested=False;finished=False;done=False
+    attested=False;finished=False;done=False;usage_seen=False
     terminal_raw_sha=None;terminal_raw_length=None;terminal_event_number=None
     iterator=iter(lines)
     while True:
@@ -108,7 +108,6 @@ def decode_sse(lines:Iterable[bytes], *,
             terminal_event_number=events
             done=True
             continue  # Do NOT claim final provider_done until tail checked.
-        require(not finished and not done, "C1_SSE_FRAME_AFTER_FINISH")
         try: part=json.loads(data.decode("utf-8"))
         except (UnicodeError,ValueError) as ex:
             raise WireRejected("C1_SSE_INVALID_JSON") from ex
@@ -119,6 +118,31 @@ def decode_sse(lines:Iterable[bytes], *,
                     "C1_SSE_PROVIDER_MODEL_MISMATCH")
             attested=True
         choices=part.get("choices")
+        if finished:
+            # OpenAI-compatible SSE permits exactly one usage-only final
+            # chunk AFTER finish_reason=stop and BEFORE [DONE]. Such a chunk
+            # has empty choices, no delta/content and nonnegative token
+            # counters; it is never model text, a second finish, or terminal.
+            require(not usage_seen and type(choices) is list and
+                    choices==[], "C1_SSE_POSTFINISH_TEXT_OR_DUPLICATE_DENIED")
+            require(set(part).issubset({
+                    "id","object","created","model","choices","usage",
+                    "system_fingerprint"}), "C1_SSE_POSTFINISH_EXTRA_KEYS_DENIED")
+            usage=part.get("usage")
+            require(type(usage) is dict and
+                    all(type(usage.get(k)) is int and usage[k]>=0
+                        for k in ("prompt_tokens","completion_tokens",
+                                  "total_tokens")) and
+                    usage["total_tokens"]>=usage["prompt_tokens"] and
+                    usage["total_tokens"]>=usage["completion_tokens"],
+                    "C1_SSE_POSTFINISH_USAGE_INVALID")
+            usage_seen=True
+            audit({"origin":"CLOUDFLARE_ORIGINAL_SSE_WIRE",
+                   "sequence":events,
+                   "upstream_raw_line_sha256":upstream_sha,
+                   "upstream_raw_bytes":len(raw),
+                   "meaning":"NONANSWER_USAGE_METADATA_ONLY"})
+            continue
         require(type(choices) is list and len(choices)==1 and
                 type(choices[0]) is dict, "C1_SSE_CHOICES_INVALID")
         choice=choices[0]
