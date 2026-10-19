@@ -143,6 +143,16 @@ class C1GitlessUnix(unittest.TestCase):
             proof.inspect_exact_bundle(bundle,m,expected_head=self.head,
                                        expected_tree=self.tree)
 
+    def test_07_current_source_abi_never_promotes_unsigned_gitless_or_os_uid_idp(self):
+        result=c1.source_vector(ROOT,expected_head=self.head,
+                                expected_tree=self.tree)
+        self.assertEqual(result["gitless_proof_abi"],proof.ABI)
+        self.assertEqual(result["gitless_source_signer"],"NOT_ADMITTED")
+        self.assertEqual(result["independent_product_client_idp"],"NOT_QUALIFIED")
+        self.assertEqual(result["generation"],"NOT_RUN")
+        self.assertEqual(result["cache"],"OFF")
+        self.assertFalse(result["product_pass"])
+
     def server(self):
         ready=self.dir/"ready.json"
         args=[sys.executable,
