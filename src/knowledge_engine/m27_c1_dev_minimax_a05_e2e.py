@@ -548,6 +548,9 @@ def main():
          "first_generated_text_ms":None,
          "formal_product_pass":False},sort_keys=True))
         return
+    # All C1 source/task journals must be created owner-private from first
+    # byte, including NativeLiveProduct.prepare before the UNIX server binds.
+    os.umask(0o077)
     repo=Path(args.repo).resolve();fence=Path(args.fence)
     evidence=Path(args.evidence).resolve();evidence.mkdir(parents=True,exist_ok=True)
     os.chmod(evidence,0o700)

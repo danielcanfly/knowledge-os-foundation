@@ -84,4 +84,24 @@ class WireDoesNotReuseOldUnsafeEnd(unittest.TestCase):
         x=simulate(good()+[": harmless keepalive"]*260)
         self.assertNotIn("provider_done",[y["event"] for y in x])
         self.assertTrue(any(y.get("category")=="CLOUDFLARE_EVENT_BUDGET" for y in x))
+    def test_12_one_empty_stop_metadata_frame_after_finish(self):
+        x=simulate(good()[:-1]+[frame("",finish="stop")]+good()[-1:])
+        self.assertEqual(x[-1]["event"],"stream_end")
+        self.assertEqual(sum(y["event"]=="delta" for y in x),2)
+        self.assertFalse(any(y["event"]=="error" for y in x))
+    def test_13_empty_control_plus_usage_once_but_never_new_text(self):
+        x=simulate(good()[:-1]+[frame("",finish="stop"),usage()]+good()[-1:])
+        self.assertEqual(x[-1]["event"],"stream_end")
+        self.assertNotIn("LATE",json.dumps(x))
+    def test_14_two_empty_control_frames_deny(self):
+        x=simulate(good()[:-1]+[frame("",finish="stop"),frame("",finish="stop")]+good()[-1:])
+        self.assertNotIn("provider_done",[y["event"] for y in x])
+    def test_15_nonempty_postfinish_delta_even_if_stop_is_rejected(self):
+        x=simulate(good()[:-1]+[frame("LATE FORGED CLAIM",finish="stop")]+good()[-1:])
+        self.assertNotIn("provider_done",[y["event"] for y in x])
+    def test_16_other_role_or_malformed_terminal_control_is_rejected(self):
+        tail="data: "+json.dumps({"model":MODEL,"choices":[{
+          "delta":{"role":"system"},"finish_reason":"stop","index":0}]})
+        x=simulate(good()[:-1]+[tail]+good()[-1:])
+        self.assertNotIn("provider_done",[y["event"] for y in x])
 if __name__=="__main__":unittest.main()

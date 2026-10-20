@@ -80,7 +80,7 @@ try:
         if not response.headers.get('content-type','').lower().startswith('text/event-stream'):
             emit('error',category='CLOUDFLARE_STREAM_PROTOCOL_MISMATCH')
             sys.exit(0)
-        got_model=False;done=False;deltas=0;finish=False;usage_seen=False
+        got_model=False;done=False;deltas=0;finish=False;usage_seen=False;empty_tail_seen=False
         total_deadline=time.monotonic()+30
         for i,line in enumerate(response.iter_lines()):
             if time.monotonic()>=total_deadline:
@@ -127,20 +127,46 @@ try:
                         got_model=True
                 choices=part.get('choices')
                 if finish:
-                    # One standards-compliant, nonanswer usage-only SSE chunk
-                    # can occur after stop and before DONE, never new text.
+                    # Cloudflare/OpenAI-compatible providers may emit an
+                    # additional nonanswer control chunk before the single
+                    # final [DONE]. Never admit ANY new model text after stop.
+                    # At most one usage chunk AND one empty control chunk.
                     safe_fields={'id','object','created','model','choices',
                                  'usage','system_fingerprint'}
-                    usage=part.get('usage')
-                    if (usage_seen or choices!=[] or
-                        not set(part).issubset(safe_fields) or
-                        not isinstance(usage,dict) or
-                        not all(type(usage.get(k)) is int and usage[k]>=0
-                          for k in ('prompt_tokens','completion_tokens',
-                                    'total_tokens'))):
+                    if not set(part).issubset(safe_fields):
                         emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
                         break
-                    usage_seen=True
+                    usage=part.get('usage')
+                    if choices==[]:
+                        if (usage_seen or not isinstance(usage,dict) or
+                            not all(type(usage.get(k)) is int and usage[k]>=0
+                              for k in ('prompt_tokens','completion_tokens',
+                                        'total_tokens')) or
+                            usage['total_tokens'] < max(usage['prompt_tokens'],
+                                                         usage['completion_tokens'])):
+                            emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
+                            break
+                        usage_seen=True
+                        continue
+                    if (empty_tail_seen or not isinstance(choices,list) or
+                        len(choices)!=1 or not isinstance(choices[0],dict) or
+                        usage not in (None,{}) or
+                        not set(choices[0]).issubset(
+                            {'index','delta','finish_reason','logprobs'})):
+                        emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
+                        break
+                    tail=choices[0]
+                    chunk=tail.get('delta')
+                    if (not isinstance(chunk,dict) or
+                        not set(chunk).issubset({'content','role'}) or
+                        chunk.get('content') not in (None,'') or
+                        chunk.get('role','assistant')!='assistant' or
+                        tail.get('finish_reason') not in (None,'stop') or
+                        tail.get('index',0)!=0 or
+                        tail.get('logprobs') not in (None,{})):
+                        emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
+                        break
+                    empty_tail_seen=True
                     continue
                 if not isinstance(choices,list) or len(choices)!=1:
                     emit('error',category='CLOUDFLARE_CHOICES_INVALID')
