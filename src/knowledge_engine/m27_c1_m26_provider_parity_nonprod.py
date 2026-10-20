@@ -80,7 +80,7 @@ try:
         if not response.headers.get('content-type','').lower().startswith('text/event-stream'):
             emit('error',category='CLOUDFLARE_STREAM_PROTOCOL_MISMATCH')
             sys.exit(0)
-        got_model=False;done=False;deltas=0;finish=False;usage_seen=False;empty_tail_seen=False
+        got_model=False;done=False;deltas=0;finish=False;usage_seen=False;empty_tail_seen=False;native_tail_seen=False
         total_deadline=time.monotonic()+30
         for i,line in enumerate(response.iter_lines()):
             if time.monotonic()>=total_deadline:
@@ -127,10 +127,23 @@ try:
                         got_model=True
                 choices=part.get('choices')
                 if finish:
-                    # Cloudflare/OpenAI-compatible providers may emit an
-                    # additional nonanswer control chunk before the single
-                    # final [DONE]. Never admit ANY new model text after stop.
-                    # At most one usage chunk AND one empty control chunk.
+                    # Some genuine Cloudflare Workers AI streams end in a
+                    # native (non-OpenAI) empty response + cumulative usage
+                    # frame, after stop and before [DONE]. This is metadata,
+                    # NOT a second answer or accepted model text.
+                    if 'response' in part:
+                        if (native_tail_seen or usage_seen or empty_tail_seen or
+                            'choices' in part or
+                            not set(part).issubset({'response','usage',
+                              'model','id','object','created','system_fingerprint'})
+                            or part.get('response')!='' or
+                            not isinstance(part.get('usage'),dict)):
+                            emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
+                            break
+                        native_tail_seen=True
+                        continue
+                    # OpenAI-compatible providers may also emit bounded
+                    # nonanswer control frames, never any late material text.
                     safe_fields={'id','object','created','model','choices',
                                  'usage','system_fingerprint'}
                     if not set(part).issubset(safe_fields):

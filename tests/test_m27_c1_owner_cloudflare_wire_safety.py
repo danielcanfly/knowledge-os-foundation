@@ -21,6 +21,9 @@ def good():
 def usage():
     return "data: "+json.dumps({"model":MODEL,"choices":[],
       "usage":{"prompt_tokens":12,"completion_tokens":21,"total_tokens":33}})
+def native_tail(response="",usage_value=None):
+    if usage_value is None:usage_value={"prompt_tokens":12,"completion_tokens":21,"total_tokens":33}
+    return "data: "+json.dumps({"response":response,"usage":usage_value})
 def simulate(lines):
     class Response:
         status_code=200
@@ -103,5 +106,19 @@ class WireDoesNotReuseOldUnsafeEnd(unittest.TestCase):
         tail="data: "+json.dumps({"model":MODEL,"choices":[{
           "delta":{"role":"system"},"finish_reason":"stop","index":0}]})
         x=simulate(good()[:-1]+[tail]+good()[-1:])
+        self.assertNotIn("provider_done",[y["event"] for y in x])
+    def test_17_cloudflare_native_empty_response_usage_tail(self):
+        x=simulate(good()[:-1]+[native_tail()]+good()[-1:])
+        self.assertEqual(x[-1]["event"],"stream_end")
+        self.assertEqual(sum(y["event"]=="delta" for y in x),2)
+        self.assertEqual(sum(y["event"]=="provider_done" for y in x),1)
+    def test_18_native_nonempty_response_refused(self):
+        x=simulate(good()[:-1]+[native_tail("FORGED CLAIM")]+good()[-1:])
+        self.assertNotIn("provider_done",[y["event"] for y in x])
+    def test_19_two_native_tails_refused(self):
+        x=simulate(good()[:-1]+[native_tail(),native_tail()]+good()[-1:])
+        self.assertNotIn("provider_done",[y["event"] for y in x])
+    def test_20_native_tail_after_done_refused(self):
+        x=simulate(good()+[native_tail()])
         self.assertNotIn("provider_done",[y["event"] for y in x])
 if __name__=="__main__":unittest.main()
