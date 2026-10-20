@@ -80,7 +80,7 @@ try:
         if not response.headers.get('content-type','').lower().startswith('text/event-stream'):
             emit('error',category='CLOUDFLARE_STREAM_PROTOCOL_MISMATCH')
             sys.exit(0)
-        got_model=False;done=False;deltas=0;finish=False;usage_seen=False;empty_tail_seen=False;native_tail_seen=False
+        got_model=False;done=False;deltas=0;finish=False;usage_seen=False;empty_tail_seen=False;native_tail_seen=False;heartbeat_seen=False
         total_deadline=time.monotonic()+30
         for i,line in enumerate(response.iter_lines()):
             if time.monotonic()>=total_deadline:
@@ -151,6 +151,14 @@ try:
                         break
                     usage=part.get('usage')
                     if choices==[]:
+                        # Cloudflare may emit ONE empty heartbeat without
+                        # usage. It is not an answer or a terminal grant.
+                        if usage is None:
+                            if heartbeat_seen:
+                                emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
+                                break
+                            heartbeat_seen=True
+                            continue
                         if (usage_seen or not isinstance(usage,dict) or
                             not all(type(usage.get(k)) is int and usage[k]>=0
                               for k in ('prompt_tokens','completion_tokens',

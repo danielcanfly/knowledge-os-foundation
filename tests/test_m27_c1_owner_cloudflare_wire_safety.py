@@ -121,4 +121,13 @@ class WireDoesNotReuseOldUnsafeEnd(unittest.TestCase):
     def test_20_native_tail_after_done_refused(self):
         x=simulate(good()+[native_tail()])
         self.assertNotIn("provider_done",[y["event"] for y in x])
+    def test_21_single_empty_heartbeat_postfinish_only(self):
+        heartbeat="data: "+json.dumps({"choices":[]})
+        x=simulate(good()[:-1]+[heartbeat,native_tail()]+good()[-1:])
+        self.assertEqual(x[-1]["event"],"stream_end")
+        self.assertEqual(sum(y["event"]=="delta" for y in x),2)
+    def test_22_repeated_empty_heartbeat_denied(self):
+        heartbeat="data: "+json.dumps({"choices":[]})
+        x=simulate(good()[:-1]+[heartbeat,heartbeat]+good()[-1:])
+        self.assertNotIn("provider_done",[y["event"] for y in x])
 if __name__=="__main__":unittest.main()
