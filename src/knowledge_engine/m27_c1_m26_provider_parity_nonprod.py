@@ -81,6 +81,7 @@ try:
             emit('error',category='CLOUDFLARE_STREAM_PROTOCOL_MISMATCH')
             sys.exit(0)
         got_model=False;done=False;deltas=0;finish=False;usage_seen=False;empty_tail_seen=False;native_tail_seen=False;heartbeat_seen=False
+        assembled=''
         total_deadline=time.monotonic()+30
         for i,line in enumerate(response.iter_lines()):
             if time.monotonic()>=total_deadline:
@@ -136,7 +137,8 @@ try:
                             'choices' in part or
                             not set(part).issubset({'response','usage',
                               'model','id','object','created','system_fingerprint'})
-                            or part.get('response')!='' or
+                            or not isinstance(part.get('response'),str) or
+                            part['response'] not in ('',assembled) or
                             not isinstance(part.get('usage'),dict)):
                             emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
                             break
@@ -201,6 +203,10 @@ try:
                 if content:
                     if not got_model:
                         emit('error',category='CLOUDFLARE_MODEL_NOT_ATTESTED')
+                        break
+                    assembled+=content
+                    if len(assembled.encode('utf-8'))>8192:
+                        emit('error',category='CLOUDFLARE_ANSWER_LENGTH_BUDGET')
                         break
                     deltas+=1;emit('delta',text=content,chunk_index=deltas)
                 reason=choice.get('finish_reason')

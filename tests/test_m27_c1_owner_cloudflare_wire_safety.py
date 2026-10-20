@@ -130,4 +130,21 @@ class WireDoesNotReuseOldUnsafeEnd(unittest.TestCase):
         heartbeat="data: "+json.dumps({"choices":[]})
         x=simulate(good()[:-1]+[heartbeat,heartbeat]+good()[-1:])
         self.assertNotIn("provider_done",[y["event"] for y in x])
+    def test_23_exact_repeated_response_tail_is_nonanswer_metadata(self):
+        emitted="Verification is in the Execution & Governance Plane.\n"+"PolicyEngine decides deterministic enforcement."
+        x=simulate(good()[:-1]+[native_tail(emitted)]+good()[-1:])
+        self.assertEqual(x[-1]["event"],"stream_end")
+        self.assertEqual(sum(y["event"]=="delta" for y in x),2)
+    def test_24_modified_last_claim_is_rejected(self):
+        emitted="Verification is in the Execution & Governance Plane.\n"+"PolicyEngine decides NEW policy."
+        x=simulate(good()[:-1]+[native_tail(emitted)]+good()[-1:])
+        self.assertNotIn("provider_done",[y["event"] for y in x])
+    def test_25_duplicated_exact_repeated_response_is_rejected(self):
+        emitted="Verification is in the Execution & Governance Plane.\n"+"PolicyEngine decides deterministic enforcement."
+        x=simulate(good()[:-1]+[native_tail(emitted),native_tail(emitted)]+good()[-1:])
+        self.assertNotIn("provider_done",[y["event"] for y in x])
+    def test_26_repeated_response_without_done_is_rejected(self):
+        emitted="Verification is in the Execution & Governance Plane.\n"+"PolicyEngine decides deterministic enforcement."
+        x=simulate(good()[:-1]+[native_tail(emitted)])
+        self.assertNotIn("provider_done",[y["event"] for y in x])
 if __name__=="__main__":unittest.main()
