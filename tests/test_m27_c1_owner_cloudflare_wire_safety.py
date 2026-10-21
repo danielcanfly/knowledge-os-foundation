@@ -251,4 +251,51 @@ class WireDoesNotReuseOldUnsafeEnd(unittest.TestCase):
         self.assertNotIn("provider_done",[i["event"] for i in x])
         self.assertTrue(any(i.get("category")=="CLOUDFLARE_PREMATURE_DONE_DENIED"
                             for i in x))
+    def test_41_empty_reasoning_placeholder_after_stop_is_not_late_text(self):
+        tail={"model":MODEL,"choices":[{"index":0,
+              "delta":{"content":"","reasoning_content":None,"reasoning":""},
+              "finish_reason":"stop"}],
+              "usage":{"prompt_tokens":12,"completion_tokens":21,"total_tokens":33}}
+        x=simulate(good()[:-1]+["data: "+json.dumps(tail),"data: [DONE]"])
+        self.assertEqual(x[-1]["event"],"stream_end")
+        self.assertEqual(sum(i["event"]=="delta" for i in x),2)
+    def test_42_bounded_opaque_openai_obfuscation_is_metadata_only(self):
+        tail={"model":MODEL,"choices":[],
+              "usage":{"prompt_tokens":12,"completion_tokens":21,"total_tokens":33},
+              "obfuscation":"p9x6v3"}
+        x=simulate(good()[:-1]+["data: "+json.dumps(tail),"data: [DONE]"])
+        self.assertEqual(x[-1]["event"],"stream_end")
+        self.assertNotIn("p9x6v3",json.dumps(x))
+    def test_43_nonempty_reasoning_after_stop_must_failclosed_and_not_leak(self):
+        tail={"model":MODEL,"choices":[{"index":0,
+             "delta":{"content":"","reasoning_content":"SECRET PRIVATE CHAIN"},
+             "finish_reason":"stop"}]}
+        x=simulate(good()[:-1]+["data: "+json.dumps(tail),"data: [DONE]"])
+        self.assertNotIn("provider_done",[i["event"] for i in x])
+        self.assertTrue(any(i.get("category")=="CLOUDFLARE_POSTFINISH_DATA_DENIED" for i in x))
+        self.assertNotIn("SECRET PRIVATE CHAIN",json.dumps(x))
+    def test_44_nonstring_or_oversized_obfuscation_denied(self):
+        for pad in ({"payload":"FORGED"},None,"x"*513,"abc\nmalformed"):
+            with self.subTest(pad=type(pad).__name__):
+                tail={"model":MODEL,"choices":[],"obfuscation":pad,
+                     "usage":{"prompt_tokens":12,"completion_tokens":21,"total_tokens":33}}
+                x=simulate(good()[:-1]+["data: "+json.dumps(tail),"data: [DONE]"])
+                self.assertNotIn("provider_done",[i["event"] for i in x])
+    def test_45_unknown_extra_after_stop_still_denied(self):
+        tail={"model":MODEL,"choices":[],"untrusted_arbitrary":"UNKNOWN LATE ANSWER",
+              "usage":{"prompt_tokens":12,"completion_tokens":21,"total_tokens":33}}
+        x=simulate(good()[:-1]+["data: "+json.dumps(tail),"data: [DONE]"])
+        self.assertNotIn("provider_done",[i["event"] for i in x])
+        self.assertNotIn("UNKNOWN LATE ANSWER",json.dumps(x))
+    def test_46_late_tool_calls_still_denied(self):
+        tail={"model":MODEL,"choices":[{"index":0,"finish_reason":"stop",
+                "delta":{"content":"","tool_calls":[{"id":"forged"}]}}]}
+        x=simulate(good()[:-1]+["data: "+json.dumps(tail),"data: [DONE]"])
+        self.assertNotIn("provider_done",[i["event"] for i in x])
+    def test_47_bounded_metadata_cannot_substitute_done(self):
+        tail={"model":MODEL,"choices":[{"index":0,
+              "delta":{"content":"","reasoning_content":None},"finish_reason":"stop"}],
+              "obfuscation":"p9x6v3"}
+        x=simulate(good()[:-1]+["data: "+json.dumps(tail)])
+        self.assertNotIn("provider_done",[i["event"] for i in x])
 if __name__=="__main__":unittest.main()

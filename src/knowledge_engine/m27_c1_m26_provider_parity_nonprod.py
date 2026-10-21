@@ -47,7 +47,7 @@ def reject_postfinish(part,raw,got_model,finish,deltas):
     # prompt, reasoning, bearer token, or unknown field names.  This is
     # diagnostic only: the original malformed tail is STILL rejected.
     allowed_top={'model','choices','usage','response','id','object',
-                 'created','system_fingerprint'}
+                 'created','system_fingerprint','obfuscation'}
     choices=part.get('choices')
     choice=(choices[0] if isinstance(choices,list) and
             len(choices)==1 and isinstance(choices[0],dict) else {})
@@ -165,6 +165,15 @@ try:
                         got_model=True
                 choices=part.get('choices')
                 if finish:
+                    # OpenAI-compatible Chat Completions can add opaque
+                    # stream-length padding. It is NEVER user/model text.
+                    # Accept only a small string, never nested/large payloads.
+                    padding=part.get('obfuscation')
+                    if ('obfuscation' in part and
+                        (not isinstance(padding,str) or
+                         len(padding)>512 or any(ord(c)<32 for c in padding))):
+                        reject_postfinish(part,raw,got_model,finish,deltas)
+                        break
                     # Some genuine Cloudflare Workers AI streams end in a
                     # native (non-OpenAI) empty response + cumulative usage
                     # frame, after stop and before [DONE]. This is metadata,
@@ -173,7 +182,8 @@ try:
                         if (native_tail_seen or usage_seen or empty_tail_seen or
                             'choices' in part or
                             not set(part).issubset({'response','usage',
-                              'model','id','object','created','system_fingerprint'})
+                              'model','id','object','created','system_fingerprint',
+                              'obfuscation'})
                             or not isinstance(part.get('response'),str) or
                             part['response'] not in ('',assembled) or
                             not isinstance(part.get('usage'),dict)):
@@ -184,7 +194,7 @@ try:
                     # OpenAI-compatible providers may also emit bounded
                     # nonanswer control frames, never any late material text.
                     safe_fields={'id','object','created','model','choices',
-                                 'usage','system_fingerprint'}
+                                 'usage','system_fingerprint','obfuscation'}
                     if not set(part).issubset(safe_fields):
                         reject_postfinish(part,raw,got_model,finish,deltas)
                         break
@@ -223,8 +233,11 @@ try:
                     tail=choices[0]
                     chunk=tail.get('delta')
                     if (not isinstance(chunk,dict) or
-                        not set(chunk).issubset({'content','role'}) or
+                        not set(chunk).issubset(
+                            {'content','role','reasoning_content','reasoning'}) or
                         chunk.get('content') not in (None,'') or
+                        chunk.get('reasoning_content') not in (None,'') or
+                        chunk.get('reasoning') not in (None,'') or
                         chunk.get('role','assistant')!='assistant' or
                         tail.get('finish_reason') not in (None,'stop') or
                         tail.get('native_finish_reason') not in (None,'stop') or
