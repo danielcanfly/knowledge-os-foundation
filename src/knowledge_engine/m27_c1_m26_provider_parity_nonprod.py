@@ -171,11 +171,16 @@ try:
                             break
                         usage_seen=True
                         continue
+                    # Some valid OpenAI-shaped providers attach a final
+                    # usage object to a content-free choice that repeats the
+                    # finish status. The old parser rejected this even though
+                    # the previously successful C1 adapter accepted it.
+                    # Usage never becomes answer text or a second finish.
                     if (empty_tail_seen or not isinstance(choices,list) or
                         len(choices)!=1 or not isinstance(choices[0],dict) or
-                        usage not in (None,{}) or
                         not set(choices[0]).issubset(
-                            {'index','delta','finish_reason','logprobs'})):
+                            {'index','delta','finish_reason',
+                             'native_finish_reason','logprobs'})):
                         emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
                         break
                     tail=choices[0]
@@ -185,10 +190,25 @@ try:
                         chunk.get('content') not in (None,'') or
                         chunk.get('role','assistant')!='assistant' or
                         tail.get('finish_reason') not in (None,'stop') or
+                        tail.get('native_finish_reason') not in (None,'stop') or
                         tail.get('index',0)!=0 or
                         tail.get('logprobs') not in (None,{})):
                         emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
                         break
+                    if usage is not None:
+                        # Metadata is never forwarded or rendered. Strictly
+                        # reject repeated or malformed accounting payloads.
+                        if (usage_seen or not isinstance(usage,dict) or
+                            not all(type(usage.get(k)) is int and
+                                    0<=usage[k]<=1000000000
+                                for k in ('prompt_tokens','completion_tokens',
+                                          'total_tokens')) or
+                            usage['total_tokens'] <
+                                max(usage['prompt_tokens'],
+                                    usage['completion_tokens'])):
+                            emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
+                            break
+                        usage_seen=True
                     empty_tail_seen=True
                     continue
                 if not isinstance(choices,list) or len(choices)!=1:

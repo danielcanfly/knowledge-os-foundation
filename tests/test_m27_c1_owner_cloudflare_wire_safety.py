@@ -147,4 +147,44 @@ class WireDoesNotReuseOldUnsafeEnd(unittest.TestCase):
         emitted="Verification is in the Execution & Governance Plane.\n"+"PolicyEngine decides deterministic enforcement."
         x=simulate(good()[:-1]+[native_tail(emitted)])
         self.assertNotIn("provider_done",[y["event"] for y in x])
+    def test_27_accounting_on_final_empty_choice_with_repeat_stop(self):
+        final="data: "+json.dumps({"model":MODEL,"choices":[{
+            "index":0,"delta":{"role":"assistant","content":""},
+            "finish_reason":"stop","native_finish_reason":"stop"}],
+            "usage":{"prompt_tokens":12,"completion_tokens":21,
+                     "total_tokens":33,"neurons":0.12}})
+        x=simulate(good()[:-1]+[final]+good()[-1:])
+        self.assertEqual(x[-1]["event"],"stream_end")
+        self.assertEqual(sum(v["event"]=="delta" for v in x),2)
+        self.assertEqual(sum(v["event"]=="provider_done" for v in x),1)
+    def test_28_final_choice_with_usage_cannot_append_new_text(self):
+        final="data: "+json.dumps({"model":MODEL,"choices":[{
+            "index":0,"delta":{"content":"LATE MALICIOUS WORDS"},
+            "finish_reason":"stop"}],
+            "usage":{"prompt_tokens":12,"completion_tokens":21,
+                     "total_tokens":33}})
+        x=simulate(good()[:-1]+[final]+good()[-1:])
+        self.assertNotIn("provider_done",[v["event"] for v in x])
+    def test_29_final_choice_with_wrong_native_finish_rejected(self):
+        final="data: "+json.dumps({"model":MODEL,"choices":[{
+            "index":0,"delta":{"content":""},
+            "finish_reason":"stop","native_finish_reason":"length"}],
+            "usage":{"prompt_tokens":12,"completion_tokens":21,
+                     "total_tokens":33}})
+        x=simulate(good()[:-1]+[final]+good()[-1:])
+        self.assertNotIn("provider_done",[v["event"] for v in x])
+    def test_30_duplicate_final_choice_with_usage_rejected(self):
+        final="data: "+json.dumps({"model":MODEL,"choices":[{
+            "index":0,"delta":{"content":""},"finish_reason":"stop"}],
+            "usage":{"prompt_tokens":12,"completion_tokens":21,
+                     "total_tokens":33}})
+        x=simulate(good()[:-1]+[final,final]+good()[-1:])
+        self.assertNotIn("provider_done",[v["event"] for v in x])
+    def test_31_missing_done_even_with_valid_final_usage_denied(self):
+        final="data: "+json.dumps({"model":MODEL,"choices":[{
+            "index":0,"delta":{"content":""},"finish_reason":"stop"}],
+            "usage":{"prompt_tokens":12,"completion_tokens":21,
+                     "total_tokens":33}})
+        x=simulate(good()[:-1]+[final])
+        self.assertNotIn("provider_done",[v["event"] for v in x])
 if __name__=="__main__":unittest.main()
