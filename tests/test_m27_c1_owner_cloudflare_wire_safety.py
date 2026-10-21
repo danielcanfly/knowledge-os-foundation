@@ -210,4 +210,45 @@ class WireDoesNotReuseOldUnsafeEnd(unittest.TestCase):
         x=simulate(good())
         self.assertEqual(x[-1]["event"],"stream_end")
         self.assertFalse(any("rejected_tail_shape" in v for v in x))
+    def test_34_prefinish_heartbeat_after_real_deltas_completes(self):
+        text=good()[:2]
+        heartbeat="data: "+json.dumps({"model":MODEL,"choices":[]})
+        x=simulate(text+[heartbeat]+good()[2:])
+        self.assertEqual(x[-1]["event"],"stream_end")
+        self.assertEqual(sum(i["event"]=="delta" for i in x),2)
+        self.assertEqual(sum(i["event"]=="provider_done" for i in x),1)
+    def test_35_prefinish_heartbeat_with_bounded_usage_completes(self):
+        heartbeat="data: "+json.dumps({"model":MODEL,"choices":[],
+          "usage":{"prompt_tokens":12,"completion_tokens":21,"total_tokens":33}})
+        x=simulate(good()[:2]+[heartbeat]+good()[2:])
+        self.assertEqual(x[-1]["event"],"stream_end")
+        self.assertEqual(sum(i["event"]=="delta" for i in x),2)
+    def test_36_heartbeat_before_material_text_cannot_attest(self):
+        heartbeat="data: "+json.dumps({"model":MODEL,"choices":[]})
+        x=simulate([frame("",model=MODEL),heartbeat]+good())
+        self.assertNotIn("provider_done",[i["event"] for i in x])
+        self.assertTrue(any(i.get("category")==
+                "CLOUDFLARE_PRETERMINAL_HEARTBEAT_DENIED" for i in x))
+    def test_37_duplicate_prefinish_heartbeat_denied(self):
+        heartbeat="data: "+json.dumps({"model":MODEL,"choices":[]})
+        x=simulate(good()[:2]+[heartbeat,heartbeat]+good()[2:])
+        self.assertNotIn("provider_done",[i["event"] for i in x])
+    def test_38_heartbeat_with_unknown_fields_denied(self):
+        heartbeat="data: "+json.dumps({"model":MODEL,"choices":[],
+          "unknown_extra":"PRIVATE_UNTRUSTED_FIELD"})
+        x=simulate(good()[:2]+[heartbeat]+good()[2:])
+        self.assertNotIn("provider_done",[i["event"] for i in x])
+        self.assertNotIn("PRIVATE_UNTRUSTED_FIELD",json.dumps(x))
+    def test_39_heartbeat_with_malformed_usage_denied(self):
+        heartbeat="data: "+json.dumps({"model":MODEL,"choices":[],
+          "usage":{"prompt_tokens":-1,"completion_tokens":10,
+                   "total_tokens":9}})
+        x=simulate(good()[:2]+[heartbeat]+good()[2:])
+        self.assertNotIn("provider_done",[i["event"] for i in x])
+    def test_40_heartbeat_does_not_replace_required_stop(self):
+        heartbeat="data: "+json.dumps({"model":MODEL,"choices":[]})
+        x=simulate(good()[:2]+[heartbeat,"data: [DONE]"])
+        self.assertNotIn("provider_done",[i["event"] for i in x])
+        self.assertTrue(any(i.get("category")=="CLOUDFLARE_PREMATURE_DONE_DENIED"
+                            for i in x))
 if __name__=="__main__":unittest.main()

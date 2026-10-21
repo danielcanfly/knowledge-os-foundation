@@ -248,6 +248,30 @@ try:
                         usage_seen=True
                     empty_tail_seen=True
                     continue
+                # Cloudflare may emit a bounded choices:[] heartbeat DURING
+                # real text streaming, not only after a stop. It grants no
+                # new output, finish state, model attestation, or client ACK.
+                # A single known-shape heartbeat is safe; unknown frames,
+                # replays and heartbeats before real content stay denied.
+                if choices==[]:
+                    heartbeat_fields={'model','id','object','created',
+                                      'system_fingerprint','choices','usage'}
+                    heartbeat_usage=part.get('usage')
+                    if (heartbeat_seen or not got_model or deltas==0 or
+                        not set(part).issubset(heartbeat_fields) or
+                        (heartbeat_usage is not None and
+                         (not isinstance(heartbeat_usage,dict) or
+                          not all(type(heartbeat_usage.get(k)) is int and
+                                  0<=heartbeat_usage[k]<=1000000000
+                              for k in ('prompt_tokens','completion_tokens',
+                                        'total_tokens')) or
+                          heartbeat_usage['total_tokens'] <
+                              max(heartbeat_usage['prompt_tokens'],
+                                  heartbeat_usage['completion_tokens'])))):
+                        emit('error',category='CLOUDFLARE_PRETERMINAL_HEARTBEAT_DENIED')
+                        break
+                    heartbeat_seen=True
+                    continue
                 if not isinstance(choices,list) or len(choices)!=1:
                     emit('error',category='CLOUDFLARE_CHOICES_INVALID')
                     break
