@@ -42,6 +42,43 @@ import hashlib,json,os,sys,time
 import httpx
 def emit(event,**kw):
     print(json.dumps(dict(event=event,**kw),ensure_ascii=True,separators=(',',':')),flush=True)
+def reject_postfinish(part,raw,got_model,finish,deltas):
+    # Preserve a shape fingerprint, never raw provider content, account ID,
+    # prompt, reasoning, bearer token, or unknown field names.  This is
+    # diagnostic only: the original malformed tail is STILL rejected.
+    allowed_top={'model','choices','usage','response','id','object',
+                 'created','system_fingerprint'}
+    choices=part.get('choices')
+    choice=(choices[0] if isinstance(choices,list) and
+            len(choices)==1 and isinstance(choices[0],dict) else {})
+    delta=choice.get('delta') if isinstance(choice,dict) else {}
+    if not isinstance(delta,dict):delta={}
+    usage=part.get('usage')
+    allowed_choice={'index','delta','finish_reason','native_finish_reason','logprobs'}
+    allowed_delta={'content','role','reasoning','reasoning_content'}
+    shape={
+       'top_known':sorted(set(part)&allowed_top),
+       'top_unknown_count':len(set(part)-allowed_top),
+       'choices_count':len(choices) if isinstance(choices,list) else -1,
+       'choice_known':sorted(set(choice)&allowed_choice),
+       'choice_unknown_count':len(set(choice)-allowed_choice),
+       'delta_known':sorted(set(delta)&allowed_delta),
+       'delta_unknown_count':len(set(delta)-allowed_delta),
+       'content_state':('absent' if 'content' not in delta else
+                         'empty' if delta['content'] in ('',None) else
+                         'nonempty' if isinstance(delta['content'],str) else 'invalid'),
+       'finish_state':('stop' if choice.get('finish_reason')=='stop' else
+                       'none' if choice.get('finish_reason') is None else 'other'),
+       'usage_kind':('dict' if isinstance(usage,dict) else
+                     'absent' if usage is None else 'other'),
+       'native_response_state':('absent' if 'response' not in part else
+                                'empty' if part['response']=='' else 'nonempty_or_invalid'),
+    }
+    emit('stream_diagnostic',model_attested=got_model,done_frame=False,
+         finish_stop=finish,delta_count=deltas,
+         rejected_tail_shape=shape,
+         rejected_tail_wire_sha256=hashlib.sha256(raw.encode()).hexdigest())
+    emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
 model='@cf/openai/gpt-oss-120b'
 account=os.getenv('CLOUDFLARE_ACCOUNT_ID','')
 key=(os.getenv('CLOUDFLARE_WORKER_AI_RESTFUL_API_KEY') or
@@ -140,7 +177,7 @@ try:
                             or not isinstance(part.get('response'),str) or
                             part['response'] not in ('',assembled) or
                             not isinstance(part.get('usage'),dict)):
-                            emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
+                            reject_postfinish(part,raw,got_model,finish,deltas)
                             break
                         native_tail_seen=True
                         continue
@@ -149,7 +186,7 @@ try:
                     safe_fields={'id','object','created','model','choices',
                                  'usage','system_fingerprint'}
                     if not set(part).issubset(safe_fields):
-                        emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
+                        reject_postfinish(part,raw,got_model,finish,deltas)
                         break
                     usage=part.get('usage')
                     if choices==[]:
@@ -157,7 +194,7 @@ try:
                         # usage. It is not an answer or a terminal grant.
                         if usage is None:
                             if heartbeat_seen:
-                                emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
+                                reject_postfinish(part,raw,got_model,finish,deltas)
                                 break
                             heartbeat_seen=True
                             continue
@@ -167,7 +204,7 @@ try:
                                         'total_tokens')) or
                             usage['total_tokens'] < max(usage['prompt_tokens'],
                                                          usage['completion_tokens'])):
-                            emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
+                            reject_postfinish(part,raw,got_model,finish,deltas)
                             break
                         usage_seen=True
                         continue
@@ -181,7 +218,7 @@ try:
                         not set(choices[0]).issubset(
                             {'index','delta','finish_reason',
                              'native_finish_reason','logprobs'})):
-                        emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
+                        reject_postfinish(part,raw,got_model,finish,deltas)
                         break
                     tail=choices[0]
                     chunk=tail.get('delta')
@@ -193,7 +230,7 @@ try:
                         tail.get('native_finish_reason') not in (None,'stop') or
                         tail.get('index',0)!=0 or
                         tail.get('logprobs') not in (None,{})):
-                        emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
+                        reject_postfinish(part,raw,got_model,finish,deltas)
                         break
                     if usage is not None:
                         # Metadata is never forwarded or rendered. Strictly
@@ -206,7 +243,7 @@ try:
                             usage['total_tokens'] <
                                 max(usage['prompt_tokens'],
                                     usage['completion_tokens'])):
-                            emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
+                            reject_postfinish(part,raw,got_model,finish,deltas)
                             break
                         usage_seen=True
                     empty_tail_seen=True

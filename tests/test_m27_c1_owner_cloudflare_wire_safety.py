@@ -187,4 +187,27 @@ class WireDoesNotReuseOldUnsafeEnd(unittest.TestCase):
                      "total_tokens":33}})
         x=simulate(good()[:-1]+[final])
         self.assertNotIn("provider_done",[v["event"] for v in x])
+    def test_32_denied_tail_provides_nonsecret_structure_not_content(self):
+        private="PRIVATE_MODEL_RESPONSE_NEVER_LOG_789"
+        injected_key="PRIVATE_UNEXPECTED_KEY_NEVER_LOG_789"
+        final="data: "+json.dumps({"model":MODEL,
+            "choices":[{"index":0,
+              "delta":{"content":private,"reasoning_content":"PRIVATE_THOUGHTS"},
+              "finish_reason":"stop"}],
+            injected_key:"PRIVATE_VALUE"})
+        x=simulate(good()[:-1]+[final]+good()[-1:])
+        self.assertNotIn("provider_done",[v["event"] for v in x])
+        diag=[v for v in x if v["event"]=="stream_diagnostic" and
+              "rejected_tail_shape" in v]
+        self.assertEqual(len(diag),1)
+        self.assertEqual(diag[0]["rejected_tail_shape"]["content_state"],"nonempty")
+        self.assertEqual(diag[0]["rejected_tail_shape"]["top_unknown_count"],1)
+        self.assertEqual(len(diag[0]["rejected_tail_wire_sha256"]),64)
+        self.assertNotIn(private,json.dumps(x))
+        self.assertNotIn(injected_key,json.dumps(x))
+        self.assertNotIn("PRIVATE_THOUGHTS",json.dumps(x))
+    def test_33_success_has_no_rejection_fingerprint(self):
+        x=simulate(good())
+        self.assertEqual(x[-1]["event"],"stream_end")
+        self.assertFalse(any("rejected_tail_shape" in v for v in x))
 if __name__=="__main__":unittest.main()

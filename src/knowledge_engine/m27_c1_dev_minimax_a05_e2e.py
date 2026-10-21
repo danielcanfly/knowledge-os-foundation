@@ -289,7 +289,9 @@ class Handler(BaseHTTPRequestHandler):
                              "model_attested":event.get("model_attested"),
                              "done_frame":event.get("done_frame"),
                              "finish_stop":event.get("finish_stop"),
-                             "delta_count":event.get("delta_count")})
+                             "delta_count":event.get("delta_count"),
+                             "rejected_tail_shape":event.get("rejected_tail_shape"),
+                             "rejected_tail_wire_sha256":event.get("rejected_tail_wire_sha256")})
                 elif kind=="failover":
                     import m27_c1_m26_provider_parity_nonprod as parity
                     must(s.provider_mode=="m26-parity-direct" and
