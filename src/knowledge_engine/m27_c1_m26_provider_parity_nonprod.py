@@ -381,7 +381,10 @@ def cloudflare_first_with_minimax_backup(*,prompt, vendor,
     A developer must not force a MiniMax success by hiding bad primary text.
     """
     primary=primary_fn if primary_fn is not None else invoke_direct_cloudflare
-    fallback=fallback_fn if fallback_fn is not None else vendor_generator(Path(vendor))
+    # The pinned fallback is deliberately constructed ONLY after an eligible
+    # real Cloudflare infrastructure failure. Eager vendor import/pinning can
+    # prevent a healthy primary from running when an unused backup is stale.
+    # This changes no fallback eligibility, identity, or post-text fail-close.
     emitted_cloud_text=False
     failed_reason=None
     for item in primary(prompt):
@@ -395,7 +398,10 @@ def cloudflare_first_with_minimax_backup(*,prompt, vendor,
             return
         yield item
     if failed_reason is None:return
+    # Do not advertise a failover receipt until the approved, pinned MiniMax
+    # implementation is actually present and has passed its source checks.
+    fallback=fallback_fn if fallback_fn is not None else vendor_generator(Path(vendor))
     yield {"event":"failover","reason":failed_reason,"provider":"MiniMax-M3",
-           "source":"ACTUAL_CLOUDFLARE_INFRASTRUCTURE_ERROR"}
+         "source":"ACTUAL_CLOUDFLARE_INFRASTRUCTURE_ERROR"}
     for item in fallback():
         yield only_safe_event(item)

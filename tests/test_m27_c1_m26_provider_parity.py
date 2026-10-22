@@ -6,6 +6,7 @@ requires a new real Worker AI response + real A05/Native Client receipts.
 from __future__ import annotations
 import sys
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"src/knowledge_engine"))
 import m27_c1_m26_provider_parity_nonprod as p
@@ -96,5 +97,53 @@ class CloudflareM26ScopedParity(unittest.TestCase):
             p.only_safe_event({"event":"fake_provider_done"})
         with self.assertRaisesRegex(ValueError,"PROMPT_SCOPE"):
             list(p.invoke_direct_cloudflare("hi"))
+
+    def test_07_healthy_cloudflare_does_not_initialize_unneeded_backup(self):
+        # Real old implementation invoked vendor_generator before even
+        # iterating cloud_ok. This detects that concrete preflight failure.
+        with patch.object(p,"vendor_generator",
+                side_effect=AssertionError("UNUSED_BACKUP_WAS_IMPORTED")) as vendor:
+            events=list(p.cloudflare_first_with_minimax_backup(
+                prompt=PROMPT,vendor=Path("/nonexistent-fallback"),
+                primary_fn=cloud_ok))
+        self.assertEqual(events[-1]["event"],"stream_end")
+        self.assertEqual(sum(x["event"]=="provider_done" for x in events),1)
+        vendor.assert_not_called()
+
+    def test_08_noneligible_primary_error_does_not_load_backup(self):
+        def cloud_bad(prompt):
+            yield {"event":"error","category":"CLOUDFLARE_POSTFINISH_DATA_DENIED"}
+        with patch.object(p,"vendor_generator",
+                side_effect=AssertionError("UNAUTHORIZED_FALLBACK_CHECK")) as vendor:
+            events=list(p.cloudflare_first_with_minimax_backup(
+                prompt=PROMPT,vendor=Path("/nonexistent-fallback"),
+                primary_fn=cloud_bad))
+        self.assertEqual([x["event"] for x in events],["error"])
+        vendor.assert_not_called()
+
+    def test_09_only_eligible_real_infra_error_can_initialize_backup(self):
+        def cloud_infra(prompt):
+            yield {"event":"request_start","model":p.MODEL,"route":p.ROUTE}
+            yield {"event":"error","category":"CLOUDFLARE_HTTP_503"}
+        with patch.object(p,"vendor_generator",return_value=minimax_ok) as vendor:
+            events=list(p.cloudflare_first_with_minimax_backup(
+                prompt=PROMPT,vendor=Path("/nonexistent-fallback"),
+                primary_fn=cloud_infra))
+        vendor.assert_called_once()
+        self.assertEqual(sum(x["event"]=="failover" for x in events),1)
+        self.assertEqual(events[-1]["event"],"stream_end")
+
+    def test_10_missing_pinned_backup_must_not_emit_false_failover(self):
+        def cloud_infra(prompt):
+            yield {"event":"request_start","model":p.MODEL,"route":p.ROUTE}
+            yield {"event":"error","category":"CLOUDFLARE_HTTP_503"}
+        with patch.object(p,"vendor_generator",
+                side_effect=ValueError("NOT_APPROVED_G01_PROVIDER_VENDOR")):
+            stream=p.cloudflare_first_with_minimax_backup(
+                prompt=PROMPT,vendor=Path("/nonexistent-fallback"),
+                primary_fn=cloud_infra)
+            self.assertEqual(next(stream)["event"],"request_start")
+            with self.assertRaisesRegex(ValueError,"NOT_APPROVED_G01"):
+                list(stream)
 
 if __name__=="__main__":unittest.main()
