@@ -8,6 +8,7 @@ a cache. Exact source spans are read by accepted A05 F03 and OS-verifier.
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import datetime as dt
 import hashlib
 import hmac
@@ -102,8 +103,13 @@ class Consumer:
 
     def _source(self):
         """Two *distinct*, real, owner-first-party A05 source document spans."""
-        receipts = []
-        for oid, question, obligation, filename in OBLIGATIONS:
+        # The two obligations are distinct immutable A05 source spans. Do
+        # both complete original source/revocation/ACL checks, including their
+        # independent OS byte verifiers, concurrently. The ordered map output
+        # preserves the preexisting signed-proof/source SHA contract. Never
+        # replace either verifier with an in-memory fixture or stale cache.
+        def one_source(item):
+            oid, question, obligation, filename = item
             receipt = self.reader.source_retrieval(
                 question, tenant="owner-internal", principal=self.principal,
                 obligations=[obligation], ttl_seconds=120)
@@ -120,15 +126,17 @@ class Consumer:
             proof = self.verifier._verify(obligation, cite)
             check(proof["verified"] is True and proof["signed_issuer"] is False,
                   "INDEPENDENT_OS_BYTE_VERIFICATION_DENIED")
-            receipts.append({"obligation_id": oid, "citation": cite,
-                             "excerpt_sha256": cite["excerpt_sha256"],
-                             "document_sha256": cite["document_sha256"],
-                             "release_sha256": receipt["release_sha256"],
-                             "rights_sha256": receipt["revocation_sha256"],
-                             "rights_epoch": receipt["rights_epoch"],
-                             "source_manifest_sha256": receipt["source_manifest_sha256"],
-                             "os_verifier_proof_sha256": sha(canonical(proof)),
-                             "source_excerpt": excerpt})
+            return {"obligation_id": oid, "citation": cite,
+                    "excerpt_sha256": cite["excerpt_sha256"],
+                    "document_sha256": cite["document_sha256"],
+                    "release_sha256": receipt["release_sha256"],
+                    "rights_sha256": receipt["revocation_sha256"],
+                    "rights_epoch": receipt["rights_epoch"],
+                    "source_manifest_sha256": receipt["source_manifest_sha256"],
+                    "os_verifier_proof_sha256": sha(canonical(proof)),
+                    "source_excerpt": excerpt}
+        with ThreadPoolExecutor(max_workers=2,thread_name_prefix="c1-a05-proof") as pool:
+            receipts = list(pool.map(one_source, OBLIGATIONS))
         check(receipts[0]["document_sha256"] != receipts[1]["document_sha256"] and
               receipts[0]["excerpt_sha256"] != receipts[1]["excerpt_sha256"],
               "TWO_INDEPENDENT_MATERIAL_SOURCES_REQUIRED")
