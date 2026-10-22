@@ -157,7 +157,14 @@ class Server(socketserver.ThreadingMixIn,socketserver.UnixStreamServer):
             f.write(json.dumps({"at_ns":time.monotonic_ns(),**v},sort_keys=True)+"\n")
             f.flush();os.fsync(f.fileno())
     def current(self):
+        # The A05 read and separate OS byte verifiers can block under heavy
+        # local I/O load. Passing the deadline BEFORE that work is insufficient:
+        # stale answers/ACKs must not be published AFTER it expires.
+        must(self.deadline_ns is None or time.monotonic_ns()<self.deadline_ns,
+             "C1_ONE_TASK_30_SECOND_DEADLINE")
         current=self.live._source()
+        must(self.deadline_ns is None or time.monotonic_ns()<self.deadline_ns,
+             "C1_ONE_TASK_30_SECOND_DEADLINE")
         must(digest(canon(current))==self.live.pending["source_proofs_sha256"],
              "F03_A05_RIGHTS_REVOKED_DURING_LIVE_MODEL")
         return current
@@ -205,6 +212,8 @@ class Handler(BaseHTTPRequestHandler):
                      "ACK_CHALLENGE_OR_REPLAY_DENIED")
                 must(not s.done,"ACK_AFTER_PROVIDER_DONE_DENIED")
                 s.current()
+                must(time.monotonic_ns()<s.deadline_ns,
+                     "C1_ONE_TASK_30_SECOND_DEADLINE")
                 s.acked.append(data["claim_id"])
                 if data["claim_id"]==c1live.OBLIGATIONS[0]:
                     s.first_preterminal_ack=not s.done
@@ -358,6 +367,8 @@ class Handler(BaseHTTPRequestHandler):
                             "verified_by_separate_os_pid":v["pid"],
                             "verified_owner_source_not_independent_issuer":True,
                             "provider_done_observed":False,"product_pass":False}
+                        must(time.monotonic_ns()<s.deadline_ns,
+                             "C1_ONE_TASK_30_SECOND_DEADLINE")
                         self.frame("answer_text",response)
                         with s.ack_cond:
                             deadline=min(time.monotonic()+8,
@@ -414,6 +425,8 @@ class Handler(BaseHTTPRequestHandler):
                             "verified_by_separate_os_pid":v["pid"],
                             "verified_owner_source_not_independent_issuer":True,
                             "provider_done_observed":True,"product_pass":False}
+                        must(time.monotonic_ns()<s.deadline_ns,
+                             "C1_ONE_TASK_30_SECOND_DEADLINE")
                         self.frame("answer_text",response)
                         with s.ack_cond:
                             deadline=min(time.monotonic()+8,s.deadline_ns/1e9)

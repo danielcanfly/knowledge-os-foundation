@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 import sys
 import unittest
+from types import SimpleNamespace
+from unittest.mock import patch
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"src/knowledge_engine"))
 import m27_c1_dev_minimax_a05_e2e as dev
@@ -57,5 +59,48 @@ class MiniMaxDevScopedContracts(unittest.TestCase):
         self.assertTrue(callable(stream))
         self.assertIn("'max_tokens':128",stream.__globals__["b1"].VM_PROVIDER_SCRIPT)
         self.assertNotIn("'max_tokens':650",stream.__globals__["b1"].VM_PROVIDER_SCRIPT)
+
+    def test_06_source_recheck_expiring_during_io_denies_after_io(self):
+        # This is the historical failure mode: verification starts before
+        # the deadline and finishes after it. No late publication is allowed.
+        proofs=[{"obligation_id":"real_owner_source_byte_proof"}]
+        actual_sha=dev.digest(dev.canon(proofs))
+        reads=[]
+        def source():
+            reads.append(True)
+            return proofs
+        stub=SimpleNamespace(deadline_ns=150,
+             live=SimpleNamespace(_source=source,
+                pending={"source_proofs_sha256":actual_sha}))
+        with patch.object(dev.time,"monotonic_ns",side_effect=[100,200]):
+            with self.assertRaisesRegex(ValueError,"C1_ONE_TASK_30_SECOND_DEADLINE"):
+                dev.Server.current(stub)
+        self.assertEqual(len(reads),1)
+
+    def test_07_already_expired_request_does_not_even_reopen_sources(self):
+        reads=[]
+        def no_read():
+            reads.append(True)
+            raise AssertionError("EXPIRED_SOURCE_IO_CALLED")
+        stub=SimpleNamespace(deadline_ns=150,
+             live=SimpleNamespace(_source=no_read,
+                pending={"source_proofs_sha256":"NOT_USED"}))
+        with patch.object(dev.time,"monotonic_ns",return_value=200):
+            with self.assertRaisesRegex(ValueError,"C1_ONE_TASK_30_SECOND_DEADLINE"):
+                dev.Server.current(stub)
+        self.assertEqual(reads,[])
+
+    def test_08_live_rights_are_still_rechecked_within_deadline(self):
+        proofs=[{"obligation_id":"source1"},{"obligation_id":"source2"}]
+        actual_sha=dev.digest(dev.canon(proofs))
+        stub=SimpleNamespace(deadline_ns=150,
+             live=SimpleNamespace(_source=lambda:proofs,
+                pending={"source_proofs_sha256":actual_sha}))
+        with patch.object(dev.time,"monotonic_ns",side_effect=[100,110]):
+            self.assertEqual(dev.Server.current(stub),proofs)
+        stub.live.pending["source_proofs_sha256"]="wrong-source-hash"
+        with patch.object(dev.time,"monotonic_ns",side_effect=[100,110]):
+            with self.assertRaisesRegex(ValueError,"F03_A05_RIGHTS_REVOKED"):
+                dev.Server.current(stub)
 
 if __name__=="__main__":unittest.main()
