@@ -597,12 +597,53 @@ class A05OwnerCorpusAdmission:
             check((self.repo / ".git").exists(),
                   "SOURCE_CONTROLLER_READER_NOT_ADMITTED")
             if relative not in self._pinned_blob_cache:
-                result = subprocess.run(
-                    ["git", "-C", str(self.repo), "cat-file", "blob",
-                     BASE_H02 + ":" + relative],
-                    capture_output=True, check=False, timeout=5)
-                check(result.returncode == 0, "MISSING_PINNED_SOURCE")
-                self._pinned_blob_cache[relative] = result.stdout
+                # The A05 corpus is a fixed, commit-pinned set of 14 Git
+                # objects. A single cat-file --batch avoids 14 separate Git
+                # process startups on cold Task, while retaining exactly the
+                # same immutable BASE_H02:path provenance and byte comparisons.
+                # The mutable on-disk corpus, ACL, TTL and revocations are
+                # STILL independently re-read by _pinned_release/_epoch.
+                if relative in F03_GITLESS_ALLOWED_A05:
+                    names = sorted(F03_GITLESS_ALLOWED_A05)
+                    request = b"".join((BASE_H02 + ":" + name + "\n").encode()
+                                       for name in names)
+                    result = subprocess.run(
+                        ["git", "-C", str(self.repo), "cat-file", "--batch"],
+                        input=request, capture_output=True, check=False, timeout=8)
+                    check(result.returncode == 0 and
+                          len(result.stdout) <= len(names) * (262144 + 100),
+                          "MISSING_PINNED_SOURCE_BATCH")
+                    output, offset, verified = result.stdout, 0, {}
+                    for name in names:
+                        end = output.find(b"\n", offset, offset + 100)
+                        check(end > offset, "INVALID_PINNED_GIT_BATCH_HEADER")
+                        header = output[offset:end].split()
+                        check(len(header) == 3 and header[1] == b"blob" and
+                              len(header[0]) == 40 and
+                              all(c in b"0123456789abcdef" for c in header[0]) and
+                              header[2].isdigit(), "INVALID_PINNED_GIT_BATCH_OBJECT")
+                        size = int(header[2])
+                        check(size <= 262144, "OVERSIZE_PINNED_GIT_BLOB")
+                        start = end + 1
+                        stop = start + size
+                        check(stop < len(output) and output[stop:stop+1] == b"\n",
+                              "TRUNCATED_PINNED_GIT_BATCH")
+                        raw = output[start:stop]
+                        oid = hashlib.sha1(
+                            b"blob " + str(size).encode() + b"\0" + raw
+                        ).hexdigest().encode()
+                        check(oid == header[0], "MISMATCHED_PINNED_GIT_OBJECT")
+                        verified[name] = raw
+                        offset = stop + 1
+                    check(offset == len(output), "TRAILING_PINNED_GIT_BATCH_DATA")
+                    self._pinned_blob_cache.update(verified)
+                else:
+                    result = subprocess.run(
+                        ["git", "-C", str(self.repo), "cat-file", "blob",
+                         BASE_H02 + ":" + relative],
+                        capture_output=True, check=False, timeout=5)
+                    check(result.returncode == 0, "MISSING_PINNED_SOURCE")
+                    self._pinned_blob_cache[relative] = result.stdout
             return self._pinned_blob_cache[relative]
 
     def _read(self, filename: str) -> bytes:
