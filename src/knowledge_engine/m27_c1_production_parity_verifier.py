@@ -154,6 +154,28 @@ def evaluate(evidence_dir, *, head, tree, real_run=True,
               acks[i].get("text_sha256")==receipts[i+1].get("model_text_sha256") and
               delivered[i].get("source_cited") is True,
               "M26_REAL_MODEL_TEXT_CLIENT_PROOF_MISMATCH")
+        # A06/A07: all three physical sources independently retain the
+        # nonce challenge hash + exact 5-field ACK binding. Client stores
+        # the raw POST body's digest and the accepting Server independently
+        # hashes that received HTTP body. No plaintext nonce in evidence.
+        client_row=receipts[i+1]
+        for key in ("challenge_sha256","ack_binding_sha256",
+                    "ack_request_body_sha256"):
+            values=[client_row.get(key),acks[i].get(key)]
+            if key!="ack_request_body_sha256":
+                values.append(delivered[i].get(key))
+            check(all(type(v) is str and
+                      re.fullmatch("[0-9a-f]{64}",v) for v in values) and
+                  len(set(values))==1,
+                  "M26_ACK_CHALLENGE_BINDING_CUSTODY_MISSING_OR_MISMATCH")
+        check(client_row.get("claim_id")==claim and
+              delivered[i].get("claim_id")==claim and
+              delivered[i].get("task_sha256")==prepared["task_contract_sha256"] and
+              acks[i].get("task_sha256")==prepared["task_contract_sha256"],
+              "M26_ACK_BINDING_TASK_OR_CLAIM_MISMATCH")
+    check(receipts[1].get("challenge_sha256")!=
+          receipts[2].get("challenge_sha256"),
+          "M26_REUSED_ACK_CHALLENGE_DENIED")
     check(
         type(acks[0].get("at_ns")) is int and
         type(done[0].get("at_ns")) is int and

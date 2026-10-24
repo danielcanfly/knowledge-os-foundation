@@ -51,6 +51,38 @@ SEMANTIC=(
  re.compile(r"(?:(?:The )?PolicyEngine (?:decides|determines|is responsible for) deterministic (?:policy )?enforcement|Deterministic (?:policy )?enforcement is (?:decided|determined) by (?:the )?PolicyEngine)\.",re.I))
 def digest(raw):return hashlib.sha256(raw).hexdigest()
 def canon(v):return json.dumps(v,sort_keys=True,separators=(",",":"),ensure_ascii=False).encode()
+
+def ack_custody_fields(*,request_id,task_sha256,claim_id,challenge,text_sha256,raw_ack_body):
+    """Bind exact HTTP ACK bytes and the five verified values without storing nonce.
+
+    Strict request-body shape. No raw challenge, capability, or model plaintext
+    is persisted in the returned owner-only evidence. This is custody, not a
+    signer, signature or external identity authority.
+    """
+    must(all(type(v) is str for v in
+         (request_id,task_sha256,claim_id,challenge,text_sha256)) and
+         re.fullmatch("[0-9a-f]{48}",request_id) and
+         re.fullmatch("[0-9a-f]{64}",task_sha256) and
+         claim_id in c1live.OBLIGATIONS and
+         re.fullmatch("[0-9a-f]{40}",challenge) and
+         re.fullmatch("[0-9a-f]{64}",text_sha256) and
+         type(raw_ack_body) is bytes and
+         0<len(raw_ack_body)<=2048,
+         "ACK_CUSTODY_BAD_VALUES")
+    try:actual=json.loads(raw_ack_body)
+    except (UnicodeDecodeError,ValueError) as exc:
+        raise ValueError("ACK_CUSTODY_MALFORMED_JSON") from exc
+    must(type(actual) is dict and set(actual)==
+         {"request_id","claim_id","challenge","text_sha256"} and
+         all(actual[k]==v for k,v in
+          (("request_id",request_id),("claim_id",claim_id),
+           ("challenge",challenge),("text_sha256",text_sha256))),
+         "ACK_BODY_NOT_EXACT")
+    return {"challenge_sha256":digest(challenge.encode()),
+            "ack_binding_sha256":digest("|".join((
+                request_id,task_sha256,claim_id,challenge,text_sha256)).encode()),
+            "ack_request_body_sha256":digest(raw_ack_body)}
+
 def must(ok,reason):
     if not ok:raise ValueError(reason)
 
@@ -287,11 +319,25 @@ class Handler(BaseHTTPRequestHandler):
     def frame(self,name,body):
         data=("event: "+name+"\ndata: "+json.dumps(body,sort_keys=True)+"\n\n").encode()
         self.wfile.write(data);self.wfile.flush()
-        self.server.audit({"event":"native_delivery_"+name,
-                           "request_id":body.get("request_id"),
-                           "text_sha256":body.get("text_sha256"),
-                           "source_cited":bool(body.get("citation")),
-                           "provider_done_observed":self.server.done})
+        event={"event":"native_delivery_"+name,
+               "request_id":body.get("request_id"),
+               "text_sha256":body.get("text_sha256"),
+               "source_cited":bool(body.get("citation")),
+               "provider_done_observed":self.server.done}
+        if name=="answer_text":
+            ack={k:body[k] for k in
+                 ("request_id","claim_id","challenge","text_sha256")}
+            custody=ack_custody_fields(
+                request_id=body["request_id"],
+                task_sha256=body["task_sha256"],
+                claim_id=body["claim_id"],challenge=body["challenge"],
+                text_sha256=body["text_sha256"],
+                raw_ack_body=json.dumps(ack).encode())
+            event.update({k:custody[k] for k in
+                          ("challenge_sha256","ack_binding_sha256")})
+            event["task_sha256"]=body["task_sha256"]
+            event["claim_id"]=body["claim_id"]
+        self.server.audit(event)
     def do_POST(self):
         if not self.authorized():return self.reply({"status":"CLIENT_AUTH_DENIED"},403)
         if self.path!="/ack":return self.reply({"status":"UNKNOWN_ROUTE"},404)
@@ -319,12 +365,18 @@ class Handler(BaseHTTPRequestHandler):
                 s.current()
                 must(time.monotonic_ns()<s.deadline_ns,
                      "C1_ONE_TASK_30_SECOND_DEADLINE")
+                custody=ack_custody_fields(
+                    request_id=data["request_id"],
+                    task_sha256=s.prepared["task_contract_sha256"],
+                    claim_id=data["claim_id"],challenge=data["challenge"],
+                    text_sha256=data["text_sha256"],raw_ack_body=raw)
                 s.acked.append(data["claim_id"])
                 if data["claim_id"]==c1live.OBLIGATIONS[0]:
                     s.first_preterminal_ack=not s.done
                 s.audit({"event":"native_client_local_ack",
                   "claim_id":data["claim_id"],"request_id":data["request_id"],
-                  "text_sha256":data["text_sha256"],
+                  "task_sha256":s.prepared["task_contract_sha256"],
+                  "text_sha256":data["text_sha256"],**custody,
                   "scope":"OS_LOCAL_BEARER_NOT_INDEPENDENT_IDP"})
                 s.ack_cond.notify_all()
             self.reply({"status":"SOURCE_VERIFIED_DEV_NATIVE_ACK","product_pass":False})
@@ -610,10 +662,17 @@ def client_mode(path:Path,token:Path,evidence:Path):
                     must(body["text_sha256"]==digest(body["text"].encode()),
                          "VERIFIED_MODEL_TEXT_SHA_MISMATCH")
                     ack={x:body[x] for x in ("request_id","claim_id","challenge","text_sha256")}
+                    ack_bytes=json.dumps(ack).encode()
+                    entry["claim_id"]=body["claim_id"]
+                    entry.update(ack_custody_fields(
+                        request_id=body["request_id"],
+                        task_sha256=body["task_sha256"],
+                        claim_id=body["claim_id"],challenge=body["challenge"],
+                        text_sha256=body["text_sha256"],raw_ack_body=ack_bytes))
                     request=UnixClient(path)
                     try:
                         request.request("POST","/ack",headers={**headers,"Content-Type":"application/json"},
-                                        body=json.dumps(ack).encode())
+                                        body=ack_bytes)
                         a=request.getresponse()
                         entry["ack_http_status"]=a.status
                         entry["ack_receipt"]=json.loads(a.read()).get("status")

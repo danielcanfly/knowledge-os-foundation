@@ -103,6 +103,25 @@ def main():
     demand(sha(" ".join(lines).encode())==entries[-1].get("answer_sha256"),
            "FINAL_CITED_ANSWER_NOT_REAL_MODEL")
     demand(len(native)==len(acknowledged)==2,"PHYSICAL_DELIVERY_ACK_COUNT_DRIFT")
+    # New original custody contract. No challenge/nonce plaintext is
+    # retained, but the exact live Client POST body and the Server's received
+    # body must independently have the same digest, while the actual SSE
+    # challenge & all five bound fields match both client/server receipts.
+    for i,claim in enumerate(c1live.OBLIGATIONS):
+        c=answers[i];n=native[i];a=acknowledged[i]
+        demand(c.get("claim_id")==n.get("claim_id")==a.get("claim_id")==claim and
+               n.get("task_sha256")==a.get("task_sha256")==task_sha,
+               "ACK_NONCE_CUSTODY_TASK_CLAIM_MISMATCH")
+        for key in ("challenge_sha256","ack_binding_sha256",
+                    "ack_request_body_sha256"):
+            both=[c.get(key),a.get(key)]
+            if key!="ack_request_body_sha256":both.append(n.get(key))
+            demand(all(type(x) is str and len(x)==64 and
+                       all(ch in "0123456789abcdef" for ch in x)
+                       for x in both) and len(set(both))==1,
+                   "ACK_NONCE_CUSTODY_INCOMPLETE_OR_FORGED_"+key)
+    demand(answers[0]["challenge_sha256"]!=answers[1]["challenge_sha256"],
+           "ACK_REUSED_CHALLENGE_DENIED")
     demand(native[0]["at_ns"]<acknowledged[0]["at_ns"]<
            end_seen[0]["at_ns"] and
            native[1]["at_ns"]<acknowledged[1]["at_ns"]<

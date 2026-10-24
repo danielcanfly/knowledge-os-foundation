@@ -26,6 +26,8 @@ class AckServer(socketserver.ThreadingMixIn,socketserver.UnixStreamServer):
     daemon_threads=True
     def __init__(self,path):
         self.pending={}
+        # The new A06/A07 live receipt binds the ACK to a frozen Task SHA.
+        self.prepared={"task_contract_sha256":"0"*64}
         self.acked=[]
         self.done=False
         self.deadline_ns=time.monotonic_ns()+20_000_000_000
@@ -41,8 +43,8 @@ class AckServer(socketserver.ThreadingMixIn,socketserver.UnixStreamServer):
 class NativeAckExactFraming(unittest.TestCase):
     def exchange(self, declared_delta=0):
         claim=dev.c1live.OBLIGATIONS[0]
-        ack={"request_id":"req-native","claim_id":claim,
-             "challenge":"test-ack-challenge","text_sha256":"abc123"}
+        ack={"request_id":"a"*48,"claim_id":claim,
+             "challenge":"b"*40,"text_sha256":"c"*64}
         body=json.dumps(ack,separators=(",",":")).encode()
         with tempfile.TemporaryDirectory(prefix="c1-ack-framing-") as td:
             path=str(Path(td)/"c1.sock")

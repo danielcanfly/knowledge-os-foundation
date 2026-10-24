@@ -56,6 +56,22 @@ def fixture():
              claim_id=v.CLAIMS[1],text_sha256=h(TEXTS[1])),
       ticket(event="actual_provider_done",at_ns=10,delta_count=2,
              first_client_ack_before_done=True)]
+    # Synthetic fixture must include the NEW A06/A07 dual-endpoint nonce
+    # custody. These are MOCK values, never eligible Product evidence.
+    for i,claim in enumerate(v.CLAIMS):
+        nonce=str(i+1)*40
+        vals={"request_id":RID,"claim_id":claim,"challenge":nonce,
+              "text_sha256":h(TEXTS[i])}
+        body=json.dumps(vals).encode()
+        meta={"challenge_sha256":h(nonce),
+              "ack_binding_sha256":h("|".join((
+                  RID,TASK,claim,nonce,h(TEXTS[i])))),
+              "ack_request_body_sha256":hashlib.sha256(body).hexdigest()}
+        receipts[i+1].update({"claim_id":claim,**meta})
+        journal[4+i*3].update({"task_sha256":TASK,"claim_id":claim,
+             "challenge_sha256":meta["challenge_sha256"],
+             "ack_binding_sha256":meta["ack_binding_sha256"]})
+        journal[5+i*3].update({"task_sha256":TASK,**meta})
     return run,c,journal
 
 class ParityEvidenceRejectsForgedOutcomes(unittest.TestCase):
@@ -156,4 +172,31 @@ class ParityEvidenceRejectsForgedOutcomes(unittest.TestCase):
         source.write_text(json.dumps(item)+"\n")
         with self.assertRaisesRegex(v.Rejected,"SOURCE_TASK_JOURNAL_MISMATCH"):
             v.evaluate(self.path,head=HEAD,tree=TREE)
+    def test_14_legacy_ack_without_nonce_hash_must_not_promote(self):
+        del self.client["receipts"][1]["challenge_sha256"]
+        with self.assertRaisesRegex(v.Rejected,"ACK_CHALLENGE_BINDING_CUSTODY"):
+            self.check()
+    def test_15_forged_client_ack_http_body_digest_must_not_promote(self):
+        self.client["receipts"][1]["ack_request_body_sha256"]="f"*64
+        with self.assertRaisesRegex(v.Rejected,"ACK_CHALLENGE_BINDING_CUSTODY"):
+            self.check()
+    def test_16_server_claim_nonce_binding_must_match_both_client_and_frame(self):
+        self.events[5]["ack_binding_sha256"]="0"*64
+        with self.assertRaisesRegex(v.Rejected,"ACK_CHALLENGE_BINDING_CUSTODY"):
+            self.check()
+        self.events[5]["ack_binding_sha256"]=fixture()[2][5]["ack_binding_sha256"]
+        self.events[4]["challenge_sha256"]="0"*64
+        with self.assertRaisesRegex(v.Rejected,"ACK_CHALLENGE_BINDING_CUSTODY"):
+            self.check()
+    def test_17_reused_challenge_even_with_consistent_fake_hashes_denied(self):
+        ch=self.client["receipts"][1]["challenge_sha256"]
+        self.client["receipts"][2]["challenge_sha256"]=ch
+        self.events[7]["challenge_sha256"]=ch
+        self.events[8]["challenge_sha256"]=ch
+        with self.assertRaisesRegex(v.Rejected,"REUSED_ACK_CHALLENGE"):
+            self.check()
+    def test_18_server_ack_wrong_task_custody_must_not_promote(self):
+        self.events[5]["task_sha256"]="f"*64
+        with self.assertRaisesRegex(v.Rejected,"ACK_BINDING_TASK_OR_CLAIM"):
+            self.check()
 if __name__=="__main__":unittest.main()
