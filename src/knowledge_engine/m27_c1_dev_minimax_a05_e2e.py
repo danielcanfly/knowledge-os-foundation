@@ -53,6 +53,76 @@ def digest(raw):return hashlib.sha256(raw).hexdigest()
 def canon(v):return json.dumps(v,sort_keys=True,separators=(",",":"),ensure_ascii=False).encode()
 def must(ok,reason):
     if not ok:raise ValueError(reason)
+
+# Cloudflare's VM script reports one immutable branch enum on a denied
+# postfinish frame. The real Native Server must preserve the rejection reason
+# in its private evidence, but never log arbitrary vendor content or keys.
+CF_TAIL_REASONS=frozenset({
+ "TAIL_PADDING_INVALID","TAIL_NATIVE_RESPONSE_INVALID",
+ "TAIL_UNKNOWN_TOP_FIELDS","TAIL_HEARTBEAT_REPLAY",
+ "TAIL_USAGE_DUPLICATE_OR_INVALID","TAIL_CHOICE_SHAPE_INVALID",
+ "TAIL_MATERIAL_OR_INVALID_CHOICE",
+})
+CF_SHAPE_KNOWN_FIELDS=frozenset({
+ "top_known","top_unknown_count","choices_count","choice_known",
+ "choice_unknown_count","delta_known","delta_unknown_count",
+ "content_state","finish_state","usage_kind","native_response_state",
+})
+CF_SHAPE_KNOWN_TOKENS=frozenset({
+ "model","choices","usage","response","id","object","created",
+ "system_fingerprint","obfuscation","index","delta","finish_reason",
+ "native_finish_reason","logprobs","content","role",
+ "reasoning","reasoning_content",
+ "absent","empty","nonempty","invalid","stop","none","other",
+ "dict","nonempty_or_invalid",
+})
+def safe_cloudflare_stream_diagnostic(event:dict):
+    must(type(event) is dict and event.get("event")=="stream_diagnostic" and
+         type(event.get("delta_count")) is int and
+         0<=event["delta_count"]<=MAX_EVENTS and
+         type(event.get("model_attested")) is bool and
+         type(event.get("finish_stop")) is bool and
+         type(event.get("done_frame")) is bool,
+         "C1_CLOUDFLARE_DIAG_ENVELOPE_DENIED")
+    record={"event":"cloudflare_stream_completion_evidence",
+            "model_attested":event["model_attested"],
+            "done_frame":event["done_frame"],
+            "finish_stop":event["finish_stop"],
+            "delta_count":event["delta_count"]}
+    if "rejected_tail_reason" in event:
+        code=event["rejected_tail_reason"]
+        record["rejected_tail_reason"]=(
+            code if type(code) is str and code in CF_TAIL_REASONS
+            else "TAIL_UNKNOWN_REASON")
+    if "rejected_tail_shape" in event:
+        shape=event["rejected_tail_shape"]
+        must(type(shape) is dict and set(shape)<=CF_SHAPE_KNOWN_FIELDS,
+             "C1_CLOUDFLARE_DIAG_UNSAFE_SHAPE")
+        clean={}
+        for key,value in shape.items():
+            if type(value) is int:
+                must(-1<=value<=MAX_EVENTS,
+                     "C1_CLOUDFLARE_DIAG_UNSAFE_INT")
+                clean[key]=value
+            elif type(value) is str:
+                must(value in CF_SHAPE_KNOWN_TOKENS,
+                     "C1_CLOUDFLARE_DIAG_UNSAFE_VALUE")
+                clean[key]=value
+            elif type(value) is list:
+                must(len(value)<=24 and all(type(item) is str and
+                    item in CF_SHAPE_KNOWN_TOKENS for item in value),
+                    "C1_CLOUDFLARE_DIAG_UNSAFE_LIST")
+                clean[key]=value
+            else:
+                raise ValueError("C1_CLOUDFLARE_DIAG_UNSAFE_TYPE")
+        record["rejected_tail_shape"]=clean
+    if "rejected_tail_wire_sha256" in event:
+        wire=event["rejected_tail_wire_sha256"]
+        must(type(wire) is str and re.fullmatch("[0-9a-f]{64}",wire),
+             "C1_CLOUDFLARE_DIAG_BAD_WIRE_HASH")
+        record["rejected_tail_wire_sha256"]=wire
+    return record
+
 def vendor_generator(vendor:Path):
     vendor=Path(vendor).resolve(strict=True)
     must(vendor.is_dir() and vendor.name=="g01_vendor","NOT_APPROVED_G01_PROVIDER_VENDOR")
@@ -325,16 +395,9 @@ class Handler(BaseHTTPRequestHandler):
                              count==0,"PROVIDER_HTTP_NOT_200")
                 elif kind=="stream_diagnostic":
                     must(s.provider_mode=="m26-parity-direct" and
-                         active_model=="@cf/openai/gpt-oss-120b" and
-                         type(event.get("delta_count")) is int,
+                         active_model=="@cf/openai/gpt-oss-120b",
                          "UNQUALIFIED_CLOUDFLARE_DIAGNOSTIC")
-                    s.audit({"event":"cloudflare_stream_completion_evidence",
-                             "model_attested":event.get("model_attested"),
-                             "done_frame":event.get("done_frame"),
-                             "finish_stop":event.get("finish_stop"),
-                             "delta_count":event.get("delta_count"),
-                             "rejected_tail_shape":event.get("rejected_tail_shape"),
-                             "rejected_tail_wire_sha256":event.get("rejected_tail_wire_sha256")})
+                    s.audit(safe_cloudflare_stream_diagnostic(event))
                 elif kind=="failover":
                     import m27_c1_m26_provider_parity_nonprod as parity
                     must(s.provider_mode=="m26-parity-direct" and
