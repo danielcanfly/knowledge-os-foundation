@@ -25,9 +25,14 @@ class OSVerifierBinding(unittest.TestCase):
                 "source_excerpt_sha256":"1"*64,
                 "citation":"A05 source pin"}
         result.update(overrides)
-        return subprocess.CompletedProcess([],0,json.dumps(result),"")
+        class FakeChild:
+            pid=os.getpid()+100000
+            returncode=0
+            def communicate(self,input=None,timeout=None):
+                return json.dumps(result),""
+        return FakeChild()
     def run_child(self,**overrides):
-        with patch.object(dev.subprocess,"run",return_value=self.child(**overrides)):
+        with patch.object(dev.subprocess,"Popen",return_value=self.child(**overrides)):
             return dev.real_os_semantic_verify(ROOT,ROOT/"fence",CLAIM,TEXT,SRC)
     def test_exact_digest_and_child_os_identity_accepted(self):
         record=self.run_child()

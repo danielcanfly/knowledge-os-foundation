@@ -85,16 +85,26 @@ def real_os_semantic_verify(repo:Path,fence:Path,claim_id:str,text:str,actual_sh
     program=Path(__file__).resolve()
     request={"repo":str(repo),"fence":str(fence),"claim_id":claim_id,
              "text":text,"source_proof_sha256":actual_sha}
-    p=subprocess.run([sys.executable,str(program),"verify"],
-      input=json.dumps(request),capture_output=True,text=True,timeout=16,check=False)
+    # The verifier's self-reported JSON pid is NOT an OS identity proof.
+    # Keep the launched process handle so the kernel-supplied child PID can
+    # be compared with the receipt. subprocess.run() loses this identity.
+    p=subprocess.Popen([sys.executable,str(program),"verify"],
+        stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+        text=True)
+    try:
+        stdout,_=p.communicate(input=json.dumps(request),timeout=16)
+    except subprocess.TimeoutExpired:
+        p.kill()
+        p.communicate()
+        raise ValueError("SEPARATE_OS_SEMANTIC_SOURCE_VERIFIER_TIMEOUT")
     must(p.returncode==0,"SEPARATE_OS_SEMANTIC_SOURCE_VERIFIER_DENIED")
-    v=json.loads(p.stdout)
+    v=json.loads(stdout)
     must(v.get("accepted") is True and v.get("signed_semantic_issuer") is False
          and v.get("claim_id")==claim_id and
          v.get("source_proof_sha256")==actual_sha and
          v.get("model_text_sha256")==digest(text.encode()) and
          type(v.get("pid")) is int and v["pid"]>0 and
-         v["pid"]!=os.getpid(),
+         v["pid"]!=os.getpid() and v["pid"]==p.pid,
          "LOCAL_F03_VERIFIER_SOURCE_BINDING_DENIED")
     return v
 
