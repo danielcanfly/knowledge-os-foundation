@@ -91,7 +91,10 @@ def real_os_semantic_verify(repo:Path,fence:Path,claim_id:str,text:str,actual_sh
     v=json.loads(p.stdout)
     must(v.get("accepted") is True and v.get("signed_semantic_issuer") is False
          and v.get("claim_id")==claim_id and
-         v.get("source_proof_sha256")==actual_sha,
+         v.get("source_proof_sha256")==actual_sha and
+         v.get("model_text_sha256")==digest(text.encode()) and
+         type(v.get("pid")) is int and v["pid"]>0 and
+         v["pid"]!=os.getpid(),
          "LOCAL_F03_VERIFIER_SOURCE_BINDING_DENIED")
     return v
 
