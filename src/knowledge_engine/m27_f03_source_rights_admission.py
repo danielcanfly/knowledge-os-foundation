@@ -574,6 +574,10 @@ class A05OwnerCorpusAdmission:
         # This is NOT a response, retrieval-result or Product answer cache.
         self._pinned_blob_cache: dict[str, bytes] = {}
         self._pinned_blob_lock = threading.RLock()
+        # Only immutable adapter code is reusable. Its on-disk bytes remain
+        # independently checked against the pinned Git object EVERY read.
+        self._adapter_class = None
+        self._adapter_lock = threading.RLock()
         self.original_root = (self.repo / A05_SOURCE).resolve(strict=True)
         if self.source_root != self.original_root:
             check(isolated_test_copy and
@@ -764,11 +768,15 @@ class A05OwnerCorpusAdmission:
             # Load the previously implemented native local retrieval method,
             # not new fixture text or fake model calls.
             import importlib.util
-            spec = importlib.util.spec_from_file_location(
-                "m27_a05_f03_owned_reader", self.repo / A05_ADAPTER)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-            engine = module.ContextIndex(root=self.source_root)
+            with self._adapter_lock:
+                if self._adapter_class is None:
+                    spec = importlib.util.spec_from_file_location(
+                        "m27_a05_f03_owned_reader", self.repo / A05_ADAPTER)
+                    module = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(module)
+                    self._adapter_class = module.ContextIndex
+                adapter_class = self._adapter_class
+            engine = adapter_class(root=self.source_root)
             result = engine.search(
                 question=question, tenant=tenant, roles=["internal"],
                 release_id=release_id, source_revision=source_revision,
