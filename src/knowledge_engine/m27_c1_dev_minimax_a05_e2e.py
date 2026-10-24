@@ -144,6 +144,7 @@ class Server(socketserver.ThreadingMixIn,socketserver.UnixStreamServer):
             "deadline_seconds":30,
             "fallback_consent":False})
         self.once=False;self.done=False;self.provider_calls=0
+        self.stream_claim_lock=threading.Lock()
         self.first_preterminal_ack=False
         self.deadline_ns=None
         self.ack_cond=threading.Condition();self.pending={};self.acked=[]
@@ -156,6 +157,15 @@ class Server(socketserver.ThreadingMixIn,socketserver.UnixStreamServer):
         with self.log_lock,self.journal.open("a") as f:
             f.write(json.dumps({"at_ns":time.monotonic_ns(),**v},sort_keys=True)+"\n")
             f.flush();os.fsync(f.fileno())
+    def claim_stream_once(self):
+        # ThreadingMixIn can accept concurrent GET /stream clients. Claiming
+        # the sole provider Task must be indivisible, including when the
+        # losing request is authenticated with the same local capability.
+        with self.stream_claim_lock:
+            if self.once:
+                return False
+            self.once=True
+            return True
     def current(self):
         # The A05 read and separate OS byte verifiers can block under heavy
         # local I/O load. Passing the deadline BEFORE that work is insufficient:
@@ -240,9 +250,8 @@ class Handler(BaseHTTPRequestHandler):
               "provider_calls":s.provider_calls,
               "product_pass":False,"formal_model_stream_admitted":False,
               "development_only":True})
-        if self.path!="/stream" or s.once:
+        if self.path!="/stream" or not s.claim_stream_once():
             return self.reply({"status":"NO_REPLAY_OR_UNKNOWN"},403)
-        s.once=True
         s.deadline_ns=time.monotonic_ns()+30*10**9
         self.send_response(200);self.send_header("Content-Type","text/event-stream")
         self.send_header("Cache-Control","no-store");self.end_headers()
