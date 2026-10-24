@@ -42,7 +42,7 @@ import hashlib,json,os,sys,time
 import httpx
 def emit(event,**kw):
     print(json.dumps(dict(event=event,**kw),ensure_ascii=True,separators=(',',':')),flush=True)
-def reject_postfinish(part,raw,got_model,finish,deltas):
+def reject_postfinish(part,raw,got_model,finish,deltas,reason):
     # Preserve a shape fingerprint, never raw provider content, account ID,
     # prompt, reasoning, bearer token, or unknown field names.  This is
     # diagnostic only: the original malformed tail is STILL rejected.
@@ -76,7 +76,7 @@ def reject_postfinish(part,raw,got_model,finish,deltas):
     }
     emit('stream_diagnostic',model_attested=got_model,done_frame=False,
          finish_stop=finish,delta_count=deltas,
-         rejected_tail_shape=shape,
+         rejected_tail_shape=shape,rejected_tail_reason=reason,
          rejected_tail_wire_sha256=hashlib.sha256(raw.encode()).hexdigest())
     emit('error',category='CLOUDFLARE_POSTFINISH_DATA_DENIED')
 model='@cf/openai/gpt-oss-120b'
@@ -172,7 +172,7 @@ try:
                     if ('obfuscation' in part and
                         (not isinstance(padding,str) or
                          len(padding)>512 or any(ord(c)<32 for c in padding))):
-                        reject_postfinish(part,raw,got_model,finish,deltas)
+                        reject_postfinish(part,raw,got_model,finish,deltas,'TAIL_PADDING_INVALID')
                         break
                     # Some genuine Cloudflare Workers AI streams end in a
                     # native (non-OpenAI) empty response + cumulative usage
@@ -187,7 +187,7 @@ try:
                             or not isinstance(part.get('response'),str) or
                             part['response'] not in ('',assembled) or
                             not isinstance(part.get('usage'),dict)):
-                            reject_postfinish(part,raw,got_model,finish,deltas)
+                            reject_postfinish(part,raw,got_model,finish,deltas,'TAIL_NATIVE_RESPONSE_INVALID')
                             break
                         native_tail_seen=True
                         continue
@@ -196,7 +196,7 @@ try:
                     safe_fields={'id','object','created','model','choices',
                                  'usage','system_fingerprint','obfuscation'}
                     if not set(part).issubset(safe_fields):
-                        reject_postfinish(part,raw,got_model,finish,deltas)
+                        reject_postfinish(part,raw,got_model,finish,deltas,'TAIL_UNKNOWN_TOP_FIELDS')
                         break
                     usage=part.get('usage')
                     if choices==[]:
@@ -204,7 +204,7 @@ try:
                         # usage. It is not an answer or a terminal grant.
                         if usage is None:
                             if heartbeat_seen:
-                                reject_postfinish(part,raw,got_model,finish,deltas)
+                                reject_postfinish(part,raw,got_model,finish,deltas,'TAIL_HEARTBEAT_REPLAY')
                                 break
                             heartbeat_seen=True
                             continue
@@ -214,7 +214,7 @@ try:
                                         'total_tokens')) or
                             usage['total_tokens'] < max(usage['prompt_tokens'],
                                                          usage['completion_tokens'])):
-                            reject_postfinish(part,raw,got_model,finish,deltas)
+                            reject_postfinish(part,raw,got_model,finish,deltas,'TAIL_USAGE_DUPLICATE_OR_INVALID')
                             break
                         usage_seen=True
                         continue
@@ -228,7 +228,7 @@ try:
                         not set(choices[0]).issubset(
                             {'index','delta','finish_reason',
                              'native_finish_reason','logprobs'})):
-                        reject_postfinish(part,raw,got_model,finish,deltas)
+                        reject_postfinish(part,raw,got_model,finish,deltas,'TAIL_CHOICE_SHAPE_INVALID')
                         break
                     tail=choices[0]
                     chunk=tail.get('delta')
@@ -243,7 +243,7 @@ try:
                         tail.get('native_finish_reason') not in (None,'stop') or
                         tail.get('index',0)!=0 or
                         tail.get('logprobs') not in (None,{})):
-                        reject_postfinish(part,raw,got_model,finish,deltas)
+                        reject_postfinish(part,raw,got_model,finish,deltas,'TAIL_MATERIAL_OR_INVALID_CHOICE')
                         break
                     if usage is not None:
                         # Metadata is never forwarded or rendered. Strictly
@@ -256,7 +256,7 @@ try:
                             usage['total_tokens'] <
                                 max(usage['prompt_tokens'],
                                     usage['completion_tokens'])):
-                            reject_postfinish(part,raw,got_model,finish,deltas)
+                            reject_postfinish(part,raw,got_model,finish,deltas,'TAIL_USAGE_DUPLICATE_OR_INVALID')
                             break
                         usage_seen=True
                     empty_tail_seen=True
