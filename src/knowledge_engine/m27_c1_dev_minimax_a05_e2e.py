@@ -215,7 +215,12 @@ class Handler(BaseHTTPRequestHandler):
         try:
             n=int(self.headers.get("Content-Length","0"))
             must(0<n<=2048,"ACK_BODY_BUDGET")
-            data=json.loads(self.rfile.read(n))
+            raw=self.rfile.read(n)
+            # A clean EOF can return a syntactically valid JSON prefix even
+            # when Content-Length promised more bytes. Do not authenticate
+            # an ACK unless the complete declared HTTP body was received.
+            must(len(raw)==n,"ACK_BODY_TRUNCATED")
+            data=json.loads(raw)
             must(type(data) is dict and
               set(data)=={"request_id","claim_id","challenge","text_sha256"},
               "ACK_SHAPE")
