@@ -181,6 +181,13 @@ class Server(socketserver.ThreadingMixIn,socketserver.UnixStreamServer):
 
 class Handler(BaseHTTPRequestHandler):
     protocol_version="HTTP/1.0"
+    CLIENT_IO_TIMEOUT_SECONDS=5.0
+    def setup(self):
+        # AF_UNIX is local, but a peer with the capability can still send an
+        # unfinished header/body indefinitely. Bound both request parsing
+        # and ACK body reads without extending the Task's 30s deadline.
+        self.connection.settimeout(self.CLIENT_IO_TIMEOUT_SECONDS)
+        super().setup()
     def log_message(self,*args):pass
     def authorized(self):
         server=self.server
