@@ -28,6 +28,29 @@ class ProbeServer(socketserver.ThreadingMixIn,socketserver.UnixStreamServer):
     def handle_error(self,*args):pass
 
 class NativeDeadline(unittest.TestCase):
+    def test_complete_get_still_returns_200(self):
+        self._complete(b"GET /status HTTP/1.0\r\nHost: c1-dev-unix.local\r\n\r\n",b'"status": "OK"')
+    def test_complete_post_body_still_returns_200(self):
+        self._complete(b"POST /ack HTTP/1.0\r\nHost: c1-dev-unix.local\r\nContent-Length: 2\r\n\r\n{}",b'UNEXPECTED_COMPLETE')
+    def _complete(self,wire,expected):
+        with tempfile.TemporaryDirectory(prefix="c1-http-complete-") as d:
+            with ProbeServer(str(Path(d)/"c1.sock"),ProbeHandler) as server:
+                worker=threading.Thread(target=server.serve_forever,daemon=True)
+                worker.start()
+                client=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM)
+                try:
+                    client.settimeout(0.65)
+                    client.connect(str(Path(d)/"c1.sock"))
+                    client.sendall(wire)
+                    response=b""
+                    while expected not in response:
+                        chunk=client.recv(2048)
+                        if not chunk:break
+                        response+=chunk
+                    self.assertIn(b"HTTP/1.0 200",response)
+                    self.assertIn(expected,response)
+                finally:
+                    client.close();server.shutdown();worker.join(timeout=2)
     def test_incomplete_headers_do_not_hold_native_worker(self):
         self._run(b"POST /ack HTTP/1.0\r\nHost: c1-dev-unix.local\r\n")
     def test_incomplete_ack_body_does_not_hold_native_worker(self):

@@ -186,8 +186,8 @@ class Handler(BaseHTTPRequestHandler):
         # AF_UNIX is local, but a peer with the capability can still send an
         # unfinished header/body indefinitely. Bound both request parsing
         # and ACK body reads without extending the Task's 30s deadline.
-        self.connection.settimeout(self.CLIENT_IO_TIMEOUT_SECONDS)
         super().setup()
+        self.connection.settimeout(self.CLIENT_IO_TIMEOUT_SECONDS)
     def log_message(self,*args):pass
     def authorized(self):
         server=self.server
