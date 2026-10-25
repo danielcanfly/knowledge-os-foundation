@@ -42,6 +42,11 @@ class PublicConsumerFixture(unittest.TestCase):
             destination = cls.source / path
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(ROOT / path, destination)
+        cls.c1_source = cls.tmp / "14-c1-modules"
+        for name in sorted(f04.C1_MODULES):
+            target = cls.c1_source / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(ROOT / "src" / name, target)
         cls.now = int(time.time())
         cls.head = "a"*40
         cls.tree = "b"*40
@@ -79,6 +84,19 @@ class PublicConsumerFixture(unittest.TestCase):
             "source_controller": role_keys["source_controller"]["principal"],
             "expires_at": cls.now + 1800, "files": files,
             "tenant": "owner-internal", "source_release_id": f04.f03.A05_RELEASE_ID}
+        c1_files = []
+        for name in sorted(f04.C1_MODULES):
+            raw = (cls.c1_source / name).read_bytes()
+            c1_files.append({
+                "path": name, "sha256": f04.digest(raw),
+                "git_blob_oid": hashlib.sha1(
+                    b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest(),
+                "git_mode": "100644"})
+        c1_manifest = {
+            "schema": gitless.ABI, "head": cls.head, "tree": cls.tree,
+            "source_controller": role_keys["source_controller"]["principal"],
+            "expires_at": cls.now + 1800, "files": c1_files,
+            "tenant": "owner-internal", "source_release_id": f04.f03.A05_RELEASE_ID}
         rights = {
             "task_sha256": cls.task["task_sha256"],
             "request_id": cls.task["request_id"], "source_sha256": f04.CORPUS,
@@ -92,6 +110,7 @@ class PublicConsumerFixture(unittest.TestCase):
             "revocation_uri": "https://invalid.example/revocations",
             "acl": {"tenant": "owner-internal", "read": ["internal"]},
             "gitless_manifest_sha256": f04.digest(f04.canonical(manifest)),
+            "c1_gitless_manifest_sha256": f04.digest(f04.canonical(c1_manifest)),
             "source_rights_epoch": cls.task["rights_epoch"]}
         revocation = {
             "schema": "m27.external-trust-revocations/v1",
@@ -104,7 +123,9 @@ class PublicConsumerFixture(unittest.TestCase):
             "revocations_signed": cls.sign("release_controller", revocation),
             "rights_signed": cls.sign("source_controller", rights),
             "gitless_signed": cls.sign("source_controller", manifest),
-            "gitless_source_directory": str(cls.source)}
+            "gitless_source_directory": str(cls.source),
+            "c1_gitless_signed": cls.sign("source_controller", c1_manifest),
+            "c1_gitless_source_directory": str(cls.c1_source)}
         cls.root_pin = f04.digest(cls.keys["release_controller"][1].encode())
         cls.receipts = []
         expectations = [
@@ -187,7 +208,9 @@ class PublicConsumerFixture(unittest.TestCase):
     def test_03_fixture_signed_rights_and_fourteen_exact_real_bytes(self):
         x = f04.verify_source_rights(self.fixture, self.inspect(),
                                       task=self.task, now=self.now)
-        self.assertEqual(x["verified_physical_files"], 14)
+        self.assertEqual(x["verified_physical_files"], 28)
+        self.assertEqual(x["verified_f03_source_files"], 14)
+        self.assertEqual(x["verified_c1_module_files"], 14)
         self.assertFalse(x["product_pass"])
 
     def test_04_fixture_seven_signed_same_task_receipts(self):
@@ -360,6 +383,44 @@ class PublicConsumerFixture(unittest.TestCase):
                 candidate.start({"request_id": self.task["request_id"]})
             self.assertEqual(candidate.provider_invocations, 0)
             self.assertEqual(candidate.sessions, {})
+
+    def test_29_c1_signed_fourteen_modules_blob_tamper_denied(self):
+        e = copy.deepcopy(self.fixture)
+        source = e["c1_gitless_signed"]["payload"]
+        source["files"][0]["git_blob_oid"] = "1"*40
+        e["c1_gitless_signed"] = self.sign("source_controller", source)
+        rights = e["rights_signed"]["payload"]
+        rights["c1_gitless_manifest_sha256"] = f04.digest(f04.canonical(source))
+        e["rights_signed"] = self.sign("source_controller", rights)
+        with self.assertRaisesRegex(gitless.GitlessDenied, "GIT_BLOB_OID_MISMATCH"):
+            f04.verify_source_rights(e, self.inspect(), task=self.task, now=self.now)
+
+    def test_30_c1_signed_thirteen_modules_denied(self):
+        e = copy.deepcopy(self.fixture)
+        source = e["c1_gitless_signed"]["payload"]
+        source["files"].pop()
+        e["c1_gitless_signed"] = self.sign("source_controller", source)
+        rights = e["rights_signed"]["payload"]
+        rights["c1_gitless_manifest_sha256"] = f04.digest(f04.canonical(source))
+        e["rights_signed"] = self.sign("source_controller", rights)
+        with self.assertRaisesRegex(f04.Denied, "C1_FOURTEEN_MODULES"):
+            f04.verify_source_rights(e, self.inspect(), task=self.task, now=self.now)
+
+    def test_31_c1_gitless_rights_manifest_unbound_denied(self):
+        e = copy.deepcopy(self.fixture)
+        rights = e["rights_signed"]["payload"]
+        rights["c1_gitless_manifest_sha256"] = "f"*64
+        e["rights_signed"] = self.sign("source_controller", rights)
+        with self.assertRaisesRegex(f04.Denied, "C1_FOURTEEN_MODULES"):
+            f04.verify_source_rights(e, self.inspect(), task=self.task, now=self.now)
+
+    def test_32_native_f04_cli_new_argument_present(self):
+        import inspect
+        import m27_c1_current_native_product_nonprod as app
+        self.assertIn("release_evidence_file", inspect.signature(app.serve).parameters)
+        self.assertIn("release_evidence_file", inspect.signature(app.Candidate).parameters)
+        self.assertIn("release_evidence", inspect.signature(live.NativeLiveProduct).parameters)
+
 
 if __name__ == "__main__":
     unittest.main()

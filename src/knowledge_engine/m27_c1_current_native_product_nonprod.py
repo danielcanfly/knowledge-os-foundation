@@ -186,7 +186,7 @@ class Candidate:
             trust_root=trust_root_file,
             qualification_bundle=qualification_bundle_file,
             release_evidence=release_evidence_file,
-            source_head=self.version["head"], source_tree=self.version["tree"])
+            source_head=expected_head, source_tree=expected_tree)
         self.contract_instances: dict[str, dict] = {}
         check(self.reader.recovery in ("EMPTY", "PREVIOUS_TERMINAL_NO_REPLAY"),
               "INCOMPLETE_PREVIOUS_TASK_NO_REPLAY")

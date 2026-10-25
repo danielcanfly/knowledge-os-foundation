@@ -32,6 +32,22 @@ A05_DOCS = {
         "6f98ef617f1c1957ccec627aeae0381f9db48dbd763503a818732bbeb1476a02",
 }
 CORPUS = "7835ec95cee639722f89a0520336283f7e226358ad7be003a2a906635d1200e3"
+C1_MODULES = frozenset("knowledge_engine/" + mod + ".py" for mod in (
+    "m27_c1_current_native_product_nonprod",
+    "m27_c1_dev_minimax_a05_e2e",
+    "m27_c1_formal_workers_ai_sse",
+    "m27_c1_genuine_native_generation_seam",
+    "m27_c1_gitless_source_proof",
+    "m27_c1_m26_provider_parity_nonprod",
+    "m27_c1_production_parity_verifier",
+    "m27_f02_current_native_model_events",
+    "m27_f03_client_restore_boundary",
+    "m27_f03_source_rights_admission",
+    "m27_g01_current_native_consumer",
+    "m27_g01_qa_outcome",
+    "m27_h02_native_nonprod_consumer",
+    "m27_task_contracts_v1",
+))
 
 
 class Denied(ValueError):
@@ -109,7 +125,8 @@ def verify_release_structure(evidence: dict, *, pinned_root_sha256: str,
     require(hex_digest(pinned_root_sha256), "F04_NO_APPROVED_RELEASE_ROOT")
     _mapping(evidence, ("release_root_pem", "release_signed",
                        "revocations_signed", "rights_signed",
-                       "gitless_signed", "gitless_source_directory"),
+                       "gitless_signed", "gitless_source_directory",
+                       "c1_gitless_signed", "c1_gitless_source_directory"),
              "F04_EVIDENCE_FIELDS_INVALID")
     pem_string = evidence["release_root_pem"]
     require(type(pem_string) is str, "F04_RELEASE_ROOT_INVALID")
@@ -208,7 +225,8 @@ def verify_source_rights(evidence: dict, inspected: dict, *,
     _mapping(payload, (*rights_fields, "role", "issuer", "nonce",
                        "issued_at", "expires_at", "region", "retention_seconds",
                        "serving_ttl_seconds", "revocation_uri", "acl",
-                       "gitless_manifest_sha256", "source_rights_epoch"),
+                       "gitless_manifest_sha256", "c1_gitless_manifest_sha256",
+                       "source_rights_epoch"),
              "F04_A05_RIGHTS_SCHEMA_INVALID")
     _window(payload, now)
     require(payload["role"] == "source_controller" and
@@ -254,9 +272,32 @@ def verify_source_rights(evidence: dict, inspected: dict, *,
     require(result["files_verified"] == 14 and
             result["signed_source_admitted"] is False,
             "F04_GITLESS_PHYSICAL_EVIDENCE_INVALID")
+    # C1's separate 14-Python-module Gitless Source Controller lane is NOT
+    # the A05 14-file F03 reader lane. Both signatures and both full byte
+    # inventories must be checked, under the same approved Source principal.
+    c1_signed = evidence["c1_gitless_signed"]
+    c1_payload = _verify_signed(
+        inspected["roles"]["source_controller"]["public_key_pem"].encode("ascii"),
+        c1_signed)
+    require(digest(canonical(c1_payload)) == payload["c1_gitless_manifest_sha256"] and
+            type(c1_payload.get("files")) is list and
+            len(c1_payload["files"]) == 14 and
+            {x.get("path") for x in c1_payload["files"]
+             if type(x) is dict} == C1_MODULES and
+            c1_payload.get("source_controller") == payload["issuer"],
+            "F04_C1_FOURTEEN_MODULES_SOURCE_GRANT_MISMATCH")
+    c1_result = gitless.inspect_exact_bundle(
+        Path(evidence["c1_gitless_source_directory"]),
+        c1_payload, expected_head=inspected["release"]["head"],
+        expected_tree=inspected["release"]["tree"])
+    require(c1_result["files_verified"] == 14 and
+            c1_result["signed_source_admitted"] is False,
+            "F04_C1_FOURTEEN_MODULES_BYTE_ADMISSION_INVALID")
     return {"rights_payload_sha256": digest(canonical(payload)),
             "gitless_payload_sha256": digest(canonical(gitless_payload)),
-            "verified_physical_files": 14, "signed_signature_verified": True,
+            "c1_module_gitless_payload_sha256": digest(canonical(c1_payload)),
+            "verified_f03_source_files": 14, "verified_c1_module_files": 14,
+            "verified_physical_files": 28, "signed_signature_verified": True,
             "scope": "NONPROD_RIGHTS_CRYPTOGRAPHIC_CONSUMER_ONLY",
             "product_pass": False}
 
