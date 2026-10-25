@@ -29,6 +29,7 @@ import m27_h02_native_nonprod_consumer as h02
 import m27_g01_current_native_consumer as g01
 import m27_task_contracts_v1 as tc
 import m27_c1_formal_workers_ai_sse as cf_sse
+import m27_c1_f04_external_authority_consumer as f04_consumer
 
 ABI = "m27.c1.native-live-generation-governed/v1"
 CLIENT_ABI = "m27.c1.native-verified-text-ack/v1"
@@ -479,12 +480,17 @@ class NativeLiveProduct:
 
     def __init__(self, *, repo: Path, fence: Path, journal: Path,
                  trust_root: Path | None = None,
-                 qualification_bundle: Path | None = None):
+                 qualification_bundle: Path | None = None,
+                 release_evidence: Path | None = None,
+                 source_head: str | None = None,
+                 source_tree: str | None = None):
         self.repo = Path(repo).resolve(strict=True)
         self.fence = Path(fence)
         self.journal = h02.FsyncJournal(journal)
         self.trust_root = trust_root
         self.qualification_bundle = qualification_bundle
+        self.release_evidence = release_evidence
+        self.source_head, self.source_tree = source_head, source_tree
         self.status = "LIVE_NOT_RUN_EXTERNAL_TRUST_ROOT_MISSING"
         self.provider_invocations = 0
         self.sessions = {}
@@ -669,6 +675,21 @@ class NativeLiveProduct:
             authority.receipt("client_idp", grant["client"],
                               {**context, "client_principal": grant["client_principal"],
                                "client_abi": CLIENT_ABI}, nonce=nonce)
+            # Fifth, independently governed Release Controller root + two-doc
+            # online serving rights + signed 14-source Gitless physical proof.
+            # This guard is additive: it cannot weaken the four existing
+            # Controller receipt checks and occurs BEFORE any Provider call.
+            check(type(self.source_head) is str and
+                  type(self.source_tree) is str,
+                  "F04_NEW_C1_COMMIT_VECTOR_REQUIRED")
+            f04_consumer.require_live_launch(
+                self.release_evidence,
+                task={"task_sha256": pending["task_sha"],
+                      "request_id": pending["request_id"],
+                      "nonce": nonce, "source_proof_sha256":
+                      pending["source_proofs_sha256"],
+                      "rights_epoch": context["rights_epoch"]},
+                expected_head=self.source_head, expected_tree=self.source_tree)
             if grant["wire_protocol"] == PROVIDER_SSE_ABI:
                 wire = cf_sse.DirectWorkersAISSE(
                     url=grant["url"], model=grant["model"],
