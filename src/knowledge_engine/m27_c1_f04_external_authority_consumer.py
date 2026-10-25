@@ -7,6 +7,7 @@ Test-fixture verification is unadmitted, never a model-call or Product permit.
 """
 from __future__ import annotations
 
+import ast
 import base64
 import hashlib
 import json
@@ -35,6 +36,7 @@ CORPUS = "7835ec95cee639722f89a0520336283f7e226358ad7be003a2a906635d1200e3"
 C1_MODULES = frozenset("knowledge_engine/" + mod + ".py" for mod in (
     "m27_c1_current_native_product_nonprod",
     "m27_c1_dev_minimax_a05_e2e",
+    "m27_c1_f04_external_authority_consumer",
     "m27_c1_formal_workers_ai_sse",
     "m27_c1_genuine_native_generation_seam",
     "m27_c1_gitless_source_proof",
@@ -206,6 +208,31 @@ def _role_payload(evidence, inspected, role: str, signed: dict,
     return p
 
 
+def _require_c1_staged_import_closure(root: Path, declared: frozenset[str]) -> None:
+    """Reject imports of non-inventoried local m27_* runtime dependencies.
+
+    All listed files were already checked for exact byte hashes/OIDs and
+    no-follow paths by inspect_exact_bundle before this AST inspection.
+    """
+    local_names = {Path(item).stem for item in declared}
+    for item in sorted(declared):
+        source = (root / item).read_bytes()
+        try:
+            nodes = ast.walk(ast.parse(source, filename=item))
+            for node in nodes:
+                if isinstance(node, ast.Import):
+                    imports = (alias.name.split(".")[0] for alias in node.names)
+                elif isinstance(node, ast.ImportFrom):
+                    imports = (node.module.split(".")[0],) if node.module else ()
+                else:
+                    continue
+                for name in imports:
+                    require(not name.startswith("m27_") or name in local_names,
+                            "F04_C1_LOCAL_IMPORT_NOT_IN_SOURCE_MANIFEST")
+        except (SyntaxError, UnicodeError) as exc:
+            raise Denied("F04_C1_SOURCE_AST_PARSE_DENIED") from exc
+
+
 def verify_source_rights(evidence: dict, inspected: dict, *,
                          task: dict, now: int) -> dict:
     rights_fields = {
@@ -272,8 +299,8 @@ def verify_source_rights(evidence: dict, inspected: dict, *,
     require(result["files_verified"] == 14 and
             result["signed_source_admitted"] is False,
             "F04_GITLESS_PHYSICAL_EVIDENCE_INVALID")
-    # C1's separate 14-Python-module Gitless Source Controller lane is NOT
-    # the A05 14-file F03 reader lane. Both signatures and both full byte
+    # C1's independent Python-source lane is NOT the A05 14-file corpus lane.
+    # Both signatures and both full byte
     # inventories must be checked, under the same approved Source principal.
     c1_signed = evidence["c1_gitless_signed"]
     c1_payload = _verify_signed(
@@ -281,23 +308,26 @@ def verify_source_rights(evidence: dict, inspected: dict, *,
         c1_signed)
     require(digest(canonical(c1_payload)) == payload["c1_gitless_manifest_sha256"] and
             type(c1_payload.get("files")) is list and
-            len(c1_payload["files"]) == 14 and
+            len(c1_payload["files"]) == len(C1_MODULES) and
             {x.get("path") for x in c1_payload["files"]
              if type(x) is dict} == C1_MODULES and
             c1_payload.get("source_controller") == payload["issuer"],
-            "F04_C1_FOURTEEN_MODULES_SOURCE_GRANT_MISMATCH")
+            "F04_C1_COMPLETE_MODULES_SOURCE_GRANT_MISMATCH")
     c1_result = gitless.inspect_exact_bundle(
         Path(evidence["c1_gitless_source_directory"]),
         c1_payload, expected_head=inspected["release"]["head"],
         expected_tree=inspected["release"]["tree"])
-    require(c1_result["files_verified"] == 14 and
+    require(c1_result["files_verified"] == len(C1_MODULES) and
             c1_result["signed_source_admitted"] is False,
-            "F04_C1_FOURTEEN_MODULES_BYTE_ADMISSION_INVALID")
+            "F04_C1_COMPLETE_MODULES_BYTE_ADMISSION_INVALID")
+    _require_c1_staged_import_closure(
+        Path(evidence["c1_gitless_source_directory"]), C1_MODULES)
     return {"rights_payload_sha256": digest(canonical(payload)),
             "gitless_payload_sha256": digest(canonical(gitless_payload)),
             "c1_module_gitless_payload_sha256": digest(canonical(c1_payload)),
-            "verified_f03_source_files": 14, "verified_c1_module_files": 14,
-            "verified_physical_files": 28, "signed_signature_verified": True,
+            "verified_f03_source_files": 14,
+            "verified_c1_module_files": len(C1_MODULES),
+            "verified_physical_files": 14 + len(C1_MODULES), "signed_signature_verified": True,
             "scope": "NONPROD_RIGHTS_CRYPTOGRAPHIC_CONSUMER_ONLY",
             "product_pass": False}
 

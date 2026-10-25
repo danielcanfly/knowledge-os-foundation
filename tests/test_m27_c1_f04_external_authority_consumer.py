@@ -42,7 +42,7 @@ class PublicConsumerFixture(unittest.TestCase):
             destination = cls.source / path
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(ROOT / path, destination)
-        cls.c1_source = cls.tmp / "14-c1-modules"
+        cls.c1_source = cls.tmp / "complete-c1-modules"
         for name in sorted(f04.C1_MODULES):
             target = cls.c1_source / name
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -205,12 +205,12 @@ class PublicConsumerFixture(unittest.TestCase):
         self.assertFalse(x["formal_product_pass"])
         self.assertIn("NOT_REAL_AUTHORITY", x["qualification"])
 
-    def test_03_fixture_signed_rights_and_fourteen_exact_real_bytes(self):
+    def test_03_fixture_signed_rights_and_complete_real_bytes(self):
         x = f04.verify_source_rights(self.fixture, self.inspect(),
                                       task=self.task, now=self.now)
-        self.assertEqual(x["verified_physical_files"], 28)
+        self.assertEqual(x["verified_physical_files"], 29)
         self.assertEqual(x["verified_f03_source_files"], 14)
-        self.assertEqual(x["verified_c1_module_files"], 14)
+        self.assertEqual(x["verified_c1_module_files"], 15)
         self.assertFalse(x["product_pass"])
 
     def test_04_fixture_seven_signed_same_task_receipts(self):
@@ -384,7 +384,7 @@ class PublicConsumerFixture(unittest.TestCase):
             self.assertEqual(candidate.provider_invocations, 0)
             self.assertEqual(candidate.sessions, {})
 
-    def test_29_c1_signed_fourteen_modules_blob_tamper_denied(self):
+    def test_29_c1_signed_complete_modules_blob_tamper_denied(self):
         e = copy.deepcopy(self.fixture)
         source = e["c1_gitless_signed"]["payload"]
         source["files"][0]["git_blob_oid"] = "1"*40
@@ -395,7 +395,7 @@ class PublicConsumerFixture(unittest.TestCase):
         with self.assertRaisesRegex(gitless.GitlessDenied, "GIT_BLOB_OID_MISMATCH"):
             f04.verify_source_rights(e, self.inspect(), task=self.task, now=self.now)
 
-    def test_30_c1_signed_thirteen_modules_denied(self):
+    def test_30_c1_signed_missing_module_denied(self):
         e = copy.deepcopy(self.fixture)
         source = e["c1_gitless_signed"]["payload"]
         source["files"].pop()
@@ -403,7 +403,7 @@ class PublicConsumerFixture(unittest.TestCase):
         rights = e["rights_signed"]["payload"]
         rights["c1_gitless_manifest_sha256"] = f04.digest(f04.canonical(source))
         e["rights_signed"] = self.sign("source_controller", rights)
-        with self.assertRaisesRegex(f04.Denied, "C1_FOURTEEN_MODULES"):
+        with self.assertRaisesRegex(f04.Denied, "C1_COMPLETE_MODULES"):
             f04.verify_source_rights(e, self.inspect(), task=self.task, now=self.now)
 
     def test_31_c1_gitless_rights_manifest_unbound_denied(self):
@@ -411,8 +411,34 @@ class PublicConsumerFixture(unittest.TestCase):
         rights = e["rights_signed"]["payload"]
         rights["c1_gitless_manifest_sha256"] = "f"*64
         e["rights_signed"] = self.sign("source_controller", rights)
-        with self.assertRaisesRegex(f04.Denied, "C1_FOURTEEN_MODULES"):
+        with self.assertRaisesRegex(f04.Denied, "C1_COMPLETE_MODULES"):
             f04.verify_source_rights(e, self.inspect(), task=self.task, now=self.now)
+
+    def test_31a_missing_new_runtime_consumer_denied(self):
+        e = copy.deepcopy(self.fixture)
+        source = e["c1_gitless_signed"]["payload"]
+        source["files"] = [row for row in source["files"]
+                           if row["path"] !=
+                           "knowledge_engine/m27_c1_f04_external_authority_consumer.py"]
+        e["c1_gitless_signed"] = self.sign("source_controller", source)
+        rights = e["rights_signed"]["payload"]
+        rights["c1_gitless_manifest_sha256"] = f04.digest(f04.canonical(source))
+        e["rights_signed"] = self.sign("source_controller", rights)
+        with self.assertRaisesRegex(f04.Denied, "C1_COMPLETE_MODULES"):
+            f04.verify_source_rights(e, self.inspect(), task=self.task, now=self.now)
+
+    def test_31b_runtime_static_import_not_in_complete_source_denied(self):
+        with tempfile.TemporaryDirectory(prefix="repair03-missing-import-") as td:
+            root = Path(td)
+            for name in sorted(f04.C1_MODULES):
+                p = root / name
+                p.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(ROOT / "src" / name, p)
+            target = root / "knowledge_engine/m27_c1_genuine_native_generation_seam.py"
+            with target.open("ab") as handle:
+                handle.write(b"\nimport m27_unlisted_local_runtime_dependency\n")
+            with self.assertRaisesRegex(f04.Denied, "LOCAL_IMPORT_NOT_IN_SOURCE_MANIFEST"):
+                f04._require_c1_staged_import_closure(root, f04.C1_MODULES)
 
     def test_32_native_f04_cli_new_argument_present(self):
         import inspect

@@ -1,4 +1,4 @@
-"""Make NEW-C1-HEAD exact dual 14-file Gitless UNSIGNED intake evidence.
+"""Make complete C1-runtime + F03/A05 Gitless UNSIGNED intake evidence.
 
 Reads the clean current C1 commit and source bytes, writes ONLY to a caller's
 new output directory outside the repository. No private keys, signatures,
@@ -7,6 +7,7 @@ independent Controller claims, Provider calls or Product admission.
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 import os
@@ -20,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src" / "knowledge_
 import m27_c1_f04_external_authority_consumer as c
 import m27_c1_gitless_source_proof as gitless
 
-ABI = "m27.c1.f04-dual-source-unsigned-intake/v1"
+ABI = "m27.c1.f04-dual-source-unsigned-intake/v2"
 
 
 def run(repo: Path, *args: str) -> bytes:
@@ -49,6 +50,47 @@ def source_file(repo: Path, head: str, source_path: str):
     return raw, mode.decode(), calculated_oid
 
 
+def validate_frozen_git_import_closure(repo: Path, head: str, declared: frozenset[str]):
+    """Validate exact tracked frozen Git bytes, not working-directory guesses.
+
+    Every static local import from inventoried C1 modules must be inventoried.
+    A new source dependency therefore forces a manifest/source-freeze update.
+    """
+    tracked = set(run(repo, "ls-tree", "-r", "--name-only", head, "--",
+                      "src/knowledge_engine").decode().splitlines())
+    known = {"src/" + path for path in declared}
+    if not known <= tracked:
+        raise ValueError("F04_C1_DECLARED_MODULE_NOT_IN_FROZEN_GIT")
+    missing = []
+    imported_edges = []
+    for item in sorted(known):
+        raw, mode, oid = source_file(repo, head, item)
+        try:
+            parsed = ast.parse(raw, filename=item)
+        except (SyntaxError, UnicodeError) as exc:
+            raise ValueError("F04_C1_FROZEN_SOURCE_AST_INVALID") from exc
+        for node in ast.walk(parsed):
+            if isinstance(node, ast.Import):
+                names = (a.name.split(".")[0] for a in node.names)
+            elif isinstance(node, ast.ImportFrom):
+                names = (node.module.split(".")[0],) if node.module else ()
+            else:
+                continue
+            for name in names:
+                target = "src/knowledge_engine/" + name + ".py"
+                # Local means tracked at this same frozen HEAD. m27_* denotes
+                # first-party imports and must never silently evade inventory.
+                if target in tracked or name.startswith("m27_"):
+                    imported_edges.append((item, target))
+                    if target not in known:
+                        missing.append((item, target))
+    if missing:
+        raise ValueError("F04_C1_FROZEN_GIT_IMPORT_CLOSURE_MISSING:" +
+                         repr(sorted(missing)))
+    return {"declared_files": len(known), "checked_git_paths": len(known),
+            "local_import_edges": len(imported_edges), "missing": []}
+
+
 def generate(repo: Path, output: Path):
     repo = repo.resolve(strict=True)
     if output.exists() or output.is_relative_to(repo):
@@ -61,6 +103,7 @@ def generate(repo: Path, output: Path):
     tree = run(repo, "rev-parse", "HEAD^{tree}").decode().strip()
     if not (c.hex_digest(head, 40) and c.hex_digest(tree, 40)):
         raise ValueError("F04_GIT_VECTOR_INVALID")
+    closure = validate_frozen_git_import_closure(repo, head, c.C1_MODULES)
     output.mkdir(parents=True, mode=0o700)
     os.chmod(output, 0o700)
     expiry = int(time.time()) + 1800
@@ -90,9 +133,10 @@ def generate(repo: Path, output: Path):
             "source_release_id": c.f03.A05_RELEASE_ID}
         proof = gitless.inspect_exact_bundle(
             stage, manifest, expected_head=head, expected_tree=tree)
-        if proof["files_verified"] != 14 or proof["signed_source_admitted"]:
+        if proof["files_verified"] != len(names) or proof["signed_source_admitted"]:
             raise ValueError("F04_UNSIGNED_STRUCTURAL_CHECK_INVALID")
-        file_name = "UNSIGNED_" + kind.upper() + "_14_SOURCE_CONTROLLER_REQUEST.json"
+        file_name = ("UNSIGNED_" + kind.upper() + "_" + str(len(names)) +
+                     "_SOURCE_CONTROLLER_REQUEST.json")
         path = output / file_name
         path.write_bytes(c.canonical(manifest) + b"\n")
         path.chmod(0o600)
@@ -105,9 +149,11 @@ def generate(repo: Path, output: Path):
         "schema": ABI, "head": head, "tree": tree,
         "source_release_id": c.f03.A05_RELEASE_ID,
         "source_manifest_sha256": c.CORPUS, "expires_at": expiry,
-        "inventories": inventories,
+        "inventories": inventories, "c1_git_import_closure": closure,
         "file_count": sum(v["structural_proof"]["files_verified"]
                           for v in inventories.values()),
+        "c1_code_files": len(c.C1_MODULES),
+        "f03_corpus_files": len(c.f03.F03_GITLESS_ALLOWED_A05),
         "signed": False,
         "release_controller_approved": False,
         "source_controller_identity_qualified": False,
