@@ -15,7 +15,7 @@ import sys
 
 ROOT = Path("/home/ubuntu/m27-owner-native-01-runtime")
 IMAGE = "m27-owner-native-app:f04-owner-native-01-direct-v4-7aa"
-IMAGE_ID = "sha256:760c4a2b538f72840d4820c75ae47b8ff1b5f83b38afb4e2b1c29f5172e29bcd"
+IMAGE_ID = "sha256:c1488bcbf0837fd7f3821d51a22138fe84d5fc096731138041529ac166b31280"
 C1_HEAD = "7aa58392bcf5f4be493912c8a2817d0e4d08df52"
 G01_HEAD = "81eae18f819ab90850bce3b89a3ee9237be68a8d"
 RUN_UID = 65532
