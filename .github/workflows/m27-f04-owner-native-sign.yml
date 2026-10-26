@@ -1,0 +1,62 @@
+name: M27 F04 owner native nonprod OCI signing
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: "Fully qualified immutable OCI image reference"
+        required: true
+        type: string
+      source_digest:
+        description: "Expected local OCI config/manifest digest"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+  packages: read
+  attestations: write
+
+jobs:
+  sign-and-attest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install cosign and syft
+        uses: sigstore/cosign-installer@v3.7.0
+      - uses: anchore/sbom-action/download-syft@v0.20.3
+      - name: Verify immutable subject and sign with GitHub OIDC
+        env:
+          IMAGE: ${{ inputs.image }}
+          EXPECTED: ${{ inputs.source_digest }}
+        run: |
+          set -euo pipefail
+          case "$IMAGE" in *@sha256:*) ;; *) echo "IMAGE_MUST_BE_DIGEST_PINNED" >&2; exit 2 ;; esac
+          actual="$(docker buildx imagetools inspect "$IMAGE" --format '{{.Manifest.Digest}}')"
+          test "$actual" = "${IMAGE##*@}"
+          test "$EXPECTED" = "$actual"
+          cosign sign --yes "$IMAGE"
+          syft "$IMAGE" -o spdx-json > /tmp/m27-f04.spdx.json
+          cosign attest --yes --predicate /tmp/m27-f04.spdx.json --type spdxjson "$IMAGE"
+          cosign verify "$IMAGE" \
+            --certificate-identity-regexp 'https://github.com/danielcanfly/knowledge-os-foundation/.github/workflows/m27-f04-owner-native-sign.yml@refs/heads/.*' \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+            > /tmp/m27-f04-verify.json
+          cosign verify-attestation "$IMAGE" --type spdxjson \
+            --certificate-identity-regexp 'https://github.com/danielcanfly/knowledge-os-foundation/.github/workflows/m27-f04-owner-native-sign.yml@refs/heads/.*' \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+            > /tmp/m27-f04-verify-attestation.json
+          jq -n --arg image "$IMAGE" --arg digest "$actual" \
+            --arg verify_sha "$(sha256sum /tmp/m27-f04-verify.json | cut -d' ' -f1)" \
+            --arg attest_sha "$(sha256sum /tmp/m27-f04-verify-attestation.json | cut -d' ' -f1)" \
+            '{schema:"m27.f04.owner-native-signed-oci/v1",image:$image,manifest_digest:$digest,cosign_verified:true,spdx_attestation_verified:true,verify_receipt_sha256:$verify_sha,attestation_receipt_sha256:$attest_sha}' \
+            > /tmp/m27-f04-signed-oci.json
+      - name: Upload signed OCI receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: m27-f04-owner-native-signed-oci
+          path: |
+            /tmp/m27-f04-signed-oci.json
+            /tmp/m27-f04-verify.json
+            /tmp/m27-f04-verify-attestation.json
+            /tmp/m27-f04.spdx.json
