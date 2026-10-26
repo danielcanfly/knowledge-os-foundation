@@ -104,6 +104,7 @@ def compatible_sse(lines, *, audit):
         if type(part) is not dict:
             yield raw
             continue
+        was_finished = finished
         choices = part.get("choices")
         if type(choices) is list and len(choices) == 1 and type(choices[0]) is dict:
             choice = choices[0]
@@ -130,7 +131,7 @@ def compatible_sse(lines, *, audit):
                    "upstream_raw_bytes": len(raw),
                    "meaning": "NONANSWER_HEARTBEAT_METADATA_ONLY"})
             continue
-        if finished and "response" in part:
+        if was_finished and "response" in part:
             allowed = {"response", "usage", "model", "id", "object", "created",
                        "system_fingerprint", "obfuscation"}
             padding = part.get("obfuscation", "")
@@ -151,7 +152,7 @@ def compatible_sse(lines, *, audit):
             yield b"data: " + json.dumps(normalized, sort_keys=True,
                                            separators=(",", ":")).encode() + b"\n"
             continue
-        if finished and type(choices) is list and len(choices) == 1:
+        if was_finished and type(choices) is list and len(choices) == 1:
             allowed_top = {"id", "object", "created", "model", "choices",
                            "usage", "system_fingerprint", "obfuscation"}
             choice = choices[0]

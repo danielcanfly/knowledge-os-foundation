@@ -94,6 +94,17 @@ class NativeCloudflareProviderTests(unittest.TestCase):
         ]
         self.assertEqual(list(provider.compatible_sse(frames, audit=lambda _: None))[-1], bad)
 
+    def test_first_finish_frame_is_never_consumed_as_postfinish_tail(self):
+        finish = (b'data: {"model":"gpt-oss-120b","choices":'
+                  b'[{"delta":{"content":""},"finish_reason":"stop"}]}\n')
+        frames = [
+            b'data: {"model":"gpt-oss-120b","choices":[{"delta":{"content":"First."},"finish_reason":null}]}\n',
+            finish,
+            b"data: [DONE]\n",
+        ]
+        self.assertIn(finish, list(provider.compatible_sse(
+            frames, audit=lambda _: None)))
+
 
 if __name__ == "__main__":
     unittest.main()
