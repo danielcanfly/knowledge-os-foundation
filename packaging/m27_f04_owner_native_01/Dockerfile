@@ -6,7 +6,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 WORKDIR /opt/m27
 COPY --chown=65532:65532 knowledge_engine/ /opt/m27/knowledge_engine/
-COPY --chown=65532:65532 native_entrypoint.py native_runner.py native_https_provider.py source_lock.json /opt/m27/app/
+COPY --chown=65532:65532 native_entrypoint.py native_runner.py native_https_provider.py native_cloudflare_provider.py source_lock.json /opt/m27/app/
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/opt/m27/knowledge_engine
 LABEL org.opencontainers.image.title="M27 Owner Nonprod Native Product App"
 LABEL org.opencontainers.image.revision="7aa58392bcf5f4be493912c8a2817d0e4d08df52"

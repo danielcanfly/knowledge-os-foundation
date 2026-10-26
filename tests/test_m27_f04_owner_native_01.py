@@ -61,17 +61,17 @@ class NativeAppTests(unittest.TestCase):
         with self.assertRaisesRegex(app.Denied,"CAPABILITY_FILE_OWNER_MODE_DENIED"):
             app.owner_only_file(t)
     def test_root_may_not_run(self):
-        a=SimpleNamespace(provider_mode="minimax-dev")
+        a=SimpleNamespace(provider_mode="m26-parity-direct")
         with mock.patch.object(app.os,"geteuid",return_value=0):
             with self.assertRaisesRegex(app.Denied,"ROOT_NATIVE_PRODUCT_DENIED"):
                 app.preflight(a)
-    def test_cloudflare_route_not_silently_used(self):
-        a=SimpleNamespace(provider_mode="m26-parity-direct")
+    def test_unapproved_route_denied(self):
+        a=SimpleNamespace(provider_mode="minimax-dev")
         with mock.patch.object(app.os,"geteuid",return_value=65532):
             with self.assertRaisesRegex(app.Denied,"UNAUTHORIZED_PROVIDER_ROUTE"):
                 app.preflight(a)
     def test_valid_lock_without_git_checkout_not_task(self):
-        a=SimpleNamespace(provider_mode="minimax-dev",source_root=str(self.src),
+        a=SimpleNamespace(provider_mode="m26-parity-direct",source_root=str(self.src),
                           source_lock=str(self.lock),repo=str(self.d/"absent"))
         with mock.patch.object(app.os,"geteuid",return_value=65532):
             with self.assertRaisesRegex(app.Denied,"PINNED_RUNTIME_REPO_UNAVAILABLE"):

@@ -42,6 +42,8 @@ class LaunchContractTests(unittest.TestCase):
             with self.assertRaisesRegex(app.Denied,
                                         "UNEXPECTED_NONPROD_RUNTIME_ROOT_OR_IMAGE"):
                 app.build_command(approved_secret=Path("/tmp/nonsecret"),
+                                  cloudflare_account_file=Path("/tmp/cf-account"),
+                                  cloudflare_token_file=Path("/tmp/cf-token"),
                                   root=root, image=image)
 
     def test_exact_mount_args_no_env_or_key_contents(self):
@@ -62,10 +64,14 @@ class LaunchContractTests(unittest.TestCase):
              mock.patch.object(Path, "stat", return_value=SimpleNamespace(
                  st_uid=app.RUN_UID, st_mode=stat.S_IFDIR | 0o700)):
             cmd = app.build_command(
-                approved_secret=Path("/runtime/provisioned/minimax-owner-key"))
+                approved_secret=Path("/runtime/provisioned/minimax-owner-key"),
+                cloudflare_account_file=Path("/runtime/provisioned/cf-account"),
+                cloudflare_token_file=Path("/runtime/provisioned/cf-token"))
         joined = " ".join(cmd)
         self.assertIn("readonly", joined)
         self.assertIn("/run/secrets/minimax_api_key", joined)
+        self.assertIn("/run/secrets/cloudflare_account_id", joined)
+        self.assertIn("/run/secrets/cloudflare_ai_token", joined)
         self.assertIn(app.IMAGE, joined)
         self.assertIn("--pids-limit 64", joined)
         self.assertIn("--network bridge", joined)
@@ -73,7 +79,8 @@ class LaunchContractTests(unittest.TestCase):
         self.assertNotIn("--env", cmd)
         self.assertNotIn("--env-file", cmd)
         self.assertNotIn("TESTONLY", joined)
-        self.assertTrue(joined.endswith("--provider-secret /run/secrets/minimax_api_key"))
+        self.assertTrue(joined.endswith(
+            "--cloudflare-token-file /run/secrets/cloudflare_ai_token"))
 
 
 if __name__ == "__main__":

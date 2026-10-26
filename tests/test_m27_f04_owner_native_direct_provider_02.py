@@ -76,6 +76,9 @@ class Tests(unittest.TestCase):
         exec(compile(module,str(RUNNER),"exec"),scope)
         evidence=Path(self.tmp.name)/"evidence";evidence.mkdir()
         result_file=evidence/"C1_REAL_MINIMAX_DEV_RUN_RESULT.json"
+        journal=evidence/"C1_DEV_REAL_PROVIDER_AND_CLIENT.jsonl"
+        journal.write_text(json.dumps({"event":"real_provider_identity",
+                         "model":"@cf/openai/gpt-oss-120b"})+"\n")
         complete={"actual_real_provider_call_count":1,
                   "real_provider_done_observed":True,
                   "local_native_ack_count":2,"client_process_exit":0}

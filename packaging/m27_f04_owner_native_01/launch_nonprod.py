@@ -14,13 +14,15 @@ import subprocess
 import sys
 
 ROOT = Path("/home/ubuntu/m27-owner-native-01-runtime")
-IMAGE = "m27-owner-native-app:f04-owner-native-01-direct-v4-7aa"
-IMAGE_ID = "sha256:c1488bcbf0837fd7f3821d51a22138fe84d5fc096731138041529ac166b31280"
+IMAGE = "m27-owner-native-app:f04-owner-native-01-cloudflare-v5-7aa"
+IMAGE_ID = "PENDING_EXACT_V5_CONFIG_ID"
 C1_HEAD = "7aa58392bcf5f4be493912c8a2817d0e4d08df52"
 G01_HEAD = "81eae18f819ab90850bce3b89a3ee9237be68a8d"
 RUN_UID = 65532
-RUN_NAME = "m27-f04-owner-native-01-minimax-single"
+RUN_NAME = "m27-f04-owner-native-01-cloudflare-single"
 SECRET_IN_CONTAINER = "/run/secrets/minimax_api_key"
+CLOUDFLARE_ACCOUNT_IN_CONTAINER = "/run/secrets/cloudflare_account_id"
+CLOUDFLARE_TOKEN_IN_CONTAINER = "/run/secrets/cloudflare_ai_token"
 
 
 class Denied(ValueError):
@@ -48,12 +50,15 @@ def private_file(path: Path) -> None:
             "SECRET_UID_MODE_OR_LENGTH_DENIED")
 
 
-def build_command(*, approved_secret: Path, root: Path = ROOT,
+def build_command(*, approved_secret: Path, cloudflare_account_file: Path,
+                  cloudflare_token_file: Path, root: Path = ROOT,
                   image: str = IMAGE, dry_run: bool = False) -> list[str]:
     """Preserve source/root boundaries and use a single scoped Docker mount."""
     require(root == ROOT and image == IMAGE,
             "UNEXPECTED_NONPROD_RUNTIME_ROOT_OR_IMAGE")
-    private_file(approved_secret)
+    for item in (approved_secret, cloudflare_account_file,
+                 cloudflare_token_file):
+        private_file(item)
     c1, g01 = root / "c1-git", root / "g01-git"
     private = root / "private"
     for repo, sha in ((c1, C1_HEAD), (g01, G01_HEAD)):
@@ -85,22 +90,30 @@ def build_command(*, approved_secret: Path, root: Path = ROOT,
            "--mount", f"type=bind,source={g01},target=/runtime/g01,readonly",
            "--mount", f"type=bind,source={private},target=/runtime/private",
            "--mount", f"type=bind,source={approved_secret},target={SECRET_IN_CONTAINER},readonly",
+           "--mount", f"type=bind,source={cloudflare_account_file},target={CLOUDFLARE_ACCOUNT_IN_CONTAINER},readonly",
+           "--mount", f"type=bind,source={cloudflare_token_file},target={CLOUDFLARE_TOKEN_IN_CONTAINER},readonly",
            image, "--repo", "/runtime/c1",
            "--fence", "/runtime/private/fence.json",
            "--vendor", "/runtime/g01/tools/g01_vendor",
            "--token", "/runtime/private/client_capability",
-           "--evidence", "/runtime/private/evidence",
-           "--provider-secret", SECRET_IN_CONTAINER]
+           "--evidence", "/runtime/private/evidence_cf_primary_01",
+           "--provider-secret", SECRET_IN_CONTAINER,
+           "--cloudflare-account-file", CLOUDFLARE_ACCOUNT_IN_CONTAINER,
+           "--cloudflare-token-file", CLOUDFLARE_TOKEN_IN_CONTAINER]
     return cmd
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--approved-secret-file", type=Path, required=True)
+    parser.add_argument("--cloudflare-account-file", type=Path, required=True)
+    parser.add_argument("--cloudflare-token-file", type=Path, required=True)
     parser.add_argument("--execute-once", action="store_true")
     args = parser.parse_args()
     try:
-        cmd = build_command(approved_secret=args.approved_secret_file)
+        cmd = build_command(approved_secret=args.approved_secret_file,
+                            cloudflare_account_file=args.cloudflare_account_file,
+                            cloudflare_token_file=args.cloudflare_token_file)
     except (Denied, OSError, subprocess.TimeoutExpired) as exc:
         why = str(exc) if isinstance(exc, Denied) else type(exc).__name__
         print(json.dumps({"status": "OWNER_NONPROD_LAUNCH_FAIL_CLOSED",

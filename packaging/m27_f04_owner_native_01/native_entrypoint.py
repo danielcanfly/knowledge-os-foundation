@@ -71,7 +71,7 @@ def owner_only_file(path: Path) -> None:
 
 def preflight(args) -> dict:
     require(os.geteuid() != 0, "ROOT_NATIVE_PRODUCT_DENIED")
-    require(args.provider_mode == "minimax-dev", "UNAUTHORIZED_PROVIDER_ROUTE")
+    require(args.provider_mode == "m26-parity-direct", "UNAUTHORIZED_PROVIDER_ROUTE")
     root = Path(args.source_root)
     pinned = check_source_lock(root, Path(args.source_lock))
     repo = Path(args.repo)
@@ -100,10 +100,12 @@ def preflight(args) -> dict:
         require(path.exists() and not path.is_symlink(), why)
     # A real provisioned owner-only secret is required before ANY model effect.
     # The actual credential bytes remain inside the Linux runtime only.
-    owner_only_file(Path(args.provider_secret))
+    for secret in (args.provider_secret, args.cloudflare_account_file,
+                   args.cloudflare_token_file):
+        owner_only_file(Path(secret))
     # Provider vendor hashes/Git HEAD and all A05 release/ACL/TTL/revoke
     # checks are done by frozen C1 7aa; never weaken these at the wrapper.
-    return {"abi": ABI, "route": "MiniMax-M3 owner firstparty nonprod",
+    return {"abi": ABI, "route": "Cloudflare Workers AI primary; MiniMax fallback",
             "source_head": C1_HEAD, "source_tree": C1_TREE, **pinned}
 
 def main() -> None:
@@ -112,8 +114,10 @@ def main() -> None:
         ap.add_argument("--" + name, required=True)
     ap.add_argument("--source-root", default="/opt/m27/knowledge_engine")
     ap.add_argument("--source-lock", default="/opt/m27/app/source_lock.json")
-    ap.add_argument("--provider-mode", default="minimax-dev")
+    ap.add_argument("--provider-mode", default="m26-parity-direct")
     ap.add_argument("--provider-secret", default="/run/secrets/minimax_api_key")
+    ap.add_argument("--cloudflare-account-file", default="/run/secrets/cloudflare_account_id")
+    ap.add_argument("--cloudflare-token-file", default="/run/secrets/cloudflare_ai_token")
     a = ap.parse_args()
     try:
         preflight(a)
@@ -131,7 +135,9 @@ def main() -> None:
         result = native_runner.run({"repo": a.repo, "fence": a.fence,
                                     "vendor": a.vendor, "token": a.token,
                                     "evidence": a.evidence,
-                                    "provider_secret": a.provider_secret})
+                                    "provider_secret": a.provider_secret,
+                                    "cloudflare_account_file": a.cloudflare_account_file,
+                                    "cloudflare_token_file": a.cloudflare_token_file})
     except (OSError, ValueError, RuntimeError, subprocess.CalledProcessError):
         # No raw credential, exception message, or provider header may appear
         # in the output. A missing runtime secret is NOT an authentication
