@@ -66,7 +66,7 @@ class LaunchContractTests(unittest.TestCase):
         joined = " ".join(cmd)
         self.assertIn("readonly", joined)
         self.assertIn("/run/secrets/minimax_api_key", joined)
-        self.assertIn("m27-owner-native-app:f04-owner-native-01-direct-v3-7aa", joined)
+        self.assertIn(app.IMAGE, joined)
         self.assertIn("--pids-limit 64", joined)
         self.assertIn("--network bridge", joined)
         self.assertIn("--cap-drop ALL", joined)

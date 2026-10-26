@@ -8,6 +8,7 @@ from unittest import mock
 PROVIDER=Path(__file__).resolve().parents[1]/"packaging/m27_f04_owner_native_01/native_https_provider.py"
 spec=importlib.util.spec_from_file_location("native_https_provider",PROVIDER)
 mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+RUNNER=PROVIDER.with_name("native_runner.py")
 PROMPT="Source A. "*45
 class FakeResponse:
     def __init__(self,events,status=200):
@@ -63,4 +64,28 @@ class Tests(unittest.TestCase):
     def test_secret_symlink_denied(self):
         alias=Path(self.tmp.name)/"alias";alias.symlink_to(self.path)
         with self.assertRaises(OSError):mod.secret(alias)
+    def test_native_runner_terminal_gate(self):
+        source=RUNNER.read_text()
+        tree=__import__("ast").parse(source)
+        keep={node.name:node for node in tree.body
+              if isinstance(node,(__import__("ast").FunctionDef,)) and
+              node.name in {"require","terminal_result","require_complete"}}
+        scope={"Path":Path,"json":json}
+        module=__import__("ast").Module(body=[keep[x] for x in
+             ("require","terminal_result","require_complete")],type_ignores=[])
+        exec(compile(module,str(RUNNER),"exec"),scope)
+        evidence=Path(self.tmp.name)/"evidence";evidence.mkdir()
+        result_file=evidence/"C1_REAL_MINIMAX_DEV_RUN_RESULT.json"
+        complete={"actual_real_provider_call_count":1,
+                  "real_provider_done_observed":True,
+                  "local_native_ack_count":2,"client_process_exit":0}
+        result_file.write_text(json.dumps(complete))
+        result=scope["terminal_result"](evidence)
+        scope["require_complete"](result)
+        incomplete={**complete,"real_provider_done_observed":False,
+                    "local_native_ack_count":0}
+        result_file.write_text(json.dumps(incomplete))
+        with self.assertRaisesRegex(ValueError,
+                                   "NATIVE_E2E_TERMINAL_OR_ACK_INCOMPLETE"):
+            scope["require_complete"](scope["terminal_result"](evidence))
 if __name__=="__main__":unittest.main()

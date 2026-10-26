@@ -11,6 +11,24 @@ import native_https_provider as direct
 def require(ok,reason):
     if not ok:raise ValueError(reason)
 
+def terminal_result(evidence:Path)->dict:
+    record=evidence/"C1_REAL_MINIMAX_DEV_RUN_RESULT.json"
+    require(record.is_file() and not record.is_symlink(),
+            "NATIVE_E2E_RESULT_MISSING")
+    result=json.loads(record.read_bytes())
+    require(type(result) is dict,"NATIVE_E2E_RESULT_INVALID")
+    return {
+        "provider_calls":result.get("actual_real_provider_call_count"),
+        "provider_done":result.get("real_provider_done_observed"),
+        "native_acks":result.get("local_native_ack_count"),
+        "client_exit":result.get("client_process_exit"),
+    }
+
+def require_complete(result:dict)->None:
+    require(result=={"provider_calls":1,"provider_done":True,
+                     "native_acks":2,"client_exit":0},
+            "NATIVE_E2E_TERMINAL_OR_ACK_INCOMPLETE")
+
 def pinned_vendor(vendor:Path)->None:
     vendor=vendor.resolve(strict=True)
     require(vendor.name=="g01_vendor" and vendor.is_dir(),
@@ -44,6 +62,9 @@ def run(args):
               "--vendor",args["vendor"],"--token",args["token"],
               "--evidence",args["evidence"],"--provider-mode","minimax-dev"]
     c1dev.main()
+    result=terminal_result(Path(args["evidence"]))
+    require_complete(result)
+    return result
 
 if __name__=="__main__":
     raise SystemExit("OWNER_NATIVE_RUNNER_NOT_STANDALONE")

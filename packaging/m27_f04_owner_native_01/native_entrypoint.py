@@ -128,19 +128,21 @@ def main() -> None:
     # legacy canary. Frozen C1 server/OS Client/semantic verifier remain 7aa.
     try:
         import native_runner
-        native_runner.run({"repo": a.repo, "fence": a.fence,
-                           "vendor": a.vendor, "token": a.token,
-                           "evidence": a.evidence,
-                           "provider_secret": a.provider_secret})
+        result = native_runner.run({"repo": a.repo, "fence": a.fence,
+                                    "vendor": a.vendor, "token": a.token,
+                                    "evidence": a.evidence,
+                                    "provider_secret": a.provider_secret})
     except (OSError, ValueError, RuntimeError, subprocess.CalledProcessError):
         # No raw credential, exception message, or provider header may appear
         # in the output. A missing runtime secret is NOT an authentication
         # substitute and is never allowed to trigger a provider request.
         print(json.dumps({"status": "NATIVE_APP_FAIL_CLOSED",
                           "reason": "OWNER_RUNTIME_DEPENDENCY_OR_PROVIDER_SECRET_DENIED",
-                          "provider_calls": 0, "formal_f04_pass": False},
+                          "provider_calls": None, "formal_f04_pass": False},
                          sort_keys=True))
         raise SystemExit(2)
+    print(json.dumps({"status": "NATIVE_APP_E2E_COMPLETE",
+                      **result, "formal_f04_pass": False}, sort_keys=True))
 
 if __name__ == "__main__":
     main()

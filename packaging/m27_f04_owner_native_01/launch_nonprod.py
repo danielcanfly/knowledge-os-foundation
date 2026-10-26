@@ -14,8 +14,9 @@ import subprocess
 import sys
 
 ROOT = Path("/home/ubuntu/m27-owner-native-01-runtime")
-IMAGE = "m27-owner-native-app:f04-owner-native-01-direct-v3-7aa"
-IMAGE_ID = "sha256:805dd1a54522cf02bb625e7adf62ace937ba57d92dd434969ed2d48fd8cb6563"
+IMAGE = "m27-owner-native-app:f04-owner-native-01-direct-v4-7aa"
+# Replaced with the exact v4 CONFIG SHA after the first clean source build.
+IMAGE_ID = "PENDING_V4_EXACT_CONFIG_SHA"
 C1_HEAD = "7aa58392bcf5f4be493912c8a2817d0e4d08df52"
 G01_HEAD = "81eae18f819ab90850bce3b89a3ee9237be68a8d"
 RUN_UID = 65532
