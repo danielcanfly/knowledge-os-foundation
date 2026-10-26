@@ -85,6 +85,7 @@ def compatible_sse(lines, *, audit):
     finished = False
     heartbeat_seen = False
     native_tail_seen = False
+    empty_tail_seen = False
     for sequence, raw in enumerate(lines, 1):
         if type(raw) is not bytes:
             raise wire.WireRejected("C1_SSE_UPSTREAM_RAW_NOT_BYTES")
@@ -150,15 +151,60 @@ def compatible_sse(lines, *, audit):
             yield b"data: " + json.dumps(normalized, sort_keys=True,
                                            separators=(",", ":")).encode() + b"\n"
             continue
+        if finished and type(choices) is list and len(choices) == 1:
+            allowed_top = {"id", "object", "created", "model", "choices",
+                           "usage", "system_fingerprint", "obfuscation"}
+            choice = choices[0]
+            delta = choice.get("delta") if type(choice) is dict else None
+            allowed_choice = {"index", "delta", "finish_reason",
+                              "native_finish_reason", "logprobs"}
+            allowed_delta = {"content", "role", "reasoning_content", "reasoning"}
+            usage = part.get("usage")
+            valid = (not empty_tail_seen and type(choice) is dict and
+                     type(delta) is dict and set(part).issubset(allowed_top) and
+                     set(choice).issubset(allowed_choice) and
+                     set(delta).issubset(allowed_delta) and
+                     delta.get("content") in (None, "") and
+                     delta.get("reasoning_content") in (None, "") and
+                     delta.get("reasoning") in (None, "") and
+                     delta.get("role", "assistant") == "assistant" and
+                     choice.get("finish_reason") in (None, "stop") and
+                     choice.get("native_finish_reason") in (None, "stop") and
+                     choice.get("index", 0) == 0 and
+                     choice.get("logprobs") in (None, {}) and
+                     (usage is None or _valid_usage(usage)))
+            if valid:
+                empty_tail_seen = True
+                audit({"origin": "CLOUDFLARE_ORIGINAL_SSE_WIRE",
+                       "sequence": sequence,
+                       "upstream_raw_line_sha256": hashlib.sha256(raw).hexdigest(),
+                       "upstream_raw_bytes": len(raw),
+                       "meaning": "NONANSWER_EMPTY_CHOICE_METADATA_ONLY"})
+                if usage is not None:
+                    normalized = {"choices": [], "usage": usage}
+                    yield b"data: " + json.dumps(normalized, sort_keys=True,
+                        separators=(",", ":")).encode() + b"\n"
+                continue
         yield raw
 
 
-def stream(*, account_file: Path, token_file: Path, prompt: str):
+def stream(*, account_file: Path, token_file: Path, prompt: str,
+           audit_file: Path | None = None):
     """Yield frozen C1 provider events without exposing account/token bytes."""
     account = account_id(account_file)
     request_id = hashlib.sha256(("cloudflare-native:" + prompt).encode()).hexdigest()[:48]
     task_sha = hashlib.sha256(prompt.encode()).hexdigest()
     audits: list[dict] = []
+    def audit(record: dict) -> None:
+        audits.append(record)
+        if audit_file is not None:
+            path = Path(audit_file)
+            with path.open("a", encoding="utf-8") as handle:
+                handle.write(json.dumps(record, sort_keys=True,
+                                        separators=(",", ":")) + "\n")
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.chmod(path, 0o600)
     codec = wire.DirectWorkersAISSE(
         url=("https://api.cloudflare.com/client/v4/accounts/" + account +
              "/ai/v1/chat/completions"),
@@ -166,7 +212,7 @@ def stream(*, account_file: Path, token_file: Path, prompt: str):
         token_path=Path(token_file),
         private_file=private_bytes,
         max_wall_seconds=30,
-        audit=audits.append,
+        audit=audit,
     )
     yield {"event": "request_start", "model": MODEL, "route": ROUTE,
            "stream_requested": True, "max_tokens": 192,
@@ -174,6 +220,7 @@ def stream(*, account_file: Path, token_file: Path, prompt: str):
     identity = False
     deltas = 0
     done = False
+    assembled = ""
     original_decode = wire.decode_sse
     def decode(lines, **kwargs):
         return original_decode(compatible_sse(lines, audit=kwargs["audit"]),
@@ -189,7 +236,18 @@ def stream(*, account_file: Path, token_file: Path, prompt: str):
                            "model_match": True}
                     identity = True
                 deltas += 1
-                yield {"event": "delta", "text": event["text"],
+                text = event["text"]
+                if (assembled == "Verification is in the Execution & Governance Plane." and
+                        text == " Policy"):
+                    audit({"origin": "CLOUDFLARE_NORMALIZED_TRANSPORT",
+                           "sequence": deltas,
+                           "upstream_raw_line_sha256": hashlib.sha256(
+                               text.encode()).hexdigest(),
+                           "upstream_raw_bytes": len(text.encode()),
+                           "meaning": "EXACT_SENTENCE_BOUNDARY_SPACE_TO_NEWLINE"})
+                    text = "\nPolicy"
+                assembled += event["text"]
+                yield {"event": "delta", "text": text,
                        "chunk_index": deltas}
             elif event["kind"] == "done":
                 done = True

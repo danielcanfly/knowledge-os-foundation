@@ -73,7 +73,8 @@ def run(args):
         prompt=prompt,vendor=vendor,
         primary_fn=lambda value: cloudflare.stream(
             account_file=Path(args["cloudflare_account_file"]),
-            token_file=Path(args["cloudflare_token_file"]),prompt=value),
+            token_file=Path(args["cloudflare_token_file"]),prompt=value,
+            audit_file=Path(args["evidence"])/"C1_CLOUDFLARE_ORIGINAL_WIRE_AUDIT.jsonl"),
         fallback_fn=fallback)
     sys.argv=[str(Path(c1dev.__file__)),"run",
               "--repo",args["repo"],"--fence",args["fence"],
