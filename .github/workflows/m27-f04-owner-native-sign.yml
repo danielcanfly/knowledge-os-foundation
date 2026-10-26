@@ -1,16 +1,7 @@
-name: M27 F04 owner native nonprod OCI signing
+name: M27 F04 owner native publish, sign, and attest
 
 on:
   workflow_dispatch:
-    inputs:
-      image:
-        description: "Fully qualified immutable OCI image reference"
-        required: true
-        type: string
-      source_digest:
-        description: "Expected local OCI config/manifest digest"
-        required: true
-        type: string
 
 permissions:
   contents: read
@@ -18,45 +9,187 @@ permissions:
   packages: write
   attestations: write
 
+env:
+  SOURCE_REF: work/f04-owner-native-01-20261026
+  SOURCE_HEAD: 3dd8a8165a4a996b50aa0fa680ea6070a96b6dd0
+  SOURCE_TREE: 21d8f51a99ed8366890e9951d681dc0487cfd6c9
+  C1_HEAD: 7aa58392bcf5f4be493912c8a2817d0e4d08df52
+  C1_TREE: 63ff1c5f0c41c7e70701ee688d1f6d70b855dbcd
+  IMAGE_REPOSITORY: ghcr.io/danielcanfly/knowledge-os-foundation/m27-f04-owner-native-01
+
 jobs:
-  sign-and-attest:
-    runs-on: ubuntu-latest
+  publish-sign-attest:
+    runs-on: ubuntu-24.04
     steps:
-      - name: Install cosign and syft
-        uses: sigstore/cosign-installer@v3.7.0
-      - uses: anchore/sbom-action/download-syft@v0.20.3
-      - name: Verify immutable subject and sign with GitHub OIDC
-        env:
-          IMAGE: ${{ inputs.image }}
-          EXPECTED: ${{ inputs.source_digest }}
+      - name: Checkout exact WorkID source
+        uses: actions/checkout@v4
+        with:
+          ref: 3dd8a8165a4a996b50aa0fa680ea6070a96b6dd0
+          fetch-depth: 0
+
+      - name: Verify source and frozen C1 identity
+        shell: bash
         run: |
           set -euo pipefail
-          case "$IMAGE" in *@sha256:*) ;; *) echo "IMAGE_MUST_BE_DIGEST_PINNED" >&2; exit 2 ;; esac
-          actual="$(docker buildx imagetools inspect "$IMAGE" --format '{{.Manifest.Digest}}')"
-          test "$actual" = "${IMAGE##*@}"
-          test "$EXPECTED" = "$actual"
+          test "$(git rev-parse HEAD)" = "$SOURCE_HEAD"
+          test "$(git write-tree)" = "$SOURCE_TREE"
+          test "$(git rev-parse "$C1_HEAD^{tree}")" = "$C1_TREE"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test -f packaging/m27_f04_owner_native_01/source_lock.json
+          jq -e --arg h "$C1_HEAD" --arg t "$C1_TREE" \
+            '.head == $h and .tree == $t and (.modules | length == 15)' \
+            packaging/m27_f04_owner_native_01/source_lock.json
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR with first-party GITHUB_TOKEN
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Assemble exact 21-file build context
+        id: context
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          import pathlib
+          import subprocess
+          import tempfile
+
+          c1_head = os.environ["C1_HEAD"]
+          c1_tree = os.environ["C1_TREE"]
+          source_head = os.environ["SOURCE_HEAD"]
+          source_tree = os.environ["SOURCE_TREE"]
+          lock = json.loads(pathlib.Path("packaging/m27_f04_owner_native_01/source_lock.json").read_text())
+          if lock["head"] != c1_head or lock["tree"] != c1_tree or len(lock["modules"]) != 15:
+              raise SystemExit("INVALID_C1_SOURCE_LOCK")
+
+          def git_show(revision: str, path: str) -> bytes:
+              return subprocess.check_output(["git", "show", f"{revision}:{path}"])
+
+          files: dict[str, bytes] = {}
+          for module, expected in sorted(lock["modules"].items()):
+              data = git_show(c1_head, f"src/knowledge_engine/{module}")
+              if hashlib.sha256(data).hexdigest() != expected:
+                  raise SystemExit(f"C1_GIT_BLOB_LOCK_MISMATCH:{module}")
+              files[f"knowledge_engine/{module}"] = data
+          for name in (
+              "Dockerfile",
+              "native_entrypoint.py",
+              "native_runner.py",
+              "native_https_provider.py",
+              "native_cloudflare_provider.py",
+              "source_lock.json",
+          ):
+              files[name] = git_show(source_head, f"packaging/m27_f04_owner_native_01/{name}")
+          if len(files) != 21:
+              raise SystemExit("EXACT_21_BUILD_FILES_REQUIRED")
+
+          root = pathlib.Path(tempfile.mkdtemp(prefix="m27-f04-build-context-"))
+          for name, data in files.items():
+              path = root / name
+              path.parent.mkdir(parents=True, exist_ok=True)
+              path.write_bytes(data)
+              path.chmod(0o444)
+          context_sha = hashlib.sha256(b"".join(hashlib.sha256(files[k]).digest() for k in sorted(files))).hexdigest()
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as out:
+              out.write(f"path={root}\n")
+              out.write(f"context_sha256={context_sha}\n")
+          print(json.dumps({
+              "file_count": len(files),
+              "source_head": source_head,
+              "source_tree": source_tree,
+              "c1_head": c1_head,
+              "c1_tree": c1_tree,
+              "context_sha256": context_sha,
+          }, sort_keys=True))
+          PY
+
+      - name: Build and publish exact Linux AMD64 image
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ steps.context.outputs.path }}
+          file: ${{ steps.context.outputs.path }}/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ env.IMAGE_REPOSITORY }}:f04-owner-native-01-${{ github.run_id }}
+          provenance: false
+          sbom: false
+
+      - name: Verify pushed immutable manifest
+        id: subject
+        shell: bash
+        env:
+          PUSH_DIGEST: ${{ steps.push.outputs.digest }}
+        run: |
+          set -euo pipefail
+          case "$PUSH_DIGEST" in sha256:*) ;; *) echo PUSH_DIGEST_NOT_SHA256 >&2; exit 2 ;; esac
+          image="$IMAGE_REPOSITORY@$PUSH_DIGEST"
+          actual="$(docker buildx imagetools inspect "$image" --format '{{.Manifest.Digest}}')"
+          test "$actual" = "$PUSH_DIGEST"
+          {
+            echo "image=$image"
+            echo "digest=$PUSH_DIGEST"
+          } >> "$GITHUB_OUTPUT"
+          printf '%s\n' "image=$image" "digest=$PUSH_DIGEST"
+
+      - name: Install Cosign and Syft
+        uses: sigstore/cosign-installer@v3.7.0
+      - uses: anchore/sbom-action/download-syft@v0.20.3
+
+      - name: Sign immutable OCI subject and create SPDX attestation
+        shell: bash
+        env:
+          IMAGE: ${{ steps.subject.outputs.image }}
+        run: |
+          set -euo pipefail
           cosign sign --yes "$IMAGE"
           syft "$IMAGE" -o spdx-json > /tmp/m27-f04.spdx.json
           cosign attest --yes --predicate /tmp/m27-f04.spdx.json --type spdxjson "$IMAGE"
           cosign verify "$IMAGE" \
-            --certificate-identity-regexp 'https://github.com/danielcanfly/knowledge-os-foundation/.github/workflows/m27-f04-owner-native-sign.yml@refs/heads/.*' \
+            --certificate-identity-regexp 'https://github.com/danielcanfly/knowledge-os-foundation/.github/workflows/m27-f04-owner-native-sign.yml@refs/heads/main' \
             --certificate-oidc-issuer https://token.actions.githubusercontent.com \
-            > /tmp/m27-f04-verify.json
+            > /tmp/m27-f04-cosign-verify.json
           cosign verify-attestation "$IMAGE" --type spdxjson \
-            --certificate-identity-regexp 'https://github.com/danielcanfly/knowledge-os-foundation/.github/workflows/m27-f04-owner-native-sign.yml@refs/heads/.*' \
+            --certificate-identity-regexp 'https://github.com/danielcanfly/knowledge-os-foundation/.github/workflows/m27-f04-owner-native-sign.yml@refs/heads/main' \
             --certificate-oidc-issuer https://token.actions.githubusercontent.com \
-            > /tmp/m27-f04-verify-attestation.json
-          jq -n --arg image "$IMAGE" --arg digest "$actual" \
-            --arg verify_sha "$(sha256sum /tmp/m27-f04-verify.json | cut -d' ' -f1)" \
-            --arg attest_sha "$(sha256sum /tmp/m27-f04-verify-attestation.json | cut -d' ' -f1)" \
-            '{schema:"m27.f04.owner-native-signed-oci/v1",image:$image,manifest_digest:$digest,cosign_verified:true,spdx_attestation_verified:true,verify_receipt_sha256:$verify_sha,attestation_receipt_sha256:$attest_sha}' \
-            > /tmp/m27-f04-signed-oci.json
-      - name: Upload signed OCI receipt
+            > /tmp/m27-f04-spdx-verify.json
+
+      - name: Generate GitHub SLSA provenance for exact subject
+        id: provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.IMAGE_REPOSITORY }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+
+      - name: Verify GitHub SLSA provenance
+        shell: bash
+        env:
+          IMAGE: ${{ steps.subject.outputs.image }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh attestation verify "oci://$IMAGE" \
+            --repo "$GITHUB_REPOSITORY" \
+            --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/m27-f04-owner-native-sign.yml" \
+            --cert-oidc-issuer https://token.actions.githubusercontent.com \
+            --format json > /tmp/m27-f04-slsa-verify.json
+
+      - name: Upload signed OCI evidence
         uses: actions/upload-artifact@v4
         with:
-          name: m27-f04-owner-native-signed-oci
+          name: m27-f04-owner-native-signed-oci-${{ github.run_id }}
           path: |
-            /tmp/m27-f04-signed-oci.json
-            /tmp/m27-f04-verify.json
-            /tmp/m27-f04-verify-attestation.json
             /tmp/m27-f04.spdx.json
+            /tmp/m27-f04-cosign-verify.json
+            /tmp/m27-f04-spdx-verify.json
+            /tmp/m27-f04-slsa-verify.json
