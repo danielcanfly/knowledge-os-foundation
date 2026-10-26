@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 import sys
 import tempfile
@@ -66,6 +67,32 @@ class NativeCloudflareProviderTests(unittest.TestCase):
         error.read.return_value = b'{"errors":[{"code":3036}]}'
         self.assertEqual(provider._http_category(error),
                          "CLOUDFLARE_DAILY_QUOTA_EXHAUSTED_3036")
+
+    def test_known_native_terminal_tail_normalizes_without_answer_text(self):
+        answer = "First. Second."
+        tail = {"response": answer, "usage": {"prompt_tokens": 20,
+                "completion_tokens": 4, "total_tokens": 24},
+                "model": provider.MODEL}
+        raw = b"data: " + json.dumps(tail).encode() + b"\n"
+        frames = [
+            b'data: {"model":"gpt-oss-120b","choices":[{"delta":{"content":"First. Second."},"finish_reason":"stop"}]}\n',
+            raw,
+            b"data: [DONE]\n",
+        ]
+        audits = []
+        normalized = list(provider.compatible_sse(frames, audit=audits.append))
+        self.assertEqual(len(normalized), 3)
+        self.assertNotIn(answer.encode(), normalized[1])
+        self.assertEqual(audits[0]["upstream_raw_line_sha256"],
+                         __import__("hashlib").sha256(raw).hexdigest())
+
+    def test_unknown_native_tail_is_not_normalized(self):
+        bad = b'data: {"response":"different","usage":{},"secret":"x"}\n'
+        frames = [
+            b'data: {"model":"gpt-oss-120b","choices":[{"delta":{"content":"First."},"finish_reason":"stop"}]}\n',
+            bad,
+        ]
+        self.assertEqual(list(provider.compatible_sse(frames, audit=lambda _: None))[-1], bad)
 
 
 if __name__ == "__main__":

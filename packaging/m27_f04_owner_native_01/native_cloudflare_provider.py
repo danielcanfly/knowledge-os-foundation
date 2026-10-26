@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 from pathlib import Path
 import re
@@ -63,6 +64,95 @@ def _http_category(error: HTTPError) -> str:
     return "CLOUDFLARE_HTTP_" + str(status)
 
 
+def _valid_usage(value) -> bool:
+    return (type(value) is dict and
+            all(type(value.get(key)) is int and 0 <= value[key] <= 1_000_000_000
+                for key in ("prompt_tokens", "completion_tokens", "total_tokens")) and
+            value["total_tokens"] >= max(value["prompt_tokens"],
+                                          value["completion_tokens"]))
+
+
+def compatible_sse(lines, *, audit):
+    """Normalize only known nonanswer Workers AI tail frames.
+
+    The frozen decoder remains authoritative for model, text, finish and DONE.
+    Original tail hashes are audited before a known metadata-only shape is
+    converted to its OpenAI usage-only equivalent or discarded.
+    """
+    total = 0
+    assembled = ""
+    content_seen = False
+    finished = False
+    heartbeat_seen = False
+    native_tail_seen = False
+    for sequence, raw in enumerate(lines, 1):
+        if type(raw) is not bytes:
+            raise wire.WireRejected("C1_SSE_UPSTREAM_RAW_NOT_BYTES")
+        total += len(raw)
+        if total > wire.MAX_RAW_TOTAL or len(raw) > wire.MAX_EVENT_BYTES:
+            raise wire.WireRejected("C1_SSE_UPSTREAM_WIRE_BUDGET")
+        stripped = raw.strip()
+        if not raw.startswith(b"data:") or stripped == b"data: [DONE]":
+            yield raw
+            continue
+        try:
+            part = json.loads(raw[5:].strip().decode("utf-8"))
+        except (UnicodeError, ValueError):
+            yield raw
+            continue
+        if type(part) is not dict:
+            yield raw
+            continue
+        choices = part.get("choices")
+        if type(choices) is list and len(choices) == 1 and type(choices[0]) is dict:
+            choice = choices[0]
+            delta = choice.get("delta")
+            if type(delta) is dict and type(delta.get("content", "")) is str:
+                content = delta.get("content") or ""
+                assembled += content
+                content_seen = content_seen or bool(content)
+            if choice.get("finish_reason") == "stop":
+                finished = True
+        if choices == [] and part.get("usage") is None and content_seen:
+            allowed = {"model", "id", "object", "created", "system_fingerprint",
+                       "choices", "usage", "obfuscation"}
+            padding = part.get("obfuscation", "")
+            if (heartbeat_seen or not set(part).issubset(allowed) or
+                    type(padding) is not str or len(padding) > 512 or
+                    any(ord(char) < 32 for char in padding)):
+                yield raw
+                continue
+            heartbeat_seen = True
+            audit({"origin": "CLOUDFLARE_ORIGINAL_SSE_WIRE",
+                   "sequence": sequence,
+                   "upstream_raw_line_sha256": hashlib.sha256(raw).hexdigest(),
+                   "upstream_raw_bytes": len(raw),
+                   "meaning": "NONANSWER_HEARTBEAT_METADATA_ONLY"})
+            continue
+        if finished and "response" in part:
+            allowed = {"response", "usage", "model", "id", "object", "created",
+                       "system_fingerprint", "obfuscation"}
+            padding = part.get("obfuscation", "")
+            if (native_tail_seen or not set(part).issubset(allowed) or
+                    part.get("response") not in ("", assembled) or
+                    not _valid_usage(part.get("usage")) or
+                    type(padding) is not str or len(padding) > 512 or
+                    any(ord(char) < 32 for char in padding)):
+                yield raw
+                continue
+            native_tail_seen = True
+            audit({"origin": "CLOUDFLARE_ORIGINAL_SSE_WIRE",
+                   "sequence": sequence,
+                   "upstream_raw_line_sha256": hashlib.sha256(raw).hexdigest(),
+                   "upstream_raw_bytes": len(raw),
+                   "meaning": "NONANSWER_NATIVE_TERMINAL_METADATA_ONLY"})
+            normalized = {"choices": [], "usage": part["usage"]}
+            yield b"data: " + json.dumps(normalized, sort_keys=True,
+                                           separators=(",", ":")).encode() + b"\n"
+            continue
+        yield raw
+
+
 def stream(*, account_file: Path, token_file: Path, prompt: str):
     """Yield frozen C1 provider events without exposing account/token bytes."""
     account = account_id(account_file)
@@ -84,6 +174,11 @@ def stream(*, account_file: Path, token_file: Path, prompt: str):
     identity = False
     deltas = 0
     done = False
+    original_decode = wire.decode_sse
+    def decode(lines, **kwargs):
+        return original_decode(compatible_sse(lines, audit=kwargs["audit"]),
+                               **kwargs)
+    wire.decode_sse = decode
     try:
         for _, event in codec.one_bounded_stream(
                 prompt=prompt, task_sha=task_sha,
@@ -118,4 +213,6 @@ def stream(*, account_file: Path, token_file: Path, prompt: str):
                     if "DEADLINE" in str(exc)
                     else "CLOUDFLARE_STREAM_PROTOCOL_MISMATCH")
         yield {"event": "error", "category": category}
+    finally:
+        wire.decode_sse = original_decode
 

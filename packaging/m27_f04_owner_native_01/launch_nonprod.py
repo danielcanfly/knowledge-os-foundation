@@ -14,8 +14,8 @@ import subprocess
 import sys
 
 ROOT = Path("/home/ubuntu/m27-owner-native-01-runtime")
-IMAGE = "m27-owner-native-app:f04-owner-native-01-cloudflare-v5-7aa"
-IMAGE_ID = "sha256:5b14f3f49d6df4317689484cdfcb382bef8eed65cec690e552aa3b9e536ca1ee"
+IMAGE = "m27-owner-native-app:f04-owner-native-01-cloudflare-v6-7aa"
+IMAGE_ID = "PENDING_EXACT_V6_CONFIG_ID"
 C1_HEAD = "7aa58392bcf5f4be493912c8a2817d0e4d08df52"
 G01_HEAD = "81eae18f819ab90850bce3b89a3ee9237be68a8d"
 RUN_UID = 65532
@@ -96,7 +96,7 @@ def build_command(*, approved_secret: Path, cloudflare_account_file: Path,
            "--fence", "/runtime/private/fence.json",
            "--vendor", "/runtime/g01/tools/g01_vendor",
            "--token", "/runtime/private/client_capability",
-           "--evidence", "/runtime/private/evidence_cf_primary_01",
+           "--evidence", "/runtime/private/evidence_cf_primary_02",
            "--provider-secret", SECRET_IN_CONTAINER,
            "--cloudflare-account-file", CLOUDFLARE_ACCOUNT_IN_CONTAINER,
            "--cloudflare-token-file", CLOUDFLARE_TOKEN_IN_CONTAINER]
