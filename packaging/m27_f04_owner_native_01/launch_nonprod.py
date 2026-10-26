@@ -15,7 +15,7 @@ import sys
 
 ROOT = Path("/home/ubuntu/m27-owner-native-01-runtime")
 IMAGE = "m27-owner-native-app:f04-owner-native-01-cloudflare-v8-7aa"
-IMAGE_ID = "PENDING_EXACT_V8_CONFIG_ID"
+IMAGE_ID = "sha256:d9fa36b3d0f81fbf3d6c009a6ababcf64cddf6dc9b0ae976c614e03de7310863"
 C1_HEAD = "7aa58392bcf5f4be493912c8a2817d0e4d08df52"
 G01_HEAD = "81eae18f819ab90850bce3b89a3ee9237be68a8d"
 RUN_UID = 65532
