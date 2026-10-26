@@ -16,7 +16,7 @@ import tarfile
 
 C1_HEAD = "7aa58392bcf5f4be493912c8a2817d0e4d08df52"
 C1_TREE = "63ff1c5f0c41c7e70701ee688d1f6d70b855dbcd"
-TAG = "m27-owner-native-app:f04-owner-native-01-direct-v2-7aa"
+TAG = "m27-owner-native-app:f04-owner-native-01-direct-v3-7aa"
 PACKAGE = "packaging/m27_f04_owner_native_01"
 MAX_BUILD_CONTEXT = 900_000
 REMOTE = r"""
