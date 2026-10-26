@@ -1,0 +1,22 @@
+{
+  "head": "7aa58392bcf5f4be493912c8a2817d0e4d08df52",
+  "modules": {
+    "m27_c1_current_native_product_nonprod.py": "a4bb1ba2ceab07f461b0de58f2dc9d2598e295fe5ad8ae2740d5d202dd4bcdca",
+    "m27_c1_dev_minimax_a05_e2e.py": "39e6fb2a5441248bb43c0b7e32c98d48ec57fdac04ff974c583ae1a176c0204e",
+    "m27_c1_f04_external_authority_consumer.py": "ca20300e6a1e0fcdf427162f04b3f027d9d3463d5ddce45a650141fc8cf013e8",
+    "m27_c1_formal_workers_ai_sse.py": "50ced4e6fe6e9aa816bc41ee05fe0857a1e7df58df73e0129c190f98bbfb824c",
+    "m27_c1_genuine_native_generation_seam.py": "c1785816f5705bc8b65bfd2a22b511448d6876e14622b6c421e7364fe557d213",
+    "m27_c1_gitless_source_proof.py": "3bfd476c6d68273f0186f8a779434ed89f35bb6d45bb955331f132a12d4559f8",
+    "m27_c1_m26_provider_parity_nonprod.py": "9de32efb1100079b0fe03a62c7b0dde4bcd10f9abc843cfc9c5fbbb00faab6c1",
+    "m27_c1_production_parity_verifier.py": "c4ea7e758e961e2ea047feaed526f1da08688d2f10f190393950e84ae398a6d7",
+    "m27_f02_current_native_model_events.py": "c09ccb88d783f89c619ddd7a8527952c307d8c1dc3d3f2e19eb8850d350fb724",
+    "m27_f03_client_restore_boundary.py": "b6590454fe3ae1aff875214fa0cc4189787e59578a72e0f78ee66b0dd925bbcd",
+    "m27_f03_source_rights_admission.py": "9640981fd29b95f89c59bab5cbd1f63b3853361a2d69b3ac8b843db4135b7500",
+    "m27_g01_current_native_consumer.py": "c7e6b2a718860959150cc1e79b48ee48b288cbfeddb73a912007fb26dda4e442",
+    "m27_g01_qa_outcome.py": "e8b4013f0d62ba42079cd34dd1d191c69ec7defbfda386f6b1891a6103a65458",
+    "m27_h02_native_nonprod_consumer.py": "52ff27546f92b2351d19f0e1810668435a09457b1472e147c3893dc44ce8d65b",
+    "m27_task_contracts_v1.py": "5e29951d466197b93f5ee185e8a88ac2aa418164992f0e781fb426640b605315"
+  },
+  "schema": "m27.f04.owner-native-app/v1.source-lock/v1",
+  "tree": "63ff1c5f0c41c7e70701ee688d1f6d70b855dbcd"
+}
