@@ -16,7 +16,7 @@ import tarfile
 
 C1_HEAD = "7aa58392bcf5f4be493912c8a2817d0e4d08df52"
 C1_TREE = "63ff1c5f0c41c7e70701ee688d1f6d70b855dbcd"
-TAG = "m27-owner-native-app:f04-owner-native-01-7aa"
+TAG = "m27-owner-native-app:f04-owner-native-01-direct-v2-7aa"
 PACKAGE = "packaging/m27_f04_owner_native_01"
 MAX_BUILD_CONTEXT = 900_000
 REMOTE = r"""
@@ -31,7 +31,7 @@ with tempfile.TemporaryDirectory(prefix="m27-f04-owner-native-",dir="/tmp") as t
  root=pathlib.Path(t); physical={}
  with tarfile.open(fileobj=io.BytesIO(data),mode="r:") as tf:
   parts=tf.getmembers()
-  check(len(parts)==18,"EXACT_18_BUILD_FILES_REQUIRED")
+  check(len(parts)==20,"EXACT_20_BUILD_FILES_REQUIRED")
   for p in parts:
    check(p.isfile() and not p.issym() and not p.islnk() and
          p.name in m["files"] and p.name not in physical and
@@ -104,7 +104,7 @@ def build_context(repo: Path) -> tuple[bytes,dict]:
         if hashlib.sha256(raw).hexdigest()!=expected:
             raise RuntimeError("C1_GIT_BLOB_LOCK_MISMATCH")
         data["knowledge_engine/"+name]=raw
-    for name in ("Dockerfile","native_entrypoint.py","source_lock.json"):
+    for name in ("Dockerfile","native_entrypoint.py","native_runner.py","native_https_provider.py","source_lock.json"):
         data[name]=run_git(repo,"show",head+":"+PACKAGE+"/"+name)
     blob=io.BytesIO()
     with tarfile.open(fileobj=blob,mode="w") as t:

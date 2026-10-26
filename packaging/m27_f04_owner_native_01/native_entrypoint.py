@@ -98,6 +98,9 @@ def preflight(args) -> dict:
     for path, why in ((Path(args.fence), "A05_RIGHTS_FENCE_NOT_MOUNTED"),
                       (Path(args.vendor), "PINNED_VENDOR_NOT_MOUNTED")):
         require(path.exists() and not path.is_symlink(), why)
+    # A real provisioned owner-only secret is required before ANY model effect.
+    # The actual credential bytes remain inside the Linux runtime only.
+    owner_only_file(Path(args.provider_secret))
     # Provider vendor hashes/Git HEAD and all A05 release/ACL/TTL/revoke
     # checks are done by frozen C1 7aa; never weaken these at the wrapper.
     return {"abi": ABI, "route": "MiniMax-M3 owner firstparty nonprod",
@@ -110,6 +113,7 @@ def main() -> None:
     ap.add_argument("--source-root", default="/opt/m27/knowledge_engine")
     ap.add_argument("--source-lock", default="/opt/m27/app/source_lock.json")
     ap.add_argument("--provider-mode", default="minimax-dev")
+    ap.add_argument("--provider-secret", default="/run/secrets/minimax_api_key")
     a = ap.parse_args()
     try:
         preflight(a)
@@ -120,13 +124,13 @@ def main() -> None:
                           "reason": reason[:90], "provider_calls": 0,
                           "formal_f04_pass": False}, sort_keys=True))
         raise SystemExit(2)
-    # OS exec retains the container App process, starts a real AF_UNIX server,
-    # forks the independent native client and OS semantic verifier in C1 7aa.
-    # No fixture, mock, synthetic DONE or offline CLI substitute.
-    os.execv(sys.executable, [sys.executable, str(Path(a.source_root) / C1_ENTRY),
-             "run", "--repo", a.repo, "--fence", a.fence,
-             "--vendor", a.vendor, "--token", a.token,
-             "--evidence", a.evidence, "--provider-mode", a.provider_mode])
+    # Native transport runs HTTPS in THIS image/process group, not SSH to the
+    # legacy canary. Frozen C1 server/OS Client/semantic verifier remain 7aa.
+    import native_runner
+    native_runner.run({"repo": a.repo, "fence": a.fence,
+                       "vendor": a.vendor, "token": a.token,
+                       "evidence": a.evidence,
+                       "provider_secret": a.provider_secret})
 
 if __name__ == "__main__":
     main()
