@@ -15,7 +15,7 @@ env:
   SOURCE_TREE: 21d8f51a99ed8366890e9951d681dc0487cfd6c9
   C1_HEAD: 7aa58392bcf5f4be493912c8a2817d0e4d08df52
   C1_TREE: 63ff1c5f0c41c7e70701ee688d1f6d70b855dbcd
-  IMAGE_REPOSITORY: ghcr.io/danielcanfly/knowledge-os-foundation/m27-f04-owner-native-01
+  IMAGE_REPOSITORY: ghcr.io/danielcanfly/knowledge-os-foundation/m27-f04-owner-native-01-ci
 
 jobs:
   publish-sign-attest:
@@ -121,6 +121,9 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ${{ env.IMAGE_REPOSITORY }}:f04-owner-native-01-${{ github.run_id }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/danielcanfly/knowledge-os-foundation
+            org.opencontainers.image.revision=${{ env.SOURCE_HEAD }}
           provenance: false
           sbom: false
 
